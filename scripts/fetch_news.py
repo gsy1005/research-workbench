@@ -5,7 +5,7 @@ import json, os, re, requests
 from datetime import datetime, timezone, timedelta
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT=os.path.join(ROOT,'data','news_latest.json')
-C='/mnt/agents/output/.cache'
+C='/mnt/agents/output/凭证与API档案'
 BJT=timezone(timedelta(hours=8))
 now=datetime.now(BJT).strftime('%Y-%m-%d %H:%M')
 TAG=re.compile(r'<[^>]+>')
