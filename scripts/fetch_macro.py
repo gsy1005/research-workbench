@@ -21,12 +21,12 @@ DATA = os.path.join(APP, 'data')
 
 def log(*a): print(datetime.datetime.now().strftime('%H:%M:%S'), *a, flush=True)
 
-def http_get(url, timeout=15, retries=2, backoff=1.0):
+def http_get(url, timeout=15, retries=2, backoff=1.0, maxbytes=8 * 1024 * 1024):
     for i in range(retries):
         try:
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (research-workbench)'})
             with urllib.request.urlopen(req, timeout=timeout) as r:
-                return r.read().decode('utf-8', 'replace')
+                return r.read(maxbytes).decode('utf-8', 'replace')
         except Exception as e:
             log('  retry', i + 1, repr(e)[:110], url[:70])
             time.sleep(backoff * (i + 1))
@@ -34,7 +34,7 @@ def http_get(url, timeout=15, retries=2, backoff=1.0):
 
 # ---------- 抓取器 ----------
 def fred(sid, limit=1700):
-    t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s' % sid,
+    t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s&cosd=2017-01-01' % sid,
                  timeout=20, retries=3, backoff=3.0)
     if not t or 'observation_date' not in t[:200]:
         return []
@@ -52,11 +52,13 @@ def fred(sid, limit=1700):
     return out[-limit:]
 
 def fred_batch(sids, limit=1700):
-    """fredgraph 支持逗号分隔多条序列, 12条/批; 批失败回退单条"""
+    """fredgraph 支持逗号分隔多条序列, 12条/批; cosd限起点减负载; 批失败回退单条"""
     out = {}
+    nb = (len(sids) + 11) // 12
     for i in range(0, len(sids), 12):
         chunk = sids[i:i + 12]
-        t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=' + ','.join(chunk),
+        log('  FRED批 %d/%d: %s…' % (i // 12 + 1, nb, chunk[0]))
+        t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=' + ','.join(chunk) + '&cosd=2017-01-01',
                      timeout=30, retries=3, backoff=4.0)
         rows = []
         if t and 'observation_date' in t[:200]:
