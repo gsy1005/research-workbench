@@ -86,13 +86,16 @@ def fred_batch(sids, limit=1700):
             for sid in chunk:
                 out[sid] = []
         time.sleep(1.0)
-    # 失败的序列只做一轮单条回退, 快速放弃(保留旧数据, 明日自愈)
+    # 失败的序列只做一轮单条回退(前提:批次有成功=FRED在线;全败=限流则直接放弃,明日自愈)
+    got = sum(1 for s in sids if out.get(s))
     missing = [s for s in sids if not out.get(s)]
-    if missing:
+    if missing and got > 0 and len(missing) <= 12:
         log('  单条回退', len(missing), '条')
         for sid in missing:
             out[sid] = fred(sid)
             time.sleep(0.8)
+    elif missing:
+        log('  FRED疑似限流(成功%d/%d), 放弃回退, 保留旧数据明日自愈' % (got, len(sids)))
     return out
 
 def yahoo(sym, rng='5y'):
