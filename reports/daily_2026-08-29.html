@@ -57,6 +57,20 @@
   .tag2 .u{font-size:10px;opacity:.7;}
   #chartBox{width:100%;height:520px;}
   .chart-note{font-size:11px;color:var(--dim);margin-top:6px;}
+  /* 置顶日历横排 */
+  .calrow{display:flex;flex-wrap:wrap;gap:10px;}
+  .calitem{flex:1 1 200px;min-width:180px;background:#12161f;border:1px solid var(--line);border-radius:6px;padding:10px 12px;}
+  .calitem.hot{border-color:#5a3a3a;background:rgba(229,83,75,.06);}
+  .cald{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px;}
+  .calt{font-size:12px;color:var(--txt);line-height:1.5;}
+  /* 关键数据时间表 */
+  .kdbar{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin-bottom:12px;}
+  .kd{text-align:center;padding:4px 10px;border-radius:5px;background:#12161f;border:1px solid var(--line);min-width:86px;}
+  .kd.hot{border-color:var(--gold);background:rgba(212,169,68,.08);}
+  .kdd{font-size:13px;font-weight:700;color:var(--gold);}
+  .kde{font-size:11px;color:var(--txt);margin:2px 0;}
+  .kds{font-size:10px;color:var(--up);letter-spacing:1px;}
+  .kdarr{align-self:center;color:var(--dim);font-size:12px;}
   @media(max-width:900px){.news{grid-template-columns:1fr;}#chartBox{height:420px;}.grid3,.grid2{grid-template-columns:1fr;}}
   .updbtn{background:var(--gold);color:#111;border:none;border-radius:4px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;}
   .updbtn:active{opacity:.8;}
@@ -87,6 +101,14 @@
   </div>
 </header>
 
+<!-- ============ 宏观日历（置顶·横排·按钮切换） ============ -->
+<h2 style="margin-top:0">宏观日历<span class="en">MACRO CALENDAR · 未来两周与关键节点</span></h2>
+<div class="card" style="padding:14px 16px;">
+  <div class="seg" id="calSeg" style="margin-bottom:12px;"></div>
+  <div id="calTopBox" class="calrow"></div>
+  <div style="font-size:11px;color:var(--dim);margin-top:10px;" id="calNote"></div>
+</div>
+
 <!-- ============ 一、今日三条边际变化（置顶） ============ -->
 <h2 style="margin-top:0">一、今日三条边际变化<span class="en">THREE CHANGES · 注意力约束</span></h2>
 
@@ -107,6 +129,9 @@
   <p>短端利率跳升背景下，标普<span class="dn">+0.59%</span>、道指<span class="dn">+0.65%</span>、纳指<span class="dn">+0.44%</span>，VIX回落至<b>14.51</b>，高收益债OAS收窄至<b>0.98%</b>。"利率重新定价"与"风险偏好"脱钩——0828面板"紧缩未传导为risk-off"判断延续有效。企业盈利端的高增速仍在对冲分母端压力。</p>
   <p class="falsify"><b>证伪点：</b>若HY OAS回升破1.20%且VIX破18，则紧缩开始传导，权益观点降级。</p>
 </div>
+
+<!-- ============ 关键数据时间表（结论上方） ============ -->
+<div class="kdbar" id="keyDateBar"></div>
 
 <!-- ============ 二、日度结论 ============ -->
 <h2>二、日度结论<span class="en">CONCLUSIONS · 数据→政策→资产</span></h2>
@@ -149,14 +174,12 @@
 
 <!-- ============ 五、数据图表区 ============ -->
 <!-- ============ 五、政策定价与日历 ============ -->
-<h2>五、政策定价与日历<span class="en">POLICY PRICING & CALENDAR</span></h2>
+<h2>五、政策定价与地缘跟踪<span class="en">POLICY PRICING & GEO</span></h2>
 <div class="grid2">
   <div class="mini"><h4>CME FedWatch 加息预期（联邦基金期货定价）</h4><div id="fwBox"></div></div>
   <div class="mini"><h4>特朗普 TACO 压力指数</h4><div id="tacoBox"></div></div>
 </div>
 <div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div></div>
-<div style="height:12px;"></div>
-<div class="grid3" id="calBox"></div>
 
 <h2>六、数据图表<span class="en">CHARTS · 点选指标叠加 · 折线/季节性切换</span></h2>
 <div class="chart-panel">
@@ -384,11 +407,26 @@ function renderLive(S){
     `<table><tr><th>预测市场（Yes=达成/恢复）</th><th style="text-align:right;">概率</th><th style="text-align:right;">成交额</th><th>变动</th></tr>${mk}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">最新进展：</div>${iev}
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(ir.src)} · 数据日 ${ir.asof}</div>`;
-  // 日历
+  // 日历（置顶横排 + 按钮切换）
   let cal = S.calendar;
-  document.getElementById('calBox').innerHTML = cal.weeks.map(w=>
-    `<div class="mini"><h4>${w.label}</h4>${w.items.map(it=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><b style="color:var(--blue);">${it[0]}</b> ${it[1]}</div>`).join('')}</div>`
-  ).join('') + `<div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(cal.note)}</div>`;
+  let seg = document.getElementById('calSeg');
+  seg.innerHTML = cal.weeks.map((w,i)=>`<button data-i="${i}" class="${i===0?'on':''}">${w.label}</button>`).join('');
+  function showWeek(i){
+    seg.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on', j===i));
+    document.getElementById('calTopBox').innerHTML = cal.weeks[i].items.map(it=>{
+      const star = (it[1].match(/★/g)||[]).length;
+      return `<div class="calitem ${star>=4?'hot':''}"><div class="cald">${it[0]}</div><div class="calt">${it[1]}</div></div>`;
+    }).join('');
+  }
+  seg.querySelectorAll('button').forEach(b=>b.onclick=()=>showWeek(+b.dataset.i));
+  showWeek(0);
+  document.getElementById('calNote').textContent = cal.note + ' · 数据日 ' + cal.asof;
+  // 关键数据时间表（结论上方）
+  if(cal.keydates){
+    document.getElementById('keyDateBar').innerHTML = cal.keydates.map(k=>
+      `<div class="kd ${k[2].length>=4?'hot':''}"><div class="kdd">${k[0]}</div><div class="kde">${k[1]}</div><div class="kds">${k[2]}</div></div>`
+    ).join('<div class="kdarr">→</div>');
+  }
   document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='数据快照：'+S.asof);
 }
 function refreshLive(){

@@ -4,7 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>宏观研究周报 · 2026年第35周</title>
+<script src="../lib/echarts.min.js"></script>
+<script src="../data/chart_series.js"></script>
 <script src="../data/live_snapshot.js"></script>
+<script>
+function bindTabs(){
+document.querySelectorAll('.tabbar button').forEach(function(b){ b.onclick=function(){
+  document.querySelectorAll('.tabbar button').forEach(function(x){x.classList.remove('on');});
+  b.classList.add('on');
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  document.getElementById('p-'+b.dataset.p).classList.add('on');
+  window.dispatchEvent(new Event('resize'));
+};});}
+const CHART_DEFS = [];
+function registerChart(hostId, sel, ids){ CHART_DEFS.push({hostId:hostId, sel:sel, ids:ids, done:false}); }
+function ensureCharts(){
+  CHART_DEFS.forEach(function(d){
+    if(d.done) return;
+    var el = document.getElementById(d.hostId);
+    if(el && el.offsetParent !== null){ chartWidget(d.hostId, d.sel, d.ids); d.done=true; }
+  });
+}
+function bindEnsure(){ document.querySelectorAll('.tabbar button').forEach(function(b){ b.addEventListener('click', function(){setTimeout(ensureCharts, 30);}); }); }
+var WS = null;
+function presetWS(ids){
+  document.getElementById('cw-ws').innerHTML='';
+  chartWidget('cw-ws', ids, null);
+  WS = true;
+}
+function bindWS(){ document.querySelector('[data-p="ws"]').addEventListener('click', function(){setTimeout(function(){ if(!WS){ chartWidget('cw-ws', ['DGS10','DFII10','T5YIE'], null); WS=true; } }, 30);}); }
+document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure(); bindWS(); });</script>
 <style>
   :root{--bg:#0e1117;--card:#161b26;--line:#262d3d;--txt:#d7dde8;--dim:#8a94a6;--up:#e5534b;--dn:#4caf7d;--gold:#d4a944;--blue:#5b9bd5;}
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -40,6 +69,28 @@
   .roadmap{color:var(--dim);font-size:12px;margin:4px 0 10px;line-height:1.9;}
   .roadmap b{color:#aeb8c8;}
   @media(max-width:900px){.grid3,.grid2{grid-template-columns:1fr;}}
+
+  /* tab 导航 */
+  .tabbar{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 20px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:50;border-bottom:1px solid var(--line);}
+  .tabbar button{background:#1c2333;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:6px 13px;font-size:12px;cursor:pointer;}
+  .tabbar button.on{background:var(--gold);color:#111;font-weight:600;border-color:var(--gold);}
+  .panel{display:none;}
+  .panel.on{display:block;}
+  /* 图表控件 */
+  .cw{background:#12161f;border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-top:12px;}
+  .cw .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .cw .seg2{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .cw .seg2 button{background:#1c2333;color:var(--dim);border:none;padding:4px 12px;font-size:11px;cursor:pointer;}
+  .cw .seg2 button.on{background:var(--gold);color:#111;font-weight:600;}
+  .cw details{margin-top:8px;border:none;background:transparent;padding:0;}
+  .cw details summary{font-size:11px;color:var(--dim);font-weight:400;}
+  .cw .tags{display:none;flex-wrap:wrap;gap:5px;margin-top:8px;}
+  .cw details[open] .tags{display:flex;}
+  .cw .tag2{font-size:11px;padding:2px 9px;border:1px solid var(--line);border-radius:11px;cursor:pointer;color:var(--dim);background:#161b26;}
+  .cw .tag2.on{border-color:var(--gold);color:var(--gold);background:rgba(212,169,68,.08);}
+  .cw .tag2 .u{font-size:9px;opacity:.7;}
+  .cw .chart{width:100%;height:400px;margin-top:8px;}
+  .cw .cn{font-size:10px;color:var(--dim);margin-top:4px;}
 </style>
 </head>
 <body>
@@ -48,119 +99,278 @@
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
     <div>
       <h1>宏观研究周报 · 2026年第35周</h1>
-      <div class="meta">覆盖 8/24–8/28 美盘 · 框架：<b>九章体系</b>（就业→通胀→GDP→消费→地产→投资→PMI→财政→美联储）· <span class="snapAsof" style="color:var(--gold);"></span></div>
+      <div class="meta">覆盖 8/24–8/28 美盘 · 九大板块（就业·通胀·GDP·消费·地产·投资·PMI·财政·美联储） · <b class="snapAsof" style="color:var(--gold);"></b></div>
     </div>
     <div style="display:flex;align-items:center;">
       <button class="updbtn" onclick="refreshLive()">⟳ 更新最新数据</button>
       <span id="updMsg"></span>
     </div>
   </div>
+  <div class="tabbar"><button data-p="ov" class="on">本周总览</button><button data-p="emp">就业市场</button><button data-p="inf">通胀</button><button data-p="gdp">GDP与经济核算</button><button data-p="cons">消费</button><button data-p="house">房地产</button><button data-p="inv">企业投资与AI资本开支</button><button data-p="pmi">PMI</button><button data-p="fisc">财政与国债市场</button><button data-p="fed">美联储与金融条件</button><button data-p="ws" style="border-color:var(--gold);color:var(--gold);">图表工作区</button></div>
 </header>
 
-<h2>一、本周总览<span class="en">WEEK IN REVIEW</span></h2>
+<div class="panel on" id="p-ov">
 <div class="card">
   <p style="font-size:13px;"><b style="color:var(--gold);">中心矛盾（存续）：A端</b>（财政主导+通胀黏性 → 实际利率与美元高位）<b style="color:var(--gold);">vs B端</b>（央行购金+矿紧供给+AI电力资本开支 → 实物资产重估）。本周天平明显向A端倾斜：沃什JH偏鹰 → 9月加息概率单日+22pp、2Y跳升、金银重挫、美元走强。联合阈值规则下——金破4520✅、但10Y实际利率尚未破2.45%❌——<b>不宣告A胜，观点不跨零直翻</b>。</p>
 </div>
 <table>
 <tr><th>资产</th><th>周五收盘</th><th>周五单日</th><th>本周方向</th><th>一句话</th></tr>
 <tr><td>标普500</td><td>7711.76</td><td class="dn">-0.25%</td><td class="up">周+0.5%</td><td>紧缩未传导为risk-off</td></tr>
-<tr><td>纳斯达克</td><td>26402.42</td><td class="dn">-0.52%</td><td class="up">周+0.9%</td><td>费半周权重挫，AI叙事裂缝</td></tr>
-<tr><td>美债10Y</td><td>4.67%</td><td class="flat">持平</td><td class="up">收益率上行</td><td>长端稳、短端跳，曲线走平</td></tr>
+<tr><td>纳斯达克</td><td>26402.42</td><td class="dn">-0.52%</td><td class="up">周+0.9%</td><td>费半权重挫，AI叙事裂缝</td></tr>
+<tr><td>美债10Y</td><td>4.67%</td><td class="flat">+1bp</td><td class="up">收益率上行</td><td>长端稳、短端跳，曲线走平</td></tr>
+<tr><td>美债30Y</td><td>5.19%</td><td class="flat">+1bp</td><td class="up">高位</td><td>5.2%关口下方蓄势</td></tr>
 <tr><td>美债2Y</td><td>4.34–4.35%</td><td class="up">+11~14bp</td><td class="up">跳升</td><td>政策收紧预期前移</td></tr>
-<tr><td>COMEX黄金</td><td>4503</td><td class="dn">-3.45%</td><td class="dn">大幅回撤</td><td>自4696历史高点回撤超240美元</td></tr>
+<tr><td>COMEX黄金</td><td>4503</td><td class="dn">-3.45%</td><td class="dn">大幅回撤</td><td>自高点回撤超240美元</td></tr>
 <tr><td>COMEX白银</td><td>67.07</td><td class="dn">-4.51%</td><td class="dn">重挫</td><td>跟随黄金</td></tr>
 <tr><td>WTI原油</td><td>83.47</td><td class="dn">-0.06%</td><td class="flat">区间震荡</td><td>远期供给叙事强化，即期平稳</td></tr>
 <tr><td>美元指数DXY</td><td>99.68</td><td class="up">+0.56%</td><td class="up">走强</td><td>鹰派定价</td></tr>
 </table>
 
-<h2>二、政策定价与地缘跟踪<span class="en">POLICY PRICING & GEO</span></h2>
+<h2>政策定价与地缘跟踪<span class="en">POLICY PRICING & GEO</span></h2>
 <div class="grid2">
   <div class="mini"><h4>CME FedWatch 加息预期（联邦基金期货定价）</h4><div id="fwBox"></div></div>
   <div class="mini"><h4>特朗普 TACO 压力指数</h4><div id="tacoBox"></div></div>
 </div>
 <div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div></div>
 
-<h2>三、九章周度体检<span class="en">NINE-CHAPTER FRAMEWORK</span></h2>
-
-<details open>
-<summary><span style="color:var(--gold);">第1章</span> 就业市场 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 美国宏观数据之王 · 双重使命的一半 · 工资通胀的源头</span></summary>
-<div class="roadmap"><b>官方双调查</b>：CES企业调查(非农增量·工时·时薪，数岗位有修正) / CPS家庭调查(失业率·参与率·U1–U6，数人比率可靠) → <b>流量与周频</b>：JOLTS看V/U紧度、初请/续请(周频官方硬数据) → <b>工资三口径</b>：AHE(快)/ECI(联储首选)/Atlanta Wage Tracker → <b>四大经验框架</b>：Okun定律·失业缺口u−u*·贝弗里奇曲线·Sahm规则 → <b>第三方交叉验证</b>：ADP·Challenger·Indeed·WARN</div>
-<p style="font-size:13px;margin-bottom:10px;">7月非农<b class="up">-2.3万</b>（预期+8万，年内最差），叠加BLS把2025.3–2026.3新增就业下修7.9万——"实际就业比表面更弱"是加息派的软肋、维持派的台阶；但7/18当周初请18.7万创1969年以来新低，解雇端并未恶化。<b>低流量特征</b>： hiring弱、firing也弱。9/4的8月非农是9月FOMC前最重要一战。</p>
-<table><tr><th>数据</th><th>最新值</th><th>口径/数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>新增非农</td><td>-2.3万</td><td>7月·8/7公布</td><td>9/4（8月值）</td><td><span class="badge b1">L1</span></td></tr><tr><td>失业率</td><td>4.3%（前值口径）</td><td>7月</td><td>9/4</td><td><span class="badge b1">L1</span></td></tr><tr><td>初请失业金</td><td>18.7万</td><td>7/18当周·57年新低</td><td>9/3 周四</td><td><span class="badge b1">L1</span></td></tr><tr><td>JOLTS V/U</td><td>6月值待核</td><td>每月首个周二T-2月</td><td>9/1 周二</td><td><span class="badge bg2">灰</span></td></tr><tr><td>AHE时薪环比</td><td>7月值待核</td><td>非农同日</td><td>9/4</td><td><span class="badge bg2">灰</span></td></tr><tr><td>盈亏平衡增速</td><td>3–8万/月</td><td>各联储估算区间（移民收缩后）</td><td>—</td><td><span class="badge">⚙️</span></td></tr><tr><td>ADP就业</td><td>8月值待公布</td><td>非农前周三</td><td>9/2</td><td><span class="badge bg2">灰</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/4非农：若连续两月为负 → 9月加息概率回落至低20s；若反弹 → 维持派论据瓦解</div>
-</details>
-<details open>
-<summary><span style="color:var(--gold);">第2章</span> 通胀 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 新凯恩斯三方程 · 每个数据回答方程里的一个参数</span></summary>
-<div class="roadmap"><b>分析框架</b>：新凯恩斯三方程（IS/PC/MP闭环）·泰勒规则·supercore三分法 → <b>CPI深讲</b>：6211结构·住房滞后12–18月·OER·1月效应 → <b>PCE与映射</b>：CPI+PPI发布日即可推算PCE → <b>PPI与底层通胀</b>：管道压力·中位/截尾/粘性家族 → <b>预期与高频</b>：调查/市场/企业三来源·5y5y·锚定=长端对短端冲击敏感度≈0</div>
-<p style="font-size:13px;margin-bottom:10px;">7月CPI同比<b>3.4%</b>、核心<b>2.5%</b>双双温和回落；但联储官方口径PCE仍钉在<b class="up">3.7%</b>。沃什JH原话："夏季PCE与CPI好于预期，不代表底层趋势实质改善"——<b>通胀下行舒适期结束</b>的存续判断维持。8月密歇根1年通胀预期4.0%仍高位。9/11 CPI是9月FOMC前最后一份通胀：核心环比≤0.15%将触发证伪。</p>
-<table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>CPI同比</td><td>3.4%</td><td>7月·8/12</td><td>9/11（8月值）★★★★★</td><td><span class="badge b1">L1</span></td></tr><tr><td>核心CPI同比</td><td>2.5%</td><td>7月</td><td>9/11</td><td><span class="badge b1">L1</span></td></tr><tr><td>PCE同比</td><td>3.7%</td><td>7月</td><td>9月末</td><td><span class="badge b1">L1</span></td></tr><tr><td>5Y盈亏平衡通胀</td><td>2.30%</td><td>FRED 08-28</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>10Y TIPS实际利率</td><td>2.34%</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>密歇根1年通胀预期</td><td>4.0%</td><td>8月终值</td><td>9月</td><td><span class="badge b1">L1</span></td></tr><tr><td>CPI Nowcast（克利夫兰）</td><td>待接入</td><td>日度nowcast</td><td>—</td><td><span class="badge bg2">灰</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/9 PPI → 9/11 CPI：CPI+PPI发布日即可精确推算PCE，月末PCE信息增量≈0</div>
-</details>
-<details open>
-<summary><span style="color:var(--gold);">第3章</span> GDP与经济核算 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 先立标尺，再读数据 · 支出法Y=C+I+G+NX是全书章节地图</span></summary>
-<div class="roadmap"><b>分析框架</b>：潜在增速≈劳动力+生产率（一切读数的标尺）·剥洋葱GDP→最终销售→PDFP(core GDP) → <b>官方数据</b>：三次估计(advance★★★★)·GDP vs GDI分歧看均值·贡献度拆分(库存与净出口是两大噪音源)·NBER六指标 vs"两季法则" → <b>第三方跟踪</b>：GDPNow(会计模拟) vs NY Fed Nowcast(动态因子)·WEI周度指数 → <b>常见陷阱</b>：拐点处初值系统性高估·"进口拖累GDP"是会计错觉</div>
-<p style="font-size:13px;margin-bottom:10px;">Q2 GDP三轮修正<b>+1.5%</b>（季环比折年），低于约1.8–2%的潜在增速标尺——<b>低于潜在=失业缺口温和走阔</b>的方向未变。当前正值Q3参考期中段，GDPNow/Nowcast处于"填真空"阶段（两项均待接入中转）。</p>
-<table><tr><th>数据</th><th>最新值</th><th>口径</th><th>下次发布</th><th>来源</th></tr><tr><td>实际GDP（SAAR）</td><td>+1.5%</td><td>Q2三轮修正·8/27</td><td>Q3初值10月末</td><td><span class="badge b1">L1</span></td></tr><tr><td>潜在增速标尺</td><td>≈1.8–2%</td><td>CBO/联储估计</td><td>—</td><td><span class="badge">⚙️</span></td></tr><tr><td>GDPNow（亚特兰大）</td><td>待接入中转</td><td>Q3参考期·周更</td><td>周更</td><td><span class="badge bg2">灰</span></td></tr><tr><td>NY Fed Nowcast</td><td>待接入中转</td><td>周更</td><td>周更</td><td><span class="badge bg2">灰</span></td></tr><tr><td>WEI周度指数</td><td>待接入中转</td><td>周四</td><td>周四</td><td><span class="badge bg2">灰</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：本周无重磅；跟踪Nowcast双模型对Q3的填真空读数</div>
-</details>
-<details open>
-<summary><span style="color:var(--gold);">第4章</span> 消费 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 占GDP 68%的压舱石 · 衰退的确认指标</span></summary>
-<div class="roadmap"><b>分析框架</b>：C=f(收入,财富,信贷,预期)×MPC·消费平滑(拐点是确认信号不是领先信号)·主线=双轨数据+三大背离 → <b>官方双轨</b>：零售销售(快/窄/名义,控制组直送GDP)/个人收支(慢/全/可实际化,储蓄率=残差) → <b>第三方与高频</b>：刷卡数据·TSA/OpenTable·信心调查(密歇根物价敏感 vs 谘商会就业敏感) → <b>三大背离</b>：软vs硬·名义vs实际·总量vs结构(K型分化,裂缝先在信贷端)</div>
-<p style="font-size:13px;margin-bottom:10px;">8月密歇根信心终值<b class="up">51.7</b>仍处低位、1年通胀预期4.0%——<b>软的（信心）继续弱于硬的（支出）</b>，背离主线延续。零售与个人收支7月值待核验补齐。</p>
-<table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>零售销售·控制组</td><td>7月值待核</td><td>月中</td><td>9月中（8月值）</td><td><span class="badge bg2">灰</span></td></tr><tr><td>个人收支/储蓄率</td><td>7月值待核</td><td>月末</td><td>9月末</td><td><span class="badge bg2">灰</span></td></tr><tr><td>密歇根信心终值</td><td>51.7</td><td>8月</td><td>9月</td><td><span class="badge b1">L1</span></td></tr><tr><td>密歇根1年通胀预期</td><td>4.0%</td><td>8月</td><td>9月</td><td><span class="badge b1">L1</span></td></tr><tr><td>红皮书同店销售</td><td>待接入</td><td>周度·周二</td><td>周二</td><td><span class="badge bg2">灰</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9月中零售销售（8月值）：控制组环比直送GDPNow</div>
-</details>
-<details open>
-<summary><span style="color:var(--gold);">第5章</span> 房地产 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 周期之母 · 最长的数据链条：利率→信心→销量→开工→房价→租金CPI(约19个月)</span></summary>
-<div class="roadmap"><b>分析框架</b>：住宅投资仅占GDP约4%却领先衰退4–6个季度 → <b>房贷制度</b>：30年固定+可再融资(加息只冻结增量,不对称传导) → <b>官方数据</b>：许可/开工(单户vs多户)·新屋(签约)vs成屋(过户)·库存月数(供需温度计,6为平衡线)·CS/FHFA房价(反映约半年前)·CPI房租三重滞后(约1.5年前) → <b>第三方高频</b>：NAHB(链条最前端)·MBA周度申请·30年房贷利率·Zillow/Redfin新租约(领先官方约6个月)</div>
-<p style="font-size:13px;margin-bottom:10px;">30年抵押贷款利率约<b>6.4%</b>（TACO分项口径，周度小幅回落）。高利率"锁定效应"延续：<b>量崩价稳</b>格局不变。官方销量/库存7月值待核验。</p>
-<table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>30年抵押贷款利率</td><td>≈6.4%</td><td>周度</td><td>周度</td><td><span class="badge b2">L2</span></td></tr><tr><td>NAHB建筑商信心</td><td>8月值待核</td><td>月中</td><td>9月中</td><td><span class="badge bg2">灰</span></td></tr><tr><td>新屋销售/成屋销售</td><td>7月值待核</td><td>月下旬</td><td>9月下旬</td><td><span class="badge bg2">灰</span></td></tr><tr><td>CS房价指数</td><td>6月值待核</td><td>滞后2月</td><td>9月末</td><td><span class="badge bg2">灰</span></td></tr><tr><td>MBA周度申请</td><td>待接入</td><td>周三</td><td>周三</td><td><span class="badge bg2">灰</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9月中NAHB → 9月下旬新屋/成屋销售</div>
-</details>
-<details open>
-<summary><span style="color:var(--gold);">第6章</span> 企业投资与AI资本开支 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 短期是需求，中期是供给（生产率）</span></summary>
-<div class="roadmap"><b>分析框架</b>：三分项设备(周期)/知识产权(趋势)/厂房(政策与长波)·传统四因子(需求增速/利润/资金成本/不确定性)·本轮特殊性=AI相关投资对利率与不确定性钝感 → <b>官方数据</b>：核心资本品订单/出货(最佳月频代理)·建造支出(制造业与数据中心分项)·GDP投资贡献拆解(研发资本化) → <b>微观与第三方</b>：云厂商capex指引(最前瞻)·台积电月度营收/SEMI/电力落地(供应链印证)·NFIB与地区联储调查(中小企业对照组) → <b>测算口径</b>：进口GPU不计入GDP</div>
-<p style="font-size:13px;margin-bottom:10px;">AI资本开支主线本周两件大事：①英伟达财报后周五单日<b class="up">-4.57%</b>，费半重挫近3%——分子端叙事出现裂缝但capex指引未崩；②马斯克称2027年约15GW算力即便产出来也无法投运，<b>瓶颈从芯片转向电力配套</b>。核心资本品订单（最佳月频代理）7月值待核验。</p>
-<table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>核心资本品订单</td><td>7月值待核</td><td>月下旬耐用品报告</td><td>9月下旬</td><td><span class="badge bg2">灰</span></td></tr><tr><td>建造支出·制造/数据中心</td><td>7月值待核</td><td>月初</td><td>9月初</td><td><span class="badge bg2">灰</span></td></tr><tr><td>云厂商capex指引</td><td>Q2财报季已落地</td><td>季度</td><td>Q3财报季</td><td><span class="badge bc">L3</span></td></tr><tr><td>台积电月度营收</td><td>8月值待公布</td><td>每月10日</td><td>9/10</td><td><span class="badge b2">L2</span></td></tr><tr><td>英伟达股价（周）</td><td>周-4.57%（周五单日）</td><td>08-28</td><td>—</td><td><span class="badge b2">L2</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/10台积电8月营收 → 9月下旬耐用品/核心资本品订单</div>
-</details>
-<details open>
-<summary><span style="color:var(--gold);">第7章</span> PMI <span style="color:var(--dim);font-size:12px;font-weight:400;">· 占比约11%，贡献大部分周期波动</span></summary>
-<div class="roadmap"><b>分析框架</b>：库存周期(基钦周期)牛鞭效应·PCA证据(PMI变化与全球多资产共同因子高度相关) → <b>官方硬数据</b>：工业生产与产能利用率·三级库存与库存销售比(补库/去库四象限) → <b>ISM深拆</b>：新订单−自有库存差(领先总指数约3个月)·价格分项(商品通胀与关税传导前哨)·就业分项与供应商交付(两个常见误读)·校准(GDP零增长≈ISM 49而非50) → <b>调查家族</b>：S&P flash(约23日)·地区联储(早约2周) → <b>全球与资产</b>：韩国出口(每月1日)·四象限(PMI方向×通胀方向)</div>
-<p style="font-size:13px;margin-bottom:10px;">8月ISM制造业<b>9/1公布</b>、服务业9/3——8月S&P flash与地区联储调查显示制造业动能平平（待核验），韩国8月出口9/1同日落地，是全球制造业周期的先行观察。</p>
-<table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>ISM制造业PMI</td><td>7月值待核</td><td>每月1日</td><td>9/1（8月值）★★★★</td><td><span class="badge bg2">灰</span></td></tr><tr><td>ISM服务业PMI</td><td>7月值待核</td><td>每月3日</td><td>9/3 ★★★</td><td><span class="badge bg2">灰</span></td></tr><tr><td>S&P flash PMI</td><td>8月初值已公布·待核</td><td>约23日</td><td>9月下旬</td><td><span class="badge bg2">灰</span></td></tr><tr><td>韩国出口</td><td>8月值9/1公布</td><td>每月1日</td><td>9/1</td><td><span class="badge b2">L2</span></td></tr><tr><td>工业产出/产能利用率</td><td>7月值待核</td><td>月中</td><td>9月中</td><td><span class="badge bg2">灰</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/1 ISM制造业+韩国出口双落地：新订单−自有库存差看方向</div>
-</details>
-<details open>
-<summary><span style="color:var(--gold);">第8章</span> 财政与国债市场 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 钱袋权在国会，财政部只是出纳</span></summary>
-<div class="roadmap"><b>立法流程</b>：永动机(必要支出+税收=参数)/合同工(非必要支出,年度清零)/CR与关门只关"合同工" → <b>收支特征</b>：收入=个税半壁+payroll+企业税+关税；净利息已超国防 → <b>财政立场三看</b>：长期看"协调"(法案十年评分)·中期看"经济"(失业率+1pp≈赤字率+1pp)·短期看"拨款" → <b>国债市场</b>：发行哲学regular&predictable(久期锚约60个月)·拍卖三件套(覆盖率/间接投标/尾部)·久期供给→期限溢价(与QE/QT一体两面) → <b>数据体系</b>：DTS(日)→MTS(月)→CBO→QRA("第五次FOMC")→拍卖检验</div>
-<p style="font-size:13px;margin-bottom:10px;">本周30Y TIPS拍卖中标利率<b class="up">2.973%创近25年新高</b>——长端实际利率的"非价格证据"继续支持A端（财政主导+通胀黏性）。10Y名义收益率4.67%、30Y约5.19%高位，久期供给压力与期限溢价重建是下半年主线。<b>10月QRA</b>（季度再融资）是下一个"第五次FOMC"。</p>
-<table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>30Y TIPS拍卖利率</td><td>2.973%·25年新高</td><td>本周</td><td>—</td><td><span class="badge b1">L1</span></td></tr><tr><td>美债10Y</td><td>4.67%</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>美债30Y</td><td>≈5.19%</td><td>7月下旬高点区间</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>TGA余额</td><td>DTS日度·待接入</td><td>财政部DTS</td><td>日度</td><td><span class="badge bg2">灰</span></td></tr><tr><td>财政赤字MTS</td><td>7月值待核</td><td>月中</td><td>9月中</td><td><span class="badge bg2">灰</span></td></tr><tr><td>QRA季度再融资</td><td>下期10月底</td><td>季度</td><td>10月</td><td><span class="badge b1">L1</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：跟踪9月拍卖检验（覆盖率/间接/尾部）→ 10月QRA久期结构</div>
-</details>
-<details open>
-<summary><span style="color:var(--gold);">第9章</span> 美联储与金融条件 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 从反应函数到政策的市场落点</span></summary>
-<div class="roadmap"><b>制度框架</b>：双重使命与反应函数·FOMC构成与投票轮换·决策产品时序(声明→记者会→SEP→纪要→讲话) → <b>政策工具箱</b>：利率走廊IORB/ON RRP/SRF·EFFR与SOFR位置·资产负债表QE/QT与负债端三件套(准备金/ON RRP/TGA)·准备金"充足"判别 → <b>解读文本数据</b>：声明逐句比较·SEP/点阵图·纪要量词体系 → <b>市场定价</b>：FF期货/OIS加降息概率（见FedWatch表） → <b>金融条件</b>：曲线/信用利差/美元/股权·FCI指数对比·金融条件的反身性</div>
-<p style="font-size:13px;margin-bottom:10px;">沃什JH首秀《In Our Time》定调偏鹰："必须确信核心通胀清晰且足够快地回落，否则还有工作要做"。FedWatch 9月加息概率单日<b class="up">35.4%→57%</b>。纪要显示沃什提议减少议息次数被否，维持每年8次。金融条件仍宽：VIX 14.51、HY OAS 0.98%——<b>紧缩未传导为risk-off</b>，反身性循环（市场越松、联储越鹰）是当前主要矛盾。</p>
-<table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>联邦基金目标区间</td><td>3.50–3.75%</td><td>7/29按兵不动</td><td>9/16 ★★★★★</td><td><span class="badge b1">L1</span></td></tr><tr><td>9月加息概率(FedWatch)</td><td>57%</td><td>08-29 10:00</td><td>日度</td><td><span class="badge b2">L2</span></td></tr><tr><td>EFFR/SOFR</td><td>待接入中转</td><td>日度</td><td>日度</td><td><span class="badge bg2">灰</span></td></tr><tr><td>美联储H.4.1资产负债表</td><td>待接入</td><td>周四</td><td>周四</td><td><span class="badge bg2">灰</span></td></tr><tr><td>VIX</td><td>14.51</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>高收益债OAS</td><td>0.98%</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr></table>
-<div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/4非农 → 9/11 CPI → 9/16 FOMC+点阵图：三个闸门依次过</div>
-</details>
-
-<h2>四、宏观日历<span class="en">MACRO CALENDAR</span></h2>
+<h2>宏观日历<span class="en">MACRO CALENDAR</span></h2>
 <div class="grid3" id="calBox"></div>
 
-<h2>五、下周展望与证伪清单<span class="en">NEXT WEEK</span></h2>
+<h2>下周展望与证伪清单<span class="en">NEXT WEEK</span></h2>
 <div class="card"><p style="font-size:13px;">
 <b style="color:var(--gold);">三个闸门依次过：</b>9/4非农（连续两月负值则加息论退潮）→ 9/11 CPI（核心环比≤0.15%则证伪"舒适期结束"）→ 9/16 FOMC+点阵图。<br>
-<b style="color:var(--gold);">证伪雷达（周报级）：</b>①A端：10Y实际利率破2.45%且金破4520 → 当前金已破✅/实际利率未破❌，未触发；②美股risk-on：HY OAS破1.20%且VIX破18 → 当前0.98%/14.51，远离触发；③霍尔木兹：12月档正常化概率跌破25% → 当前30.5%，接近警戒线；④曲线走陡头寸：10Y-2Y回落至&lt;20bp → 当前39bp，单日-8bp需警惕。</p></div>
-
+<b style="color:var(--gold);">证伪雷达（周度）：</b>①A端：10Y实际利率破2.45%且金破4520 → 当前金已破✅/实际利率未破❌，未触发；②美股risk-on：HY OAS破1.20%且VIX破18 → 当前0.98%/14.51，远离触发；③霍尔木兹：12月档正常化概率跌破25% → 当前30.5%，接近警戒线；④曲线走陡头寸：10Y-2Y回落至&lt;20bp → 当前39bp，单日-8bp需警惕。</p></div>
+</div>
+<div class="panel" id="p-emp">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">就业市场 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 美国宏观数据之王 · 双重使命的一半 · 工资通胀的源头</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>官方双调查</b>：CES企业调查(非农增量·工时·时薪，数岗位有修正) / CPS家庭调查(失业率·参与率·U1–U6，数人比率可靠) → <b>流量与周频</b>：JOLTS看V/U紧度、初请/续请(周频官方硬数据) → <b>工资三口径</b>：AHE(快)/ECI(联储首选)/Atlanta Wage Tracker → <b>四大经验框架</b>：Okun定律·失业缺口u−u*·贝弗里奇曲线·Sahm规则 → <b>第三方</b>：ADP·Challenger·Indeed·WARN</div>
+  <p style="font-size:13px;margin:8px 0 10px;">7月非农<b class="up">-2.3万</b>（年内最差），失业率<b>4.1%</b>；AHE时薪环比仅<b>+0.05%</b>（同比+3.15%）——工资压力温和。初请8/22当周<b>20.3万</b>，从7/18当周18.9万的年内低点小幅回升但仍处低位：<b>低流量特征（hiring弱、firing也弱）</b>。9/4的8月非农是9月FOMC前最重要一战。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>口径/数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>新增非农</td><td>-2.3万</td><td>7月·8/7公布</td><td>9/4（8月值）★★★★★</td><td><span class="badge b1">L1</span></td></tr><tr><td>失业率</td><td>4.1%</td><td>7月</td><td>9/4</td><td><span class="badge b1">L1</span></td></tr><tr><td>初请失业金</td><td>20.3万</td><td>8/22当周</td><td>9/3 周四</td><td><span class="badge b1">L1</span></td></tr><tr><td>JOLTS职位空缺</td><td>735.9万</td><td>6月</td><td>9/1 周二（7月值）</td><td><span class="badge b1">L1</span></td></tr><tr><td>AHE时薪</td><td>37.62美元·环比+0.05%</td><td>7月</td><td>9/4</td><td><span class="badge b1">L1</span></td></tr><tr><td>盈亏平衡增速</td><td>3–8万/月</td><td>各联储估算区间（移民收缩后）</td><td>—</td><td><span class="badge">⚙️</span></td></tr><tr><td>ADP就业</td><td>8月值待公布</td><td>非农前周三</td><td>9/2</td><td><span class="badge bg2">灰</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/4非农：若连续两月为负 → 9月加息概率回落至低位；若反弹 → 维持派论据瓦解</div>
+</div>
+<div class="cw" id="cw-emp"></div>
+<script>registerChart('cw-emp', ['ICSA','UNRATE','JTSJOL'], ['ICSA','UNRATE','PAYEMS','JTSJOL','CES0500000003','MANEMP']);</script>
+</div>
+<div class="panel" id="p-inf">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">通胀 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 新凯恩斯三方程 · 每个数据回答方程里的一个参数</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>分析框架</b>：新凯恩斯三方程(IS/PC/MP闭环)·泰勒规则·supercore三分法 → <b>CPI深讲</b>：6211结构·住房滞后12–18月·OER·1月效应 → <b>PCE与映射</b>：CPI+PPI发布日即可推算PCE → <b>PPI与底层通胀</b>：管道压力·中位/截尾/粘性家族 → <b>预期与高频</b>：调查/市场/企业三来源·5y5y·锚定=长端对短端冲击敏感度≈0</div>
+  <p style="font-size:13px;margin:8px 0 10px;">7月CPI同比<b>+3.3%</b>、核心CPI <b>+2.47%</b>（FRED指数计算）；联储官方口径PCE同比<b class="up">3.7%</b>、核心PCE <b class="up">3.34%</b>仍高位。沃什JH原话："夏季PCE与CPI好于预期，不代表底层趋势实质改善"——<b>通胀下行舒适期结束</b>的存续判断维持。市场定价的预期稳定：5Y盈亏平衡2.30%、10Y 2.31%。9/11 CPI是9月FOMC前最后一份通胀：核心环比≤0.15%将触发证伪。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>CPI同比</td><td>+3.3%</td><td>7月（指数332.81）</td><td>9/11 ★★★★★</td><td><span class="badge">⚙️</span></td></tr><tr><td>核心CPI同比</td><td>+2.47%</td><td>7月（指数336.79）</td><td>9/11</td><td><span class="badge">⚙️</span></td></tr><tr><td>PCE同比</td><td>+3.7%</td><td>7月</td><td>9月末</td><td><span class="badge">⚙️</span></td></tr><tr><td>核心PCE同比</td><td>+3.34%</td><td>7月（指数130.66）</td><td>9月末</td><td><span class="badge">⚙️</span></td></tr><tr><td>5Y盈亏平衡通胀</td><td>2.30%</td><td>FRED 08-28</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>10Y盈亏平衡通胀</td><td>2.31%</td><td>FRED 08-28</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>密歇根1年通胀预期</td><td>4.2%（7月）/ 4.0%（8月终值·媒体）</td><td>8/28</td><td>9月</td><td><span class="badge b1">L1</span></td></tr><tr><td>CPI Nowcast（克利夫兰）</td><td>待接入</td><td>日度nowcast</td><td>—</td><td><span class="badge bg2">灰</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/9 PPI → 9/11 CPI：CPI+PPI发布日即可精确推算PCE，月末PCE信息增量≈0</div>
+</div>
+<div class="cw" id="cw-inf"></div>
+<script>registerChart('cw-inf', ['T5YIE','T10YIE','MICH'], ['CPIAUCSL','CPILFESL','PCEPILFE','T5YIE','T10YIE','MICH','UMCSENT']);</script>
+</div>
+<div class="panel" id="p-gdp">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">GDP与经济核算 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 先立标尺，再读数据 · 支出法Y=C+I+G+NX是章节地图</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>分析框架</b>：潜在增速≈劳动力+生产率(一切读数的标尺)·剥洋葱GDP→最终销售→PDFP(core GDP) → <b>官方数据</b>：三次估计(advance★★★★)·GDP vs GDI分歧看均值·贡献度拆分(库存与净出口是两大噪音源)·NBER六指标vs"两季法则" → <b>第三方跟踪</b>：GDPNow(会计模拟) vs NY Fed Nowcast(动态因子)·WEI周度指数 → <b>常见陷阱</b>：拐点处初值系统性高估·"进口拖累GDP"是会计错觉</div>
+  <p style="font-size:13px;margin:8px 0 10px;">Q2 GDP三轮修正<b>+1.5%</b>（季环比折年），低于约1.8–2%的潜在增速标尺——<b>低于潜在=失业缺口温和走阔</b>的方向未变。Q3参考期中段，GDPNow/Nowcast处于"填真空"阶段（两项待接入中转）。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>口径</th><th>下次发布</th><th>来源</th></tr><tr><td>实际GDP（SAAR）</td><td>+1.5%</td><td>Q2三轮修正·8/27</td><td>Q3初值10月末</td><td><span class="badge b1">L1</span></td></tr><tr><td>潜在增速标尺</td><td>≈1.8–2%</td><td>CBO/联储估计</td><td>—</td><td><span class="badge">⚙️</span></td></tr><tr><td>工业产出指数</td><td>102.99·环比+0.1%</td><td>7月</td><td>9月中</td><td><span class="badge b1">L1</span></td></tr><tr><td>GDPNow（亚特兰大）</td><td>待接入中转</td><td>Q3参考期·周更</td><td>周更</td><td><span class="badge bg2">灰</span></td></tr><tr><td>NY Fed Nowcast</td><td>待接入中转</td><td>周更</td><td>周更</td><td><span class="badge bg2">灰</span></td></tr><tr><td>WEI周度指数</td><td>待接入中转</td><td>周四</td><td>周四</td><td><span class="badge bg2">灰</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：本周无重磅；跟踪Nowcast双模型对Q3的填真空读数</div>
+</div>
+<div class="cw" id="cw-gdp"></div>
+<script>registerChart('cw-gdp', ['INDPRO','PCEC96'], ['INDPRO','PCEC96','MANEMP','TCU']);</script>
+</div>
+<div class="panel" id="p-cons">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">消费 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 占GDP 68%的压舱石 · 衰退的确认指标</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>分析框架</b>：C=f(收入,财富,信贷,预期)×MPC·消费平滑(拐点是确认信号)·主线=双轨数据+三大背离 → <b>官方双轨</b>：零售销售(快/窄/名义,控制组直送GDP)/个人收支(慢/全/可实际化,储蓄率=残差) → <b>第三方与高频</b>：刷卡数据·TSA/OpenTable·信心调查(密歇根物价敏感 vs 谘商会就业敏感) → <b>三大背离</b>：软vs硬·名义vs实际·总量vs结构(K型分化)</div>
+  <p style="font-size:13px;margin:8px 0 10px;">7月零售销售<b class="up">环比-0.58%</b>（7636亿美元），实际个人消费环比仅+0.01%——<b>硬数据开始跟上软数据的弱</b>。储蓄率3.0%低位。信心端：密歇根7月55.2，8月终值51.7再下台阶。<b>软vs硬背离正在收敛，方向向下</b>。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>零售销售</td><td>7636亿·环比-0.58%</td><td>7月</td><td>9月中（8月值）</td><td><span class="badge b1">L1</span></td></tr><tr><td>实际个人消费PCE</td><td>环比+0.01%</td><td>7月</td><td>9月末</td><td><span class="badge b1">L1</span></td></tr><tr><td>实际可支配收入</td><td>环比+0.37%</td><td>7月</td><td>9月末</td><td><span class="badge b1">L1</span></td></tr><tr><td>个人储蓄率</td><td>3.0%</td><td>7月</td><td>9月末</td><td><span class="badge b1">L1</span></td></tr><tr><td>密歇根信心</td><td>55.2（7月）/ 51.7（8月终值·媒体）</td><td>8/28</td><td>9月</td><td><span class="badge b1">L1</span></td></tr><tr><td>红皮书同店销售</td><td>待接入</td><td>周度·周二</td><td>周二</td><td><span class="badge bg2">灰</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9月中零售销售（8月值）：控制组环比直送GDPNow</div>
+</div>
+<div class="cw" id="cw-cons"></div>
+<script>registerChart('cw-cons', ['RSAFS','UMCSENT'], ['RSAFS','PCEC96','UMCSENT','PSAVERT','DSPIC96']);</script>
+</div>
+<div class="panel" id="p-house">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">房地产 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 周期之母 · 最长数据链条：利率→信心→销量→开工→房价→租金CPI(约19个月)</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>分析框架</b>：住宅投资仅占GDP约4%却领先衰退4–6个季度 → <b>房贷制度</b>：30年固定+可再融资(加息只冻结增量,不对称传导) → <b>官方数据</b>：许可/开工·新屋(签约)vs成屋(过户)·库存月数(6为平衡线)·CS/FHFA房价(反映约半年前)·CPI房租三重滞后 → <b>第三方高频</b>：NAHB·MBA周度申请·30年房贷利率·Zillow/Redfin新租约(领先官方约6个月)</div>
+  <p style="font-size:13px;margin:8px 0 10px;">30年房贷利率<b>6.66%</b>（8/27，Freddie Mac口径）仍高企。7月新屋开工<b class="up">环比-12.4%</b>（123.9万户）大跌、成屋销售406万户低位、库存月数4.6个月——<b>量弱价稳</b>格局延续，锁定效应未解。链条最前端的NAHB 8月值待核验。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>30年抵押贷款利率</td><td>6.66%</td><td>8/27·周度</td><td>周度</td><td><span class="badge b1">L1</span></td></tr><tr><td>新屋开工</td><td>123.9万户·环比-12.4%</td><td>7月</td><td>9月中</td><td><span class="badge b1">L1</span></td></tr><tr><td>建筑许可</td><td>143.3万户·环比+4.3%</td><td>7月</td><td>9月中</td><td><span class="badge b1">L1</span></td></tr><tr><td>成屋销售</td><td>406万户·SAAR</td><td>7月</td><td>9月下旬</td><td><span class="badge b1">L1</span></td></tr><tr><td>成屋库存月数</td><td>4.6个月（平衡线6）</td><td>7月</td><td>9月下旬</td><td><span class="badge b1">L1</span></td></tr><tr><td>CS房价指数</td><td>331.89</td><td>6月·滞后2月</td><td>9月末</td><td><span class="badge b1">L1</span></td></tr><tr><td>NAHB建筑商信心</td><td>8月值待核</td><td>月中</td><td>9月中</td><td><span class="badge bg2">灰</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9月中NAHB+新屋开工 → 9月下旬成屋销售</div>
+</div>
+<div class="cw" id="cw-house"></div>
+<script>registerChart('cw-house', ['MORTGAGE30US','HOUST'], ['MORTGAGE30US','HOUST','PERMIT','EXHOSLUSM495S','CSUSHPISA','HOSSUPUSM673N']);</script>
+</div>
+<div class="panel" id="p-inv">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">企业投资与AI资本开支 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 短期是需求，中期是供给（生产率）</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>分析框架</b>：三分项设备(周期)/知识产权(趋势)/厂房(政策与长波)·传统四因子(需求/利润/资金成本/不确定性)·本轮特殊性=AI相关投资对利率与不确定性钝感 → <b>官方数据</b>：核心资本品订单/出货(最佳月频代理)·建造支出·GDP投资贡献拆解(研发资本化) → <b>微观与第三方</b>：云厂商capex指引(最前瞻)·台积电月度营收/SEMI/电力落地·NFIB与地区联储调查 → <b>测算口径</b>：进口GPU不计入GDP</div>
+  <p style="font-size:13px;margin:8px 0 10px;">核心资本品订单7月<b>859.5亿美元·同比+12.9%</b>——AI资本开支的月频代理仍在高位，是B端叙事最硬的官方证据。但股价端裂缝已现：英伟达财报后周五<b class="up">-4.57%</b>；马斯克称2027年约15GW算力产出也无法投运，<b>瓶颈从芯片转向电力配套</b>。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>核心资本品订单</td><td>859.5亿·环比+0.2%·同比+12.9%</td><td>7月</td><td>9月下旬</td><td><span class="badge b1">L1</span></td></tr><tr><td>产能利用率</td><td>76.29%</td><td>7月</td><td>9月中</td><td><span class="badge b1">L1</span></td></tr><tr><td>建造支出·制造/数据中心</td><td>待接入</td><td>月初</td><td>9月初</td><td><span class="badge bg2">灰</span></td></tr><tr><td>云厂商capex指引</td><td>Q2财报季已落地</td><td>季度</td><td>Q3财报季</td><td><span class="badge bc">L3</span></td></tr><tr><td>台积电月度营收</td><td>8月值待公布</td><td>每月10日</td><td>9/10</td><td><span class="badge b2">L2</span></td></tr><tr><td>英伟达股价</td><td>周五单日-4.57%</td><td>08-28</td><td>—</td><td><span class="badge b2">L2</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/10台积电8月营收 → 9月下旬耐用品/核心资本品订单</div>
+</div>
+<div class="cw" id="cw-inv"></div>
+<script>registerChart('cw-inv', ['NEWORDER','TCU'], ['NEWORDER','TCU','INDPRO','BUSINV']);</script>
+</div>
+<div class="panel" id="p-pmi">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">PMI <span style="color:var(--dim);font-size:12px;font-weight:400;">· 占比约11%，贡献大部分周期波动</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>分析框架</b>：库存周期(基钦周期)牛鞭效应·PCA证据(PMI变化与全球多资产共同因子高度相关) → <b>官方硬数据</b>：工业生产与产能利用率·三级库存与库存销售比(补库/去库四象限) → <b>ISM深拆</b>：新订单−自有库存差(领先总指数约3个月)·价格分项(关税传导前哨)·就业分项与供应商交付(两个常见误读)·校准(GDP零增长≈ISM 49而非50) → <b>调查家族</b>：S&P flash(约23日)·地区联储(早约2周) → <b>全球与资产</b>：韩国出口(每月1日)·四象限</div>
+  <p style="font-size:13px;margin:8px 0 10px;">8月ISM制造业<b>9/1公布</b>、服务业9/3。韩国8月出口9/1同日落地，是全球制造业周期先行观察。硬数据侧：7月工业产出102.99（环比+0.1%）、产能利用率76.29%、库存销售比1.30（6月）——<b>制造业不冷不热</b>。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>ISM制造业PMI</td><td>7月值待核</td><td>每月1日</td><td>9/1 ★★★★</td><td><span class="badge bg2">灰</span></td></tr><tr><td>ISM服务业PMI</td><td>7月值待核</td><td>每月3日</td><td>9/3 ★★★</td><td><span class="badge bg2">灰</span></td></tr><tr><td>工业产出指数</td><td>102.99·环比+0.1%</td><td>7月</td><td>9月中</td><td><span class="badge b1">L1</span></td></tr><tr><td>产能利用率</td><td>76.29%</td><td>7月</td><td>9月中</td><td><span class="badge b1">L1</span></td></tr><tr><td>库存销售比</td><td>1.30</td><td>6月</td><td>9月中</td><td><span class="badge b1">L1</span></td></tr><tr><td>韩国出口</td><td>8月值9/1公布</td><td>每月1日</td><td>9/1</td><td><span class="badge b2">L2</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/1 ISM制造业+韩国出口双落地：新订单−自有库存差看方向</div>
+</div>
+<div class="cw" id="cw-pmi"></div>
+<script>registerChart('cw-pmi', ['INDPRO','MANEMP'], ['INDPRO','MANEMP','TCU','ISRATIO','BUSINV']);</script>
+</div>
+<div class="panel" id="p-fisc">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">财政与国债市场 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 钱袋权在国会，财政部只是出纳</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>立法流程</b>：永动机(必要支出+税收=参数)/合同工(非必要支出,年度清零)/CR与关门 → <b>收支特征</b>：收入=个税半壁+payroll+企业税+关税；净利息已超国防 → <b>财政立场三看</b>：长期看"协调"·中期看"经济"(失业率+1pp≈赤字率+1pp)·短期看"拨款" → <b>国债市场</b>：发行哲学regular&predictable(久期锚约60个月)·拍卖三件套(覆盖率/间接投标/尾部)·久期供给→期限溢价 → <b>数据体系</b>：DTS(日)→MTS(月)→CBO→QRA("第五次FOMC")→拍卖检验</div>
+  <p style="font-size:13px;margin:8px 0 10px;">本周30Y TIPS拍卖中标利率<b class="up">2.973%创近25年新高</b>——长端实际利率的"非价格证据"继续支持A端。美债30Y <b>5.19%</b>（08-27）、10Y 4.67%，长端高位+久期供给压力是下半年主线。<b>10月QRA</b>（季度再融资）是下一个"第五次FOMC"。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>30Y TIPS拍卖利率</td><td>2.973%·25年新高</td><td>本周</td><td>—</td><td><span class="badge b1">L1</span></td></tr><tr><td>美债30Y</td><td>5.19%</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>美债10Y</td><td>4.67%</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>10Y-2Y利差</td><td>39bp·单日-8bp</td><td>FRED 08-28</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>TGA余额</td><td>DTS日度·待接入</td><td>财政部DTS</td><td>日度</td><td><span class="badge bg2">灰</span></td></tr><tr><td>财政赤字MTS</td><td>7月值待核</td><td>月中</td><td>9月中</td><td><span class="badge bg2">灰</span></td></tr><tr><td>QRA季度再融资</td><td>下期10月底</td><td>季度</td><td>10月</td><td><span class="badge b1">L1</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：跟踪9月拍卖检验（覆盖率/间接/尾部）→ 10月QRA久期结构</div>
+</div>
+<div class="cw" id="cw-fisc"></div>
+<script>registerChart('cw-fisc', ['DGS10','DGS30','T10Y2Y'], ['DGS10','DGS30','DGS2','T10Y2Y','DFII10']);</script>
+</div>
+<div class="panel" id="p-fed">
+<div class="card">
+  <div style="font-size:16px;font-weight:700;color:#fff;">美联储与金融条件 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 从反应函数到政策的市场落点</span></div>
+  <div class="roadmap" style="margin-top:8px;"><b>制度框架</b>：双重使命与反应函数·FOMC构成与投票轮换·决策产品时序(声明→记者会→SEP→纪要→讲话) → <b>政策工具箱</b>：利率走廊IORB/ON RRP/SRF·EFFR与SOFR位置·资产负债表QE/QT与负债端三件套(准备金/ON RRP/TGA)·准备金"充足"判别 → <b>解读文本</b>：声明逐句比较·SEP/点阵图·纪要量词体系 → <b>市场定价</b>：FF期货/OIS加降息概率(见总览FedWatch表) → <b>金融条件</b>：曲线/信用利差/美元/股权·FCI·反身性</div>
+  <p style="font-size:13px;margin:8px 0 10px;">沃什JH首秀《In Our Time》定调偏鹰，FedWatch 9月加息概率单日<b class="up">35.4%→57%</b>。负债端三件套：准备金<b>9507亿</b>（8/26）、ON RRP仅<b>1.75亿</b>（缓冲垫已基本耗尽）、总资产6.73万亿——QT已把冗余流动性抽干，<b>准备金"充足"判别进入敏感期</b>。金融条件仍宽：VIX 14.51、HY OAS 0.98%——<b>紧缩未传导为risk-off</b>，反身性循环是当前主要矛盾。</p>
+  <table><tr><th>数据</th><th>最新值</th><th>数据日</th><th>下次发布</th><th>来源</th></tr><tr><td>联邦基金目标区间</td><td>3.50–3.75%</td><td>7/29按兵不动</td><td>9/16 ★★★★★</td><td><span class="badge b1">L1</span></td></tr><tr><td>9月加息概率(FedWatch)</td><td>57%</td><td>08-29 10:00</td><td>日度</td><td><span class="badge b2">L2</span></td></tr><tr><td>EFFR</td><td>3.63%</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>SOFR</td><td>3.64%</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>ON RRP用量</td><td>1.75亿美元·缓冲垫耗尽</td><td>FRED 08-28</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>银行准备金余额</td><td>9507亿美元</td><td>FRED 08-26·周度</td><td>周四</td><td><span class="badge b1">L1</span></td></tr><tr><td>美联储总资产</td><td>6.73万亿美元</td><td>FRED 08-26·周度</td><td>周四</td><td><span class="badge b1">L1</span></td></tr><tr><td>VIX</td><td>14.51</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr><tr><td>高收益债OAS</td><td>0.98%</td><td>FRED 08-27</td><td>日度</td><td><span class="badge b1">L1</span></td></tr></table>
+  <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/4非农 → 9/11 CPI → 9/16 FOMC+点阵图：三个闸门依次过</div>
+</div>
+<div class="cw" id="cw-fed"></div>
+<script>registerChart('cw-fed', ['EFFR','SOFR'], ['EFFR','SOFR','RRPONTSYD','WTREGEN','WALCL','VIXCLS','BAMLC0A4CBBB','DGS2']);</script>
+</div>
+<div class="panel" id="p-ws">
+<div class="card"><p style="font-size:13px;">自由图表工作区：<b style="color:var(--gold);">全部45条序列</b>任选叠加（最多4个），折线/季节性自由切换。高相关组合预设：
+<button class="tag2" style="margin-left:6px;" onclick="presetWS(['DGS10','DGS2','DGS30','T10Y2Y'])">美债曲线</button>
+<button class="tag2" onclick="presetWS(['DFII10','T5YIE','T10YIE'])">实际利率与通胀预期</button>
+<button class="tag2" onclick="presetWS(['EFFR','SOFR','RRPONTSYD','WTREGEN'])">流动性三件套</button>
+<button class="tag2" onclick="presetWS(['VIXCLS','BAMLC0A4CBBB'])">风险偏好</button>
+<button class="tag2" onclick="presetWS(['ICSA','UNRATE','JTSJOL'])">就业流量</button>
+<button class="tag2" onclick="presetWS(['MORTGAGE30US','HOUST','EXHOSLUSM495S'])">地产链条</button>
+<button class="tag2" onclick="presetWS(['DCOILWTICO','EIA商业原油库存'])">原油量价</button>
+<button class="tag2" onclick="presetWS(['沪金主连','沪银主连','INE原油主连'])">境内商品</button>
+</p></div>
+<div class="cw" id="cw-ws"></div>
+</div>
 <div style="margin-top:40px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:12px;">
-宏观研究周报 · 数据皆有来源，缺口标灰 · 观点事前冻结 · 框架版本：九章体系 v1.0（0829定稿口径）<br>
+宏观研究周报 · 数据皆有来源，缺口标灰 · 观点事前冻结 · 框架：九章体系 v2（0829定稿口径）<br>
 <a href="../index.html">← 返回工作台</a> · <a href="../panels/macro_framework.html">宏观框架面板 ↗</a> · <a href="daily_2026-08-29.html">最新日报 ↗</a>
 </div>
 </div>
+<script>const CATALOG = [{id:'DGS10',name:'美债10Y',unit:'%'},{id:'DGS2',name:'美债2Y',unit:'%'},{id:'DGS30',name:'美债30Y',unit:'%'},{id:'T10Y2Y',name:'10Y-2Y利差',unit:'%'},{id:'DFII10',name:'10Y实际利率TIPS',unit:'%'},{id:'T5YIE',name:'5Y盈亏平衡通胀',unit:'%'},{id:'T10YIE',name:'10Y盈亏平衡通胀',unit:'%'},{id:'EFFR',name:'EFFR',unit:'%'},{id:'SOFR',name:'SOFR',unit:'%'},{id:'RRPONTSYD',name:'ON RRP用量',unit:'十亿美元'},{id:'WTREGEN',name:'准备金余额',unit:'十亿美元'},{id:'WALCL',name:'美联储总资产',unit:'十亿美元'},{id:'MORTGAGE30US',name:'30年房贷利率',unit:'%'},{id:'VIXCLS',name:'VIX波动率',unit:'点'},{id:'BAMLC0A4CBBB',name:'高收益债OAS',unit:'%'},{id:'DCOILWTICO',name:'WTI原油',unit:'美元/桶'},{id:'DCOILBRENTEU',name:'布伦特原油',unit:'美元/桶'},{id:'ICSA',name:'初请失业金',unit:'千人'},{id:'PAYEMS',name:'非农就业总人数',unit:'千人'},{id:'UNRATE',name:'失业率',unit:'%'},{id:'CES0500000003',name:'平均时薪AHE',unit:'美元/时'},{id:'JTSJOL',name:'JOLTS职位空缺',unit:'千人'},{id:'MANEMP',name:'制造业就业',unit:'千人'},{id:'CPIAUCSL',name:'CPI指数',unit:'点'},{id:'CPILFESL',name:'核心CPI指数',unit:'点'},{id:'PCEPILFE',name:'核心PCE指数',unit:'点'},{id:'UMCSENT',name:'密歇根信心',unit:'点'},{id:'MICH',name:'密歇根1年通胀预期',unit:'%'},{id:'HOUST',name:'新屋开工',unit:'千户'},{id:'PERMIT',name:'建筑许可',unit:'千户'},{id:'EXHOSLUSM495S',name:'成屋销售',unit:'户'},{id:'CSUSHPISA',name:'CS房价指数',unit:'点'},{id:'HOSSUPUSM673N',name:'成屋库存月数',unit:'月'},{id:'INDPRO',name:'工业产出指数',unit:'点'},{id:'TCU',name:'产能利用率',unit:'%'},{id:'NEWORDER',name:'核心资本品订单',unit:'百万美元'},{id:'BUSINV',name:'商业库存',unit:'百万美元'},{id:'ISRATIO',name:'库存销售比',unit:'倍'},{id:'RSAFS',name:'零售销售',unit:'百万美元'},{id:'PCEC96',name:'实际个人消费',unit:'十亿美元'},{id:'PSAVERT',name:'个人储蓄率',unit:'%'},{id:'DSPIC96',name:'实际可支配收入',unit:'十亿美元'},{id:'沪金主连',name:'沪金主连',unit:'元/克'},{id:'沪银主连',name:'沪银主连',unit:'元/千克'},{id:'沪铜主连',name:'沪铜主连',unit:'元/吨'},{id:'INE原油主连',name:'INE原油主连',unit:'元/桶'},{id:'EIA商业原油库存',name:'EIA商业原油库存',unit:'百万桶'}];</script>
 <script>
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+const PALETTE=['#d4a944','#5b9bd5','#4caf7d','#e5534b'];
+function chartWidget(hostId, presetSel, allowIds, defMode){
+  const host=document.getElementById(hostId); if(!host) return;
+  const HIST = window.CHART_SERIES||{};
+  const CATS = CATALOG.filter(c=>!allowIds||allowIds.includes(c.id));
+  let sel = presetSel.slice(), mode = defMode||'line', rng='3y';
+  host.innerHTML = `<div class="ctl">
+      <div class="seg2" data-k="mode"><button data-v="line" class="${mode==='line'?'on':''}">折线图</button><button data-v="seasonal" class="${mode==='seasonal'?'on':''}">季节性图</button></div>
+      <div class="seg2" data-k="rng"><button data-v="1y">近1年</button><button data-v="3y" class="on">近3年</button><button data-v="y20">2020以来</button><button data-v="all">全部</button></div>
+    </div>
+    <details><summary>▸ 指标选项（点击展开，点选叠加，最多4个）</summary><div class="tags"></div></details>
+    <div class="chart"></div>
+    <div class="cn">折线：多指标自动分配左右轴，可拖动滑块缩放。季节性：同一指标按年叠线（当年金色加粗），多选分图显示。</div>`;
+  const tagsEl=host.querySelector('.tags'), chartEl=host.querySelector('.chart');
+  const chart=echarts.init(chartEl,null,{renderer:'canvas'});
+  function renderTags(){
+    tagsEl.innerHTML='';
+    CATS.forEach(c=>{
+      const t=document.createElement('span');
+      t.className='tag2'+(sel.includes(c.id)?' on':'');
+      t.innerHTML=`${c.name}<span class="u"> ${c.unit}</span>`;
+      t.onclick=()=>{
+        if(sel.includes(c.id)) sel=sel.filter(x=>x!==c.id);
+        else { if(sel.length>=4){alert('最多同时叠加4个指标');return;} sel.push(c.id); }
+        renderTags(); render();
+      };
+      tagsEl.appendChild(t);
+    });
+  }
+  host.querySelectorAll('.seg2 button').forEach(b=>b.onclick=()=>{
+    const seg=b.parentElement;
+    seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    if(seg.dataset.k==='mode') mode=b.dataset.v; else rng=b.dataset.v;
+    render();
+  });
+  function rangeStart(){
+    const all=[]; sel.forEach(id=>{(HIST[id]||[]).forEach(p=>all.push(p[0]))});
+    if(!all.length) return null;
+    const mx=all.sort()[all.length-1];
+    const y=parseInt(mx.slice(0,4));
+    if(rng==='1y') return (y-1)+mx.slice(4);
+    if(rng==='3y') return (y-3)+mx.slice(4);
+    if(rng==='y20') return '2020-01-01';
+    return null;
+  }
+  function render(){
+    if(!sel.length){chart.clear();return;}
+    if(mode==='line') renderLine(); else renderSeasonal();
+  }
+  function renderLine(){
+    const st=rangeStart();
+    const series=[]; const yAxis=[];
+    sel.forEach((id,i)=>{
+      const c=CATALOG.find(x=>x.id===id);
+      let data=(HIST[id]||[]).filter(p=>!st||p[0]>=st);
+      let yi=0;
+      if(i>0){
+        const fu=(CATALOG.find(x=>x.id===sel[0])||{}).unit;
+        if(c.unit!==fu) yi=1;
+      }
+      if(!yAxis[yi]) yAxis[yi]={type:'value',name:c.unit,position:yi===0?'left':'right',axisLabel:{color:'#8a94a6',fontSize:10},splitLine:{lineStyle:{color:'#222a3a'}},scale:true};
+      series.push({name:`${c.name}(${c.unit})`,type:'line',yAxisIndex:yi,showSymbol:false,data,
+        lineStyle:{width:1.6,color:PALETTE[i%4]},itemStyle:{color:PALETTE[i%4]}});
+    });
+    chart.clear();
+    chart.setOption({backgroundColor:'transparent',
+      tooltip:{trigger:'axis',backgroundColor:'#1c2333',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11}},
+      legend:{textStyle:{color:'#aeb8c8',fontSize:11},top:0,type:'scroll'},
+      grid:{left:56,right:56,top:34,bottom:52},
+      xAxis:{type:'time',axisLabel:{color:'#8a94a6',fontSize:10},axisLine:{lineStyle:{color:'#333'}}},
+      yAxis:yAxis.filter(Boolean),
+      dataZoom:[{type:'slider',height:16,bottom:8,borderColor:'#262d3d',backgroundColor:'#12161f',fillerColor:'rgba(212,169,68,.12)',handleStyle:{color:'#d4a944'},textStyle:{color:'#8a94a6',fontSize:9}}],
+      series});
+  }
+  function renderSeasonal(){
+    const grids=[],xAxes=[],yAxes=[],series=[],legends=[];
+    const per=Math.floor(88/Math.max(sel.length,1));
+    const st=rangeStart();
+    sel.forEach((id,gi)=>{
+      const c=CATALOG.find(x=>x.id===id);
+      const raw=(HIST[id]||[]).filter(p=>!st||p[0]>=st);
+      const byY={};
+      raw.forEach(p=>{const y=p[0].slice(0,4);(byY[y]=byY[y]||{})[p[0].slice(5)]=p[1];});
+      const years=Object.keys(byY).sort();
+      const days=new Set(); raw.forEach(p=>days.add(p[0].slice(5)));
+      const cats=[...days].sort();
+      grids.push({left:56,right:20,top:(gi*per+4)+'%',height:(per-9)+'%'});
+      xAxes.push({type:'category',data:cats,gridIndex:gi,axisLabel:{color:'#8a94a6',fontSize:9,interval:Math.floor(cats.length/8)},axisLine:{lineStyle:{color:'#333'}}});
+      yAxes.push({type:'value',gridIndex:gi,name:`${c.name} ${c.unit}`,nameTextStyle:{color:'#8a94a6',fontSize:10},axisLabel:{color:'#8a94a6',fontSize:9},splitLine:{lineStyle:{color:'#222a3a'}},scale:true});
+      const maxY=years[years.length-1];
+      years.forEach(y=>{
+        const cur=(y===maxY);
+        series.push({name:y,type:'line',xAxisIndex:gi,yAxisIndex:gi,showSymbol:false,
+          data:cats.map(d=>byY[y][d]??null),connectNulls:false,
+          lineStyle:{width:cur?2.6:1,color:cur?'#d4a944':'#3a4a65'},
+          itemStyle:{color:cur?'#d4a944':'#3a4a65'},emphasis:{lineStyle:{width:2.4}}});
+      });
+      legends.push({data:years,top:(gi*per+1)+'%',left:60,textStyle:{color:'#aeb8c8',fontSize:9},itemWidth:12,itemHeight:8,type:'scroll'});
+    });
+    chart.clear();
+    chart.setOption({backgroundColor:'transparent',
+      tooltip:{trigger:'axis',backgroundColor:'#1c2333',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11}},
+      legend:legends, grid:grids, xAxis:xAxes, yAxis:yAxes, series});
+  }
+  renderTags(); render();
+  window.addEventListener('resize',()=>chart.resize());
+}
+</script>
+
+<script>function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function renderLive(S){
   // FedWatch
   let fw = S.fedwatch;
