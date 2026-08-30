@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-08-30T18:07:07.195984Z",
+ "fetched_at": "2026-08-30T18:19:43.403658Z",
  "markets": [
   {
    "question": "US recession by end of 2026?",
@@ -2854,7 +2854,7 @@
      "price": 0.9975
     }
    ],
-   "vol24": 115372,
+   "vol24": 114935,
    "end": "2026-09-16",
    "slug": "fed-decision-in-september-762",
    "history": [
@@ -5266,7 +5266,7 @@
      "price": 0.495
     }
    ],
-   "vol24": 1081,
+   "vol24": 983,
    "end": "2026-11-03",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -7307,11 +7307,11 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.037
+     "price": 0.0365
     },
     {
      "name": "No",
-     "price": 0.963
+     "price": 0.9635
     }
    ],
    "vol24": 749,
@@ -7324,7 +7324,7 @@
     ],
     [
      "2026-08-30",
-     0.037
+     0.0365
     ]
    ]
   },
@@ -7460,7 +7460,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 96273,
+   "vol24": 96073,
    "end": "2026-08-22",
    "slug": "us-ceasefire-against-iran-continues-throughptptpt",
    "history": [
