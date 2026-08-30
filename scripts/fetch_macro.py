@@ -59,7 +59,7 @@ def fred_batch(sids, limit=1700):
         chunk = sids[i:i + 12]
         log('  FRED批 %d/%d: %s…' % (i // 12 + 1, nb, chunk[0]))
         t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=' + ','.join(chunk) + '&cosd=2017-01-01',
-                     timeout=30, retries=3, backoff=4.0)
+                     timeout=25, retries=2, backoff=3.0)
         rows = []
         if t and 'observation_date' in t[:200]:
             rows = list(csv.reader(io.StringIO(t)))
@@ -83,11 +83,16 @@ def fred_batch(sids, limit=1700):
                         pass
                 out[sid] = ser[-limit:]
         else:
-            log('  批失败, 回退单条:', ','.join(chunk))
             for sid in chunk:
-                out[sid] = fred(sid)
-                time.sleep(0.6)
+                out[sid] = []
         time.sleep(1.0)
+    # 失败的序列只做一轮单条回退, 快速放弃(保留旧数据, 明日自愈)
+    missing = [s for s in sids if not out.get(s)]
+    if missing:
+        log('  单条回退', len(missing), '条')
+        for sid in missing:
+            out[sid] = fred(sid)
+            time.sleep(0.8)
     return out
 
 def yahoo(sym, rng='5y'):
