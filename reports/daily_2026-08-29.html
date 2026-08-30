@@ -6,6 +6,7 @@
 <title>宏观研究日报 · 2026-08-29</title>
 <script src="../lib/echarts.min.js"></script>
 <script src="../data/chart_series.js"></script>
+<script src="../data/live_snapshot.js"></script>
 <style>
   :root{--bg:#0e1117;--card:#161b26;--line:#262d3d;--txt:#d7dde8;--dim:#8a94a6;--up:#e5534b;--dn:#4caf7d;--gold:#d4a944;--blue:#5b9bd5;}
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -56,15 +57,34 @@
   .tag2 .u{font-size:10px;opacity:.7;}
   #chartBox{width:100%;height:520px;}
   .chart-note{font-size:11px;color:var(--dim);margin-top:6px;}
-  @media(max-width:900px){.news{grid-template-columns:1fr;}#chartBox{height:420px;}}
+  @media(max-width:900px){.news{grid-template-columns:1fr;}#chartBox{height:420px;}.grid3,.grid2{grid-template-columns:1fr;}}
+  .updbtn{background:var(--gold);color:#111;border:none;border-radius:4px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;}
+  .updbtn:active{opacity:.8;}
+  #updMsg{font-size:12px;color:var(--dim);margin-left:10px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .mini{background:#12161f;border:1px solid var(--line);border-radius:6px;padding:12px 14px;}
+  .mini h4{font-size:13px;color:var(--gold);margin-bottom:8px;}
+  .big{font-size:26px;font-weight:700;font-family:Georgia,serif;}
+  .zonebar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:8px 0 4px;}
+  .zonebar div{flex:1;}
+  .ch-tag{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:10px;padding:2px 10px;margin-right:6px;display:inline-block;margin-bottom:4px;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <h1>宏观研究日报 · 2026-08-29</h1>
-  <div class="meta">周六版 · 数据日 <b>2026-08-28 美盘收盘</b>（欧美周五已收盘，亚太周六无交易） · 决策冻结 <b>2026-08-29 18:40 BJT</b> · 事后数据不回填，只追加修正注记</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+    <div>
+      <h1>宏观研究日报 · 2026-08-29</h1>
+      <div class="meta">周六版 · 数据日 <b>2026-08-28 美盘收盘</b>（欧美周五已收盘，亚太周六无交易） · 决策冻结 <b>2026-08-29 18:40 BJT</b> · 事后数据不回填，只追加修正注记 · <b class="snapAsof"></b></div>
+    </div>
+    <div style="display:flex;align-items:center;">
+      <button class="updbtn" onclick="refreshLive()">⟳ 更新最新数据</button>
+      <span id="updMsg"></span>
+    </div>
+  </div>
 </header>
 
 <!-- ============ 一、今日三条边际变化（置顶） ============ -->
@@ -128,7 +148,17 @@
 </details>
 
 <!-- ============ 五、数据图表区 ============ -->
-<h2>五、数据图表<span class="en">CHARTS · 点选指标叠加 · 折线/季节性切换</span></h2>
+<!-- ============ 五、政策定价与日历 ============ -->
+<h2>五、政策定价与日历<span class="en">POLICY PRICING & CALENDAR</span></h2>
+<div class="grid2">
+  <div class="mini"><h4>CME FedWatch 加息预期（联邦基金期货定价）</h4><div id="fwBox"></div></div>
+  <div class="mini"><h4>特朗普 TACO 压力指数</h4><div id="tacoBox"></div></div>
+</div>
+<div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div></div>
+<div style="height:12px;"></div>
+<div class="grid3" id="calBox"></div>
+
+<h2>六、数据图表<span class="en">CHARTS · 点选指标叠加 · 折线/季节性切换</span></h2>
 <div class="chart-panel">
   <div class="chart-ctl">
     <div class="seg" id="modeSeg">
@@ -148,16 +178,16 @@
 </div>
 
 <!-- ============ 六、日度数据总表 ============ -->
-<h2>六、日度数据总表<span class="en">ALL DAILY SERIES · L1官方 / L2交易所·权威媒体 / ⚙️自建 / 灰=缺口</span></h2>
+<h2>七、日度数据总表<span class="en">ALL DAILY SERIES · L1官方 / L2交易所·权威媒体 / ⚙️自建 / 灰=缺口</span></h2>
 <div id="tables"></div>
 
 <!-- ============ 七、三源实时消息 ============ -->
-<h2>七、三源实时消息流<span class="en">NEWS · 金十PLUS / 先讯VIP / CS财经 · 截止18:36</span></h2>
+<h2>八、三源实时消息流<span class="en">NEWS · 金十PLUS / 先讯VIP / CS财经 · 截止18:36</span></h2>
 <div class="news" id="news"></div>
 
 <footer style="margin-top:36px;color:var(--dim);font-size:11px;border-top:1px solid var(--line);padding-top:12px;">
   宏观研究日报 · 数据皆有来源，缺口标灰 · 观点事前冻结 · 框架版本 v1.0（八大版块）<br>
-  <a href="../index.html">← 返回工作台</a> · <a href="../panels/macro_framework.html">宏观框架面板 ↗</a> · <a href="../panels/2026-08-28.html">0828面板</a>
+  <a href="../index.html">← 返回工作台</a> · <a href="../panels/macro_framework.html">宏观框架面板 ↗</a> · <a href="../panels/2026-08-28.html">0828面板</a> · <a href="weekly_2026-W35.html">本周周报 ↗</a>
 </footer>
 </div>
 
@@ -322,6 +352,54 @@ function renderSeasonal(){
 }
 renderTags(); render();
 window.addEventListener('resize', ()=>chart.resize());
+</script>
+<script>
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function renderLive(S){
+  // FedWatch
+  let fw = S.fedwatch;
+  let rows = fw.meetings.map(m=>`<tr><td>${m.date}</td><td>${m.hold}%</td><td class="up">${m.hike25}%</td><td>${m.hike50?m.hike50+'%':'—'}</td></tr>`).join('');
+  document.getElementById('fwBox').innerHTML =
+    `<table><tr><th>FOMC会议</th><th>维持不变</th><th>加息25bp</th><th>加息50bp</th></tr>${rows}</table>
+     <div style="font-size:11px;color:var(--dim);margin-top:6px;">${esc(fw.src)} · 截至 ${fw.asof} · ${esc(fw.note)}；JH前一日(8/27)：9月维持${fw.prev.hold}% / 加息${fw.prev.hike25}%</div>`;
+  // TACO
+  let t = S.taco;
+  let comps = t.comps.map(c=>`<tr><td>${c[0]}</td><td class="${c[1]>=0?'up':'dn'}" style="text-align:right;">${c[1]>0?'+':''}${c[1]}%</td></tr>`).join('');
+  let evs = t.events.map(e=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><span style="color:var(--dim);font-size:11px;">${e[0]}</span> ${e[1]}</div>`).join('');
+  document.getElementById('tacoBox').innerHTML =
+    `<div style="display:flex;align-items:baseline;gap:14px;"><span class="big" style="color:${t.value>0?'var(--up)':'var(--dn)'};">${t.value>0?'+':''}${t.value}%</span>
+     <span class="ch-tag" style="border-color:var(--gold);color:var(--gold);">${t.zone}区</span>
+     <span style="font-size:12px;color:var(--dim);">较20个交易日前 ${t.chg20d}%</span></div>
+     <div class="zonebar"><div style="background:#2d4a3f;"></div><div style="background:#3a4a2d;"></div><div style="background:#4a3a2d;"></div><div style="background:#4a2d2d;"></div></div>
+     <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim);"><span>膨胀(易GAMBLE)</span><span>低压</span><span>中压</span><span>高压(易TACO)</span></div>
+     <div style="font-size:11px;color:var(--dim);margin:8px 0;">分项贡献（20日变动标准化）：</div>
+     <table>${comps}</table>
+     <div style="font-size:11px;color:var(--dim);margin-top:10px;">近期TACO事件：</div>${evs}
+     <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(t.src)} · 数据日 ${t.asof} · ${esc(t.method)}</div>`;
+  // 美伊
+  let ir = S.iran;
+  let mk = ir.markets.map(m=>`<tr><td>${m.q}</td><td class="up" style="text-align:right;font-weight:700;">${m.yes}%</td><td style="text-align:right;">${m.vol}</td><td style="font-size:11px;color:var(--dim);">${m.chg}</td></tr>`).join('');
+  let iev = ir.events.map(e=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><span style="color:var(--dim);font-size:11px;">${e[0]}</span> ${e[1]}</div>`).join('');
+  document.getElementById('iranBox').innerHTML =
+    `<table><tr><th>预测市场（Yes=达成/恢复）</th><th style="text-align:right;">概率</th><th style="text-align:right;">成交额</th><th>变动</th></tr>${mk}</table>
+     <div style="font-size:11px;color:var(--dim);margin-top:8px;">最新进展：</div>${iev}
+     <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(ir.src)} · 数据日 ${ir.asof}</div>`;
+  // 日历
+  let cal = S.calendar;
+  document.getElementById('calBox').innerHTML = cal.weeks.map(w=>
+    `<div class="mini"><h4>${w.label}</h4>${w.items.map(it=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><b style="color:var(--blue);">${it[0]}</b> ${it[1]}</div>`).join('')}</div>`
+  ).join('') + `<div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(cal.note)}</div>`;
+  document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='数据快照：'+S.asof);
+}
+function refreshLive(){
+  const old = document.getElementById('livejs'); if(old) old.remove();
+  const s = document.createElement('script'); s.id='livejs';
+  s.src = '../data/live_snapshot.js?t=' + Date.now();
+  s.onload = ()=>{ renderLive(window.LIVE_SNAPSHOT); const m=document.getElementById('updMsg'); if(m) m.textContent='已更新 · ' + window.LIVE_SNAPSHOT.asof; };
+  s.onerror = ()=>{ const m=document.getElementById('updMsg'); if(m) m.textContent='拉取失败，请稍后重试'; };
+  document.head.appendChild(s);
+}
+document.addEventListener('DOMContentLoaded', ()=>{ if(window.LIVE_SNAPSHOT) renderLive(window.LIVE_SNAPSHOT); });
 </script>
 </body>
 </html>
