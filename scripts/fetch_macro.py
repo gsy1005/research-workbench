@@ -21,7 +21,7 @@ DATA = os.path.join(APP, 'data')
 
 def log(*a): print(datetime.datetime.now().strftime('%H:%M:%S'), *a, flush=True)
 
-def http_get(url, timeout=15, retries=2):
+def http_get(url, timeout=15, retries=2, backoff=1.0):
     for i in range(retries):
         try:
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (research-workbench)'})
@@ -29,12 +29,13 @@ def http_get(url, timeout=15, retries=2):
                 return r.read().decode('utf-8', 'replace')
         except Exception as e:
             log('  retry', i + 1, repr(e)[:110], url[:70])
-            time.sleep(1.0 * (i + 1))
+            time.sleep(backoff * (i + 1))
     return None
 
 # ---------- 抓取器 ----------
 def fred(sid, limit=1700):
-    t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s' % sid)
+    t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s' % sid,
+                 timeout=20, retries=4, backoff=3.0)
     if not t or 'observation_date' not in t[:200]:
         return []
     out = []
@@ -173,7 +174,7 @@ add('EXPGS', '商品与服务出口', '百万美元', 'trade', 'L1·FRED/BEA', (
 add('IMPGS', '商品与服务进口', '百万美元', 'trade', 'L1·FRED/BEA', ('fred', 'IMPGS'))
 # 美中竞赛 cn
 add('DEXCHUS', '美元兑人民币', '元/美元', 'cn', 'L1·FRED', ('fred', 'DEXCHUS'))
-add('Y_000300SS', '沪深300', '点', 'cn', 'L2·Yahoo', ('yahoo', '000300.SS'))
+add('Y_000300SS', '沪深300ETF', '元', 'cn', 'L2·Yahoo', ('yahoo', '510300.SS'))
 add('Y_HSI', '恒生指数', '点', 'cn', 'L2·Yahoo', ('yahoo', '^HSI'))
 add('IRLTLT01CNM156N', '中国10Y国债收益率', '%', 'cn', 'L1·FRED/OECD', ('fred', 'IRLTLT01CNM156N'))
 add('IMPCH', '美国自中国进口', '百万美元', 'cn', 'L1·FRED/Census', ('fred', 'IMPCH'))
@@ -233,26 +234,28 @@ def main():
         except Exception:
             hist = {}
     # 1) 收集所有基础抓取任务(含衍生序列的底座)
-    jobs = {}   # key -> callable
+    fred_ids, other_jobs = [], {}
     for it in S:
         how = it['how']; kind = how[0]
-        if kind == 'fred':
-            jobs[how[1]] = (lambda sid: lambda: fred(sid))(how[1])
-        elif kind in ('yoy', 'diff'):
-            jobs.setdefault(how[1], (lambda sid: lambda: fred(sid))(how[1]))
+        if kind in ('fred', 'yoy', 'diff'):
+            if how[1] not in fred_ids: fred_ids.append(how[1])
         elif kind == 'yahoo':
-            jobs[it['id']] = (lambda sym: lambda: yahoo(sym))(how[1])
+            other_jobs[it['id']] = (lambda sym: lambda: yahoo(sym))(how[1])
         elif kind == 'debt':
-            jobs['US_DEBT'] = us_debt
+            other_jobs['US_DEBT'] = us_debt
         elif kind == 'tsa':
-            jobs['TSA_PAX'] = tsa_pax
-        elif kind == 'calc_cn':
-            pass
-    log('基础任务', len(jobs), '个, 并发抓取…')
+            other_jobs['TSA_PAX'] = tsa_pax
     raw = {}
+    # 2a) FRED 限流敏感: 串行+间隔+退避重试
+    log('FRED串行抓取', len(fred_ids), '条…')
     t0 = time.time()
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        futs = {ex.submit(fn): key for key, fn in jobs.items()}
+    for sid in fred_ids:
+        raw[sid] = fred(sid)
+        time.sleep(0.7)
+    log('FRED完成, 用时%.0fs' % (time.time() - t0))
+    # 2b) Yahoo/财政部/TSA 并发
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        futs = {ex.submit(fn): key for key, fn in other_jobs.items()}
         for fu in as_completed(futs):
             key = futs[fu]
             try:
@@ -260,7 +263,6 @@ def main():
             except Exception as e:
                 raw[key] = []
                 log('  x', key, repr(e)[:120])
-    log('基础抓取完成, 用时%.0fs' % (time.time() - t0))
     # 2) 计算+入库
     ok, fail = [], []
     for it in S:
