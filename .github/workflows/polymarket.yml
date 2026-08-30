@@ -19,6 +19,7 @@ jobs:
       - run: python scripts/fetch_polymarket.py
       - run: python scripts/fetch_macro.py
       - run: python scripts/fetch_cftc.py
+      - run: python scripts/fetch_liquidity.py
       - name: commit & push
         run: |
           git config user.name "data-bot"
