@@ -202,7 +202,8 @@
 
 </section>
 <section class="dp" id="dp4">
-<h2>六、数据图表<span class="en">CHARTS · 点选指标叠加 · 折线/季节性切换</span></h2>
+<h2>六、数据图表<span class="en">CHARTS · 宏观图表墙 + 点选指标叠加</span></h2>
+<div id="macroWall" style="margin-bottom:14px"></div>
 <div class="chart-panel">
   <div class="chart-ctl">
     <div class="seg" id="modeSeg">
@@ -492,6 +493,67 @@ fetch('../data/trump_zone.json?v='+Date.now()).then(function(r){return r.json();
     + '<div style="font-size:11px;color:var(--dim);margin-top:8px;">压力越高→TACO回撤概率越高；30条事件复盘、支持率、Truths跟踪见 '
     + '<a href="../panels/trump_zone.html" style="color:var(--gold);text-decoration:none;">特朗普专区 ↗</a></div>';
 }).catch(function(){});
+</script>
+<style>
+.mw-sec{margin-bottom:16px}
+.mw-h{font-size:13px;color:var(--gold);font-weight:700;margin:10px 0 8px}
+.mw-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.mw-c{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.mw-t{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.mw-n{font-size:12px;color:var(--txt)}
+.mw-v{color:var(--gold);font-weight:700;font-size:14px;white-space:nowrap}
+.mw-ch{width:100%;height:110px}
+.mw-d{color:var(--dim);font-size:10.5px;margin-top:2px}
+</style>
+<script>
+(function(){
+var WALL=[['rate','利率'],['price','物价'],['jobs','就业'],['asset','资产'],['energy','能源'],['cn','美中竞赛'],['fiscal','财政'],['trade','贸易'],['mfg','制造业']];
+window._mwCharts=[];
+function fv(v){var a=Math.abs(v);if(a>=10000)return v.toLocaleString('zh-CN',{maximumFractionDigits:0});if(a>=100)return v.toFixed(1);if(a>=10)return v.toFixed(2);return v.toFixed(3);}
+fetch('../data/macro_series.json').then(function(r){return r.ok?r.json():null;}).then(function(mac){
+  if(!mac)return;
+  var H=window.CHART_SERIES||{}, host=document.getElementById('macroWall'), html='', todo=[];
+  WALL.forEach(function(w){
+    var s=(mac.sections||[]).find(function(x){return x.key===w[0];});
+    if(!s)return;
+    var cards=[];
+    s.items.forEach(function(it){
+      if((H[it.id]||[]).length<3)return;
+      cards.push(it);
+    });
+    if(!cards.length)return;
+    html+='<div class="mw-sec"><div class="mw-h">'+w[1]+'</div><div class="mw-g">'+cards.map(function(it,i){
+      var id=w[0]+'_'+i;todo.push({id:id,it:it});
+      return '<div class="mw-c"><div class="mw-t"><span class="mw-n">'+it.name+'</span><span class="mw-v" id="mwv-'+id+'"></span></div><div class="mw-ch" id="mwc-'+id+'"></div><div class="mw-d">'+it.src+(it.unit?' · '+it.unit:'')+' · <span id="mwd-'+id+'"></span></div></div>';
+    }).join('')+'</div></div>';
+  });
+  if(!html)return;
+  host.innerHTML=html;
+  function draw(){
+    todo.forEach(function(t){
+      if(t.done)return;t.done=true;
+      var ser=H[t.it.id], last=ser[ser.length-1];
+      document.getElementById('mwv-'+t.id).textContent=fv(last[1]);
+      document.getElementById('mwd-'+t.id).textContent='截至 '+last[0];
+      var c=echarts.init(document.getElementById('mwc-'+t.id));
+      window._mwCharts.push(c);
+      c.setOption({backgroundColor:'transparent',animation:false,
+        grid:{left:38,right:6,top:6,bottom:16},
+        tooltip:{trigger:'axis',backgroundColor:'#161b26',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11},formatter:function(ps){var p=ps[0];return p.axisValue+'<br><b>'+fv(p.data)+'</b>';}},
+        xAxis:{type:'category',data:ser.map(function(p){return p[0];}),axisLine:{lineStyle:{color:'#262d3d'}},axisLabel:{color:'#8a94a6',fontSize:9}},
+        yAxis:{type:'value',scale:true,axisLabel:{color:'#8a94a6',fontSize:9},splitLine:{lineStyle:{color:'#1d2330'}}},
+        series:[{type:'line',symbol:'none',data:ser.map(function(p){return p[1];}),lineStyle:{color:'#d4a944',width:1.4},areaStyle:{opacity:.06,color:'#d4a944'}}]});
+    });
+  }
+  var dp4=document.getElementById('dp4');
+  if(dp4.classList.contains('on')||dp4.offsetParent!==null){draw();}
+  else{
+    document.querySelectorAll('[data-dp="dp4"]').forEach(function(b){
+      b.addEventListener('click',function(){setTimeout(draw,50);});
+    });
+  }
+}).catch(function(){});
+})();
 </script>
 </body>
 </html>

@@ -13,6 +13,7 @@
   data/macro_catalog.js  周报目录合并用
 """
 import csv, io, json, os, re, sys, time, datetime, urllib.request, urllib.parse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 APP  = os.path.dirname(BASE)
@@ -20,7 +21,7 @@ DATA = os.path.join(APP, 'data')
 
 def log(*a): print(datetime.datetime.now().strftime('%H:%M:%S'), *a, flush=True)
 
-def http_get(url, timeout=40, retries=3):
+def http_get(url, timeout=15, retries=2):
     for i in range(retries):
         try:
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (research-workbench)'})
@@ -28,7 +29,7 @@ def http_get(url, timeout=40, retries=3):
                 return r.read().decode('utf-8', 'replace')
         except Exception as e:
             log('  retry', i + 1, repr(e)[:110], url[:70])
-            time.sleep(1.5 * (i + 1))
+            time.sleep(1.0 * (i + 1))
     return None
 
 # ---------- 抓取器 ----------
@@ -231,43 +232,61 @@ def main():
             hist = json.loads(s[s.index('{'):s.rindex('}') + 1])
         except Exception:
             hist = {}
-    ok, fail = [], []
-    raw = {}
+    # 1) 收集所有基础抓取任务(含衍生序列的底座)
+    jobs = {}   # key -> callable
     for it in S:
-        how = it['how']
-        kind = how[0]
+        how = it['how']; kind = how[0]
+        if kind == 'fred':
+            jobs[how[1]] = (lambda sid: lambda: fred(sid))(how[1])
+        elif kind in ('yoy', 'diff'):
+            jobs.setdefault(how[1], (lambda sid: lambda: fred(sid))(how[1]))
+        elif kind == 'yahoo':
+            jobs[it['id']] = (lambda sym: lambda: yahoo(sym))(how[1])
+        elif kind == 'debt':
+            jobs['US_DEBT'] = us_debt
+        elif kind == 'tsa':
+            jobs['TSA_PAX'] = tsa_pax
+        elif kind == 'calc_cn':
+            pass
+    log('基础任务', len(jobs), '个, 并发抓取…')
+    raw = {}
+    t0 = time.time()
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        futs = {ex.submit(fn): key for key, fn in jobs.items()}
+        for fu in as_completed(futs):
+            key = futs[fu]
+            try:
+                raw[key] = fu.result() or []
+            except Exception as e:
+                raw[key] = []
+                log('  x', key, repr(e)[:120])
+    log('基础抓取完成, 用时%.0fs' % (time.time() - t0))
+    # 2) 计算+入库
+    ok, fail = [], []
+    for it in S:
+        how = it['how']; kind = how[0]
         try:
-            if kind == 'fred':
-                raw[it['id']] = fred(how[1])
-            elif kind == 'yoy':
-                base = raw.get(how[1]) or fred(how[1])
-                raw[how[1]] = base
-                raw[it['id']] = yoy(base, how[2])
-            elif kind == 'diff':
-                base = raw.get(how[1]) or fred(how[1])
-                raw[how[1]] = base
-                raw[it['id']] = diff(base, how[2])
+            if kind in ('fred', 'debt', 'tsa'):
+                ser = raw.get(how[1] if kind == 'fred' else it['id'], [])
             elif kind == 'yahoo':
-                raw[it['id']] = yahoo(how[1])
-            elif kind == 'debt':
-                raw[it['id']] = us_debt()
-            elif kind == 'tsa':
-                raw[it['id']] = tsa_pax()
+                ser = raw.get(it['id'], [])
+            elif kind == 'yoy':
+                ser = yoy(raw.get(how[1], []), how[2])
+            elif kind == 'diff':
+                ser = diff(raw.get(how[1], []), how[2])
             elif kind == 'calc_cn':
-                a, b = raw.get('IMPCH', []), raw.get('EXPCH', [])
-                bd = dict(b)
-                raw[it['id']] = [[d, round(v - bd.get(d, 0), 1)] for d, v in a if d in bd]
-            ser = raw[it['id']]
+                bd = dict(raw.get('EXPCH', []))
+                ser = [[d, round(v - bd[d], 1)] for d, v in raw.get('IMPCH', []) if d in bd]
+            else:
+                ser = []
             if ser and len(ser) >= 3:
                 hist[it['id']] = ser
                 ok.append(it['id'])
             else:
                 fail.append(it['id'])
-                log('  x', it['id'], '空/过短')
         except Exception as e:
             fail.append(it['id'])
             log('  x', it['id'], repr(e)[:120])
-        time.sleep(0.35)
     # 写 chart_series.js (只更新本次抓到的键, MM上传的键原样保留)
     with open(cs_path, 'w', encoding='utf-8') as f:
         f.write('window.CHART_SERIES = ' + json.dumps(hist, separators=(',', ':')) + ';')

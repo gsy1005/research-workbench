@@ -8,6 +8,7 @@
 <script src="../data/chart_series.js"></script>
 <script src="../data/live_snapshot.js"></script>
 <script src="../data/mm_catalog.js" onerror="window.MM_CATALOG=null"></script>
+<script src="../data/macro_catalog.js" onerror="window.MACRO_CATALOG=null"></script>
 <script>
 function bindTabs(){
 document.querySelectorAll('.tabbar button').forEach(function(b){ b.onclick=function(){
@@ -107,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
       <span id="updMsg"></span>
     </div>
   </div>
-  <div class="tabbar"><button data-p="ov" class="on">本周总览</button><button data-p="emp">就业市场</button><button data-p="inf">通胀</button><button data-p="gdp">GDP与经济核算</button><button data-p="cons">消费</button><button data-p="house">房地产</button><button data-p="inv">企业投资与AI资本开支</button><button data-p="pmi">PMI</button><button data-p="fisc">财政与国债市场</button><button data-p="fed">美联储与金融条件</button><button data-p="ws" style="border-color:var(--gold);color:var(--gold);">图表工作区</button></div>
+  <div class="tabbar"><button data-p="ov" class="on">本周总览</button><button data-p="emp">就业市场</button><button data-p="inf">通胀</button><button data-p="gdp">GDP与经济核算</button><button data-p="cons">消费</button><button data-p="house">房地产</button><button data-p="inv">企业投资与AI资本开支</button><button data-p="pmi">PMI</button><button data-p="fisc">财政与国债市场</button><button data-p="fed">美联储与金融条件</button><button data-p="ws" style="border-color:var(--gold);color:var(--gold);">图表工作区</button><button data-p="wall" style="border-color:var(--gold);color:var(--gold);">宏观图表墙</button></div>
 </header>
 
 <div class="panel on" id="p-ov">
@@ -254,13 +255,69 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
 </p></div>
 <div class="cw" id="cw-ws"></div>
 </div>
+<div class="panel" id="p-wall">
+<div id="macroWall"></div>
+</div>
 <div style="margin-top:40px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:12px;">
 宏观研究周报 · 数据皆有来源，缺口标灰 · 观点事前冻结 · 框架：九章体系 v2（0829定稿口径）<br>
 <a href="../index.html">← 返回工作台</a> · <a href="../panels/macro_framework.html">宏观框架面板 ↗</a> · <a href="daily_2026-08-29.html">最新日报 ↗</a> · <a href="../panels/mm_upload.html">更新MM数据 ↗</a> · <a href="../panels/trump_zone.html">特朗普专区 ↗</a>
 </div>
 </div>
 <script>const CATALOG = [{id:'DGS10',name:'美债10Y',unit:'%'},{id:'DGS2',name:'美债2Y',unit:'%'},{id:'DGS30',name:'美债30Y',unit:'%'},{id:'T10Y2Y',name:'10Y-2Y利差',unit:'%'},{id:'DFII10',name:'10Y实际利率TIPS',unit:'%'},{id:'T5YIE',name:'5Y盈亏平衡通胀',unit:'%'},{id:'T10YIE',name:'10Y盈亏平衡通胀',unit:'%'},{id:'EFFR',name:'EFFR',unit:'%'},{id:'SOFR',name:'SOFR',unit:'%'},{id:'RRPONTSYD',name:'ON RRP用量',unit:'十亿美元'},{id:'WTREGEN',name:'准备金余额',unit:'十亿美元'},{id:'WALCL',name:'美联储总资产',unit:'十亿美元'},{id:'TGA',name:'TGA财政部现金',unit:'十亿美元'},{id:'WEI',name:'WEI周度经济指数',unit:'%'},{id:'GDPNOW',name:'GDPNow(Q3演进)',unit:'%'},{id:'MORTGAGE30US',name:'30年房贷利率',unit:'%'},{id:'VIXCLS',name:'VIX波动率',unit:'点'},{id:'BAMLC0A4CBBB',name:'高收益债OAS',unit:'%'},{id:'DCOILWTICO',name:'WTI原油',unit:'美元/桶'},{id:'DCOILBRENTEU',name:'布伦特原油',unit:'美元/桶'},{id:'ICSA',name:'初请失业金',unit:'千人'},{id:'PAYEMS',name:'非农就业总人数',unit:'千人'},{id:'UNRATE',name:'失业率',unit:'%'},{id:'CES0500000003',name:'平均时薪AHE',unit:'美元/时'},{id:'JTSJOL',name:'JOLTS职位空缺',unit:'千人'},{id:'MANEMP',name:'制造业就业',unit:'千人'},{id:'CPIAUCSL',name:'CPI指数',unit:'点'},{id:'CPILFESL',name:'核心CPI指数',unit:'点'},{id:'PCEPILFE',name:'核心PCE指数',unit:'点'},{id:'UMCSENT',name:'密歇根信心',unit:'点'},{id:'MICH',name:'密歇根1年通胀预期',unit:'%'},{id:'HOUST',name:'新屋开工',unit:'千户'},{id:'PERMIT',name:'建筑许可',unit:'千户'},{id:'EXHOSLUSM495S',name:'成屋销售',unit:'户'},{id:'CSUSHPISA',name:'CS房价指数',unit:'点'},{id:'HOSSUPUSM673N',name:'成屋库存月数',unit:'月'},{id:'INDPRO',name:'工业产出指数',unit:'点'},{id:'TCU',name:'产能利用率',unit:'%'},{id:'NEWORDER',name:'核心资本品订单',unit:'百万美元'},{id:'BUSINV',name:'商业库存',unit:'百万美元'},{id:'ISRATIO',name:'库存销售比',unit:'倍'},{id:'RSAFS',name:'零售销售',unit:'百万美元'},{id:'PCEC96',name:'实际个人消费',unit:'十亿美元'},{id:'PSAVERT',name:'个人储蓄率',unit:'%'},{id:'DSPIC96',name:'实际可支配收入',unit:'十亿美元'},{id:'沪金主连',name:'沪金主连',unit:'元/克'},{id:'沪银主连',name:'沪银主连',unit:'元/千克'},{id:'沪铜主连',name:'沪铜主连',unit:'元/吨'},{id:'INE原油主连',name:'INE原油主连',unit:'元/桶'},{id:'EIA商业原油库存',name:'EIA商业原油库存',unit:'百万桶'}];
-if(window.MM_CATALOG){window.MM_CATALOG.forEach(function(m){if(!CATALOG.some(function(c){return c.id===m.id;}))CATALOG.push({id:m.id,name:m.name+'·MM',unit:m.unit||''});});}</script>
+if(window.MM_CATALOG){window.MM_CATALOG.forEach(function(m){if(!CATALOG.some(function(c){return c.id===m.id;}))CATALOG.push({id:m.id,name:m.name+'·MM',unit:m.unit||''});});}
+if(window.MACRO_CATALOG){window.MACRO_CATALOG.forEach(function(m){if(!CATALOG.some(function(c){return c.id===m.id;}))CATALOG.push({id:m.id,name:m.name,unit:m.unit||''});});}</script>
+<style>
+.mw-sec{margin-bottom:16px}
+.mw-h{font-size:13px;color:var(--gold);font-weight:700;margin:10px 0 8px}
+.mw-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.mw-c{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.mw-t{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.mw-n{font-size:12px;color:var(--txt)}
+.mw-v{color:var(--gold);font-weight:700;font-size:14px;white-space:nowrap}
+.mw-ch{width:100%;height:110px}
+.mw-d{color:var(--dim);font-size:10.5px;margin-top:2px}
+</style>
+<script>
+(function(){
+var WALL=[['rate','利率'],['price','物价'],['jobs','就业'],['asset','资产'],['energy','能源'],['cn','美中竞赛'],['fiscal','财政'],['trade','贸易'],['mfg','制造业']];
+function fv(v){var a=Math.abs(v);if(a>=10000)return v.toLocaleString('zh-CN',{maximumFractionDigits:0});if(a>=100)return v.toFixed(1);if(a>=10)return v.toFixed(2);return v.toFixed(3);}
+var drawn=false;
+function drawWall(){
+  if(drawn)return;drawn=true;
+  fetch('../data/macro_series.json').then(function(r){return r.ok?r.json():null;}).then(function(mac){
+    if(!mac)return;
+    var H=window.CHART_SERIES||{}, host=document.getElementById('macroWall'), html='', todo=[];
+    WALL.forEach(function(w){
+      var s=(mac.sections||[]).find(function(x){return x.key===w[0];});
+      if(!s)return;
+      var cards=s.items.filter(function(it){return (H[it.id]||[]).length>2;});
+      if(!cards.length)return;
+      html+='<div class="mw-sec"><div class="mw-h">'+w[1]+'</div><div class="mw-g">'+cards.map(function(it,i){
+        var id=w[0]+'_'+i;todo.push({id:id,it:it});
+        return '<div class="mw-c"><div class="mw-t"><span class="mw-n">'+it.name+'</span><span class="mw-v" id="mwv-'+id+'"></span></div><div class="mw-ch" id="mwc-'+id+'"></div><div class="mw-d">'+it.src+(it.unit?' · '+it.unit:'')+' · <span id="mwd-'+id+'"></span></div></div>';
+      }).join('')+'</div></div>';
+    });
+    if(!html){host.innerHTML='<div style="color:var(--dim);padding:30px;text-align:center">宏观图表墙数据待生成（fetch_macro.py 每日产出）</div>';return;}
+    host.innerHTML=html;
+    todo.forEach(function(t){
+      var ser=H[t.it.id], last=ser[ser.length-1];
+      document.getElementById('mwv-'+t.id).textContent=fv(last[1]);
+      document.getElementById('mwd-'+t.id).textContent='截至 '+last[0];
+      var c=echarts.init(document.getElementById('mwc-'+t.id));
+      c.setOption({backgroundColor:'transparent',animation:false,
+        grid:{left:38,right:6,top:6,bottom:16},
+        tooltip:{trigger:'axis',backgroundColor:'#161b26',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11},formatter:function(ps){var p=ps[0];return p.axisValue+'<br><b>'+fv(p.data)+'</b>';}},
+        xAxis:{type:'category',data:ser.map(function(p){return p[0];}),axisLine:{lineStyle:{color:'#262d3d'}},axisLabel:{color:'#8a94a6',fontSize:9}},
+        yAxis:{type:'value',scale:true,axisLabel:{color:'#8a94a6',fontSize:9},splitLine:{lineStyle:{color:'#1d2330'}}},
+        series:[{type:'line',symbol:'none',data:ser.map(function(p){return p[1];}),lineStyle:{color:'#d4a944',width:1.4},areaStyle:{opacity:.06,color:'#d4a944'}}]});
+    });
+  }).catch(function(){});
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('[data-p="wall"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(drawWall,40);});});
+});
+})();
+</script>
 <script>
 const PALETTE=['#d4a944','#5b9bd5','#4caf7d','#e5534b'];
 function chartWidget(hostId, presetSel, allowIds, defMode){
