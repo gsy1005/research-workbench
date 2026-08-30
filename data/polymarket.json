@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-08-30T11:36:24.165422Z",
+ "fetched_at": "2026-08-30T12:16:22.243019Z",
  "markets": [
   {
    "question": "US recession by end of 2026?",
@@ -2854,7 +2854,7 @@
      "price": 0.9975
     }
    ],
-   "vol24": 92350,
+   "vol24": 89469,
    "end": "2026-09-16",
    "slug": "fed-decision-in-september-762",
    "history": [
@@ -7460,7 +7460,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 83952,
+   "vol24": 83155,
    "end": "2026-08-22",
    "slug": "us-ceasefire-against-iran-continues-throughptptpt",
    "history": [
