@@ -292,8 +292,44 @@ add('Y_XLV', '医疗行业ETF(XLV)', '美元', 'asset', 'L2·Yahoo', ('yahoo', '
 add('Y_XLI', '工业行业ETF(XLI)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'XLI'))
 add('Y_IBIT', '比特币ETF(IBIT)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'IBIT'))
 add('Y_PLT', '铂金ETF(PPLT)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'PPLT'))
+# ---- 流动性板块(GMF框架): 由 scripts/fetch_liquidity.py 每日管线刷新, ext=仅登记 ----
+for sid, name, unit, src in [
+    ('SOFR99', 'SOFR第99分位(尾部)', '%', 'L1·FRED/NYFed'),
+    ('TGCRRATE', 'TGCR三方回购中位利率', '%', 'L1·FRED/NYFed'),
+    ('IORB', '准备金利率IORB', '%', 'L1·FRED'),
+    ('RRPONTSYAWARD', 'ON RRP中标利率', '%', 'L1·FRED/NYFed'),
+    ('RRPONTSYD', 'ON RRP余额', '十亿美元', 'L1·FRED/NYFed'),
+    ('WRESBAL', '银行准备金余额', '百万美元', 'L1·FRED/H.4.1'),
+    ('WREPOFOR', '外国官方逆回购池(FIMA)', '百万美元', 'L1·FRED/H.4.1'),
+    ('SWPT', '央行流动性互换余额', '百万美元', 'L1·FRED/H.4.1'),
+    ('DCPF1M', '1M AA金融商票利率', '%', 'L1·FRED'),
+    ('DTWEXBGS', '广义贸易加权美元指数', '点', 'L1·FRED'),
+    ('M2SL', '美国M2(季调)', '十亿美元', 'L1·FRED'),
+    ('ECBASSETSW', '欧央行总资产', '百万欧元', 'L1·FRED/ECB'),
+    ('JPNASSETS', '日央行总资产', '十亿日元', 'L1·FRED/BOJ'),
+    ('LIQ_EZM3', '欧元区M3', '万亿欧元', 'L1·ECB'),
+    ('LIQ_CNM2', '中国M2', '万亿元', 'L3·东财(PBOC口径)'),
+    ('LIQ_CNM1', '中国M1', '万亿元', 'L3·东财(PBOC口径)'),
+    ('LIQ_SRF', 'SRF常备回购便利用量', '十亿美元', 'L1·NYFed'),
+    ('SPR_SOFR_IORB', 'SOFR-IORB利差', 'bp', '⚙️自建'),
+    ('SPR_TGCR_IORB', 'TGCR-IORB利差', 'bp', '⚙️自建'),
+    ('SPR_SOFR_EFFR', 'SOFR-EFFR利差', 'bp', '⚙️自建'),
+    ('SPR_SOFR99', 'SOFR尾部压力(99分位-中位)', 'bp', '⚙️自建'),
+    ('SPR_SOFR_ONRRP', 'SOFR-ONRRP利差', 'bp', '⚙️自建'),
+    ('SPR_CP_SOFR', '商票-SOFR利差(CP-OIS代理)', 'bp', '⚙️自建'),
+    ('NETLIQ', '净流动性(总资产-TGA-RRP)', '万亿美元', '⚙️自建'),
+    ('WALCL_YOY', '美联储总资产同比', '%', '⚙️同比'),
+    ('ECBASSETSW_YOY', '欧央行总资产同比', '%', '⚙️同比'),
+    ('JPNASSETS_YOY', '日央行总资产同比', '%', '⚙️同比'),
+    ('M2SL_YOY', '美国M2同比', '%', '⚙️同比'),
+    ('LIQ_EZM3_YOY', '欧元区M3同比', '%', '⚙️同比'),
+    ('LIQ_CNM2_YOY', '中国M2同比', '%', 'L3·东财(PBOC口径)'),
+    ('LIQ_CNM1_YOY', '中国M1同比', '%', 'L3·东财(PBOC口径)'),
+    ('GM2_YOY', '全球M2同比(美欧中简单平均)', '%', '⚙️自建'),
+]:
+    add(sid, name, unit, 'liq', src, ('ext',))
 # 仅刷新不进板块(周报已在用的序列)
-for extra in ['EFFR', 'RRPONTSYD', 'WEI', 'GDPNOW', 'BAMLC0A4CBBB', 'PAYEMS',
+for extra in ['EFFR', 'WEI', 'GDPNOW', 'BAMLC0A4CBBB', 'PAYEMS',
               'CPIAUCSL', 'CPILFESL', 'PCEPILFE', 'PERMIT', 'EXHOSLUSM495S',
               'CSUSHPISA', 'HOSSUPUSM673N', 'INDPRO', 'BUSINV', 'ISRATIO',
               'RSAFS', 'PCEC96', 'PSAVERT', 'DSPIC96', 'CES0500000003']:
@@ -307,6 +343,7 @@ SECTIONS = [
     ('trade',  '贸易'),
     ('price',  '物价'),
     ('rate',   '利率'),
+    ('liq',    '流动性'),
     ('jobs',   '就业'),
     ('energy', '能源'),
     ('asset',  '资产'),

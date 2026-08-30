@@ -138,6 +138,14 @@ a.lnk{color:var(--gold);text-decoration:none}
   <div class="panel" id="sec-trade"><div class="secnote">商品与服务贸易：出口 · 进口 · 差额</div></div>
   <div class="panel" id="sec-price"><div class="secnote">CPI/PCE/PPI同比 · 盈亏平衡通胀 · 通胀预期</div></div>
   <div class="panel" id="sec-rate"><div class="secnote">国债收益率曲线 · 政策利率 · 信用利差 · 房贷利率</div></div>
+  <div class="panel" id="p-liq">
+    <div class="secnote" id="liqNote">美元流动性追踪 · GMF框架(广义信号+狭义体系) · FRED/NYFed/ECB/东财 · ⚙️综合压力分位</div>
+    <div id="liqDash"></div>
+    <div class="card"><h3>缺口（标灰 · 不参与压力指数权重）</h3><div class="note" id="liqGaps" style="font-size:12px;line-height:1.9"></div></div>
+    <div class="card"><h3>方法论</h3><div class="note" id="liqMethod" style="font-size:12px;line-height:1.9"></div></div>
+    <h3 style="color:var(--gold);font-size:14px;margin:14px 0 8px">流动性图表墙（周报同口径）</h3>
+    <div id="liqWall"></div>
+  </div>
   <div class="panel" id="sec-jobs"><div class="secnote">失业率 · 非农 · 初请 · JOLTS · 时薪</div></div>
   <div class="panel" id="sec-energy"><div class="secnote">原油 · 天然气 · 汽油零售价 · 产量</div></div>
   <div class="panel" id="sec-asset"><div class="secnote">股 · 债 · 汇 · 金 · 币 · 房 —— 资产价格全景</div></div>
@@ -221,9 +229,20 @@ $('tabs').addEventListener('click',e=>{
       if(j){LEV=j;renderLev();}else $('levNote').textContent='cftc.json未生成: 等待每日管线运行 fetch_cftc.py';
     }).catch(()=>{$('levNote').textContent='cftc.json加载失败';});
   }
+  if(b.dataset.p==='p-liq'&&!LIQ){
+    fetch('../data/liquidity.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{
+      if(j){LIQ=j;renderLiq();renderMacro('liq',$('liqWall'));}
+      else $('liqNote').textContent='liquidity.json未生成: 等待每日管线运行 fetch_liquidity.py';
+    }).catch(()=>{$('liqNote').textContent='liquidity.json加载失败';});
+  }
   setTimeout(()=>{Object.values(CH).forEach(c=>c.resize&&c.resize());},30);
 });
 const CH={};
+/* 哈希直开页签: #liq / #lev / #ht / #rate… */
+if(location.hash){
+  const t=document.querySelector('#tabs button[data-p="p'+location.hash.replace('#','-')+'"]')||document.querySelector('#tabs button[data-p="sec'+location.hash+'"]');
+  if(t)t.click();
+}
 
 /* ---------- 统计卡 ---------- */
 function renderStats(){
@@ -405,6 +424,37 @@ function renderMacro(sec,host){
       series:[{type:'line',symbol:'none',data:ser.map(p=>p[1]),lineStyle:{color:'#d4a944',width:1.5},areaStyle:{opacity:.07,color:'#d4a944'}}]
     });
   });
+}
+
+/* ---------- 流动性看板 ---------- */
+let LIQ=null;
+const LIQ_INV={onrrp:1,reserves:1,netliq:1};  // 低=紧的卡
+function renderLiq(){
+  const j=LIQ; if(!j)return;
+  const st=j.stress||{value:null}, rg=j.regime||{};
+  $('liqNote').textContent='美元流动性追踪 · 更新 '+j.updated+' · 数据截至 '+j.asof+' · 缩表阶段'+(rg.stage||'—')+'（ON RRP '+(rg.onrrp_bn!=null?rg.onrrp_bn.toFixed(2):'—')+'十亿$）';
+  const sig=(j.signals&&j.signals.broad)||[], fund=(j.signals&&j.signals.funding)||[];
+  const lamp=(on,t1,t0)=>`<span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;border:1px solid ${on?'var(--red)':'var(--line)'};color:${on?'var(--red)':'var(--dim)'};background:${on?'rgba(229,83,75,.15)':'transparent'}">${on?t1:t0}</span>`;
+  let h='<div class="stats" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">';
+  h+=`<div class="stat"><div class="k">⚙️流动性综合压力分位</div><div class="v" style="color:${pctColor(st.value||0)}">${st.value??'—'}<span style="font-size:13px;color:var(--dim)">/100</span></div><div class="d">${st.n_comp||0}项分量等权 · ≥80偏紧 ≤20宽松</div></div>`;
+  h+=`<div class="stat"><div class="k">缩表阶段判定</div><div class="v" style="color:var(--gold)">阶段${rg.stage??'—'}</div><div class="d">${esc(rg.desc||'')}</div></div>`;
+  h+=`<div class="stat"><div class="k">信号</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">${lamp(j.buy_signal,'广义冲击>2σ · 买入窗口','广义信号: 无')}${lamp(j.funding_alert,'融资压力警报>2σ','融资警报: 无')}</div><div class="d" style="margin-top:6px">${sig.map(x=>`${x.name} z=${x.z}`).join(' · ')}</div></div>`;
+  h+='</div>';
+  // 分量条
+  if(st.components){
+    h+='<div class="card"><h3>压力分量（2019以来分位，越高越紧）</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px 16px">'+
+      st.components.map(c=>`<div style="font-size:12px;color:var(--dim)">${esc(c.name)} <span style="float:right;color:${pctColor(c.pct)};font-weight:700">${c.pct}</span><div style="height:4px;background:#22262e;border-radius:2px;margin-top:3px"><div style="height:4px;width:${c.pct}%;background:${pctColor(c.pct)};border-radius:2px"></div></div></div>`).join('')+'</div></div>';
+  }
+  // 日度看板卡
+  h+='<div class="stats" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">';
+  h+=(j.cards||[]).map(c=>{
+    const p=LIQ_INV[c.id]?100-c.pct:c.pct;
+    const chg=c.chg==null?'':((c.chg>0?'+':'')+c.chg);
+    return `<div class="stat"><div class="k">${esc(c.name)}</div><div class="v" style="font-size:20px;color:${pctColor(p)}">${c.val}<span style="font-size:12px;color:var(--dim)"> ${esc(c.unit)}</span></div><div class="d">${c.date} · Δ${chg} · 分位${c.pct}</div></div>`;
+  }).join('')+'</div>';
+  $('liqDash').innerHTML=h;
+  $('liqGaps').innerHTML=(j.gaps||[]).map(g=>'· '+esc(g)).join('<br>');
+  $('liqMethod').textContent=j.methodology||'';
 }
 
 /* ---------- 贵金属杠杆 ---------- */
