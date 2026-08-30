@@ -95,25 +95,41 @@ def percentile(series, v):
     return round(100.0 * bisect.bisect_left(xs, v) / len(xs), 1)
 
 def fetch_etf_shares(cs):
-    """Yahoo份额快照积累: GLD/SLV sharesOutstanding → ETF腿序列 (26周后启用)"""
+    """Yahoo份额快照积累: GLD/SLV sharesOutstanding → ETF腿序列 (26周后启用)
+    v7/quote需cookie+crumb鉴权(免费), 限流则跳过保留旧值"""
+    import http.cookiejar
+    cj = http.cookiejar.CookieJar()
+    op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    op.addheaders = [('User-Agent', 'Mozilla/5.0 (research workbench)')]
+    try:
+        op.open('https://fc.yahoo.com', timeout=15)
+    except Exception:
+        pass  # fc.yahoo.com 返404属正常, cookie已种
+    try:
+        crumb = op.open('https://query1.finance.yahoo.com/v1/test/getcrumb', timeout=15).read().decode().strip()
+    except Exception as e:
+        log('  crumb获取失败, ETF腿跳过:', repr(e)[:80])
+        return {}
     out = {}
+    try:
+        j = json.loads(op.open(
+            f'https://query1.finance.yahoo.com/v7/finance/quote?symbols=GLD,SLV&crumb={urllib.parse.quote(crumb)}',
+            timeout=15).read())
+        res = {r['symbol']: r for r in j.get('quoteResponse', {}).get('result', [])}
+    except Exception as e:
+        log('  ETF份额请求失败(Yahoo限流则跳过, 保留旧值):', repr(e)[:80])
+        return {}
     for sym, key in [('GLD', 'GLD_SHARES'), ('SLV', 'SLV_SHARES')]:
-        url = f'https://query1.finance.yahoo.com/v10/finance/quoteSummary/{sym}?modules=defaultKeyStatistics'
-        blob = http_get(url, timeout=15, retries=1)
-        if not blob:
-            log('  ETF份额快照失败(Yahoo限流则跳过, 保留旧值)', sym)
+        sh = res.get(sym, {}).get('sharesOutstanding')
+        if not sh:
+            log('  %s份额缺失, 跳过' % sym)
             continue
-        try:
-            j = json.loads(blob)
-            sh = j['quoteSummary']['result'][0]['defaultKeyStatistics']['sharesOutstanding']['raw']
-            today = datetime.date.today().isoformat()
-            old = {p[0]: p[1] for p in cs.get(key, [])}
-            old[today] = round(sh)
-            cs[key] = sorted(old.items())
-            out[sym] = sh
-            log('  %s份额: %.0f (累计%d点)' % (sym, sh, len(cs[key])))
-        except Exception as e:
-            log('  ETF份额解析失败', sym, repr(e)[:80])
+        today = datetime.date.today().isoformat()
+        old = {p[0]: p[1] for p in cs.get(key, [])}
+        old[today] = round(sh)
+        cs[key] = sorted(old.items())
+        out[sym] = sh
+        log('  %s份额: %.0f (累计%d点)' % (sym, sh, len(cs[key])))
     return out
 
 def main():
