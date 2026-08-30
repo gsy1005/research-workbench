@@ -102,10 +102,12 @@ a.lnk{color:var(--gold);text-decoration:none}
     <button data-p="sec-jobs" class="macro">就业</button>
     <button data-p="sec-energy" class="macro">能源</button>
     <button data-p="sec-asset" class="macro">资产</button>
+    <button data-p="p-lev" style="border-color:var(--gold)">贵金属杠杆</button>
     <button data-p="sec-mfg" class="macro">制造业</button>
     <button data-p="sec-move" class="macro">国际移动</button>
     <button data-p="p3">TACO事件复盘</button>
     <button data-p="p4">Truths跟踪</button>
+    <button data-p="p-ht" style="border-color:var(--gold)">华泰库</button>
   </div>
 
   <div class="panel on" id="p1">
@@ -165,6 +167,39 @@ a.lnk{color:var(--gold);text-decoration:none}
     <div id="mkList"></div>
   </div>
 
+  <div class="panel" id="p-lev">
+    <div class="secnote" id="levNote">贵金属综合杠杆指标 · ⚙️自建仿国君期货方法论 · 期货腿=CFTC非商业净持仓(周) · ETF腿=GLD/SLV份额(快照积累)</div>
+    <div class="stats" id="levCards" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))"></div>
+    <div class="card">
+      <h3>非商业净持仓（手）· 近3年周频</h3>
+      <div class="rng" id="levRng"></div>
+      <div class="chart" id="levChart" style="height:400px"></div>
+      <div class="note" id="levMeta"></div>
+    </div>
+    <div class="card">
+      <h3>方法论与对标</h3>
+      <div class="note" style="font-size:12.5px;line-height:1.9" id="levMethod"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-ht">
+    <div class="secnote">华泰固收5库解析入库 · 共<b id="htCnt">…</b>条序列 · L2·华泰固收库（2026-07-05快照，Excel内为iFinD公式，用户刷新后可重新上传更新）· 末尾0值占位已修剪</div>
+    <div class="filterRow">
+      <input id="htQ" placeholder="搜索指标名 / 表名，如：CFTC、社融、10Y、 platinum…">
+      <span class="note" id="htHit"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:210px 1fr;gap:12px" id="htGrid">
+      <div>
+        <div class="card" style="padding:10px" id="htLibs"></div>
+        <div class="card" style="padding:10px;max-height:520px;overflow:auto" id="htSheets"></div>
+      </div>
+      <div>
+        <div class="card" style="padding:10px;max-height:300px;overflow:auto" id="htList"></div>
+        <div class="card"><h3 id="htTitle">选择左侧指标</h3><div class="chart" id="htChart" style="height:380px"></div><div class="note" id="htMeta"></div></div>
+      </div>
+    </div>
+  </div>
+
   <div class="src" id="srcNote"></div>
   <div class="src"><a class="lnk" href="../index.html">← 返回工作台</a> · <a class="lnk" href="../reports/weekly_2026-W35.html">宏观周报 ↗</a> · <a class="lnk" href="mm_upload.html">更新MM数据 ↗</a></div>
 </div>
@@ -180,6 +215,12 @@ $('tabs').addEventListener('click',e=>{
   document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
   if(b.dataset.p.startsWith('sec-'))renderMacro(b.dataset.p.slice(4));
+  if(b.dataset.p==='p-ht'&&!HT.lib)initHT();
+  if(b.dataset.p==='p-lev'&&!LEV){
+    fetch('../data/cftc.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{
+      if(j){LEV=j;renderLev();}else $('levNote').textContent='cftc.json未生成: 等待每日管线运行 fetch_cftc.py';
+    }).catch(()=>{$('levNote').textContent='cftc.json加载失败';});
+  }
   setTimeout(()=>{Object.values(CH).forEach(c=>c.resize&&c.resize());},30);
 });
 const CH={};
@@ -365,6 +406,156 @@ function renderMacro(sec,host){
     });
   });
 }
+
+/* ---------- 贵金属杠杆 ---------- */
+let LEV=null, LEV_CUR='gold';
+const LEV_COLORS={gold:'#d4a944',silver:'#c0c8d0',platinum:'#8fb8a8',palladium:'#b08fc5'};
+function pctColor(p){return p>=80?'var(--red)':(p>=60?'var(--orange)':(p>=40?'var(--gold)':'var(--green)'));}
+function renderLev(){
+  if(!LEV)return;
+  const L=LEV.leverage||{};
+  $('levNote').textContent='贵金属综合杠杆指标 · ⚙️自建仿国君期货方法论 · 更新 '+LEV.updated+' · '+LEV.src;
+  $('levCards').innerHTML=['gold','silver','platinum','palladium'].map(k=>{
+    const d=L[k];if(!d)return'';
+    if(d.gap)return `<div class="stat"><div class="k">${d.name}杠杆率</div><div class="v flat">缺口</div><div class="d">CFTC序列不足</div></div>`;
+    const pc=d.pct>=80?'up':(d.pct<=20?'down':'flat');
+    return `<div class="stat"><div class="k">${d.name}杠杆分位 ⚙️</div>
+      <div class="v" style="color:${pctColor(d.pct)}">${d.pct}<span style="font-size:13px;color:var(--dim)">/100</span></div>
+      <div class="d">净持仓 ${d.net_contracts.toLocaleString()}手 · 截至${d.asof}<br>13周变化分位 ${d.pct_chg??'—'} · 变化 ${d.chg_13w>0?'+':''}${(d.chg_13w||0).toLocaleString()}手</div></div>`;
+  }).join('');
+  // ETF腿状态
+  const etf=LEV.etf_leg||{};
+  const etfTxt=['GLD','SLV'].map(s=>{const e=etf[s];return e?`${s}份额已积累${e.n}点${e.ready?'(ETF腿已启用)':'(满26周启用ETF腿)'}`:'';}).filter(x=>x).join(' · ');
+  $('levMethod').innerHTML=esc(LEV.method||'')+(etfTxt?'<br><br><b>ETF腿:</b> '+esc(etfTxt):'')+
+    '<br><br><b>对标国君期货2026-08-26《贵金属杠杆信号解构》:</b> 其结论——①极端杠杆极值多源于ETF腿 ②杠杆<b>变化</b>比杠杆<b>水平</b>对价格解释力更高(ETF资金流解释度10.9% vs 杠杆变化3.0%) ③品种间杠杆差异大 ④高分位≠立即见顶(黄金48.6分位已回归中性)。'+
+    '本面板分位口径与其不同(仅用期货腿·2019以来全样本), 数值不可直接对比, 信号方向参考使用。';
+  renderLevChart();
+}
+function renderLevChart(){
+  const L=LEV.leverage||{};const d=L[LEV_CUR];
+  $('levRng').innerHTML=['gold','silver','platinum','palladium'].map(k=>
+    `<button data-k="${k}" class="${LEV_CUR===k?'on':''}" style="${LEV_CUR===k?'':''}">${(L[k]||{}).name||k}</button>`).join('');
+  if(!d||d.gap){$('levMeta').textContent='该品种数据不足';return;}
+  const ser=d.series_tail;
+  if(!CH.lev)CH.lev=echarts.init($('levChart'));
+  CH.lev.setOption({
+    backgroundColor:'transparent',animation:false,
+    tooltip:{trigger:'axis',backgroundColor:'#171a20',borderColor:'#2a2e37',textStyle:{color:'#e8e6e1',fontSize:12}},
+    grid:{left:64,right:20,top:20,bottom:56},
+    xAxis:{type:'category',data:ser.map(p=>p[0]),axisLine:{lineStyle:{color:'#2a2e37'}},axisLabel:{color:'#9a958c',fontSize:10}},
+    yAxis:{type:'value',scale:true,axisLabel:{color:'#9a958c'},splitLine:{lineStyle:{color:'#22262e'}}},
+    dataZoom:[{type:'slider',height:16,bottom:20,borderColor:'#2a2e37',backgroundColor:'#171a20',textStyle:{color:'#9a958c'}}],
+    series:[{type:'line',symbol:'none',data:ser.map(p=>p[1]),lineStyle:{color:LEV_COLORS[LEV_CUR],width:1.8},areaStyle:{opacity:.08,color:LEV_COLORS[LEV_CUR]}}]
+  },true);
+  $('levMeta').textContent=`${d.name}非商业净持仓 · L1·CFTC每周五发布(持仓日=周二) · 当前分位 ${d.pct}/100`;
+}
+$('levRng').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  LEV_CUR=b.dataset.k;renderLevChart();
+});
+
+/* ---------- 华泰库 ---------- */
+let HT={lib:null,sheet:null,key:null,loaded:{}};
+function htLoadLib(lib,cb){
+  if(HT.loaded[lib])return cb();
+  const s=document.createElement('script');
+  s.src='../data/ht_series_'+lib+'.js?v=20260705';
+  s.onload=()=>{HT.loaded[lib]=1;cb();};
+  s.onerror=()=>{$('htTitle').textContent='数据文件加载失败: ht_series_'+lib+'.js';};
+  document.head.appendChild(s);
+}
+function htRenderLibs(){
+  const C=window.HT_CATALOG||{},N=window.HT_LIBNAMES||{};
+  $('htLibs').innerHTML=Object.keys(C).map(l=>{
+    const n=Object.values(C[l]).reduce((a,v)=>a+v.length,0);
+    return `<div style="padding:5px 8px;border-radius:6px;cursor:pointer;font-size:12.5px;${HT.lib===l?'background:var(--gold);color:#111;font-weight:700':'color:var(--dim)'}" data-lib="${l}">${esc(N[l]||l)} <span style="opacity:.7">${n}</span></div>`;
+  }).join('');
+}
+function htRenderSheets(){
+  const C=window.HT_CATALOG||{};
+  const sh=(C[HT.lib]||{});
+  $('htSheets').innerHTML=Object.keys(sh).map(s=>
+    `<div style="padding:4px 8px;border-radius:6px;cursor:pointer;font-size:12px;${HT.sheet===s?'background:rgba(212,169,68,.25);color:var(--gold)':'color:var(--dim)'}" data-sheet="${esc(s)}">${esc(s)} <span style="opacity:.65">${sh[s].length}</span></div>`
+  ).join('');
+}
+function htRenderList(){
+  const C=window.HT_CATALOG||{},S=window.HT_SERIES||{};
+  const q=($('htQ').value||'').trim().toLowerCase();
+  let keys=(C[HT.lib]&&C[HT.lib][HT.sheet])||[];
+  if(q){
+    keys=Object.keys(S).filter(k=>S[k].name.toLowerCase().includes(q));
+    $('htHit').textContent=keys.length+' 条命中（全库）';
+  }else $('htHit').textContent='';
+  keys=keys.slice(0,400);
+  $('htList').innerHTML=keys.map(k=>
+    `<div style="padding:3px 8px;border-radius:5px;cursor:pointer;font-size:12px;${HT.key===k?'background:rgba(212,169,68,.25);color:var(--gold)':'color:var(--txt)'}" data-key="${esc(k)}">${esc(S[k]?S[k].name:k)} <span style="opacity:.5">${S[k]?esc(S[k].unit):''}</span></div>`
+  ).join('')||'<div class="empty">无数据</div>';
+}
+function htRenderChart(){
+  const d=(window.HT_SERIES||{})[HT.key];
+  if(!d)return;
+  $('htTitle').textContent=d.name;
+  const ser=d.series,last=ser[ser.length-1];
+  $('htMeta').textContent=`${d.src} · ${d.unit||''} · 截至 ${last[0]} · ${ser.length}点 · 最新值 ${fmtV(last[1])}`;
+  if(!CH.ht)CH.ht=echarts.init($('htChart'));
+  CH.ht.setOption({
+    backgroundColor:'transparent',animation:false,
+    tooltip:{trigger:'axis',backgroundColor:'#171a20',borderColor:'#2a2e37',textStyle:{color:'#e8e6e1',fontSize:12}},
+    grid:{left:56,right:20,top:20,bottom:58},
+    xAxis:{type:'category',data:ser.map(p=>p[0]),axisLine:{lineStyle:{color:'#2a2e37'}},axisLabel:{color:'#9a958c',fontSize:10}},
+    yAxis:{type:'value',scale:true,axisLabel:{color:'#9a958c'},splitLine:{lineStyle:{color:'#22262e'}}},
+    dataZoom:[{type:'slider',height:16,bottom:20,borderColor:'#2a2e37',backgroundColor:'#171a20',textStyle:{color:'#9a958c'}}],
+    series:[{type:'line',symbol:'none',data:ser.map(p=>p[1]),lineStyle:{color:'#d4a944',width:1.8},areaStyle:{opacity:.08,color:'#d4a944'}}]
+  },true);
+}
+function initHT(){
+  if(!window.HT_CATALOG){
+    const s=document.createElement('script');s.src='../data/ht_catalog.js?v=20260705';
+    s.onload=()=>{initHT2();};document.head.appendChild(s);
+  }else initHT2();
+}
+function initHT2(){
+  const C=window.HT_CATALOG||{};
+  HT.lib=HT.lib||Object.keys(C)[0];
+  HT.sheet=HT.sheet||Object.keys(C[HT.lib]||{})[0];
+  const total=Object.values(C).reduce((a,v)=>a+Object.values(v).reduce((x,y)=>x+y.length,0),0);
+  $('htCnt').textContent=total;
+  htLoadLib(HT.lib,()=>{htRenderLibs();htRenderSheets();htRenderList();
+    const first=(C[HT.lib][HT.sheet]||[])[0];
+    if(first){HT.key=first;htRenderChart();}
+  });
+}
+$('htLibs').addEventListener('click',e=>{
+  const t=e.target.closest('[data-lib]');if(!t)return;
+  HT.lib=t.dataset.lib;HT.sheet=null;HT.key=null;
+  htLoadLib(HT.lib,()=>{htRenderLibs();
+    HT.sheet=Object.keys((window.HT_CATALOG||{})[HT.lib]||{})[0];
+    htRenderSheets();htRenderList();
+    const first=((window.HT_CATALOG||{})[HT.lib][HT.sheet]||[])[0];
+    if(first){HT.key=first;htRenderChart();}
+  });
+});
+$('htSheets').addEventListener('click',e=>{
+  const t=e.target.closest('[data-sheet]');if(!t)return;
+  HT.sheet=t.dataset.sheet;HT.key=null;htRenderSheets();htRenderList();
+  const first=((window.HT_CATALOG||{})[HT.lib][HT.sheet]||[])[0];
+  if(first){HT.key=first;htRenderChart();}
+});
+$('htList').addEventListener('click',e=>{
+  const t=e.target.closest('[data-key]');if(!t)return;
+  const k=t.dataset.key;
+  // 跨库搜索命中时先加载对应库
+  const lib=Object.keys(window.HT_CATALOG||{}).find(l=>k.startsWith('HT_'+l+'_'));
+  const go=()=>{HT.key=k;htRenderList();htRenderChart();};
+  if(lib&&!HT.loaded[lib])htLoadLib(lib,go);else go();
+});
+$('htQ').addEventListener('input',()=>{
+  // 搜索需全库加载
+  const libs=Object.keys(window.HT_CATALOG||{});
+  let pend=libs.filter(l=>!HT.loaded[l]);
+  if(!pend.length)return htRenderList();
+  pend.forEach(l=>htLoadLib(l,()=>{pend=pend.filter(x=>x!==l);if(!pend.length)htRenderList();}));
+});
 
 /* ---------- 启动 ---------- */
 Promise.all([

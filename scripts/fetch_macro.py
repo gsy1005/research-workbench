@@ -248,6 +248,50 @@ add('NEWORDER', '核心资本品订单', '百万美元', 'mfg', 'L1·FRED/Census
 add('TSA_PAX', 'TSA日均安检旅客', '百万人', 'move', 'L1·TSA', ('tsa',))
 # 民调 poll 补充(支持率主图在 trump_zone.json)
 add('UMCSENT', '密歇根消费者信心', '点', 'poll', 'L1·FRED/UMich', ('fred', 'UMCSENT'))
+# iFinD直采(由 scripts/fetch_ifind.py 每日沙箱管线刷新, Actions不抓; ext=仅登记元数据)
+add('IF_000300SH', '沪深300指数', '点', 'cn', 'L1·iFinD⚙️直采', ('ext',))
+add('IF_000001SH', '上证综合指数', '点', 'cn', 'L1·iFinD⚙️直采', ('ext',))
+add('IF_399006SZ', '创业板指', '点', 'cn', 'L1·iFinD⚙️直采', ('ext',))
+add('IF_000905SH', '中证500指数', '点', 'cn', 'L1·iFinD⚙️直采', ('ext',))
+add('IF_AU9999', '沪金AU9999现货', '元/克', 'asset', 'L1·iFinD⚙️直采', ('ext',))
+add('IF_AG9999', '沪银AG9999现货', '元/千克', 'asset', 'L1·iFinD⚙️直采', ('ext',))
+# CFTC持仓(由 scripts/fetch_cftc.py 每日管线刷新; ext=仅登记)
+add('CFTC_GC_NET', '黄金非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_SI_NET', '白银非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_PL_NET', '铂金非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_PA_NET', '钯金非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_DX_NET', '美元指数非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_JY_NET', '日元非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_ES_NET', '标普E-mini非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_BTC_NET', '比特币期货非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_HG_NET', '铜非商业净持仓', '手', 'asset', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_TY_NET', '10Y美债期货净投机', '手', 'rate', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_US_NET', '30Y美债期货净投机', '手', 'rate', 'L1·CFTC⚙️周报', ('ext',))
+add('CFTC_TU_NET', '2Y美债期货净投机', '手', 'rate', 'L1·CFTC⚙️周报', ('ext',))
+add('GLD_SHARES', 'GLD基金份额(积累)', '份', 'asset', 'L2·Yahoo⚙️快照积累', ('ext',))
+add('SLV_SHARES', 'SLV基金份额(积累)', '份', 'asset', 'L2·Yahoo⚙️快照积累', ('ext',))
+# ---- B类扩充: 金融条件/外国国债/信用与行业ETF/汇率 ----
+add('NFCI', '芝加哥联储金融条件指数', '点', 'rate', 'L1·FRED/ChicagoFed', ('fred', 'NFCI'))
+add('STFSI4', '圣路易斯联储金融压力指数', '点', 'rate', 'L1·FRED/StLouisFed', ('fred', 'STFSI4'))
+add('IRLTLT01JPM156N', '日本10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01JPM156N'))
+add('IRLTLT01DEM156N', '德国10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01DEM156N'))
+add('IRLTLT01GBM156N', '英国10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01GBM156N'))
+add('ECBDFR', '欧央行存款利率', '%', 'rate', 'L1·FRED/ECB', ('fred', 'ECBDFR'))
+add('Y_LQD', '投资级信用债ETF(LQD)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'LQD'))
+add('Y_HYG', '高收益信用债ETF(HYG)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'HYG'))
+add('Y_EMB', '新兴市场债ETF(EMB)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'EMB'))
+add('Y_TLT', '20Y+美债ETF(TLT)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'TLT'))
+add('Y_GLD', '黄金ETF(GLD)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'GLD'))
+add('Y_SLV', '白银ETF(SLV)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'SLV'))
+add('Y_USDJPY', '美元兑日元', '日元', 'asset', 'L2·Yahoo', ('yahoo', 'JPY=X'))
+add('Y_EURUSD', '欧元兑美元', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'EURUSD=X'))
+add('Y_XLK', '科技行业ETF(XLK)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'XLK'))
+add('Y_XLF', '金融行业ETF(XLF)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'XLF'))
+add('Y_XLE', '能源行业ETF(XLE)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'XLE'))
+add('Y_XLV', '医疗行业ETF(XLV)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'XLV'))
+add('Y_XLI', '工业行业ETF(XLI)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'XLI'))
+add('Y_IBIT', '比特币ETF(IBIT)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'IBIT'))
+add('Y_PLT', '铂金ETF(PPLT)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'PPLT'))
 # 仅刷新不进板块(周报已在用的序列)
 for extra in ['EFFR', 'RRPONTSYD', 'WEI', 'GDPNOW', 'BAMLC0A4CBBB', 'PAYEMS',
               'CPIAUCSL', 'CPILFESL', 'PCEPILFE', 'PERMIT', 'EXHOSLUSM495S',
@@ -313,6 +357,13 @@ def main():
     for it in S:
         how = it['how']; kind = how[0]
         try:
+            if kind == 'ext':
+                # 外部管线(如iFinD)刷新的键: 只登记, 保留既有数据
+                if len(hist.get(it['id'], [])) >= 3:
+                    ok.append(it['id'])
+                else:
+                    fail.append(it['id'])
+                continue
             if kind in ('fred', 'debt', 'tsa'):
                 ser = raw.get(how[1] if kind == 'fred' else it['id'], [])
             elif kind == 'yahoo':
