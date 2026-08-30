@@ -56,6 +56,10 @@
   .tag2.on{border-color:var(--gold);color:var(--gold);background:rgba(212,169,68,.08);}
   .tag2 .u{font-size:10px;opacity:.7;}
   #chartBox{width:100%;height:520px;}
+  .dtabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;position:sticky;top:0;z-index:50;background:var(--bg);padding:10px 0;}
+  .dtabs button{background:#1c2333;color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:8px 16px;font-family:inherit;font-size:13px;cursor:pointer;}
+  .dtabs button.on{background:var(--gold);color:#111;border-color:var(--gold);font-weight:700;}
+  .dp{display:none;} .dp.on{display:block;}
   .chart-note{font-size:11px;color:var(--dim);margin-top:6px;}
   /* 置顶日历横排 */
   .calrow{display:flex;flex-wrap:wrap;gap:10px;}
@@ -101,6 +105,17 @@
   </div>
 </header>
 
+<!-- ============ 板块页签 ============ -->
+<div class="dtabs" id="dtabs">
+  <button data-dp="dp1" class="on">总览</button>
+  <button data-dp="dp2">观点与证伪</button>
+  <button data-dp="dp3">政策与地缘</button>
+  <button data-dp="dp4">数据图表</button>
+  <button data-dp="dp5">数据总表</button>
+  <button data-dp="dp6">消息流</button>
+</div>
+
+<section class="dp on" id="dp1">
 <!-- ============ 宏观日历（置顶·横排·按钮切换） ============ -->
 <h2 style="margin-top:0">宏观日历<span class="en">MACRO CALENDAR · 未来两周与关键节点</span></h2>
 <div class="card" style="padding:14px 16px;">
@@ -141,6 +156,8 @@
   <p><b>【资产映射】</b>①贵金属：利率冲击压倒避险与央行购金叙事，金单日-3.45%至4503。联合阈值规则下——金破4520✅、但10Y实际利率尚未破2.45%❌——<b>不宣告A胜，观点不跨零直翻</b>；金银短期转入震荡偏弱，等待实际利率方向确认。②美债：曲线走陡头寸单日回撤（利差-8bp），39bp仍高于前期20bp的介入参考位，策略不因单日回撤退出。③美股：分子端盈利对冲分母端紧缩，risk-on未破，但估值对实际利率的敏感度在累积。④原油：远期供给叙事与即期平稳并存，83-88区间震荡延续。</p>
 </div>
 
+</section>
+<section class="dp" id="dp2">
 <!-- ============ 三、证伪雷达 ============ -->
 <h2>三、证伪雷达<span class="en">FALSIFICATION RADAR</span></h2>
 <table class="radar">
@@ -173,6 +190,8 @@
 </details>
 
 <!-- ============ 五、数据图表区 ============ -->
+</section>
+<section class="dp" id="dp3">
 <!-- ============ 五、政策定价与日历 ============ -->
 <h2>五、政策定价与地缘跟踪<span class="en">POLICY PRICING & GEO</span></h2>
 <div class="grid2">
@@ -181,6 +200,8 @@
 </div>
 <div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div></div>
 
+</section>
+<section class="dp" id="dp4">
 <h2>六、数据图表<span class="en">CHARTS · 点选指标叠加 · 折线/季节性切换</span></h2>
 <div class="chart-panel">
   <div class="chart-ctl">
@@ -200,17 +221,22 @@
   <div class="chart-note">折线模式：多指标自动分配左右轴，拖动下方滑块缩放。季节性模式：同一指标按年份叠线（当年加粗金色），适合库存/能源/贵金属等强季节性品种；多选时各指标分图显示。</div>
 </div>
 
+</section>
+<section class="dp" id="dp5">
 <!-- ============ 六、日度数据总表 ============ -->
 <h2>七、日度数据总表<span class="en">ALL DAILY SERIES · L1官方 / L2交易所·权威媒体 / ⚙️自建 / 灰=缺口</span></h2>
 <div id="tables"></div>
 
+</section>
+<section class="dp" id="dp6">
 <!-- ============ 七、三源实时消息 ============ -->
 <h2>八、三源实时消息流<span class="en">NEWS · 金十PLUS / 先讯VIP / CS财经 · 截止18:36</span></h2>
 <div class="news" id="news"></div>
+</section>
 
 <footer style="margin-top:36px;color:var(--dim);font-size:11px;border-top:1px solid var(--line);padding-top:12px;">
   宏观研究日报 · 数据皆有来源，缺口标灰 · 观点事前冻结 · 框架版本 v1.0（八大版块）<br>
-  <a href="../index.html">← 返回工作台</a> · <a href="../panels/macro_framework.html">宏观框架面板 ↗</a> · <a href="../panels/2026-08-28.html">0828面板</a> · <a href="weekly_2026-W35.html">本周周报 ↗</a>
+  <a href="../index.html">← 返回工作台</a> · <a href="../panels/macro_framework.html">宏观框架面板 ↗</a> · <a href="../panels/trump_zone.html">特朗普专区 ↗</a> · <a href="../panels/2026-08-28.html">0828面板</a> · <a href="weekly_2026-W35.html">本周周报 ↗</a>
 </footer>
 </div>
 
@@ -438,6 +464,15 @@ function refreshLive(){
   document.head.appendChild(s);
 }
 document.addEventListener('DOMContentLoaded', ()=>{ if(window.LIVE_SNAPSHOT) renderLive(window.LIVE_SNAPSHOT); });
+</script>
+<script>
+document.getElementById('dtabs').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#dtabs button').forEach(function(x){ x.classList.toggle('on', x===b); });
+  document.querySelectorAll('.dp').forEach(function(p){ p.classList.toggle('on', p.id===b.dataset.dp); });
+  if(b.dataset.dp === 'dp4'){ setTimeout(function(){ try{ chart.resize(); }catch(err){} }, 40); }
+  window.scrollTo(0, 0);
+});
 </script>
 </body>
 </html>
