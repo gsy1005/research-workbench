@@ -1,0 +1,198 @@
+{
+ "source": "Polymarket Gamma API（GitHub Actions每日快照）",
+ "fetched_at": "2026-08-30T10:57:32.239489Z",
+ "markets": [
+  {
+   "question": "Will the Fed decrease interest rates by 50+ bps after the September 2026 meeting?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0025
+    },
+    {
+     "name": "No",
+     "price": 0.9975
+    }
+   ],
+   "vol24": 88257,
+   "end": "2026-09-16",
+   "slug": "fed-decision-in-september-762"
+  },
+  {
+   "question": "Will Tarcisio de Freitas win the 2026 Brazilian presidential election?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0005
+    },
+    {
+     "name": "No",
+     "price": 0.9995
+    }
+   ],
+   "vol24": 343,
+   "end": "2026-10-04",
+   "slug": "brazil-presidential-election"
+  },
+  {
+   "question": "Will Donald Trump win the 2028 Republican presidential nomination?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0205
+    },
+    {
+     "name": "No",
+     "price": 0.9795
+    }
+   ],
+   "vol24": 1087,
+   "end": "2028-11-07",
+   "slug": "republican-presidential-nominee-2028"
+  },
+  {
+   "question": "Will Marine Le Pen win the 2027 French presidential election?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.3335
+    },
+    {
+     "name": "No",
+     "price": 0.6665
+    }
+   ],
+   "vol24": 3286,
+   "end": "2027-04-30",
+   "slug": "next-french-presidential-election"
+  },
+  {
+   "question": "US announces end of Iranian blockade by July 24, 2026?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0
+    },
+    {
+     "name": "No",
+     "price": 1.0
+    }
+   ],
+   "vol24": 241190,
+   "end": "2026-07-25",
+   "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080"
+  },
+  {
+   "question": "Will JD Vance win the 2028 US Presidential Election?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.2535
+    },
+    {
+     "name": "No",
+     "price": 0.7465
+    }
+   ],
+   "vol24": 20016,
+   "end": "2028-11-07",
+   "slug": "presidential-election-winner-2028"
+  },
+  {
+   "question": "Will Abiy Ahmed be the next Prime Minister of Ethiopia?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.9735
+    },
+    {
+     "name": "No",
+     "price": 0.0265
+    }
+   ],
+   "vol24": 2294,
+   "end": "2026-06-01",
+   "slug": "next-prime-minister-of-ethiopia"
+  },
+  {
+   "question": "Will United Russia (ER) gain the most seats in the next Russian parliamentary election?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.715
+    },
+    {
+     "name": "No",
+     "price": 0.285
+    }
+   ],
+   "vol24": 96679,
+   "end": "2026-09-30",
+   "slug": "which-party-will-gain-most-seats-in-russian-parliamentary-election"
+  },
+  {
+   "question": "Will Gavin Newsom win the 2028 Democratic presidential nomination?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.1455
+    },
+    {
+     "name": "No",
+     "price": 0.8545
+    }
+   ],
+   "vol24": 26092,
+   "end": "2028-11-07",
+   "slug": "democratic-presidential-nominee-2028"
+  },
+  {
+   "question": "2026 Balance of Power: D Senate, D House",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.495
+    },
+    {
+     "name": "No",
+     "price": 0.505
+    }
+   ],
+   "vol24": 5274,
+   "end": "2026-11-03",
+   "slug": "balance-of-power-2026-midterms"
+  },
+  {
+   "question": "Will Trump praise Benjamin Netanyahu in August?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.365
+    },
+    {
+     "name": "No",
+     "price": 0.635
+    }
+   ],
+   "vol24": 119167,
+   "end": "2026-08-31",
+   "slug": "who-will-trump-publicly-praise-in-august-20260728221212339"
+  },
+  {
+   "question": "Will no Fed rate cuts happen in 2026?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.8765
+    },
+    {
+     "name": "No",
+     "price": 0.1235
+    }
+   ],
+   "vol24": 78587,
+   "end": "2026-12-31",
+   "slug": "how-many-fed-rate-cuts-in-2026"
+  }
+ ]
+}
