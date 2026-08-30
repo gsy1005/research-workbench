@@ -196,7 +196,7 @@ add('MICH', '密歇根1年通胀预期', '%', 'price', 'L1·FRED/UMich', ('fred'
 add('UNRATE', '失业率U3', '%', 'jobs', 'L1·FRED/BLS', ('fred', 'UNRATE'))
 add('U6RATE', '失业率U6', '%', 'jobs', 'L1·FRED/BLS', ('fred', 'U6RATE'))
 add('PAYEMS_CHG', '非农新增(月)', '千人', 'jobs', 'L1·FRED/BLS⚙️差分', ('diff', 'PAYEMS', 1))
-add('ICSA', '初请失业金(周)', '千人', 'jobs', 'L1·FRED/DOL', ('fred', 'ICSA'))
+add('ICSA', '初请失业金(周)', '千人', 'jobs', 'L1·FRED/DOL', ('fred_div', 'ICSA', 1000))
 add('JTSJOL', 'JOLTS职位空缺', '千人', 'jobs', 'L1·FRED/BLS', ('fred', 'JTSJOL'))
 add('CES0500000003_YOY', '平均时薪同比', '%', 'jobs', 'L1·FRED/BLS⚙️同比', ('yoy', 'CES0500000003', 12))
 add('MANEMP', '制造业就业', '千人', 'jobs', 'L1·FRED/BLS', ('fred', 'MANEMP'))
@@ -281,7 +281,7 @@ def main():
     fred_ids, other_jobs = [], {}
     for it in S:
         how = it['how']; kind = how[0]
-        if kind in ('fred', 'yoy', 'diff'):
+        if kind in ('fred', 'yoy', 'diff', 'fred_div'):
             if how[1] not in fred_ids: fred_ids.append(how[1])
         elif kind == 'yahoo':
             other_jobs[it['id']] = (lambda sym: lambda: yahoo(sym))(how[1])
@@ -318,6 +318,8 @@ def main():
                 ser = yoy(raw.get(how[1], []), how[2])
             elif kind == 'diff':
                 ser = diff(raw.get(how[1], []), how[2])
+            elif kind == 'fred_div':
+                ser = [[d, round(v / how[2], 3)] for d, v in raw.get(how[1], [])]
             elif kind == 'calc_cn':
                 bd = dict(raw.get('EXPCH', []))
                 ser = [[d, round(v - bd[d], 1)] for d, v in raw.get('IMPCH', []) if d in bd]
