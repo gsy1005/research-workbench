@@ -1,7 +1,71 @@
 {
  "source": "Polymarket Gamma API（GitHub Actions每日快照）",
- "fetched_at": "2026-08-30T10:57:32.239489Z",
+ "fetched_at": "2026-08-30T11:00:32.359064Z",
  "markets": [
+  {
+   "question": "US recession by end of 2026?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.085
+    },
+    {
+     "name": "No",
+     "price": 0.915
+    }
+   ],
+   "vol24": 2777,
+   "end": "2027-01-31",
+   "slug": "us-recession-by-end-of-2026"
+  },
+  {
+   "question": "US recession by end of 2027?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.305
+    },
+    {
+     "name": "No",
+     "price": 0.695
+    }
+   ],
+   "vol24": 51,
+   "end": "2027-12-31",
+   "slug": "us-recession-by-end-of-2027-20260807185409760"
+  },
+  {
+   "question": "US recession in 2025?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0
+    },
+    {
+     "name": "No",
+     "price": 1.0
+    }
+   ],
+   "vol24": 0,
+   "end": "2026-02-28",
+   "slug": "us-recession-in-2025"
+  },
+  {
+   "question": "Will the next recession in the US happen in Q4 2021?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0
+    },
+    {
+     "name": "No",
+     "price": 1.0
+    }
+   ],
+   "vol24": 0,
+   "end": "2022-01-27",
+   "slug": "when-will-the-next-recession-happen-in-the-US"
+  },
   {
    "question": "Will the Fed decrease interest rates by 50+ bps after the September 2026 meeting?",
    "outcomes": [
@@ -19,55 +83,71 @@
    "slug": "fed-decision-in-september-762"
   },
   {
-   "question": "Will Tarcisio de Freitas win the 2026 Brazilian presidential election?",
+   "question": "Will the Fed decrease interest rates by 50+ bps after the October 2026 meeting?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0005
+     "price": 0.0105
     },
     {
      "name": "No",
-     "price": 0.9995
+     "price": 0.9895
     }
    ],
-   "vol24": 343,
-   "end": "2026-10-04",
-   "slug": "brazil-presidential-election"
+   "vol24": 4587,
+   "end": "2026-10-28",
+   "slug": "fed-decision-in-october-20260617190323537"
   },
   {
-   "question": "Will Donald Trump win the 2028 Republican presidential nomination?",
+   "question": "Will the Fed decrease interest rates by 50+ bps after the December 2026 meeting?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0205
+     "price": 0.0085
     },
     {
      "name": "No",
-     "price": 0.9795
+     "price": 0.9915
     }
    ],
-   "vol24": 1087,
-   "end": "2028-11-07",
-   "slug": "republican-presidential-nominee-2028"
+   "vol24": 1812,
+   "end": "2026-12-09",
+   "slug": "fed-decision-in-december-20260729232808632"
   },
   {
-   "question": "Will Marine Le Pen win the 2027 French presidential election?",
+   "question": "Will no one dissent the September Fed decision?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.3335
+     "price": 0.12
     },
     {
      "name": "No",
-     "price": 0.6665
+     "price": 0.88
     }
    ],
-   "vol24": 3286,
-   "end": "2027-04-30",
-   "slug": "next-french-presidential-election"
+   "vol24": 1683,
+   "end": "2026-09-16",
+   "slug": "how-many-dissent-at-the-september-fed-meeting"
   },
   {
-   "question": "US announces end of Iranian blockade by July 24, 2026?",
+   "question": "Government shutdown by October 1?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.085
+    },
+    {
+     "name": "No",
+     "price": 0.915
+    }
+   ],
+   "vol24": 143,
+   "end": "2026-10-02",
+   "slug": "government-shutdown-by-october-1-20260610162414910"
+  },
+  {
+   "question": "Will there be a US government shutdown by Jan 20?",
    "outcomes": [
     {
      "name": "Yes",
@@ -78,121 +158,153 @@
      "price": 1.0
     }
    ],
-   "vol24": 241190,
-   "end": "2026-07-25",
-   "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080"
+   "vol24": 0,
+   "end": "2024-01-20",
+   "slug": "will-there-be-a-us-government-shutdown-by-jan-20"
   },
   {
-   "question": "Will JD Vance win the 2028 US Presidential Election?",
+   "question": "Federal Appropriations Lapse on October 1?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.2535
+     "price": 0.12
     },
     {
      "name": "No",
-     "price": 0.7465
+     "price": 0.88
     }
    ],
-   "vol24": 20016,
-   "end": "2028-11-07",
-   "slug": "presidential-election-winner-2028"
+   "vol24": 0,
+   "end": "2026-10-02",
+   "slug": "federal-appropriations-lapse-on-october-1-20260804220923652"
   },
   {
-   "question": "Will Abiy Ahmed be the next Prime Minister of Ethiopia?",
+   "question": "Will there be another US government shutdown by January 31 and will the Democratic Party win the House in 2026?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.9735
+     "price": 0.855
     },
     {
      "name": "No",
-     "price": 0.0265
+     "price": 0.145
     }
    ],
-   "vol24": 2294,
-   "end": "2026-06-01",
-   "slug": "next-prime-minister-of-ethiopia"
-  },
-  {
-   "question": "Will United Russia (ER) gain the most seats in the next Russian parliamentary election?",
-   "outcomes": [
-    {
-     "name": "Yes",
-     "price": 0.715
-    },
-    {
-     "name": "No",
-     "price": 0.285
-    }
-   ],
-   "vol24": 96679,
-   "end": "2026-09-30",
-   "slug": "which-party-will-gain-most-seats-in-russian-parliamentary-election"
-  },
-  {
-   "question": "Will Gavin Newsom win the 2028 Democratic presidential nomination?",
-   "outcomes": [
-    {
-     "name": "Yes",
-     "price": 0.1455
-    },
-    {
-     "name": "No",
-     "price": 0.8545
-    }
-   ],
-   "vol24": 26092,
-   "end": "2028-11-07",
-   "slug": "democratic-presidential-nominee-2028"
-  },
-  {
-   "question": "2026 Balance of Power: D Senate, D House",
-   "outcomes": [
-    {
-     "name": "Yes",
-     "price": 0.495
-    },
-    {
-     "name": "No",
-     "price": 0.505
-    }
-   ],
-   "vol24": 5274,
+   "vol24": 101,
    "end": "2026-11-03",
-   "slug": "balance-of-power-2026-midterms"
+   "slug": "another-us-government-shutdown-house-winner-2026"
   },
   {
-   "question": "Will Trump praise Benjamin Netanyahu in August?",
+   "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.365
+     "price": 0.505
     },
     {
      "name": "No",
-     "price": 0.635
+     "price": 0.495
     }
    ],
-   "vol24": 119167,
-   "end": "2026-08-31",
-   "slug": "who-will-trump-publicly-praise-in-august-20260728221212339"
+   "vol24": 5841,
+   "end": "2026-11-03",
+   "slug": "which-party-will-win-the-senate-in-2026"
   },
   {
-   "question": "Will no Fed rate cuts happen in 2026?",
+   "question": "2026 U.S. House Election: Republican Odds over 60% by March 31?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.8765
+     "price": 0.0
     },
     {
      "name": "No",
-     "price": 0.1235
+     "price": 1.0
     }
    ],
-   "vol24": 78587,
-   "end": "2026-12-31",
-   "slug": "how-many-fed-rate-cuts-in-2026"
+   "vol24": 0,
+   "end": "2026-03-31",
+   "slug": "2026-us-house-election-republican-odds-by-march-31"
+  },
+  {
+   "question": "Will Trump's approval rating be less than 37.0 on September 4, 2026?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0355
+    },
+    {
+     "name": "No",
+     "price": 0.9645
+    }
+   ],
+   "vol24": 21,
+   "end": "2026-09-04",
+   "slug": "trump-approval-rating-on-september-4"
+  },
+  {
+   "question": "Will Trump announce a tariff reduction on China?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0
+    },
+    {
+     "name": "No",
+     "price": 1.0
+    }
+   ],
+   "vol24": 0,
+   "end": "2026-05-22",
+   "slug": "trump-xi-summit-what-will-trump-announce-by-may-22"
+  },
+  {
+   "question": "US-China trade deal in 2025?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 1.0
+    },
+    {
+     "name": "No",
+     "price": 0.0
+    }
+   ],
+   "vol24": 0,
+   "end": "2025-12-31",
+   "slug": "us-china-trade-deal-in-2025"
+  },
+  {
+   "question": "US ceasefire against Iran continues through August 22?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 1.0
+    },
+    {
+     "name": "No",
+     "price": 0.0
+    }
+   ],
+   "vol24": 86228,
+   "end": "2026-08-22",
+   "slug": "us-ceasefire-against-iran-continues-throughptptpt"
+  },
+  {
+   "question": "Will trump try to fire Powell as Fed Chair before he leaves?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0
+    },
+    {
+     "name": "No",
+     "price": 1.0
+    }
+   ],
+   "vol24": 0,
+   "end": "2026-06-30",
+   "slug": "trump-tries-to-fire-powell-as-fed-chair-before-he-leaves"
   }
  ]
 }
