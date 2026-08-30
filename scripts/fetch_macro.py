@@ -35,7 +35,7 @@ def http_get(url, timeout=15, retries=2, backoff=1.0):
 # ---------- 抓取器 ----------
 def fred(sid, limit=1700):
     t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s' % sid,
-                 timeout=20, retries=4, backoff=3.0)
+                 timeout=20, retries=3, backoff=3.0)
     if not t or 'observation_date' not in t[:200]:
         return []
     out = []
@@ -50,6 +50,43 @@ def fred(sid, limit=1700):
         except ValueError:
             pass
     return out[-limit:]
+
+def fred_batch(sids, limit=1700):
+    """fredgraph 支持逗号分隔多条序列, 12条/批; 批失败回退单条"""
+    out = {}
+    for i in range(0, len(sids), 12):
+        chunk = sids[i:i + 12]
+        t = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=' + ','.join(chunk),
+                     timeout=30, retries=3, backoff=4.0)
+        rows = []
+        if t and 'observation_date' in t[:200]:
+            rows = list(csv.reader(io.StringIO(t)))
+        if len(rows) > 1:
+            col = {name: idx for idx, name in enumerate(rows[0])}
+            for sid in chunk:
+                if sid not in col:
+                    out[sid] = []
+                    continue
+                ci = col[sid]
+                ser = []
+                for row in rows[1:]:
+                    if len(row) <= ci:
+                        continue
+                    v = row[ci].strip()
+                    if v in ('.', '', 'NaN'):
+                        continue
+                    try:
+                        ser.append([row[0].strip(), round(float(v), 4)])
+                    except ValueError:
+                        pass
+                out[sid] = ser[-limit:]
+        else:
+            log('  批失败, 回退单条:', ','.join(chunk))
+            for sid in chunk:
+                out[sid] = fred(sid)
+                time.sleep(0.6)
+        time.sleep(1.0)
+    return out
 
 def yahoo(sym, rng='5y'):
     url = 'https://query1.finance.yahoo.com/v8/finance/chart/%s?range=%s&interval=1d' % (urllib.parse.quote(sym, safe=''), rng)
@@ -246,12 +283,10 @@ def main():
         elif kind == 'tsa':
             other_jobs['TSA_PAX'] = tsa_pax
     raw = {}
-    # 2a) FRED 限流敏感: 串行+间隔+退避重试
-    log('FRED串行抓取', len(fred_ids), '条…')
+    # 2a) FRED: 12条/批合并请求(绕开限流)
+    log('FRED批量抓取', len(fred_ids), '条…')
     t0 = time.time()
-    for sid in fred_ids:
-        raw[sid] = fred(sid)
-        time.sleep(0.7)
+    raw.update(fred_batch(fred_ids))
     log('FRED完成, 用时%.0fs' % (time.time() - t0))
     # 2b) Yahoo/财政部/TSA 并发
     with ThreadPoolExecutor(max_workers=6) as ex:
