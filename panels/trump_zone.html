@@ -260,11 +260,25 @@ $('postQ').oninput=renderPosts;
 function renderMarkets(){
   fetch('../data/polymarket.json?v='+Date.now()).then(r=>{if(!r.ok)throw 0;return r.json();}).then(pm=>{
     if(!pm.markets||!pm.markets.length)throw 0;
-    $('mkList').innerHTML=pm.markets.map(m=>`
+    $('mkList').innerHTML=pm.markets.map((m,i)=>`
       <div class="mk"><div class="mk-q">${esc(m.question)}</div>
       ${m.outcomes.map(o=>`<div class="oc"><span class="nm">${esc(o.name)}</span><div class="bar"><div class="fill" style="width:${(o.price*100).toFixed(1)}%"></div></div><span class="pc">${(o.price*100).toFixed(0)}%</span></div>`).join('')}
-      <div class="note">24h成交 $${(m.vol24||0).toLocaleString()} · 截止 ${esc(m.end||'—')}</div></div>`).join('')
-      +`<div class="note">数据源：Polymarket Gamma API（GitHub Actions每日抓取）· 更新 ${esc(pm.fetched_at||'').slice(0,16).replace('T',' ')} UTC · L2·交易所</div>`;
+      ${(m.history&&m.history.length>1)?`<div class="mkchart" id="mkc${i}" style="width:100%;height:150px;margin-top:8px"></div>`:''}
+      <div class="note">24h成交 $${(m.vol24||0).toLocaleString()} · 截止 ${esc(m.end||'—')}${(m.history&&m.history.length>1)?' · 曲线='+esc(m.outcomes[0].name)+'概率（'+m.history.length+'个交易日）':''}</div></div>`).join('')
+      +`<div class="note">数据源：${esc(pm.source||'Polymarket')} · 更新 ${esc(pm.fetched_at||'').slice(0,16).replace('T',' ')} UTC · L2·交易所</div>`;
+    pm.markets.forEach((m,i)=>{
+      if(!(m.history&&m.history.length>1))return;
+      const c=echarts.init($('mkc'+i));
+      (CH['mk'+i]=c).setOption({
+        backgroundColor:'transparent',animation:false,
+        grid:{left:36,right:10,top:8,bottom:20},
+        tooltip:{trigger:'axis',backgroundColor:'#171a20',borderColor:'#2a2e37',textStyle:{color:'#e8e6e1',fontSize:11},
+                 formatter:ps=>{const p=ps[0];return p.axisValue+'<br>'+esc(m.outcomes[0].name)+' <b>'+(p.data*100).toFixed(1)+'%</b>';}},
+        xAxis:{type:'category',data:m.history.map(p=>p[0]),axisLine:{lineStyle:{color:'#2a2e37'}},axisLabel:{color:'#9a958c',fontSize:9}},
+        yAxis:{type:'value',min:0,max:v=>Math.max(0.1,Math.min(1,Math.ceil(v.max*10)/10)),axisLabel:{color:'#9a958c',fontSize:9,formatter:v=>(v*100).toFixed(0)+'%'},splitLine:{lineStyle:{color:'#22262e'}}},
+        series:[{type:'line',symbol:'none',data:m.history.map(p=>p[1]),lineStyle:{color:'#d4a944',width:1.6},areaStyle:{opacity:.08,color:'#d4a944'}}]
+      });
+    });
   }).catch(()=>{
     $('mkList').innerHTML=`<div class="card"><h3>政策预期（Polymarket 预测市场）</h3>
       <div class="empty">Polymarket 直连抓取正在部署（GitHub Actions 每日快照众议院/参议院/衰退/Fed等关键市场赔率）。<br><br>

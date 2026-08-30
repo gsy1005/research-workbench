@@ -474,5 +474,24 @@ document.getElementById('dtabs').addEventListener('click', function(e){
   window.scrollTo(0, 0);
 });
 </script>
+<script>
+/* tacoBox 接入特朗普专区真实数据（覆盖快照占位渲染） */
+fetch('../data/trump_zone.json?v='+Date.now()).then(function(r){return r.json();}).then(function(tz){
+  var p = tz.pressure, box = document.getElementById('tacoBox'); if(!box || !p) return;
+  var names = {approval:'净支持', dgs10:'10Y', move:'MOVE', sp500:'S&P', vix:'VIX', bkevenpy02:'CPI Now'};
+  var c = p.latest_contrib || {};
+  var chips = Object.keys(names).map(function(k){
+    var v = c[k]; if(v == null) return '';
+    return '<span style="font-size:11px;border:1px solid var(--line);border-radius:10px;padding:2px 8px;margin:2px 4px 2px 0;display:inline-block;">'
+      + names[k] + ' <b style="color:' + (v>0?'var(--up)':'var(--dn)') + '">' + (v>0?'+':'') + v.toFixed(1) + '</b></span>';
+  }).join('');
+  box.innerHTML = '<div style="display:flex;align-items:baseline;gap:14px;">'
+    + '<span class="big" style="color:' + (p.value>0?'var(--up)':'var(--dn)') + ';">' + (p.value>0?'+':'') + p.value + '%</span>'
+    + '<span style="font-size:12px;color:var(--dim);">截至 ' + p.asof + ' · L3·ocmacro</span></div>'
+    + '<div style="margin-top:6px;">' + chips + '</div>'
+    + '<div style="font-size:11px;color:var(--dim);margin-top:8px;">压力越高→TACO回撤概率越高；30条事件复盘、支持率、Truths跟踪见 '
+    + '<a href="../panels/trump_zone.html" style="color:var(--gold);text-decoration:none;">特朗普专区 ↗</a></div>';
+}).catch(function(){});
+</script>
 </body>
 </html>
