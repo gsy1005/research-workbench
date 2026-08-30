@@ -239,11 +239,15 @@ $('tabs').addEventListener('click',e=>{
   setTimeout(()=>{Object.values(CH).forEach(c=>c.resize&&c.resize());},30);
 });
 const CH={};
-/* 哈希直开页签: #liq / #lev / #ht / #rate… */
-if(location.hash){
+/* 哈希直开页签: #liq / #lev / #ht / #rate… (等数据就绪后再点击, 最多等8秒) */
+function hashOpen(n){
+  if(!location.hash||n>26)return;
   const t=document.querySelector('#tabs button[data-p="p'+location.hash.replace('#','-')+'"]')||document.querySelector('#tabs button[data-p="sec'+location.hash+'"]');
-  if(t)t.click();
+  if(!t)return;
+  if((t.dataset.p==='p-liq'||t.dataset.p.startsWith('sec-'))&&!MACRO)return setTimeout(()=>hashOpen(n+1),300);
+  t.click();
 }
+window.addEventListener('load',()=>setTimeout(()=>hashOpen(0),200));
 
 /* ---------- 统计卡 ---------- */
 function renderStats(){
