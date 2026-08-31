@@ -57,6 +57,9 @@ FRED_S = [
     ('BAMLC0A4CBBB', 'BAMLC0A4CBBB', 'BBB公司债利差OAS', '%'),
     ('T10Y3M', 'T10Y3M', '10Y-3M利差', '%'),
     ('USSTHPI', 'USSTHPI', '标普Case-Shiller全国房价指数', '点'),
+    ('WLCFLPCL', 'WLCFLPCL', '贴现窗口一级信贷(周)', '百万美元'),
+    ('WLCFLL', 'WLCFLL', '联储贷款总额(H.4.1)', '百万美元'),
+    ('WLCFLSCL', 'WLCFLSCL', '贴现窗口二级信贷(周)', '百万美元'),
 ]
 
 def load_cs():
@@ -128,6 +131,65 @@ def boc_m2():
     try:
         obs = json.loads(raw.decode('utf-8', 'ignore'))['observations']
         return [(o['d'], float(o['V41552796']['v'])) for o in obs]
+    except Exception: return []
+
+def pd_positions():
+    """NY Fed FR2004一级交易商持仓(周度周三, 百万美元) → {键:[(d,v)]}"""
+    ks = {'PDPOSGST-TOT': 'PD_UST_POS',   # 美债(除TIPS)净持仓
+          'PDPOSMBS-TOT': 'PD_MBS_POS',   # 机构MBS净持仓
+          'PDPOSCS-TOT': 'PD_CORP_POS',   # 公司债净持仓
+          'PDPOSFGS-TOT': 'PD_AGY_POS'}   # 机构债(除MBS)净持仓
+    out = {}
+    for kid, key in ks.items():
+        raw = http_get('https://markets.newyorkfed.org/api/pd/get/%s.json' % kid,
+                       headers={'User-Agent': 'Mozilla/5.0'})
+        if not raw: continue
+        try:
+            rows = json.loads(raw.decode('utf-8', 'ignore'))['pd']['timeseries']
+            out[key] = [(r['asofdate'], float(r['value']))
+                        for r in rows if r.get('value') not in (None, '')]
+        except Exception: pass
+        time.sleep(0.4)
+    return out
+
+def boj_m2():
+    """日本央行M2同比(月度%, MD02主表, 1968/01起) → [(d,v)]"""
+    raw = http_get('https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html',
+                   headers={'User-Agent': 'Mozilla/5.0'})
+    if not raw: return []
+    try:
+        import pandas as pd
+        t = pd.read_html(io.StringIO(raw.decode('utf-8', 'ignore')))[0]
+        out = []
+        for _, row in t.iloc[7:].iterrows():
+            m = re.match(r'^(\d{4})/(\d{2})$', str(row.iloc[0]))
+            if not m: continue
+            try: fv = float(row.iloc[1])
+            except Exception: continue
+            out.append(('%s-%s-01' % (m.group(1), m.group(2)), fv))
+        return out
+    except Exception: return []
+
+def boe_m4_yoy():
+    """英国央行M4存量(月度, £m, IADB LPMAUYN, 1990起) → 同比% [(d,v)]"""
+    u = ('https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp'
+         '?csv.x=yes&Datefrom=01/Jan/1990&Dateto=31/Dec/2030&SeriesCodes=LPMAUYN&UsingCodes=Y')
+    raw = http_get(u, headers={'User-Agent': 'Mozilla/5.0'})
+    if not raw: return []
+    try:
+        rows = list(csv.DictReader(io.StringIO(raw.decode('utf-8-sig', 'ignore'))))
+        lv = {}
+        for r in rows:
+            d, v = (r.get('DATE') or '').strip(), r.get('LPMAUYN')
+            if not d or not v: continue
+            dt = datetime.datetime.strptime(d, '%d %b %Y').date()
+            lv['%04d-%02d' % (dt.year, dt.month)] = (dt.isoformat(), float(v.replace(',', '')))
+        out = []
+        for ym in sorted(lv):
+            y0 = '%04d-%02d' % (int(ym[:4]) - 1, int(ym[5:7]))
+            if y0 in lv and lv[y0][1]:
+                out.append((lv[ym][0], round((lv[ym][1] / lv[y0][1] - 1) * 100, 3)))
+        return out
     except Exception: return []
 
 def acm_tp10():
@@ -297,6 +359,11 @@ def main():
         put(k, ser)
     put('ZORI_US', zillow_zori())
     put('CA_M2', boc_m2())
+    log('== 5.5/7 贴现窗口/FR2004/日本M2/英国M4 ==')
+    for k, s in pd_positions().items():
+        put(k, s)
+    put('JPM2_YOY', boj_m2())
+    put('UKM4_YOY', boe_m4_yoy())
     log('== 6/7 衍生⚙️ ==')
     def align_div(a, b):
         bm = {d: v for d, v in b}; return [(d, v / bm[d]) for d, v in a if d in bm and bm[d]]
