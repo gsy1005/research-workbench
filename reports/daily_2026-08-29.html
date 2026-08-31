@@ -8,6 +8,7 @@
 <script src="../data/chart_series.js"></script>
 <script src="../data/macro_catalog.js" onerror="window.MACRO_CATALOG=null"></script>
 <script src="../lib/research_toolbox.js"></script>
+<script src="../lib/release_panels.js"></script>
 <script src="../data/live_snapshot.js"></script>
 <style>
   :root{--bg:#0e1117;--card:#161b26;--line:#262d3d;--txt:#d7dde8;--dim:#8a94a6;--up:#e5534b;--dn:#4caf7d;--gold:#d4a944;--blue:#5b9bd5;}
@@ -113,6 +114,7 @@
   <button data-dp="dp2">观点与证伪</button>
   <button data-dp="dp3">政策与地缘</button>
   <button data-dp="dp4">数据图表</button>
+  <button data-dp="dp7">数据发布</button>
   <button data-dp="dp5">数据总表</button>
   <button data-dp="dp6">消息流</button>
 </div>
@@ -228,6 +230,14 @@
 <h3 style="margin:22px 0 4px;color:var(--gold,#d4a944);">研究工具箱<span class="en" style="font-size:11px;color:#8a94a6;margin-left:8px;">RESEARCH TOOLBOX · 全量指标库 × 四则运算 × 八模式图表</span></h3>
 <div class="chart-note" style="margin-bottom:6px;">点选叠加≤8个指标；字母键盘四则运算（如 (A-B)*100 算中美利差bp，结果以⚙️入库可再叠加）；折线/柱状/堆叠/涨跌幅/报酬率/季节性/相关性矩阵+滚动相关/分位回测八模式；对数轴、平滑、范围切换、CSV/PNG导出、组合收藏（存本机浏览器）。分位回测为样本内历史统计，不构成预测。</div>
 <div id="rtb"></div>
+
+</section>
+<section class="dp" id="dp7">
+<!-- ============ 六之二、数据发布·分项贡献 ============ -->
+<h2>六之二、数据发布·分项贡献<span class="en">RELEASES · 非农/CPI/PCE/GDP分项 + FedWatch · 全部L1官方源,官网更新管线即跟新</span></h2>
+<div class="chart-panel">
+<div id="rp-host"></div>
+</div>
 
 </section>
 <section class="dp" id="dp5">
@@ -590,6 +600,17 @@ function mountRtb(){
 if(document.getElementById('dp4')&&(document.getElementById('dp4').classList.contains('on')||document.getElementById('dp4').offsetParent!==null)){mountRtb();}
 document.querySelectorAll('[data-dp="dp4"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountRtb,60);});});
 if(!document.querySelector('[data-dp="dp4"]'))mountRtb();
+/* 数据发布·分项贡献面板：懒挂载 */
+var _rpMounted=false;
+function mountRp(){
+  if(_rpMounted)return;
+  var el=document.getElementById('rp-host');
+  if(!el||typeof renderReleasePanels!=='function')return;
+  _rpMounted=true;renderReleasePanels('rp-host','../data/release_panels.json');
+}
+if(document.getElementById('dp7')&&(document.getElementById('dp7').classList.contains('on')||document.getElementById('dp7').offsetParent!==null)){mountRp();}
+document.querySelectorAll('[data-dp="dp7"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountRp,60);});});
+if(!document.querySelector('[data-dp="dp7"]'))mountRp();
 </script>
 </body>
 </html>
