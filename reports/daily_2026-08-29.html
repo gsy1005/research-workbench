@@ -6,6 +6,8 @@
 <title>宏观研究日报 · 2026-08-29</title>
 <script src="../lib/echarts.min.js"></script>
 <script src="../data/chart_series.js"></script>
+<script src="../data/macro_catalog.js" onerror="window.MACRO_CATALOG=null"></script>
+<script src="../lib/research_toolbox.js"></script>
 <script src="../data/live_snapshot.js"></script>
 <style>
   :root{--bg:#0e1117;--card:#161b26;--line:#262d3d;--txt:#d7dde8;--dim:#8a94a6;--up:#e5534b;--dn:#4caf7d;--gold:#d4a944;--blue:#5b9bd5;}
@@ -208,6 +210,7 @@
   <div class="chart-ctl">
     <div class="seg" id="modeSeg">
       <button class="on" data-m="line">折线图</button>
+      <button data-m="bar">柱状图</button>
       <button data-m="seasonal">季节性图（按年叠加）</button>
     </div>
     <div class="seg" id="rangeSeg">
@@ -221,6 +224,10 @@
   <div id="chartBox"></div>
   <div class="chart-note">折线模式：多指标自动分配左右轴，拖动下方滑块缩放。季节性模式：同一指标按年份叠线（当年加粗金色），适合库存/能源/贵金属等强季节性品种；多选时各指标分图显示。</div>
 </div>
+
+<h3 style="margin:22px 0 4px;color:var(--gold,#d4a944);">研究工具箱<span class="en" style="font-size:11px;color:#8a94a6;margin-left:8px;">RESEARCH TOOLBOX · 全量指标库 × 四则运算 × 八模式图表</span></h3>
+<div class="chart-note" style="margin-bottom:6px;">点选叠加≤8个指标；字母键盘四则运算（如 (A-B)*100 算中美利差bp，结果以⚙️入库可再叠加）；折线/柱状/堆叠/涨跌幅/报酬率/季节性/相关性矩阵+滚动相关/分位回测八模式；对数轴、平滑、范围切换、CSV/PNG导出、组合收藏（存本机浏览器）。分位回测为样本内历史统计，不构成预测。</div>
+<div id="rtb"></div>
 
 </section>
 <section class="dp" id="dp5">
@@ -286,7 +293,23 @@ const CATALOG = [
   {id:'沪铜主连',     name:'沪铜主连',      unit:'元/吨',   src:'L2', seasonal:true},
   {id:'INE原油主连',  name:'INE原油主连',   unit:'元/桶',   src:'L2'},
   {id:'EIA商业原油库存', name:'EIA商业原油库存', unit:'百万桶', src:'L1', seasonal:true},
+  {id:'SOFR',          name:'SOFR',           unit:'%',      src:'L1'},
+  {id:'EFFR',          name:'EFFR',           unit:'%',      src:'L1'},
+  {id:'RRPONTSYD',     name:'ON RRP余额',     unit:'十亿美元', src:'L1'},
+  {id:'WRESBAL',       name:'银行准备金',     unit:'百万美元', src:'L1'},
+  {id:'WDTGAL',        name:'TGA(日度)',      unit:'百万美元', src:'L1'},
+  {id:'SPR_SOFR_IORB', name:'SOFR-IORB',      unit:'bp',     src:'⚙️'},
+  {id:'NETLIQ',        name:'净流动性',       unit:'万亿美元', src:'⚙️'},
+  {id:'ACMTP10',       name:'10Y期限溢价',    unit:'%',      src:'L1'},
+  {id:'T10Y3M',        name:'10Y-3M利差',     unit:'%',      src:'L1'},
+  {id:'BAMLH0A0HYM2EY',name:'高收益债收益率', unit:'%',      src:'L1'},
+  {id:'SPR_USCN10Y',   name:'中美10Y利差',    unit:'pt',     src:'⚙️'},
+  {id:'EM_CGB10Y',     name:'中债10Y',        unit:'%',      src:'L3'},
+  {id:'CN_LPR1Y',      name:'LPR1Y',          unit:'%',      src:'L1'},
+  {id:'CN_SHIBOR3M',   name:'SHIBOR3M',       unit:'%',      src:'L1'},
+  {id:'GOLD_SILVER_RATIO', name:'金银比',     unit:'倍',     src:'⚙️'},
 ];
+if(window.MACRO_CATALOG){window.MACRO_CATALOG.forEach(function(m){if(!CATALOG.some(function(c){return c.id===m.id;}))CATALOG.push({id:m.id,name:m.name,unit:m.unit||'',src:'L1'});});}
 let HIST = null, sel = ['DGS10','DFII10','T5YIE'], mode = 'line', rng = 3;
 const chart = echarts.init(document.getElementById('chartBox'), null, {renderer:'canvas'});
 
@@ -328,7 +351,7 @@ function cutoffDate(){
 const PALETTE = ['#d4a944','#5b9bd5','#4caf7d','#e5534b'];
 function render(){
   if(!HIST) return;
-  if(mode==='line') renderLine(); else renderSeasonal();
+  if(mode==='seasonal') renderSeasonal(); else renderLine();
 }
 function renderLine(){
   const cut = cutoffDate();
@@ -348,8 +371,10 @@ function renderLine(){
       yAxis[yi] = {type:'value', name:c.unit, position: yi===0?'left':'right',
         axisLabel:{color:'#8a94a6',fontSize:10}, splitLine:{lineStyle:{color:'#222a3a'}}, scale:true};
     }
-    series.push({name:`${c.name}(${c.unit})`, type:'line', yAxisIndex:yi, showSymbol:false,
-      data:data, lineStyle:{width:1.6, color:PALETTE[i%4]}, itemStyle:{color:PALETTE[i%4]}});
+    const sers={name:`${c.name}(${c.unit})`, type:mode==='bar'?'bar':'line', yAxisIndex:yi, showSymbol:false,
+      data:data, lineStyle:{width:1.6, color:PALETTE[i%4]}, itemStyle:{color:PALETTE[i%4]}};
+    if(mode==='bar'){ sers.barMaxWidth=14; delete sers.lineStyle; }
+    series.push(sers);
   });
   chart.clear();
   chart.setOption({
@@ -554,6 +579,17 @@ fetch('../data/macro_series.json').then(function(r){return r.ok?r.json():null;})
   }
 }).catch(function(){});
 })();
+/* 研究工具箱：懒挂载（板块隐藏时echarts尺寸为0，首次进入再初始化） */
+var _rtbMounted=false;
+function mountRtb(){
+  if(_rtbMounted)return;
+  var el=document.getElementById('rtb');
+  if(!el||typeof researchToolbox!=='function')return;
+  _rtbMounted=true;researchToolbox('rtb');
+}
+if(document.getElementById('dp4')&&(document.getElementById('dp4').classList.contains('on')||document.getElementById('dp4').offsetParent!==null)){mountRtb();}
+document.querySelectorAll('[data-dp="dp4"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountRtb,60);});});
+if(!document.querySelector('[data-dp="dp4"]'))mountRtb();
 </script>
 </body>
 </html>

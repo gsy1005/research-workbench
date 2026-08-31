@@ -71,6 +71,12 @@ mark{background:rgba(212,169,68,.35);color:#ffe9a8;border-radius:3px;padding:0 2
 /* 宏观图表墙 */
 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;margin-bottom:14px}
 .mcard{margin-bottom:0}
+.mtool{display:flex;gap:4px;align-items:center;margin:2px 0 4px;flex-wrap:wrap}
+.mtool button,.mtool select{background:#1a1e26;border:1px solid #2a2e37;color:#9a958c;font-size:10px;border-radius:4px;padding:2px 6px;cursor:pointer;height:20px}
+.mtool button:hover,.mtool select:hover{color:#d4a944;border-color:#d4a944}
+.mtool select{max-width:104px}
+.mchip{display:inline-flex;align-items:center;gap:3px;background:rgba(212,169,68,.12);border:1px solid #d4a944;color:#d4a944;font-size:10px;border-radius:4px;padding:1px 5px}
+.mchip b{cursor:pointer;font-weight:700}
 .mhd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px}
 .mhd .mk-q{margin-bottom:0;font-size:13px}
 .mval{color:var(--gold);font-weight:700;font-size:15px;white-space:nowrap}
@@ -394,6 +400,53 @@ function fmtV(v){
   if(a>=10)return v.toFixed(2);
   return v.toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0');
 }
+/* ---- 小图编辑器: 折线/柱状 + 普通/季节性 + 叠加指标 ---- */
+const MCST={}, MCPAL=['#5b9bd5','#4caf7d','#e5534b'];
+function mcat(){
+  const out=[];const H=window.CHART_SERIES||{};
+  ((MACRO&&MACRO.sections)||[]).forEach(s=>(s.items||[]).forEach(it=>{if((H[it.id]||[]).length>2)out.push({id:it.id,name:it.name,unit:it.unit});}));
+  return out;
+}
+function drawMc(sec,i,it){
+  const key='m-'+sec+'-'+i, st=MCST[key], c=CH[key];
+  if(!st||!c)return;
+  const H=window.CHART_SERIES||{}, base=H[it.id]||[];
+  const tip={trigger:'axis',backgroundColor:'#171a20',borderColor:'#2a2e37',textStyle:{color:'#e8e6e1',fontSize:11},valueFormatter:v=>v==null?'—':fmtV(v)};
+  let opt;
+  if(st.view==='s'){
+    const byY={}; base.forEach(p=>{const y=p[0].slice(0,4);(byY[y]=byY[y]||{})[p[0].slice(5)]=p[1];});
+    const years=Object.keys(byY).sort(), maxY=years[years.length-1];
+    const cats=[...new Set(base.map(p=>p[0].slice(5)))].sort();
+    opt={backgroundColor:'transparent',animation:false,tooltip:tip,
+      legend:{data:years,top:0,type:'scroll',textStyle:{color:'#9a958c',fontSize:8},itemWidth:10,itemHeight:7},
+      grid:{left:42,right:8,top:22,bottom:18},
+      xAxis:{type:'category',data:cats,axisLine:{lineStyle:{color:'#2a2e37'}},axisLabel:{color:'#9a958c',fontSize:9,interval:Math.max(1,Math.floor(cats.length/8))}},
+      yAxis:{type:'value',scale:true,axisLabel:{color:'#9a958c',fontSize:9},splitLine:{lineStyle:{color:'#22262e'}}},
+      series:years.map(y=>({name:y,type:'line',symbol:'none',connectNulls:false,
+        data:cats.map(d=>byY[y][d]??null),
+        lineStyle:{width:y===maxY?2.2:1,color:y===maxY?'#d4a944':'#3a4a65'},
+        itemStyle:{color:y===maxY?'#d4a944':'#3a4a65'}}))};
+  }else{
+    const ovs=st.ov.map(id=>mcat().find(x=>x.id===id)).filter(Boolean);
+    const right=ovs.some(c=>c.unit!==it.unit);
+    const dates=[...new Set(base.map(p=>p[0]).concat(ovs.flatMap(c=>(H[c.id]||[]).map(p=>p[0]))))].sort();
+    const toMap=s=>{const m={};(s||[]).forEach(p=>m[p[0]]=p[1]);return dates.map(d=>m[d]??null);};
+    const bs={name:it.name,type:st.type,symbol:'none',data:toMap(base),
+      lineStyle:{color:'#d4a944',width:1.5},itemStyle:{color:'#d4a944'}};
+    if(st.type==='line')bs.areaStyle={opacity:.07,color:'#d4a944'};
+    const yAx=[{type:'value',scale:true,axisLabel:{color:'#9a958c',fontSize:9},splitLine:{lineStyle:{color:'#22262e'}}}];
+    if(right)yAx.push({type:'value',scale:true,position:'right',axisLabel:{color:'#9a958c',fontSize:9},splitLine:{show:false}});
+    opt={backgroundColor:'transparent',animation:false,tooltip:tip,
+      grid:{left:42,right:right?36:8,top:ovs.length?18:8,bottom:18},
+      legend:ovs.length?{top:0,type:'scroll',textStyle:{color:'#9a958c',fontSize:8},itemWidth:10,itemHeight:7}:{show:false},
+      xAxis:{type:'category',data:dates,axisLine:{lineStyle:{color:'#2a2e37'}},axisLabel:{color:'#9a958c',fontSize:9}},
+      yAxis:yAx,
+      series:[bs].concat(ovs.map((c,j)=>({name:c.name,type:'line',symbol:'none',
+        yAxisIndex:(right&&c.unit!==it.unit)?1:0,data:toMap(H[c.id]||[]),
+        lineStyle:{color:MCPAL[j%3],width:1.2},itemStyle:{color:MCPAL[j%3]}})))};
+  }
+  c.clear();c.setOption(opt);
+}
 function renderMacro(sec,host){
   host=host||$('sec-'+sec);
   if(!host||host.dataset.done)return;
@@ -406,7 +459,12 @@ function renderMacro(sec,host){
   grid.innerHTML=s.items.map((it,i)=>{
     const has=(H[it.id]||[]).length>2;
     return `<div class="mk mcard"><div class="mhd"><span class="mk-q">${esc(it.name)}</span>${has?`<span class="mval" id="mv-${sec}-${i}"></span>`:''}</div>
-      ${has?`<div class="mchart" id="mc-${sec}-${i}"></div>`:'<div class="gap">缺口 · 源未接通，标灰不参与判断</div>'}
+      ${has?`<div class="mchart" id="mc-${sec}-${i}"></div>
+      <div class="mtool" id="mt-${sec}-${i}">
+        <button data-a="t" title="切换图表类型">折线</button><button data-a="v" title="普通视图/季节性按年叠线">普通</button>
+        <select data-a="o" title="叠加其他指标(不同单位自动右轴)"><option value="">＋叠加指标</option></select>
+        <span id="mchips-${sec}-${i}" style="display:inline-flex;gap:4px;flex-wrap:wrap"></span>
+      </div>`:'<div class="gap">缺口 · 源未接通，标灰不参与判断</div>'}
       <div class="note">${esc(it.src)}${it.unit?' · '+esc(it.unit):''}<span id="md-${sec}-${i}"></span></div></div>`;
   }).join('');
   host.appendChild(grid);
@@ -418,16 +476,22 @@ function renderMacro(sec,host){
     if(mv){mv.textContent=fmtV(last[1]);mv.title='30点变化: '+(chg===null?'—':(chg>0?'+':'')+fmtV(chg));}
     const md=$('md-'+sec+'-'+i);
     if(md)md.textContent=' · 截至 '+last[0]+' · '+ser.length+'点';
-    const c=echarts.init($('mc-'+sec+'-'+i));
-    (CH['m-'+sec+'-'+i]=c).setOption({
-      backgroundColor:'transparent',animation:false,
-      grid:{left:42,right:8,top:8,bottom:18},
-      tooltip:{trigger:'axis',backgroundColor:'#171a20',borderColor:'#2a2e37',textStyle:{color:'#e8e6e1',fontSize:11},
-               formatter:ps=>{const p=ps[0];return p.axisValue+'<br><b>'+fmtV(p.data)+'</b> '+esc(it.unit);}},
-      xAxis:{type:'category',data:ser.map(p=>p[0]),axisLine:{lineStyle:{color:'#2a2e37'}},axisLabel:{color:'#9a958c',fontSize:9}},
-      yAxis:{type:'value',scale:true,axisLabel:{color:'#9a958c',fontSize:9},splitLine:{lineStyle:{color:'#22262e'}}},
-      series:[{type:'line',symbol:'none',data:ser.map(p=>p[1]),lineStyle:{color:'#d4a944',width:1.5},areaStyle:{opacity:.07,color:'#d4a944'}}]
-    });
+    const key='m-'+sec+'-'+i;
+    MCST[key]=MCST[key]||{type:'line',view:'n',ov:[]};
+    CH[key]=echarts.init($('mc-'+sec+'-'+i));
+    const bar=$('mt-'+sec+'-'+i), chips=$('mchips-'+sec+'-'+i);
+    const renderChips=()=>{chips.innerHTML=MCST[key].ov.map(id=>{const c=mcat().find(x=>x.id===id);return c?`<span class="mchip">${esc(c.name)}<b data-rm="${id}">×</b></span>`:''}).join('');};
+    bar.querySelector('[data-a="t"]').onclick=e=>{const st=MCST[key];st.type=st.type==='line'?'bar':'line';e.target.textContent=st.type==='line'?'折线':'柱状';drawMc(sec,i,it);};
+    bar.querySelector('[data-a="v"]').onclick=e=>{const st=MCST[key];st.view=st.view==='n'?'s':'n';e.target.textContent=st.view==='n'?'普通':'季节性';drawMc(sec,i,it);};
+    const sel=bar.querySelector('[data-a="o"]');
+    sel.addEventListener('pointerdown',function(){if(this.dataset.full)return;this.dataset.full='1';
+      this.innerHTML='<option value="">＋叠加指标</option>'+mcat().filter(c=>c.id!==it.id).map(c=>`<option value="${c.id}">${esc(c.name)} ${esc(c.unit||'')}</option>`).join('');});
+    sel.onchange=function(){const id=this.value;this.value='';if(!id)return;const st=MCST[key];
+      if(st.ov.includes(id))return;if(st.ov.length>=3){alert('单图最多叠加3个指标');return;}
+      st.ov.push(id);renderChips();drawMc(sec,i,it);};
+    chips.onclick=e=>{const id=e.target.dataset&&e.target.dataset.rm;if(!id)return;
+      const st=MCST[key];st.ov=st.ov.filter(x=>x!==id);renderChips();drawMc(sec,i,it);};
+    renderChips();drawMc(sec,i,it);
   });
 }
 

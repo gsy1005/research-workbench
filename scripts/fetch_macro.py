@@ -223,7 +223,7 @@ add('IMPGS', '商品与服务进口', '百万美元', 'trade', 'L1·FRED/BEA', (
 add('DEXCHUS', '美元兑人民币', '元/美元', 'cn', 'L1·FRED', ('fred', 'DEXCHUS'))
 add('Y_000300SS', '沪深300ETF', '元', 'cn', 'L2·Yahoo', ('yahoo', '510300.SS'))
 add('Y_HSI', '恒生指数', '点', 'cn', 'L2·Yahoo', ('yahoo', '^HSI'))
-add('IRLTLT01CNM156N', '中国10Y国债收益率', '%', 'cn', 'L1·FRED/OECD', ('fred', 'IRLTLT01CNM156N'))
+# IRLTLT01CNM156N(OECD中国10Y)已被FRED下架404, 由EM_CGB10Y(东财/中债, 日度)替代
 add('IMPCH', '美国自中国进口', '百万美元', 'cn', 'L1·FRED/Census', ('fred', 'IMPCH'))
 add('EXPCH', '美国对中国出口', '百万美元', 'cn', 'L1·FRED/Census', ('fred', 'EXPCH'))
 add('CNTRADE', '美国对华贸易差额', '百万美元', 'cn', 'L1·FRED/Census⚙️计算', ('calc_cn',))
@@ -328,8 +328,59 @@ for sid, name, unit, src in [
     ('GM2_YOY', '全球M2同比(美欧中简单平均)', '%', '⚙️自建'),
 ]:
     add(sid, name, unit, 'liq', src, ('ext',))
+# ---- B类第二批(fetch_extra.py每日管线刷新, ext=仅登记) ----
+for sid, name, unit, sec, src in [
+    ('WDTGAL', '财政部TGA现金余额', '百万美元', 'fiscal', 'L1·FRED/Treasury'),
+    ('US_AUC_10Y_BTC', '10Y美债拍卖投标倍数', '倍', 'fiscal', 'L1·FiscalData'),
+    ('US_AUC_30Y_BTC', '30Y美债拍卖投标倍数', '倍', 'fiscal', 'L1·FiscalData'),
+    ('US_AUC_2Y_BTC', '2Y美债拍卖投标倍数', '倍', 'fiscal', 'L1·FiscalData'),
+    ('JP_UST_HOLD', '日本持有美债', '十亿美元', 'fiscal', 'L1·美财政部TIC'),
+    ('CN_UST_HOLD', '中国持有美债', '十亿美元', 'fiscal', 'L1·美财政部TIC'),
+    ('UK_UST_HOLD', '英国持有美债', '十亿美元', 'fiscal', 'L1·美财政部TIC'),
+    ('FO_UST_HOLD', '外国官方持有美债', '十亿美元', 'fiscal', 'L1·美财政部TIC'),
+    ('M1SL', '美国M1(季调)', '十亿美元', 'liq', 'L1·FRED'),
+    ('OBFR', '隔夜银行融资利率OBFR', '%', 'liq', 'L1·FRED/NYFed'),
+    ('MMMFFAQ027S', '货币基金总资产', '十亿美元', 'liq', 'L1·FRED/OFR'),
+    ('CA_M2', '加拿大M2(季调)', '百万加元', 'liq', 'L1·加拿大央行'),
+    ('SPR_SOFR99_ONRRP', 'SOFR99分位-ONRRP利差', 'bp', 'liq', '⚙️自建'),
+    ('SPR_TGCR_ONRRP', 'TGCR-ONRRP利差', 'bp', 'liq', '⚙️自建'),
+    ('STICKCPIM157SFRBATL', '粘性CPI(环比折年)', '%', 'price', 'L1·FRED/亚特兰大联储'),
+    ('MEDCPIM158SFRBCLE', '中位CPI(环比折年)', '%', 'price', 'L1·FRED/克利夫兰联储'),
+    ('PCETRIM12M159SFRBDAL', '截尾PCE(环比折年)', '%', 'price', 'L1·FRED/达拉斯联储'),
+    ('EXPINF5YR', '密歇根5年通胀预期', '%', 'price', 'L1·FRED/密歇根大学'),
+    ('T5YIFR', '5y5y远期通胀预期', '%', 'price', 'L1·FRED'),
+    ('IR14270', '进口价格指数', '指数', 'price', 'L1·FRED/BLS'),
+    ('ZORI_US', 'Zillow全美租金指数', '美元/月', 'price', 'L2·Zillow'),
+    ('ECIALLCIV', '雇佣成本指数ECI', '指数', 'jobs', 'L1·FRED/BLS'),
+    ('CCSA', '持续领取失业金人数', '人', 'jobs', 'L1·FRED/DOL'),
+    ('BAMLH0A0HYM2EY', '高收益债收益率', '%', 'rate', 'L1·FRED/ICE BofA'),
+    ('BAMLC0A1CAAA', 'AAA公司债利差', '%', 'rate', 'L1·FRED/ICE BofA'),
+    ('BAMLC0A4CBBB', 'BBB公司债利差', '%', 'rate', 'L1·FRED/ICE BofA'),
+    ('T10Y3M', '10Y-3M国债利差', '%', 'rate', 'L1·FRED'),
+    ('ACMTP10', '10Y期限溢价(ACM)', '%', 'rate', 'L1·NYFed ACM'),
+    ('SPR_USCN10Y', '中美10Y利差(美-中)', 'pt', 'rate', '⚙️自建'),
+    ('USSTHPI', '美国房价指数(购房价)', '指数', 'asset', 'L1·FRED/Census·HUD'),
+    ('GOLD_SILVER_RATIO', '金银比', '倍', 'asset', '⚙️自建'),
+    ('EM_PMI', '中国制造业PMI', '点', 'cn', 'L3·东财(统计局口径)'),
+    ('EM_PMI_NM', '中国非制造业PMI', '点', 'cn', 'L3·东财(统计局口径)'),
+    ('EM_CPI_YOY', '中国CPI同比', '%', 'cn', 'L3·东财(统计局口径)'),
+    ('EM_PPI_YOY', '中国PPI同比', '%', 'cn', 'L3·东财(统计局口径)'),
+    ('EM_GDP_YOY', '中国GDP同比', '%', 'cn', 'L3·东财(统计局口径)'),
+    ('EM_RETAIL_YOY', '中国社会零售同比', '%', 'cn', 'L3·东财(统计局口径)'),
+    ('EM_LOAN_NEW', '新增人民币贷款', '亿元', 'cn', 'L3·东财(PBOC口径)'),
+    ('EM_LOAN_ACC_YOY', '贷款余额同比', '%', 'cn', 'L3·东财(PBOC口径)'),
+    ('CN_LPR1Y', 'LPR 1年期', '%', 'cn', 'L1·chinamoney'),
+    ('CN_LPR5Y', 'LPR 5年期以上', '%', 'cn', 'L1·chinamoney'),
+    ('CN_SHIBOR3M', 'SHIBOR 3M', '%', 'cn', 'L1·chinamoney'),
+    ('CN_SHIBORON', 'SHIBOR隔夜', '%', 'cn', 'L1·chinamoney'),
+    ('EM_CGB2Y', '中国国债收益率2Y', '%', 'cn', 'L3·东财(中债口径)'),
+    ('EM_CGB5Y', '中国国债收益率5Y', '%', 'cn', 'L3·东财(中债口径)'),
+    ('EM_CGB10Y', '中国国债收益率10Y', '%', 'cn', 'L3·东财(中债口径)'),
+    ('EM_CGB30Y', '中国国债收益率30Y', '%', 'cn', 'L3·东财(中债口径)'),
+]:
+    add(sid, name, unit, sec, src, ('ext',))
 # 仅刷新不进板块(周报已在用的序列)
-for extra in ['EFFR', 'WEI', 'GDPNOW', 'BAMLC0A4CBBB', 'PAYEMS',
+for extra in ['EFFR', 'WEI', 'GDPNOW', 'PAYEMS',
               'CPIAUCSL', 'CPILFESL', 'PCEPILFE', 'PERMIT', 'EXHOSLUSM495S',
               'CSUSHPISA', 'HOSSUPUSM673N', 'INDPRO', 'BUSINV', 'ISRATIO',
               'RSAFS', 'PCEC96', 'PSAVERT', 'DSPIC96', 'CES0500000003']:

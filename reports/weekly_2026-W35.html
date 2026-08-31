@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
       <span id="updMsg"></span>
     </div>
   </div>
-  <div class="tabbar"><button data-p="ov" class="on">本周总览</button><button data-p="emp">就业市场</button><button data-p="inf">通胀</button><button data-p="gdp">GDP与经济核算</button><button data-p="cons">消费</button><button data-p="house">房地产</button><button data-p="inv">企业投资与AI资本开支</button><button data-p="pmi">PMI</button><button data-p="fisc">财政与国债市场</button><button data-p="fed">美联储与金融条件</button><button data-p="ws" style="border-color:var(--gold)">图表工作区</button><button data-p="wall" style="border-color:var(--gold)">宏观图表墙</button></div>
+  <div class="tabbar"><button data-p="ov" class="on">本周总览</button><button data-p="emp">就业市场</button><button data-p="inf">通胀</button><button data-p="gdp">GDP与经济核算</button><button data-p="cons">消费</button><button data-p="house">房地产</button><button data-p="inv">企业投资与AI资本开支</button><button data-p="pmi">PMI</button><button data-p="fisc">财政与国债市场</button><button data-p="fed">美联储与金融条件</button><button data-p="liq" style="border-color:var(--gold)">流动性</button><button data-p="cn">中国宏观</button><button data-p="ws" style="border-color:var(--gold)">图表工作区</button><button data-p="wall" style="border-color:var(--gold)">宏观图表墙</button></div>
 </header>
 
 <div class="panel on" id="p-ov">
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
   <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/4非农：若连续两月为负 → 9月加息概率回落至低位；若反弹 → 维持派论据瓦解</div>
 </div>
 <div class="cw" id="cw-emp"></div>
-<script>registerChart('cw-emp', ['ICSA','UNRATE','JTSJOL'], ['ICSA','UNRATE','PAYEMS','JTSJOL','CES0500000003','MANEMP']);</script>
+<script>registerChart('cw-emp', ['ICSA','UNRATE','JTSJOL'], ['ICSA','CCSA','UNRATE','PAYEMS','JTSJOL','CES0500000003','MANEMP','ECIALLCIV']);</script>
 </div>
 <div class="panel" id="p-inf">
 <div class="card">
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
   <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/9 PPI → 9/11 CPI：CPI+PPI发布日即可精确推算PCE，月末PCE信息增量≈0</div>
 </div>
 <div class="cw" id="cw-inf"></div>
-<script>registerChart('cw-inf', ['T5YIE','T10YIE','MICH'], ['CPIAUCSL','CPILFESL','PCEPILFE','T5YIE','T10YIE','MICH','UMCSENT']);</script>
+<script>registerChart('cw-inf', ['T5YIE','T10YIE','MICH'], ['CPIAUCSL','CPILFESL','PCEPILFE','T5YIE','T10YIE','MICH','UMCSENT','STICKCPIM157SFRBATL','MEDCPIM158SFRBCLE','PCETRIM12M159SFRBDAL','EXPINF5YR','T5YIFR','IR14270','ZORI_US']);</script>
 </div>
 <div class="panel" id="p-gdp">
 <div class="card">
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
   <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：跟踪9月拍卖检验（覆盖率/间接/尾部）→ 10月QRA久期结构</div>
 </div>
 <div class="cw" id="cw-fisc"></div>
-<script>registerChart('cw-fisc', ['DGS10','DGS30','T10Y2Y'], ['DGS10','DGS30','DGS2','T10Y2Y','DFII10']);</script>
+<script>registerChart('cw-fisc', ['DGS10','DGS30','T10Y2Y'], ['DGS10','DGS30','DGS2','T10Y2Y','DFII10','ACMTP10','WDTGAL','US_AUC_10Y_BTC','US_AUC_30Y_BTC','US_AUC_2Y_BTC','JP_UST_HOLD','CN_UST_HOLD','UK_UST_HOLD','FO_UST_HOLD']);</script>
 </div>
 <div class="panel" id="p-fed">
 <div class="card">
@@ -240,7 +240,30 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
   <div style="font-size:12px;color:var(--dim);margin-top:8px;">▸ 下周关注：9/4非农 → 9/11 CPI → 9/16 FOMC+点阵图：三个闸门依次过</div>
 </div>
 <div class="cw" id="cw-fed"></div>
-<script>registerChart('cw-fed', ['EFFR','SOFR'], ['EFFR','SOFR','RRPONTSYD','WTREGEN','WALCL','TGA','VIXCLS','BAMLC0A4CBBB','DGS2']);</script>
+<script>registerChart('cw-fed', ['EFFR','SOFR'], ['EFFR','SOFR','RRPONTSYD','WTREGEN','WALCL','TGA','WDTGAL','VIXCLS','BAMLC0A4CBBB','BAMLC0A1CAAA','BAMLH0A0HYM2EY','T10Y3M','DGS2','M1SL','OBFR','MMMFFAQ027S','SPR_SOFR99_ONRRP']);</script>
+</div>
+<div class="panel" id="p-liq">
+  <div style="font-size:16px;font-weight:700;color:#fff;">流动性 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 利率管道 + 数量双维 · 压力分位与阶段判定</span></div>
+  <div class="card" id="liqSum" style="margin-top:10px;"><p style="font-size:13px;color:var(--dim)">流动性总览加载中…</p></div>
+  <div class="cw" id="cw-liq1"></div>
+  <script>registerChart('cw-liq1', ['SOFR','EFFR','RRPONTSYAWARD'], ['SOFR','SOFR99','TGCRRATE','OBFR','EFFR','IORB','RRPONTSYAWARD','DCPF1M','SPR_SOFR_IORB','SPR_TGCR_IORB','SPR_SOFR_EFFR','SPR_SOFR99','SPR_SOFR_ONRRP','SPR_CP_SOFR','SPR_SOFR99_ONRRP','SPR_TGCR_ONRRP','LIQ_SRF']);</script>
+  <div class="cw" id="cw-liq2"></div>
+  <script>registerChart('cw-liq2', ['WALCL','WRESBAL','RRPONTSYD'], ['WALCL','WRESBAL','RRPONTSYD','WDTGAL','WTREGEN','NETLIQ','WREPOFOR','SWPT','M2SL','M1SL','MMMFFAQ027S','LIQ_EZM3','LIQ_CNM2','CA_M2','ECBASSETSW','JPNASSETS','GM2_YOY','M2SL_YOY','LIQ_CNM2_YOY']);</script>
+  <script>
+  fetch('../data/liquidity.json').then(function(r){return r.ok?r.json():null;}).then(function(j){
+    if(!j)return;
+    var st=j.stress||{}, rg=j.regime||{};
+    document.getElementById('liqSum').innerHTML='<p style="font-size:13px;"><b style="color:var(--gold)">流动性总览</b>（更新 '+j.updated+' · 数据截至 '+j.asof+'）<br>综合压力分位 <b style="color:var(--gold)">'+(st.value!=null?st.value:'—')+'/100</b>（'+(st.n_comp||0)+'项分量等权）· 缩表阶段 <b style="color:var(--gold)">'+(rg.stage!=null?rg.stage:'—')+'</b>（ON RRP '+(rg.onrrp_bn!=null?rg.onrrp_bn.toFixed(2):'—')+'十亿$）· 信号：'+((j.buy_signal||j.funding_alert)?((j.buy_signal?'广义冲击买入窗口 ':'')+(j.funding_alert?'融资压力警报':'')):'无')+'</p>';
+  }).catch(function(){});
+  </script>
+</div>
+<div class="panel" id="p-cn">
+  <div style="font-size:16px;font-weight:700;color:#fff;">中国宏观 <span style="color:var(--dim);font-size:12px;font-weight:400;">· 活动数据 + 利率曲线 + 中美利差</span></div>
+  <div class="card" style="margin-top:10px;"><p style="font-size:13px;">活动面：PMI/CPI/PPI/GDP/社零/信贷（统计局·PBOC口径，经东财中转标L3）；价格面：LPR/SHIBOR（chinamoney标L1）与国债曲线2Y-30Y（中债口径标L3）；中美10Y利差为自建衍生（⚙️）。</p></div>
+  <div class="cw" id="cw-cn1"></div>
+  <script>registerChart('cw-cn1', ['EM_PMI','EM_PMI_NM'], ['EM_PMI','EM_PMI_NM','EM_CPI_YOY','EM_PPI_YOY','EM_GDP_YOY','EM_RETAIL_YOY','EM_LOAN_NEW','EM_LOAN_ACC_YOY','LIQ_CNM2_YOY','LIQ_CNM1_YOY']);</script>
+  <div class="cw" id="cw-cn2"></div>
+  <script>registerChart('cw-cn2', ['EM_CGB10Y','SPR_USCN10Y'], ['EM_CGB2Y','EM_CGB5Y','EM_CGB10Y','EM_CGB30Y','CN_LPR1Y','CN_LPR5Y','CN_SHIBOR3M','CN_SHIBORON','DGS10','SPR_USCN10Y','DEXCHUS']);</script>
 </div>
 <div class="panel" id="p-ws">
 <div class="card"><p style="font-size:13px;">自由图表工作区：<b style="color:var(--gold);">全部45条序列</b>任选叠加（最多4个），折线/季节性自由切换。高相关组合预设：
@@ -279,7 +302,7 @@ if(window.MACRO_CATALOG){window.MACRO_CATALOG.forEach(function(m){if(!CATALOG.so
 </style>
 <script>
 (function(){
-var WALL=[['rate','利率'],['price','物价'],['jobs','就业'],['asset','资产'],['energy','能源'],['cn','美中竞赛'],['fiscal','财政'],['trade','贸易'],['mfg','制造业']];
+var WALL=[['rate','利率'],['liq','流动性'],['price','物价'],['jobs','就业'],['asset','资产'],['energy','能源'],['cn','美中竞赛'],['fiscal','财政'],['trade','贸易'],['mfg','制造业']];
 function fv(v){var a=Math.abs(v);if(a>=10000)return v.toLocaleString('zh-CN',{maximumFractionDigits:0});if(a>=100)return v.toFixed(1);if(a>=10)return v.toFixed(2);return v.toFixed(3);}
 var drawn=false;
 function drawWall(){
@@ -318,116 +341,7 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 })();
 </script>
-<script>
-const PALETTE=['#d4a944','#5b9bd5','#4caf7d','#e5534b'];
-function chartWidget(hostId, presetSel, allowIds, defMode){
-  const host=document.getElementById(hostId); if(!host) return;
-  const HIST = window.CHART_SERIES||{};
-  const CATS = CATALOG.filter(c=>!allowIds||allowIds.includes(c.id));
-  let sel = presetSel.slice(), mode = defMode||'line', rng='3y';
-  host.innerHTML = `<div class="ctl">
-      <div class="seg2" data-k="mode"><button data-v="line" class="${mode==='line'?'on':''}">折线图</button><button data-v="seasonal" class="${mode==='seasonal'?'on':''}">季节性图</button></div>
-      <div class="seg2" data-k="rng"><button data-v="1y">近1年</button><button data-v="3y" class="on">近3年</button><button data-v="y20">2020以来</button><button data-v="all">全部</button></div>
-    </div>
-    <details><summary>▸ 指标选项（点击展开，点选叠加，最多4个）</summary><div class="tags"></div></details>
-    <div class="chart"></div>
-    <div class="cn">折线：多指标自动分配左右轴，可拖动滑块缩放。季节性：同一指标按年叠线（当年金色加粗），多选分图显示。</div>`;
-  const tagsEl=host.querySelector('.tags'), chartEl=host.querySelector('.chart');
-  const chart=echarts.init(chartEl,null,{renderer:'canvas'});
-  function renderTags(){
-    tagsEl.innerHTML='';
-    CATS.forEach(c=>{
-      const t=document.createElement('span');
-      t.className='tag2'+(sel.includes(c.id)?' on':'');
-      t.innerHTML=`${c.name}<span class="u"> ${c.unit}</span>`;
-      t.onclick=()=>{
-        if(sel.includes(c.id)) sel=sel.filter(x=>x!==c.id);
-        else { if(sel.length>=4){alert('最多同时叠加4个指标');return;} sel.push(c.id); }
-        renderTags(); render();
-      };
-      tagsEl.appendChild(t);
-    });
-  }
-  host.querySelectorAll('.seg2 button').forEach(b=>b.onclick=()=>{
-    const seg=b.parentElement;
-    seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on');
-    if(seg.dataset.k==='mode') mode=b.dataset.v; else rng=b.dataset.v;
-    render();
-  });
-  function rangeStart(){
-    const all=[]; sel.forEach(id=>{(HIST[id]||[]).forEach(p=>all.push(p[0]))});
-    if(!all.length) return null;
-    const mx=all.sort()[all.length-1];
-    const y=parseInt(mx.slice(0,4));
-    if(rng==='1y') return (y-1)+mx.slice(4);
-    if(rng==='3y') return (y-3)+mx.slice(4);
-    if(rng==='y20') return '2020-01-01';
-    return null;
-  }
-  function render(){
-    if(!sel.length){chart.clear();return;}
-    if(mode==='line') renderLine(); else renderSeasonal();
-  }
-  function renderLine(){
-    const st=rangeStart();
-    const series=[]; const yAxis=[];
-    sel.forEach((id,i)=>{
-      const c=CATALOG.find(x=>x.id===id);
-      let data=(HIST[id]||[]).filter(p=>!st||p[0]>=st);
-      let yi=0;
-      if(i>0){
-        const fu=(CATALOG.find(x=>x.id===sel[0])||{}).unit;
-        if(c.unit!==fu) yi=1;
-      }
-      if(!yAxis[yi]) yAxis[yi]={type:'value',name:c.unit,position:yi===0?'left':'right',axisLabel:{color:'#8a94a6',fontSize:10},splitLine:{lineStyle:{color:'#222a3a'}},scale:true};
-      series.push({name:`${c.name}(${c.unit})`,type:'line',yAxisIndex:yi,showSymbol:false,data,
-        lineStyle:{width:1.6,color:PALETTE[i%4]},itemStyle:{color:PALETTE[i%4]}});
-    });
-    chart.clear();
-    chart.setOption({backgroundColor:'transparent',
-      tooltip:{trigger:'axis',backgroundColor:'#1c2333',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11}},
-      legend:{textStyle:{color:'#aeb8c8',fontSize:11},top:0,type:'scroll'},
-      grid:{left:56,right:56,top:34,bottom:52},
-      xAxis:{type:'time',axisLabel:{color:'#8a94a6',fontSize:10},axisLine:{lineStyle:{color:'#333'}}},
-      yAxis:yAxis.filter(Boolean),
-      dataZoom:[{type:'slider',height:16,bottom:8,borderColor:'#262d3d',backgroundColor:'#12161f',fillerColor:'rgba(212,169,68,.12)',handleStyle:{color:'#d4a944'},textStyle:{color:'#8a94a6',fontSize:9}}],
-      series});
-  }
-  function renderSeasonal(){
-    const grids=[],xAxes=[],yAxes=[],series=[],legends=[];
-    const per=Math.floor(88/Math.max(sel.length,1));
-    const st=rangeStart();
-    sel.forEach((id,gi)=>{
-      const c=CATALOG.find(x=>x.id===id);
-      const raw=(HIST[id]||[]).filter(p=>!st||p[0]>=st);
-      const byY={};
-      raw.forEach(p=>{const y=p[0].slice(0,4);(byY[y]=byY[y]||{})[p[0].slice(5)]=p[1];});
-      const years=Object.keys(byY).sort();
-      const days=new Set(); raw.forEach(p=>days.add(p[0].slice(5)));
-      const cats=[...days].sort();
-      grids.push({left:56,right:20,top:(gi*per+4)+'%',height:(per-9)+'%'});
-      xAxes.push({type:'category',data:cats,gridIndex:gi,axisLabel:{color:'#8a94a6',fontSize:9,interval:Math.floor(cats.length/8)},axisLine:{lineStyle:{color:'#333'}}});
-      yAxes.push({type:'value',gridIndex:gi,name:`${c.name} ${c.unit}`,nameTextStyle:{color:'#8a94a6',fontSize:10},axisLabel:{color:'#8a94a6',fontSize:9},splitLine:{lineStyle:{color:'#222a3a'}},scale:true});
-      const maxY=years[years.length-1];
-      years.forEach(y=>{
-        const cur=(y===maxY);
-        series.push({name:y,type:'line',xAxisIndex:gi,yAxisIndex:gi,showSymbol:false,
-          data:cats.map(d=>byY[y][d]??null),connectNulls:false,
-          lineStyle:{width:cur?2.6:1,color:cur?'#d4a944':'#3a4a65'},
-          itemStyle:{color:cur?'#d4a944':'#3a4a65'},emphasis:{lineStyle:{width:2.4}}});
-      });
-      legends.push({data:years,top:(gi*per+1)+'%',left:60,textStyle:{color:'#aeb8c8',fontSize:9},itemWidth:12,itemHeight:8,type:'scroll'});
-    });
-    chart.clear();
-    chart.setOption({backgroundColor:'transparent',
-      tooltip:{trigger:'axis',backgroundColor:'#1c2333',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11}},
-      legend:legends, grid:grids, xAxis:xAxes, yAxis:yAxes, series});
-  }
-  renderTags(); render();
-  window.addEventListener('resize',()=>chart.resize());
-}
-</script>
+<script src="../lib/chart_widget.js"></script>
 
 <script>function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function renderLive(S){
