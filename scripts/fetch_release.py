@@ -286,6 +286,7 @@ def zq_settlements():
                     except Exception: pass
             if rows:
                 return d.isoformat(), rows
+            log('  ZQ', d, '空结果 keys=', list(j.keys())[:5], 'st=', len(st), 'head=', str(j)[:120])
         except Exception as e:
             log('  ZQ', d, repr(e)[:80])
     raise RuntimeError('CME结算价连续不可得')
