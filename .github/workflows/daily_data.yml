@@ -19,11 +19,12 @@ jobs:
         run: |
           python3 scripts/fetch_macro.py || true
           python3 scripts/fetch_extra.py || true
+          python3 scripts/fetch_calendar.py || true
       - name: 提交更新
         run: |
           git config user.name "data-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json
+          git add data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json data/calendar_consensus.json
           git diff --cached --quiet || git commit -m "每日数据 $(date +%F)"
           git pull --rebase origin main || true
           git push

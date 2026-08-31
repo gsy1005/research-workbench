@@ -475,11 +475,14 @@ function renderLive(S){
   seg.innerHTML = cal.weeks.map((w,i)=>`<button data-i="${i}" class="${i===0?'on':''}">${w.label}</button>`).join('');
   function showWeek(i){
     seg.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on', j===i));
+    window.__calI=i;
     document.getElementById('calTopBox').innerHTML = cal.weeks[i].items.map(it=>{
       const star = (it[1].match(/★/g)||[]).length;
-      return `<div class="calitem ${star>=4?'hot':''}"><div class="cald">${it[0]}</div><div class="calt">${it[1]}</div></div>`;
+      const chips = window.calChips ? window.calChips(it[0]) : '';
+      return `<div class="calitem ${star>=4?'hot':''}"><div class="cald">${it[0]}</div><div class="calt">${it[1]}${chips}</div></div>`;
     }).join('');
   }
+  window.__calRe=function(){ showWeek(window.__calI||0); };
   seg.querySelectorAll('button').forEach(b=>b.onclick=()=>showWeek(+b.dataset.i));
   showWeek(0);
   document.getElementById('calNote').textContent = cal.note + ' · 数据日 ' + cal.asof;
@@ -612,5 +615,37 @@ if(document.getElementById('dp7')&&(document.getElementById('dp7').classList.con
 document.querySelectorAll('[data-dp="dp7"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountRp,60);});});
 if(!document.querySelector('[data-dp="dp7"]'))mountRp();
 </script>
+<script>
+/* 宏观日历·预期值芯片：ForexFactory免费周历(每日管线刷新) */
+window.calChips = function(caldText){
+  var cc = window.CAL_CONS; if(!cc || !cc.events) return '';
+  var m = /^(\d{1,2}\/\d{1,2})/.exec((caldText||'').trim()); if(!m) return '';
+  var list = cc.events.filter(function(e){ return e.d === m[1]; });
+  if(!list.length) return '';
+  return '<div class="fcwrap">' + list.map(function(e){
+    var nm = e.tcn || e.ten;
+    var star = e.imp==='High' ? '★★★' : (e.imp==='Medium' ? '★★' : '');
+    var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
+    var body;
+    if(e.ac){ body = '实际 <b class="fcac">' + e.ac + '</b>' + (e.fc ? ' · 预期 ' + e.fc : '') + (e.pv ? ' · 前值 ' + e.pv : ''); }
+    else { body = (e.fc ? '预期 <b>' + e.fc + '</b>' : '无一致预期') + (e.pv ? ' · 前值 ' + e.pv : ''); }
+    return '<span class="fcchip">' + tm + nm + '<i>' + star + '</i> ' + body + '</span>';
+  }).join('') + '</div>';
+};
+fetch('../data/calendar_consensus.json?v='+Date.now()).then(function(r){return r.json();}).then(function(cc){
+  window.CAL_CONS = cc;
+  if(window.__calRe) window.__calRe();
+  var n = document.getElementById('calNote');
+  if(n && cc.asof) n.textContent += ' · 预期值 ' + cc.asof + (cc.stale ? '(旧)' : '') + ' · ' + cc.src;
+}).catch(function(){});
+</script>
+<style>
+.fcwrap{display:block;margin-top:5px;line-height:1.9}
+.fcchip{display:inline-block;font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:10px;padding:1px 8px;margin:0 6px 2px 0;background:rgba(255,255,255,.02)}
+.fcchip b{color:var(--gold);font-weight:700}
+.fcchip i{font-style:normal;color:var(--gold);opacity:.7;margin-left:3px;letter-spacing:-1px}
+.fcchip .fctm{color:var(--gold);opacity:.85;margin-right:6px;font-variant-numeric:tabular-nums}
+.fcchip .fcac{color:var(--up)}
+</style>
 </body>
 </html>
