@@ -13,6 +13,11 @@
   data/macro_catalog.js  周报目录合并用
 """
 import csv, io, json, os, re, sys, time, datetime, urllib.request, urllib.parse
+try:
+    from curl_cffi import requests as _creq
+    _SESS = _creq.Session(impersonate='chrome')
+except Exception:
+    _SESS = None
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -24,6 +29,11 @@ def log(*a): print(datetime.datetime.now().strftime('%H:%M:%S'), *a, flush=True)
 def http_get(url, timeout=15, retries=2, backoff=1.0, maxbytes=8 * 1024 * 1024):
     for i in range(retries):
         try:
+            if _SESS is not None:  # 浏览器TLS指纹(绕FRED/CME的Akamai HTTP/2重置)
+                r = _SESS.get(url, timeout=timeout)
+                if r.status_code == 200:
+                    return r.content[:maxbytes].decode('utf-8', 'replace')
+                raise RuntimeError('HTTP %s' % r.status_code)
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (research-workbench)'})
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return r.read(maxbytes).decode('utf-8', 'replace')

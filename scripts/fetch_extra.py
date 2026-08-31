@@ -14,8 +14,12 @@ def log(*a):
     print(datetime.datetime.now().strftime('%H:%M:%S'), *a, flush=True)
 
 import requests
-RQ = requests.Session()
-RQ.headers.update({'User-Agent': 'python-requests/2.31.0'})
+try:
+    from curl_cffi import requests as _creq  # 浏览器TLS指纹(绕FRED/CME的Akamai HTTP/2重置)
+    RQ = _creq.Session(impersonate='chrome')
+except Exception:
+    RQ = requests.Session()
+    RQ.headers.update({'User-Agent': 'python-requests/2.31.0'})
 
 def http_get(url, timeout=40, retries=3, headers=None):
     for i in range(retries):
