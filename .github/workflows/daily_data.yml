@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install requests pandas lxml html5lib
+      - run: pip install requests pandas lxml html5lib xlrd
       - name: fetch_macro + fetch_extra
         run: |
           python3 scripts/fetch_macro.py || true
