@@ -256,6 +256,13 @@ def fred_last_safe(sid):
 
 def zq_settlements():
     hdrs = {**UA, 'Accept': 'application/json', 'Referer': 'https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html'}
+    sess = None
+    try:
+        from curl_cffi import requests as creq  # 浏览器TLS指纹, 绕CME Akamai 403
+        sess = creq.Session(impersonate='chrome')
+        log('  curl_cffi可用')
+    except Exception:
+        log('  无curl_cffi, 用urllib(易被CME 403)')
     today = datetime.date.today()
     for back in range(1, 8):
         d = today - datetime.timedelta(days=back)
@@ -263,7 +270,12 @@ def zq_settlements():
         url = ('https://www.cmegroup.com/CmeWS/mvc/Settlements/Futures/Settlements/305/FUT?tradeDate=%s&pageSize=500&strategy=DEFAULT&_=%d'
                % (d.strftime('%m/%d/%Y'), int(time.time()*1000)))
         try:
-            j = json.loads(http_get(url, headers=hdrs, timeout=30, retries=2))
+            if sess:
+                r = sess.get(url, timeout=30)
+                if r.status_code != 200: raise RuntimeError('HTTP %s' % r.status_code)
+                j = json.loads(r.text)
+            else:
+                j = json.loads(http_get(url, headers=hdrs, timeout=30, retries=2))
             st = j.get('settlements') or []
             rows = []
             for x in st:
