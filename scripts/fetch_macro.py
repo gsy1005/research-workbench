@@ -282,7 +282,7 @@ add('GLD_SHARES', 'GLD基金份额(积累)', '份', 'asset', 'L2·Yahoo⚙️快
 add('SLV_SHARES', 'SLV基金份额(积累)', '份', 'asset', 'L2·Yahoo⚙️快照积累', ('ext',))
 # ---- B类扩充: 金融条件/外国国债/信用与行业ETF/汇率 ----
 add('NFCI', '芝加哥联储金融条件指数', '点', 'rate', 'L1·FRED/ChicagoFed', ('fred', 'NFCI'))
-add('STFSI4', '圣路易斯联储金融压力指数', '点', 'rate', 'L1·FRED/StLouisFed', ('fred', 'STFSI4'))
+add('STFSI4', '圣路易斯联储金融压力指数', '点', 'rate', 'L1·FRED/StLouisFed(原STFSI4已更名STLFSI4)', ('fred', 'STLFSI4'))
 add('IRLTLT01JPM156N', '日本10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01JPM156N'))
 add('IRLTLT01DEM156N', '德国10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01DEM156N'))
 add('IRLTLT01GBM156N', '英国10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01GBM156N'))
