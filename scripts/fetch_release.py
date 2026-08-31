@@ -278,12 +278,20 @@ def zq_settlements():
                 j = json.loads(http_get(url, headers=hdrs, timeout=30, retries=2))
             st = j.get('settlements') or []
             rows = []
+            MON = {'JAN':1,'FEB':2,'MAR':3,'APR':4,'MAY':5,'JUN':6,'JUL':7,'AUG':8,'SEP':9,'OCT':10,'NOV':11,'DEC':12}
             for x in st:
                 code = x.get('code') or ''
-                settle = x.get('settle')
-                if code.startswith('ZQ') and settle not in (None, '', '-'):
-                    try: rows.append((code, float(settle)))
-                    except Exception: pass
+                settle = x.get('settle') or x.get('last')
+                if settle in (None, '', '-'): continue
+                try: settle = float(settle)
+                except Exception: continue
+                if code.startswith('ZQ'):  # 有code字段时直接用
+                    rows.append((code, settle)); continue
+                mm = re.match(r'^([A-Z]{3})\s+(\d{2})$', str(x.get('month') or '').upper())
+                if mm:  # 无code时用month合成: SEP 26 -> ZQU6
+                    mon = MON[mm.group(1)]; yr2 = int(mm.group(2))
+                    zc = 'ZQ' + ZQ_MON_REV[mon] + str(yr2)
+                    rows.append((zc, settle))
             if rows:
                 return d.isoformat(), rows
             log('  ZQ', d, '空结果 keys=', list(j.keys())[:5], 'st=', len(st), 'head=', str(j)[:120])
@@ -292,6 +300,7 @@ def zq_settlements():
     raise RuntimeError('CME结算价连续不可得')
 
 ZQ_MON = {'F': 1, 'G': 2, 'H': 3, 'J': 4, 'K': 5, 'M': 6, 'N': 7, 'Q': 8, 'U': 9, 'V': 10, 'X': 11, 'Z': 12}
+ZQ_MON_REV = {v: k for k, v in ZQ_MON.items()}
 def fedwatch():
     dates_by_year, cal_src = fomc_dates()
     meetings = sorted(d for ds in dates_by_year.values() for d in ds)
