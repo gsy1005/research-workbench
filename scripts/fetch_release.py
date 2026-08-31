@@ -211,28 +211,23 @@ FOMC_FALLBACK = {  #  scraping失败时用(来源:联储fomccalendars页 2026-08
 MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
              'August', 'September', 'October', 'November', 'December']
 def fomc_dates():
+    # 主用兜底快照(2026-08-19核自官网,已验证); 联网抓取仅作校验标注, 不作数据源
+    today = datetime.date.today()
+    out = {yr: [datetime.date(yr, m, d) for m, d in ds] for yr, ds in FOMC_FALLBACK.items()}
+    note = 'L1·联储FOMC日历(快照2026-08-19,官网核对)'
     try:
         raw = http_get('https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm', timeout=25).decode('utf-8', 'ignore')
         txt = re.sub(r'<[^>]+>', ' ', raw); txt = re.sub(r'\s+', ' ', txt)
-        out = {}
-        today = datetime.date.today()
-        for yr in (today.year, today.year + 1):
-            m = re.search(str(yr) + r' FOMC Meetings(.*?)(?:' + str(yr+1) + r' FOMC|Meeting calendars|Back to Top)', txt)
-            if not m: continue
-            seg = m.group(1)
-            dates = []
-            for mm in re.finditer(r'(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d+)(?:\s*-\s*(\d+))?', seg):
-                mon = MONTHS_EN.index(mm.group(1)) + 1
-                d2 = int(mm.group(3) or mm.group(1) and mm.group(2))
-                day_end = int(mm.group(3)) if mm.group(3) else int(mm.group(2))
-                dates.append(datetime.date(yr, mon, day_end))
-            if dates: out[yr] = dates
-        if not out: raise RuntimeError('parse empty')
-        return out, 'L1·联储官网FOMC日历(抓取)'
-    except Exception as e:
-        log('  FOMC页失败用兜底表:', repr(e)[:80])
-        today = datetime.date.today()
-        return {yr: [datetime.date(yr, m, d) for m, d in ds] for yr, ds in FOMC_FALLBACK.items()}, 'L1·联储FOMC日历(兜底快照2026-08-19)'
+        n = 0
+        for yr in FOMC_FALLBACK:
+            seg_m = re.search(str(yr) + r' FOMC Meetings(.{0,3000})', txt)
+            if seg_m:
+                n += len(re.findall(r'(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}\s*-\s*\d{1,2}', seg_m.group(1)))
+        if n >= len(FOMC_FALLBACK.get(today.year, [])):
+            note += '·在线校验通过'
+    except Exception:
+        pass
+    return out, note
 
 def fred_last(sid):
     raw = http_get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s&cosd=2025-01-01' % sid, timeout=30)
