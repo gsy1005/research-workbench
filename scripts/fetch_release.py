@@ -323,6 +323,9 @@ def fedwatch():
         d_day = mt.day
         implied = imp[key]
         post = (implied*D - pre*(d_day-1)) / (D - d_day + 1)
+        if abs(post - pre) > 1.25 or not (0 < post < 12):
+            log('  跳过远月失真会议', mt.isoformat(), 'post=', round(post, 2))
+            continue  # 远月合约流动性差, 小价差被公式放大, 不入面板也不向后传递
         moves = (post - pre) / 0.25
         import math
         k = math.floor(moves + 1e-9); frac = moves - k
@@ -332,6 +335,7 @@ def fedwatch():
         res.append({'date': mt.isoformat(), 'implied': round(implied, 3), 'post': round(post, 3),
                     'probs': [{'rate': r, 'pct': p} for r, p in probs]})
         pre = post
+        if len(res) >= 6: break
     return {'settle_date': settle_date, 'effr': effr, 'target': '%.2f-%.2f' % (tarl, taru),
             'src': 'L1·CME ZQ结算价(%s)+EFFR(%s,%s) ⚙️按CME公布方法学自建(与官网QuikStrike或差数点)' % (settle_date, effr_src, target_note),
             'cal_src': cal_src, 'meetings': res}
