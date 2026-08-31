@@ -323,7 +323,7 @@ def fedwatch():
         d_day = mt.day
         implied = imp[key]
         post = (implied*D - pre*(d_day-1)) / (D - d_day + 1)
-        if abs(post - pre) > 1.25 or not (0 < post < 12):
+        if abs(post - pre) > 0.75 or not (0 < post < 12):
             log('  跳过远月失真会议', mt.isoformat(), 'post=', round(post, 2))
             continue  # 远月合约流动性差, 小价差被公式放大, 不入面板也不向后传递
         moves = (post - pre) / 0.25
