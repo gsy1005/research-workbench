@@ -172,7 +172,7 @@
   <div class="tkRow"><div class="tickerInner" id="tkIn3"></div></div>
 </div></div>
 <!-- ============ 宏观日历（置顶·横排·按钮切换） ============ -->
-<h2 style="margin-top:0">宏观日历<span class="en">MACRO CALENDAR · 未来两周与关键节点</span></h2>
+<h2 style="margin-top:0">宏观日历<span class="en">MACRO CALENDAR · 未来两周与关键节点</span><span id="calBtnBar" class="ec-titlebtns"></span></h2>
 <div class="card" style="padding:14px 16px;">
   <div class="seg" id="calSeg" style="margin-bottom:12px;"></div>
   <div id="calTopBox" class="calrow"></div>
@@ -566,7 +566,7 @@ function renderLive(S){
   document.getElementById('calNote').textContent = cal.note + ' · 数据日 ' + cal.asof;
   // 金十式数据日历（重要数据平铺、次要折叠"其他+N"）,加载成功则替换上方简版周视图
   if(window.loadEconCal){
-    window.loadEconCal('calTopBox','../data/econ_calendar.json',{},function(ec){
+    window.loadEconCal('calTopBox','../data/econ_calendar.json',{btnHostId:'calBtnBar'},function(ec){
       document.getElementById('calSeg').style.display='none';
       var tb=document.getElementById('calTopBox'); if(tb) tb.classList.remove('calrow');
       document.getElementById('calNote').textContent='';

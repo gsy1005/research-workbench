@@ -499,7 +499,7 @@ function renderLive(S){
   ).join('') + `<div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(cal.note)}</div>`;
   // 金十式数据日历（重要数据平铺、次要折叠"其他+N"）,加载成功则替换上方简版周视图
   if(window.loadEconCal){
-    window.loadEconCal('calBox','../data/econ_calendar.json',{},function(){
+    window.loadEconCal('calBox','../data/econ_calendar.json',{btnHostId:'calBtnBar'},function(){
       var cb=document.getElementById('calBox'); if(cb) cb.classList.remove('grid3');
     });
   }
