@@ -460,6 +460,7 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 <script src="../lib/chart_widget.js"></script>
+<script src="../lib/econ_calendar.js"></script>
 
 <script>function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function renderLive(S){
@@ -496,6 +497,12 @@ function renderLive(S){
   document.getElementById('calBox').innerHTML = cal.weeks.map(w=>
     `<div class="mini"><h4>${w.label}</h4>${w.items.map(it=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><b style="color:var(--blue);">${it[0]}</b> ${it[1]}</div>`).join('')}</div>`
   ).join('') + `<div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(cal.note)}</div>`;
+  // 金十式数据日历（重要数据平铺、次要折叠"其他+N"）,加载成功则替换上方简版周视图
+  if(window.loadEconCal){
+    window.loadEconCal('calBox','../data/econ_calendar.json',{},function(){
+      var cb=document.getElementById('calBox'); if(cb) cb.classList.remove('grid3');
+    });
+  }
   document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='数据快照：'+S.asof);
 }
 function refreshLive(){

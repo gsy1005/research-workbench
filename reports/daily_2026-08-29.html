@@ -9,6 +9,7 @@
 <script src="../data/macro_catalog.js" onerror="window.MACRO_CATALOG=null"></script>
 <script src="../lib/research_toolbox.js"></script>
 <script src="../lib/release_panels.js"></script>
+<script src="../lib/econ_calendar.js"></script>
 <script src="../data/live_snapshot.js"></script>
 <style>
   :root{--bg:#0e1117;--card:#161b26;--line:#262d3d;--txt:#d7dde8;--dim:#8a94a6;--up:#e5534b;--dn:#4caf7d;--gold:#d4a944;--blue:#5b9bd5;}
@@ -563,6 +564,14 @@ function renderLive(S){
   seg.querySelectorAll('button').forEach(b=>b.onclick=()=>showWeek(+b.dataset.i));
   showWeek(0);
   document.getElementById('calNote').textContent = cal.note + ' · 数据日 ' + cal.asof;
+  // 金十式数据日历（重要数据平铺、次要折叠"其他+N"）,加载成功则替换上方简版周视图
+  if(window.loadEconCal){
+    window.loadEconCal('calTopBox','../data/econ_calendar.json',{},function(ec){
+      document.getElementById('calSeg').style.display='none';
+      var tb=document.getElementById('calTopBox'); if(tb) tb.classList.remove('calrow');
+      document.getElementById('calNote').textContent='';
+    });
+  }
   // 关键数据时间表（结论上方）
   if(cal.keydates){
     document.getElementById('keyDateBar').innerHTML = cal.keydates.map(k=>
