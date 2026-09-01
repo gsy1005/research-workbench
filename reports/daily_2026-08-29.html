@@ -257,6 +257,9 @@
   <div class="mini"><h4>特朗普 TACO 压力指数</h4><div id="tacoBox"></div></div>
 </div>
 <div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div></div>
+<div class="mini" style="margin-top:12px;"><h4>地缘专区 · 美伊与中东格局重要事件时间线</h4>
+<div class="chart-note" style="margin-bottom:8px;">事实梳理自权威媒体公开报道（L2），管线随新闻每日更新。<span style="color:#e5534b">■</span>升级 <span style="color:#4caf7d">■</span>缓和 <span style="color:#d4a944">■</span>博弈 <span style="color:#5b9bd5">■</span>数据节点</div>
+<div id="geoBox" class="grid2"></div></div>
 <div class="mini" style="margin-top:12px;"><h4>预测市场图表墙 · Polymarket（Yes概率历史走势）</h4>
 <div class="chart-note" style="margin-bottom:8px;">霍尔木兹海峡复航、美联储加息概率置顶金框重点展示；折线为Yes概率历史（CLOB，最长400日），数据由云端管线每日更新。</div>
 <div id="pmWall" class="mw-g"></div>
@@ -618,31 +621,41 @@ fetch('../data/trump_zone.json?v='+Date.now()).then(function(r){return r.json();
 .mw-v{color:var(--gold);font-weight:700;font-size:14px;white-space:nowrap}
 .mw-ch{width:100%;height:110px}
 .mw-d{color:var(--dim);font-size:10.5px;margin-top:2px}
+.mw-btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;position:sticky;top:52px;background:var(--bg,#0e1117);padding:8px 0;z-index:40}
+.mw-btns button{background:#1c2333;color:var(--dim,#8a94a6);border:1px solid var(--line,#262d3d);border-radius:11px;padding:3px 12px;font-size:11px;cursor:pointer}
+.mw-btns button.on{background:var(--gold,#d4a944);color:#111;font-weight:600;border-color:var(--gold,#d4a944)}
 </style>
 <script>
 (function(){
-var WALL=[['rate','利率'],['price','物价'],['jobs','就业'],['asset','资产'],['energy','能源'],['cn','美中竞赛'],['fiscal','财政'],['trade','贸易'],['mfg','制造业'],['factors','宏观因子'],['quadrant','中美象限'],['flows','资金面'],['position','仓位·CFTC'],['vol','波动与相关'],['cnbond','股债性价比'],['relperf','相对表现']];
+var WALL_ORD=['jobs','price','rate','liq','asset','energy','cn','fiscal','trade','mfg','factors','quadrant','flows','position','vol','cnbond','relperf','poll','pm','move'];
 window._mwCharts=[];
 function fv(v){var a=Math.abs(v);if(a>=10000)return v.toLocaleString('zh-CN',{maximumFractionDigits:0});if(a>=100)return v.toFixed(1);if(a>=10)return v.toFixed(2);return v.toFixed(3);}
 fetch('../data/macro_series.json').then(function(r){return r.ok?r.json():null;}).then(function(mac){
   if(!mac)return;
   var H=window.CHART_SERIES||{}, host=document.getElementById('macroWall'), html='', todo=[];
-  WALL.forEach(function(w){
-    var s=(mac.sections||[]).find(function(x){return x.key===w[0];});
-    if(!s)return;
-    var cards=[];
-    s.items.forEach(function(it){
-      if((H[it.id]||[]).length<3)return;
-      cards.push(it);
-    });
-    if(!cards.length)return;
-    html+='<div class="mw-sec"><div class="mw-h">'+w[1]+'</div><div class="mw-g">'+cards.map(function(it,i){
-      var id=w[0]+'_'+i;todo.push({id:id,it:it});
+  var secs=(mac.sections||[]).map(function(s){
+    var cards=s.items.filter(function(it){return (H[it.id]||[]).length>2;});
+    return {key:s.key,name:s.name||s.key,cards:cards};
+  }).filter(function(s){return s.cards.length;});
+  secs.sort(function(a,b){var ia=WALL_ORD.indexOf(a.key),ib=WALL_ORD.indexOf(b.key);return (ia<0?99:ia)-(ib<0?99:ib);});
+  var btns='<div class="mw-btns"><button data-sec="all" class="on">全部 '+secs.reduce(function(a,s){return a+s.cards.length;},0)+'图</button>'+secs.map(function(s){return '<button data-sec="'+s.key+'">'+s.name+' '+s.cards.length+'</button>';}).join('')+'</div>';
+  secs.forEach(function(s){
+    html+='<div class="mw-sec" data-sec="'+s.key+'"><div class="mw-h">'+s.name+'</div><div class="mw-g">'+s.cards.map(function(it,i){
+      var id=s.key+'_'+i;todo.push({id:id,it:it});
       return '<div class="mw-c"><div class="mw-t"><span class="mw-n">'+it.name+'</span><span class="mw-v" id="mwv-'+id+'"></span></div><div class="mw-ch" id="mwc-'+id+'"></div><div class="mw-d">'+it.src+(it.unit?' · '+it.unit:'')+' · <span id="mwd-'+id+'"></span></div></div>';
     }).join('')+'</div></div>';
   });
   if(!html)return;
-  host.innerHTML=html;
+  host.innerHTML=btns+html;
+  host.querySelectorAll('.mw-btns button').forEach(function(b){
+    b.onclick=function(){
+      host.querySelectorAll('.mw-btns button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on');
+      var k=b.dataset.sec;
+      host.querySelectorAll('.mw-sec').forEach(function(sec){ sec.style.display=(k==='all'||sec.dataset.sec===k)?'':'none'; });
+      setTimeout(function(){window._mwCharts.forEach(function(c){if(c.getDom().offsetParent!==null)c.resize();});},30);
+    };
+  });
   function draw(){
     todo.forEach(function(t){
       if(t.done)return;t.done=true;
@@ -1039,6 +1052,31 @@ fetch('../data/cs_snapshot.json').then(function(r){return r.ok?r.json():null;}).
     });
     window.addEventListener('resize',function(){c.resize();});
   }
+}).catch(function(){});
+})();
+</script>
+<script>
+/* ---------- 地缘专区·事件时间线（L2·权威媒体公开报道汇编） ---------- */
+(function(){
+fetch('../data/geopolitics.json').then(function(r){return r.ok?r.json():null;}).then(function(G){
+  if(!G)return;
+  var box=document.getElementById('geoBox'); if(!box)return;
+  var TAG={esc:['#e5534b','升级'],ease:['#4caf7d','缓和'],game:['#d4a944','博弈'],data:['#5b9bd5','数据']};
+  var h='';
+  G.lines.forEach(function(L){
+    h+='<div><div style="font-weight:700;color:#fff;font-size:13px;margin-bottom:6px;">'+L.name+'</div>';
+    var evs=L.events.slice().reverse();
+    evs.forEach(function(e){
+      var t=TAG[e[2]]||TAG.data;
+      h+='<div style="display:flex;gap:8px;padding:5px 0;border-left:2px solid '+t[0]+';padding-left:10px;margin-left:4px;">'
+        +'<div style="flex:0 0 74px;color:var(--dim);font-size:11px;line-height:1.5;">'+e[0].slice(5)+'</div>'
+        +'<div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:#e8ecf4;">'+e[1]
+        +' <span style="font-size:10px;color:'+t[0]+';font-weight:400;">· '+t[1]+'</span></div>'
+        +'<div style="font-size:11.5px;color:var(--dim);line-height:1.55;margin-top:1px;">'+e[3]+'</div></div></div>';
+    });
+    h+='</div>';
+  });
+  box.innerHTML=h+'<div style="grid-column:1/-1;color:var(--dim);font-size:10.5px;margin-top:4px">'+G.src+' · 更新 '+G.updated+'</div>';
 }).catch(function(){});
 })();
 </script>
