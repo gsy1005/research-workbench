@@ -642,7 +642,7 @@ function refreshLive(){
   const old = document.getElementById('livejs'); if(old) old.remove();
   const s = document.createElement('script'); s.id='livejs';
   s.src = '../data/live_snapshot.js?t=' + Date.now();
-  s.onload = ()=>{ renderLive(window.LIVE_SNAPSHOT); const m=document.getElementById('updMsg'); if(m) m.textContent='已更新 · ' + window.LIVE_SNAPSHOT.asof; };
+  s.onload = ()=>{ renderLive(window.LIVE_SNAPSHOT); liveUST(); const m=document.getElementById('updMsg'); if(m) m.textContent='已更新 · ' + window.LIVE_SNAPSHOT.asof + ' · 美债盘中实时'; };
   s.onerror = ()=>{ const m=document.getElementById('updMsg'); if(m) m.textContent='拉取失败，请稍后重试'; };
   document.head.appendChild(s);
 }
@@ -925,7 +925,7 @@ document.addEventListener('click',function(e){
     var ser=H[cfg.id]; if(!ser||ser.length<2)return;
     var a=ser[ser.length-1],b=ser[ser.length-2];
     var d1=rel(cfg,a,b),d20=rel(cfg,a,at(ser,20)),d250=ser.length>260?rel(cfg,a,at(ser,250)):null;
-    html+='<div class="ovCard"><div><span class="ovN">'+cfg.n+'</span><span class="ovU">'+cfg.u+'</span></div>'
+    html+='<div class="ovCard" data-ovid="'+cfg.id+'"><div><span class="ovN">'+cfg.n+'</span><span class="ovU">'+cfg.u+'</span></div>'
       +'<div class="ovV">'+fmtV(a[1])+'</div>'
       +'<div class="ovChips"><span class="'+(d1>0?'up':d1<0?'dn':'flat')+'">日 '+fmtChg(cfg,d1)+'</span>'
       +'<span class="'+(d20>0?'up':d20<0?'dn':'flat')+'">20日 '+fmtChg(cfg,d20)+'</span>'
@@ -934,7 +934,46 @@ document.addEventListener('click',function(e){
       +'<div class="ovD">截至 '+a[0]+' · '+cfg.src+' · 点评⚙️自建规则</div></div>';
   });
   host.innerHTML=html||'<div class="ovD">序列未加载</div>';
+  window._ovCFG=CFG; window._ovH=H; window._ovFmt={at:at,rel:rel,fmtChg:fmtChg,fmtV:fmtV};
+  liveUST();
 })();
+/* ====== 美债2Y/10Y/30Y 盘中实时补丁：CNBC quote API（CORS开放，Tradeweb行情） ====== */
+function liveUST(){
+  var CFG=window._ovCFG,H=window._ovH,F=window._ovFmt;
+  if(!CFG||!H||!F)return;
+  fetch('https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols=US2Y|US10Y|US30Y&output=json&_='+Date.now())
+    .then(function(r){return r.json();}).then(function(d){
+      var qs=(d.FormattedQuoteResult||{}).FormattedQuote||[]; if(!qs.length)return;
+      var map={US2Y:'DGS2',US10Y:'DGS10',US30Y:'DGS30'}, live={}, tstr='';
+      qs.forEach(function(q){
+        var v=parseFloat(String(q.last).replace('%','')); if(isNaN(v))return;
+        live[q.symbol]={v:v, chg:parseFloat(q.change)||0, prev:parseFloat(String(q.previous_day_closing).replace('%',''))||null};
+        if(!tstr&&q.last_time)tstr=q.last_time;
+      });
+      var et=''; try{ et=new Date(tstr).toLocaleString('zh-CN',{timeZone:'America/New_York',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})+' ET'; }catch(e){}
+      Object.keys(map).forEach(function(sym){
+        var L=live[sym]; if(!L)return;
+        var card=document.querySelector('.ovCard[data-ovid="'+map[sym]+'"]'); if(!card)return;
+        var cfg=null; for(var i=0;i<CFG.length;i++){if(CFG[i].id===map[sym]){cfg=CFG[i];break;}} if(!cfg)return;
+        var ser=H[cfg.id]||[];
+        card.querySelector('.ovV').textContent=L.v.toFixed(2);
+        var chips=card.querySelectorAll('.ovChips span');
+        if(chips[0]){var d1=L.chg; chips[0].className=d1>0?'up':d1<0?'dn':'flat'; chips[0].textContent='日 '+F.fmtChg(cfg,d1);}
+        if(chips[1]&&ser.length>20){var d20=F.rel(cfg,[et,L.v],F.at(ser,20)); chips[1].className=d20>0?'up':d20<0?'dn':'flat'; chips[1].textContent='20日 '+F.fmtChg(cfg,d20);
+          card.querySelector('.ovC').textContent=cfg.c(L.v,cfg.k==='abs'?d20:d20*100);}
+        card.querySelector('.ovD').innerHTML='<span style="color:#d4a944">盘中 '+et+' · L2·CNBC/Tradeweb行情</span> · FRED日度截至 '+(ser.length?ser[ser.length-1][0]:'—')+' · 点评⚙️自建规则';
+      });
+      /* 10Y-2Y利差同步盘中值 */
+      if(live.US10Y&&live.US2Y){
+        var sp=document.querySelector('.ovCard[data-ovid="T10Y2Y"]');
+        if(sp){var sv=(live.US10Y.v-live.US2Y.v), sd=(live.US10Y.chg-live.US2Y.chg);
+          sp.querySelector('.ovV').textContent=sv.toFixed(2);
+          var sc=sp.querySelectorAll('.ovChips span');
+          if(sc[0]){sc[0].className=sd>0?'up':sd<0?'dn':'flat'; sc[0].textContent='日 '+(sd>=0?'+':'')+Math.round(sd*100)+'bp';}
+          sp.querySelector('.ovD').innerHTML='<span style="color:#d4a944">盘中 '+et+' · L2·CNBC行情推算</span> · FRED日度截至 '+(H.T10Y2Y&&H.T10Y2Y.length?H.T10Y2Y[H.T10Y2Y.length-1][0]:'—')+' · 点评⚙️自建规则';}
+      }
+    }).catch(function(){/* 网络失败则保留FRED日度值 */});
+}
 /* ====== 特朗普专区：TACO压力折线+净支持率折线+事件复盘（懒挂载） ====== */
 var _tzMounted=false;
 function mountTz(){
