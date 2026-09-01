@@ -7,13 +7,14 @@ import requests
 UA = {"User-Agent": "Mozilla/5.0"}
 GAMMA = "https://gamma-api.polymarket.com"
 CLOB = "https://clob.polymarket.com"
-TOPICS = ["US recession", "Fed rate decision", "government shutdown", "Senate 2026", "House 2026",
-          "Trump approval rating", "tariff", "China trade", "Iran", "Fed chair Powell", "midterm elections",
-          "Strait of Hormuz", "Hormuz traffic", "Fed rate hike", "Fed decision September", "oil price"]
+TOPICS = ["Iran nuclear deal", "Strait of Hormuz", "Iran", "Hormuz traffic",
+          "Fed rate hike", "Fed decision September", "US recession", "Fed rate decision",
+          "government shutdown", "Trump approval rating", "tariff", "China trade",
+          "Fed chair Powell", "midterm elections", "Senate 2026", "House 2026", "oil price"]
 KEYWORDS = ["recession", "fed", "fomc", "rate cut", "rate decision", "senate", "congress",
             "approval", "tariff", "shutdown", "debt ceiling", "powell", "midterm", "house",
-            "hormuz", "rate hike", "hike", "strait"]
-CAP = 16
+            "hormuz", "rate hike", "hike", "strait", "iran", "nuclear"]
+CAP = 24
 
 def get(url, **kw):
     r = requests.get(url, headers=UA, timeout=30, **kw)

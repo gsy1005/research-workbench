@@ -10,6 +10,7 @@
 <script src="../lib/research_toolbox.js"></script>
 <script src="../lib/release_panels.js"></script>
 <script src="../lib/econ_calendar.js"></script>
+<script src="../lib/chart_widget.js"></script>
 <script src="../data/live_snapshot.js"></script>
 <style>
   :root{--bg:#0e1117;--card:#161b26;--line:#262d3d;--txt:#d7dde8;--dim:#8a94a6;--up:#e5534b;--dn:#4caf7d;--gold:#d4a944;--blue:#5b9bd5;}
@@ -56,6 +57,20 @@
   .seg button{background:#1c2333;color:var(--dim);border:none;padding:5px 14px;font-size:12px;cursor:pointer;}
   .seg button.on{background:var(--gold);color:#111;font-weight:600;}
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px;}
+  .cw{background:#12161f;border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-top:12px;}
+  .cw .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .cw .seg2{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .cw .seg2 button{background:#1c2333;color:var(--dim);border:none;padding:4px 12px;font-size:11px;cursor:pointer;}
+  .cw .seg2 button.on{background:var(--gold);color:#111;font-weight:600;}
+  .cw details{margin-top:8px;border:none;background:transparent;padding:0;}
+  .cw details summary{font-size:11px;color:var(--dim);font-weight:400;}
+  .cw .tags{display:none;flex-wrap:wrap;gap:5px;margin-top:8px;}
+  .cw details[open] .tags{display:flex;}
+  .cw .tag2{font-size:11px;padding:2px 9px;border:1px solid var(--line);border-radius:11px;cursor:pointer;color:var(--dim);background:#161b26;}
+  .cw .tag2.on{border-color:var(--gold);color:var(--gold);background:rgba(212,169,68,.08);}
+  .cw .tag2 .u{font-size:9px;opacity:.7;}
+  .cw .chart{width:100%;height:400px;margin-top:8px;}
+  .cw .cn{font-size:10px;color:var(--dim);margin-top:4px;}
   .tag2{font-size:12px;padding:3px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;color:var(--dim);background:#12161f;}
   .tag2.on{border-color:var(--gold);color:var(--gold);background:rgba(212,169,68,.08);}
   .tag2 .u{font-size:10px;opacity:.7;}
@@ -107,6 +122,7 @@
   .tk i{font-style:normal;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;margin-right:5px;}
   .tk.imp{color:#fff;}
   .tk .kw{color:var(--gold);font-weight:700;background:rgba(212,169,68,.14);border-radius:3px;padding:0 2px;}
+  .ni .kw{color:var(--gold);font-weight:700;background:rgba(212,169,68,.14);border-radius:3px;padding:0 2px;text-decoration:none;}
   .tkSep{color:#3a4356;font-size:10px;}
   /* 数据总览 */
   .ovGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:8px;}
@@ -163,7 +179,8 @@
   <button data-dp="dp4">数据图表</button>
   <button data-dp="dp7">数据发布</button>
   <button data-dp="dp5">数据总表</button>
-  <button data-dp="dp6">消息流</button>
+  <button data-dp="dp9">图表工作区</button>
+  <button data-dp="dp6">消息解读</button>
 </div>
 
 <section class="dp on" id="dp1">
@@ -330,10 +347,25 @@
 <div id="snapCurve" style="width:100%;height:360px"></div>
 
 </section>
+<section class="dp" id="dp9">
+<!-- ============ 图表工作区（自由叠加·与周报同源） ============ -->
+<h2>八、图表工作区<span class="en">CHART WORKSPACE · 全部序列任选叠加</span></h2>
+<div class="card"><p style="font-size:13px;">自由图表工作区：<b style="color:var(--gold);">全部序列任选</b>（宏观库+FRED/行情/终端快照，含美债全期限·汇率·商品·流动性·CFTC等）叠加最多4个，折线/柱状/季节性自由切换。高相关组合预设：
+<button class="tag2" style="margin-left:6px;" onclick="presetWSd(['DGS10','DGS2','DGS30','T10Y2Y'])">美债曲线</button>
+<button class="tag2" onclick="presetWSd(['DFII10','T5YIE','T10YIE'])">实际利率与通胀预期</button>
+<button class="tag2" onclick="presetWSd(['Y_USDJPY','IRLTLT01JPM156N','DTWEXBGS'])">日元与日本国债</button>
+<button class="tag2" onclick="presetWSd(['EFFR','SOFR','RRPONTSYD','WDTGAL'])">流动性三件套</button>
+<button class="tag2" onclick="presetWSd(['VIXCLS','BAMLC0A4CBBB'])">风险偏好</button>
+<button class="tag2" onclick="presetWSd(['DCOILWTICO','EIA商业原油库存'])">原油量价</button>
+<button class="tag2" onclick="presetWSd(['沪金主连','沪银主连','INE原油主连'])">境内商品</button>
+</p></div>
+<div class="cw" id="cw-wsd"></div>
+</section>
 <section class="dp" id="dp6">
-<!-- ============ 七、三源实时消息 ============ -->
-<h2>八、三源实时消息流<span class="en">NEWS · 金十PLUS / 先讯VIP / CS财经 · 截止18:36</span></h2>
-<div class="news" id="news"></div>
+<!-- ============ 消息解读区（关键字自动归类·⚙️规则生成） ============ -->
+<h2>九、消息解读区<span class="en">NEWS DIGEST · 三源按主题归类 · 重要置顶</span></h2>
+<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">金十PLUS / 先讯VIP / CS财经 三源合并去重，按关键字归入四类：<b style="color:#e5534b">地缘</b> · <b style="color:#d4a944">宏观·政策</b> · <b style="color:#5b9bd5">股市·科技</b> · <b style="color:#4caf7d">商品·产业</b>；每类内重要消息（★）置顶、其余按时间倒序。归类与标签为⚙️规则自动生成，不构成观点。</p></div>
+<div class="news" id="newsDigest"></div>
 </section>
 
 <footer style="margin-top:36px;color:var(--dim);font-size:11px;border-top:1px solid var(--line);padding-top:12px;">
@@ -358,18 +390,47 @@ D.groups.forEach(g=>{
   box.innerHTML += h + '</table><div style="height:10px"></div>';
 });
 
-/* ---------- 消息流渲染 ---------- */
-const nb = document.getElementById('news');
-const names = {jin10:'金十·PLUS实时', ah:'先讯·VIP实时', cs:'CS财经·实时'};
-['jin10','ah','cs'].forEach(k=>{
-  let h = `<div class="ncol"><h4>${names[k]}（${(N[k]||[]).length}条）</h4>`;
-  (N[k]||[]).forEach(it=>{
-    const t = it.time||it.t||'';
-    const c = (it.content||it.title||'').replace(/<[^>]+>/g,'');
-    h += `<div class="ni"><span class="t">${t}</span>${c.slice(0,120)}${c.length>120?'…':''}</div>`;
-  });
-  nb.innerHTML += h + '</div>';
+/* ---------- 消息解读区渲染（关键字自动归类·重要置顶·⚙️规则生成） ---------- */
+(function(){
+const ndHost = document.getElementById('newsDigest'); if(!ndHost) return;
+const srcNames = {jin10:'金十', ah:'先讯', cs:'CS'};
+const CATS=[
+ {n:'地缘', c:'#e5534b', kw:/(伊朗|美伊|霍尔木兹|伊拉克|俄罗斯|乌克兰|特朗普|关税|委内瑞拉|以色列|中东)/},
+ {n:'宏观·政策', c:'#d4a944', kw:/(美债|美元|美伊|美国|伊朗|贝森特|沃什|加息|降息|美联储|财政部|赤字|非农|CPI|通胀)/},
+ {n:'股市·科技', c:'#5b9bd5', kw:/(美股|科技股|\bAI\b|机器人|存储|英伟达|\bARR\b|\btoken\b|\bMeta\b|芯片|港股|A股|恒生|纳斯达克|标普)/},
+ {n:'商品·产业', c:'#4caf7d', kw:/(铜|铝|(?<!无)锡|光伏|反内卷|煤|工信部|发改委|锂|硅|原油|石油|黄金|白银|欧佩克)/}
+];
+const KWH=/(伊朗|美伊|霍尔木兹|伊拉克|俄罗斯|乌克兰|特朗普|关税|委内瑞拉|以色列|中东|美债|美元|美国|贝森特|沃什|加息|降息|美联储|财政部|非农|CPI|通胀|美股|科技股|机器人|存储|英伟达|芯片|港股|A股|恒生|纳斯达克|标普|铜|铝|(?<!无)锡|光伏|反内卷|煤|工信部|发改委|锂|硅|原油|石油|黄金|白银|欧佩克|\bAI\b|\bARR\b|\bTOKEN\b|\bMETA\b)/gi;
+function escN(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+let all=[];
+['jin10','ah','cs'].forEach(k=>{ (N[k]||[]).forEach(it=>{
+  const c=(it.content||it.title||'').replace(/<[^>]+>/g,'');
+  all.push({t:it.time||it.t||'', c:c, s:k, imp:it.important?1:0});
+});});
+all.sort((a,b)=>a.t<b.t?1:-1);
+const seen=new Set(); all=all.filter(it=>{const k=it.c.slice(0,40); if(seen.has(k))return false; seen.add(k); return true;});
+let h='';
+CATS.forEach(cat=>{
+  const items=all.filter(it=>cat.kw.test(it.c));
+  const nImp=items.filter(it=>it.imp).length;
+  const sorted=items.slice().sort((a,b)=> b.imp-a.imp || (a.t<b.t?1:-1));
+  const top=sorted.slice(0,12), rest=sorted.slice(12);
+  h+='<div class="ncol"><h4 style="color:'+cat.c+'">'+cat.n+'（'+items.length+'条'+(nImp?' · ★重要'+nImp:'')+'）</h4>';
+  const render=it=>'<div class="ni"><span class="t">'+escN(it.t).slice(5,16)+'</span>'
+    +(it.imp?'<span style="color:var(--gold);font-size:11px;margin-right:3px;">★</span>':'')
+    +'<span style="font-size:10px;color:var(--dim);border:1px solid var(--line);border-radius:3px;padding:0 3px;margin-right:4px;">'+srcNames[it.s]+'</span>'
+    +escN(it.c.slice(0,180)).replace(KWH,'<u class="kw">$1</u>')+(it.c.length>180?'…':'')+'</div>';
+  h+=top.map(render).join('');
+  if(rest.length) h+='<details style="margin-top:6px;"><summary style="cursor:pointer;font-size:11px;color:var(--dim);">其余 '+rest.length+' 条 ▸</summary>'+rest.map(render).join('')+'</details>';
+  h+='</div>';
 });
+ndHost.innerHTML=h||'<div class="ncol">暂无匹配消息</div>';
+})();
+/* ---------- 图表工作区（懒挂载） ---------- */
+var _wsdDone=false;
+function presetWSd(ids){ document.getElementById('cw-wsd').innerHTML=''; chartWidget('cw-wsd', ids, null); _wsdDone=true; }
+function mountWSd(){ if(_wsdDone)return; chartWidget('cw-wsd', ['DGS10','DGS30','Y_USDJPY'], null); _wsdDone=true; }
+document.querySelectorAll('[data-dp="dp9"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountWSd,60);});});
 
 /* ---------- 图表区 ---------- */
 const CATALOG = [
@@ -850,7 +911,10 @@ document.addEventListener('click',function(e){
    {id:'Y_GOLD',n:'COMEX黄金',u:'美元/盎司',k:'pct',src:'L2 行情',c:function(v,d){return d>2?'20日走强':d<-2?'利率压制回撤':'高位拉锯';}},
    {id:'DCOILWTICO',n:'WTI原油',u:'美元/桶',k:'pct',src:'L1 FRED',c:function(v,d){return '霍尔木兹关闭溢价'+(d>3?'，20日上行':d<-3?'，20日回落':'，区间震荡');}},
    {id:'IF_000300SH',n:'沪深300',u:'点',k:'pct',src:'L2 iFinD',c:function(v,d){return d>2?'20日走强':d<-2?'20日走弱':'区间震荡';}},
-   {id:'DEXCHUS',n:'美元兑人民币',u:'元/美元',k:'pct',src:'L1 FRED',c:function(v){return v>=7.3?'贬值压力区':v<=6.9?'偏强区':'中间区';}}
+   {id:'DEXCHUS',n:'美元兑人民币',u:'元/美元',k:'pct',src:'L1 FRED',c:function(v){return v>=7.3?'贬值压力区':v<=6.9?'偏强区':'中间区';}},
+   {id:'DGS30',n:'美债30Y收益率',u:'%',k:'bp',src:'L1 FRED',c:function(v,d){return (v>=5.2?'≥5.2%关口高压':v>=4.8?'4.8–5.2%偏高区':'4.8%下方')+(d>10?'，20日上行'+Math.round(d)+'bp':d<-10?'，20日回落'+Math.round(-d)+'bp':'，20日窄幅');}},
+   {id:'Y_USDJPY',n:'美元兑日元',u:'日元',k:'pct',src:'L2 行情',c:function(v,d){return (v>=150?'日元偏弱区':v<=140?'日元偏强区':'中间区')+(d>1?'，20日日元走弱':d<-1?'，20日日元走强':'，20日窄幅');}},
+   {id:'IRLTLT01JPM156N',n:'日本10Y国债收益率',u:'%',k:'bp',src:'L1 FRED·月度',c:function(v,d){return (v>=1.5?'≥1.5%紧缩定价':v>=1.0?'1.0–1.5%正常化途中':'1%下方')+(Math.abs(d)>5?'，近期波动加大':'，月度频率');}}
   ];
   function at(ser,n){return ser[Math.max(0,ser.length-1-n)];}
   function rel(cfg,a,b){if(!b||!b[1])return 0;return cfg.k==='pct'?(a[1]/b[1]-1):(a[1]-b[1]);}

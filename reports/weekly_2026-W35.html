@@ -110,13 +110,10 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
       <span id="updMsg"></span>
     </div>
   </div>
-  <div class="tabbar"><button data-p="ov" class="on">本周总览</button><button data-p="emp">就业市场</button><button data-p="inf">通胀</button><button data-p="gdp">GDP与经济核算</button><button data-p="cons">消费</button><button data-p="house">房地产</button><button data-p="inv">企业投资与AI资本开支</button><button data-p="pmi">PMI</button><button data-p="fisc">财政与国债市场</button><button data-p="fed">美联储与金融条件</button><button data-p="liq" style="border-color:var(--gold)">流动性</button><button data-p="cn">中国宏观</button><button data-p="fw" style="border-color:var(--gold)">资金·仓位·估值</button><button data-p="ws" style="border-color:var(--gold)">图表工作区</button><button data-p="wall" style="border-color:var(--gold)">宏观图表墙</button></div>
+  <div class="tabbar"><button data-p="ov" class="on">本周总览</button><button data-p="geo" style="border-color:var(--gold)">地缘专区</button><button data-p="emp">就业市场</button><button data-p="inf">通胀</button><button data-p="gdp">GDP与经济核算</button><button data-p="cons">消费</button><button data-p="house">房地产</button><button data-p="inv">企业投资与AI资本开支</button><button data-p="pmi">PMI</button><button data-p="fisc">财政与国债市场</button><button data-p="fed">美联储与金融条件</button><button data-p="liq" style="border-color:var(--gold)">流动性</button><button data-p="cn">中国宏观</button><button data-p="fw" style="border-color:var(--gold)">资金·仓位·估值</button><button data-p="ws" style="border-color:var(--gold)">图表工作区</button><button data-p="wall" style="border-color:var(--gold)">宏观图表墙</button></div>
 </header>
 
 <div class="panel on" id="p-ov">
-<div class="mini" style="grid-column:1/-1;"><h4>地缘专区 · 美伊与中东格局重要事件时间线</h4>
-<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">事实梳理自权威媒体公开报道（L2），管线随新闻每日更新。<span style="color:#e5534b">■</span>升级 <span style="color:#4caf7d">■</span>缓和 <span style="color:#d4a944">■</span>博弈 <span style="color:#5b9bd5">■</span>数据节点</div>
-<div id="geoBox" class="grid2"></div></div>
 <div class="card">
   <p style="font-size:13px;"><b style="color:var(--gold);">中心矛盾（存续）：A端</b>（财政主导+通胀黏性 → 实际利率与美元高位）<b style="color:var(--gold);">vs B端</b>（央行购金+矿紧供给+AI电力资本开支 → 实物资产重估）。本周天平明显向A端倾斜：沃什JH偏鹰 → 9月加息概率单日+22pp、2Y跳升、金银重挫、美元走强。联合阈值规则下——金破4520✅、但10Y实际利率尚未破2.45%❌——<b>不宣告A胜，观点不跨零直翻</b>。</p>
 </div>
@@ -138,8 +135,6 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
   <div class="mini"><h4>CME FedWatch 加息预期（联邦基金期货定价）</h4><div id="fwBox"></div></div>
   <div class="mini"><h4>特朗普 TACO 压力指数</h4><div id="tacoBox"></div></div>
 </div>
-<div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div></div>
-
 <h2>宏观日历<span class="en">MACRO CALENDAR</span><span id="calBtnBar" class="ec-titlebtns"></span></h2>
 <div class="grid3" id="calBox"></div>
 
@@ -147,6 +142,15 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
 <div class="card"><p style="font-size:13px;">
 <b style="color:var(--gold);">三个闸门依次过：</b>9/4非农（连续两月负值则加息论退潮）→ 9/11 CPI（核心环比≤0.15%则证伪"舒适期结束"）→ 9/16 FOMC+点阵图。<br>
 <b style="color:var(--gold);">证伪雷达（周度）：</b>①A端：10Y实际利率破2.45%且金破4520 → 当前金已破✅/实际利率未破❌，未触发；②美股risk-on：HY OAS破1.20%且VIX破18 → 当前0.98%/14.51，远离触发；③霍尔木兹：12月档正常化概率跌破25% → 当前30.5%，接近警戒线；④曲线走陡头寸：10Y-2Y回落至&lt;20bp → 当前39bp，单日-8bp需警惕。</p></div>
+</div>
+<div class="panel" id="p-geo">
+<h2 style="margin-top:0">地缘专区<span class="en">GEOPOLITICS · 美伊与中东格局</span></h2>
+<div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div>
+<div id="pmGeoChart" style="width:100%;height:250px;margin-top:6px;"></div>
+<div id="pmGeoNote" style="font-size:11px;color:var(--dim);margin-top:4px;"></div></div>
+<div class="mini" style="grid-column:1/-1;"><h4>美伊与中东格局重要事件时间线</h4>
+<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">事实梳理自权威媒体公开报道（L2），管线随新闻每日更新。<span style="color:#e5534b">■</span>升级 <span style="color:#4caf7d">■</span>缓和 <span style="color:#d4a944">■</span>博弈 <span style="color:#5b9bd5">■</span>数据节点</div>
+<div id="geoBox" class="grid2"></div></div>
 </div>
 <div class="panel" id="p-emp">
 <div class="card">
@@ -536,6 +540,34 @@ fetch('../data/geopolitics.json').then(function(r){return r.ok?r.json():null;}).
     h+='</div>';
   });
   box.innerHTML=h+'<div style="grid-column:1/-1;color:var(--dim);font-size:10.5px;margin-top:4px">'+G.src+' · 更新 '+G.updated+'</div>';
+}).catch(function(){});
+})();
+/* 地缘专区 · Polymarket 美伊/霍尔木兹市场历史折线(Yes概率) */
+(function(){
+fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
+  var el=document.getElementById('pmGeoChart'); if(!el||!d)return;
+  var RE=/hormuz|strait|iran/i;
+  var ms=(d.markets||[]).filter(function(m){return RE.test(m.question||'')&&(m.history||[]).length>=2;});
+  var note=document.getElementById('pmGeoNote');
+  if(!ms.length){
+    el.style.display='none';
+    if(note)note.textContent='历史折线累积中:云端管线已把美伊核协议/霍尔木兹市场加入每日抓取,攒够历史后自动出图 · L3·Polymarket';
+    return;
+  }
+  var COLORS=['#d4a944','#5b9bd5','#e5534b','#4caf7d','#b08ad9','#e8912d'];
+  var c=echarts.init(el);
+  c.setOption({backgroundColor:'transparent',animation:false,
+    grid:{left:40,right:14,top:30,bottom:42},
+    legend:{top:0,textStyle:{color:'#8a94a6',fontSize:10},type:'scroll'},
+    tooltip:{trigger:'axis',backgroundColor:'#161b26',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11},
+      formatter:function(ps){var s=ps[0].axisValue;ps.forEach(function(p){s+='<br>'+p.marker+p.seriesName+' <b>'+(p.data[1]*100).toFixed(1)+'%</b>';});return s;}},
+    xAxis:{type:'time',axisLine:{lineStyle:{color:'#262d3d'}},axisLabel:{color:'#8a94a6',fontSize:9}},
+    yAxis:{type:'value',min:0,max:function(v){return Math.max(0.3,Math.min(1,v.max));},axisLabel:{color:'#8a94a6',fontSize:9,formatter:function(v){return Math.round(v*100)+'%';}},splitLine:{lineStyle:{color:'#1d2330'}}},
+    dataZoom:[{type:'slider',height:14,bottom:4,backgroundColor:'#1a2130',fillerColor:'rgba(212,169,68,.15)',borderColor:'#333',textStyle:{color:'#8a94a6',fontSize:9}}],
+    series:ms.map(function(m,i){return {name:(m.question||'').slice(0,38),type:'line',symbol:'none',data:m.history,
+      lineStyle:{color:COLORS[i%COLORS.length],width:1.6},itemStyle:{color:COLORS[i%COLORS.length]}};})});
+  if(note)note.textContent=ms.length+' 个美伊/霍尔木兹相关市场 · Yes概率日线 · 抓取于 '+(d.fetched_at||'').slice(0,10)+' · L3·Polymarket(链上预测市场,非官方口径)';
+  window.addEventListener('resize',function(){c.resize();});
 }).catch(function(){});
 })();
 </script>
