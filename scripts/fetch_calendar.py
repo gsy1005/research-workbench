@@ -68,6 +68,50 @@ J10_UID = 3749462
 J10_KEEP_COUNTRY = ('美国', '中国', '欧元区', '日本', '英国', '加拿大', '澳大利亚', '瑞士', '德国', '法国', '欧盟', '新西兰')
 J10_MAX_PER_DAY = 10
 
+# —— 金十中国宏观积累收割(东财历史库没有的序列, 滚动窗口每日积累) ——
+# indicator_name → (入库键, 名称, 单位)
+J10_HARVEST = {
+    '今年迄今社会融资规模增量': ('J10_CN_TSF_YTD', '社融增量(累计)', '亿元'),
+    '社会消费品零售总额同比': ('J10_CN_RETAIL_YOY', '社零同比', '%'),
+    '今年迄今城镇固定资产投资同比': ('J10_CN_FAI_YTD_YOY', '固投累计同比', '%'),
+    '城镇调查失业率': ('J10_CN_UR', '城镇调查失业率', '%'),
+    '外汇储备': ('J10_CN_FXRES', '外汇储备', '亿美元'),
+    'RatingDog制造业PMI': ('J10_CN_PMI_CX', '财新(RatingDog)制造业PMI', '点'),
+    '财新制造业PMI': ('J10_CN_PMI_CX', '财新(RatingDog)制造业PMI', '点'),
+    '全社会用电量同比': ('J10_CN_ELEC_YOY', '全社会用电量同比', '%'),
+    'GDP年率': ('J10_CN_GDP_YOY', '中国GDP单季同比', '%'),
+    '以美元计算出口年率': ('J10_CN_EXP_USD_YOY', '出口同比(美元)', '%'),
+    '以美元计算进口年率': ('J10_CN_IMP_USD_YOY', '进口同比(美元)', '%'),
+    '以美元计算贸易帐': ('J10_CN_TRADE_USD', '贸易差额(美元,月)', '亿美元'),
+}
+
+_QMAP = {'一': 1, '二': 2, '三': 3, '四': 4, '1': 1, '2': 2, '3': 3, '4': 4}
+
+
+def _j10_period_date(tp, pub_dt):
+    """time_period('7月'/'第二季度') + 发布日 → 数据期月末日期 'YYYY-MM-DD'; 无法解析返回None"""
+    if not tp:
+        return None
+    m = re.match(r'^(\d{1,2})月$', tp.strip())
+    if m:
+        mo = int(m.group(1))
+    else:
+        q = re.search(r'第?([一二三四1234])季度', tp)
+        if not q:
+            return None
+        mo = _QMAP[q.group(1)] * 3
+    y = pub_dt.year if mo <= pub_dt.month else pub_dt.year - 1
+    if mo == 12:
+        return '%d-12-31' % y
+    return (datetime.date(y, mo + 1, 1) - datetime.timedelta(days=1)).isoformat()
+
+
+def _f(v):
+    try:
+        return float(str(v).replace(',', ''))
+    except (TypeError, ValueError):
+        return None
+
 
 def _j10_wstr(s):
     b = s.encode('utf-8')
@@ -104,9 +148,10 @@ class _J10R:
         return v
 
 
-def fetch_j10(bjt_now, days_past=2, days_fwd=13):
+def fetch_j10(bjt_now, days_past=62, days_fwd=13):
     """金十WS日历: type0宏观数据(前值/预期/公布/星级) + type2大事, 北京时间
-    需 JIN10_TOKEN (x-token cookie)。单连接批量查询, 限速友好。"""
+    需 JIN10_TOKEN (x-token cookie)。单连接批量查询, 限速友好。
+    返回 (当日芯片条目, 中国宏观收割dict); WS历史窗口约当前月-2个月, 收割随每日运行滚动积累。"""
     import websocket, socket, base64, zlib
     tok = os.environ.get('JIN10_TOKEN')
     if not tok:
@@ -206,11 +251,29 @@ def fetch_j10(bjt_now, days_past=2, days_fwd=13):
 
     # 整形
     items = []
+    harvest = {}   # 入库键 → {name, unit, points: {期日: {ac,fc,pv,pub}}}
     for (rt, d), lst in results.items():
         for it in lst:
             if rt == 0:
                 c = it.get('country') or ''
                 star = it.get('star') or 0
+                # —— 中国宏观收割(不受国家白名单/星级过滤影响) ——
+                nm0 = it.get('indicator_name') or ''
+                if c == '中国' and nm0 in J10_HARVEST:
+                    pt0 = it.get('pub_time') or ''
+                    try:
+                        pub_dt = datetime.datetime.strptime(pt0[:16], '%Y-%m-%d %H:%M')
+                    except ValueError:
+                        pub_dt = None
+                    pd = _j10_period_date(it.get('time_period') or '', pub_dt) if pub_dt else None
+                    ac = _f(it.get('actual'))
+                    if pd and ac is not None:
+                        key, hname, hunit = J10_HARVEST[nm0]
+                        h = harvest.setdefault(key, {'name': hname, 'unit': hunit, 'points': {}})
+                        cur = h['points'].get(pd)
+                        if cur is None or (it.get('pub_time') or '') > (cur.get('pub') or ''):
+                            h['points'][pd] = {'ac': ac, 'fc': _f(it.get('consensus')),
+                                               'pv': _f(it.get('previous')), 'pub': (it.get('pub_time') or '')[:10]}
                 if c not in J10_KEEP_COUNTRY:
                     continue
                 if star < 3 and not (c in ('美国', '中国') and star >= 2):
@@ -253,7 +316,7 @@ def fetch_j10(bjt_now, days_past=2, days_fwd=13):
             continue
         per[e['d']] = n + 1
         slim.append(e)
-    return slim
+    return slim, harvest
 
 
 # —— 东财日历过滤规则 ——
@@ -399,9 +462,10 @@ def main():
             old = None
 
     ff_events, em_events, j10_items, fails = None, None, None, []
+    j10_harvest = None
     try:
-        j10_items = fetch_j10(bjt_now)
-        print('J10 %d条' % len(j10_items))
+        j10_items, j10_harvest = fetch_j10(bjt_now)
+        print('J10 %d条 收割%d键' % (len(j10_items), len(j10_harvest or {})))
     except Exception as e:
         print('J10_FAIL:', e); fails.append('j10')
     try:
@@ -429,6 +493,46 @@ def main():
         em_events = old.get('em', [])
     if j10_items is None and old:
         j10_items = (old.get('j10') or {}).get('items', [])
+
+    # —— 金十收割积累: j10_store.json → chart_series.js + macro_catalog.js ——
+    if j10_harvest:
+        try:
+            store_p = os.path.join(APP, 'data', 'j10_store.json')
+            store = {}
+            if os.path.exists(store_p):
+                store = json.load(open(store_p, encoding='utf-8'))
+            for key, h in j10_harvest.items():
+                s = store.setdefault(key, {'name': h['name'], 'unit': h['unit'], 'points': {}})
+                s['points'].update(h['points'])
+            json.dump(store, open(store_p, 'w', encoding='utf-8'), ensure_ascii=False)
+            # 并入图表墙
+            cs_p = os.path.join(APP, 'data', 'chart_series.js')
+            cat_p = os.path.join(APP, 'data', 'macro_catalog.js')
+            raw = open(cs_p, encoding='utf-8').read()
+            m = re.search(r'window\.CHART_SERIES\s*=\s*(\{.*\})\s*;?\s*$', raw, re.S)
+            cs = json.loads(m.group(1))
+            raw = open(cat_p, encoding='utf-8').read()
+            mc = re.search(r'window\.MACRO_CATALOG\s*=\s*(\[.*\])\s*;?\s*$', raw, re.S)
+            cat = json.loads(mc.group(1))
+            cat_ids = {c['id'] for c in cat}
+            for key, s in store.items():
+                pts = s.get('points') or {}
+                ser = [[d, pts[d]['ac']] for d in sorted(pts) if pts[d].get('ac') is not None]
+                if not ser:
+                    continue
+                cs[key] = ser
+                if key not in cat_ids:
+                    cat.append({'id': key, 'name': s['name'], 'unit': s['unit']})
+                    cat_ids.add(key)
+            open(cs_p + '.tmp', 'w', encoding='utf-8').write(
+                'window.CHART_SERIES = ' + json.dumps(cs, ensure_ascii=False, separators=(',', ':')) + ';')
+            os.replace(cs_p + '.tmp', cs_p)
+            open(cat_p + '.tmp', 'w', encoding='utf-8').write(
+                'window.MACRO_CATALOG = ' + json.dumps(cat, ensure_ascii=False, separators=(',', ':')) + ';')
+            os.replace(cat_p + '.tmp', cat_p)
+            print('J10积累库: %d键入图表墙' % sum(1 for k in store if store[k].get('points')))
+        except Exception as e:
+            print('J10_STORE_FAIL:', e)
 
     out = {
         'asof': bjt_now.strftime('%Y-%m-%d %H:%M BJT'),

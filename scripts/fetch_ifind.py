@@ -16,6 +16,11 @@ TICKERS = [
     ('399006.SZ',  'IF_399006SZ', '创业板指',       '点'),
     ('000905.SH',  'IF_000905SH', '中证500指数',    '点'),
     ('AG9999.SHG', 'IF_AG9999',   '沪银AG9999现货', '元/千克'),
+    # 2026-09-01扩充(均已验证ifind_get_price可取)
+    ('000016.SH',  'IF_000016SH', '上证50指数',     '点'),
+    ('000852.SH',  'IF_000852SH', '中证1000指数',   '点'),
+    ('399001.SZ',  'IF_399001SZ', '深证成指',       '点'),
+    ('000688.SH',  'IF_000688SH', '科创50指数',     '点'),
 ]
 
 def load_cs():
@@ -61,7 +66,12 @@ def main():
         with open(out, encoding='utf-8') as f:
             rows = list(csv.DictReader(f))
         for tk, key, name, unit in batch:
-            add = [[r['time'], round(float(r['close']), 3)]
+            def _nd(t):
+                t = (t or '').strip()[:10]
+                if re.fullmatch(r'\d{8}', t):
+                    t = '%s-%s-%s' % (t[:4], t[4:6], t[6:8])
+                return t
+            add = [[_nd(r['time']), round(float(r['close']), 3)]
                    for r in rows if r.get('thscode') == tk and r.get('close')]
             if not add:
                 continue
