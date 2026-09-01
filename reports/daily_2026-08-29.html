@@ -618,19 +618,33 @@ if(!document.querySelector('[data-dp="dp7"]'))mountRp();
 <script>
 /* 宏观日历·预期值芯片：ForexFactory免费周历(每日管线刷新) */
 window.calChips = function(caldText){
-  var cc = window.CAL_CONS; if(!cc || !cc.events) return '';
+  var cc = window.CAL_CONS; if(!cc) return '';
   var m = /^(\d{1,2}\/\d{1,2})/.exec((caldText||'').trim()); if(!m) return '';
-  var list = cc.events.filter(function(e){ return e.d === m[1]; });
-  if(!list.length) return '';
-  return '<div class="fcwrap">' + list.map(function(e){
-    var nm = e.tcn || e.ten;
-    var star = e.imp==='High' ? '★★★' : (e.imp==='Medium' ? '★★' : '');
-    var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
-    var body;
-    if(e.ac){ body = '实际 <b class="fcac">' + e.ac + '</b>' + (e.fc ? ' · 预期 ' + e.fc : '') + (e.pv ? ' · 前值 ' + e.pv : ''); }
-    else { body = (e.fc ? '预期 <b>' + e.fc + '</b>' : '无一致预期') + (e.pv ? ' · 前值 ' + e.pv : ''); }
-    return '<span class="fcchip">' + tm + nm + '<i>' + star + '</i> ' + body + '</span>';
-  }).join('') + '</div>';
+  var html = '';
+  // A. FF预期芯片(本周重磅)
+  var list = (cc.events||[]).filter(function(e){ return e.d === m[1]; });
+  if(list.length){
+    html += '<div class="fcwrap">' + list.map(function(e){
+      var nm = e.tcn || e.ten;
+      var star = e.imp==='High' ? '★★★' : (e.imp==='Medium' ? '★★' : '');
+      var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
+      var body;
+      if(e.ac){ body = '实际 <b class="fcac">' + e.ac + '</b>' + (e.fc ? ' · 预期 ' + e.fc : '') + (e.pv ? ' · 前值 ' + e.pv : ''); }
+      else { body = (e.fc ? '预期 <b>' + e.fc + '</b>' : '无一致预期') + (e.pv ? ' · 前值 ' + e.pv : ''); }
+      return '<span class="fcchip">' + tm + nm + '<i>' + star + '</i> ' + body + '</span>';
+    }).join('') + '</div>';
+  }
+  // B. 东财全景芯片(14天, 中文, 无预期)
+  var em = (cc.em||[]).filter(function(e){ return e.d === m[1]; });
+  if(em.length){
+    var MAX = 6;
+    html += '<div class="fcwrap">' + em.slice(0, MAX).map(function(e){
+      var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
+      var cls = e.kind === 'event' ? 'fcchip em ev' : 'fcchip em';
+      return '<span class="' + cls + '">' + tm + e.name + '</span>';
+    }).join('') + (em.length > MAX ? '<span class="fcchip em">+' + (em.length - MAX) + '</span>' : '') + '</div>';
+  }
+  return html;
 };
 fetch('../data/calendar_consensus.json?v='+Date.now()).then(function(r){return r.json();}).then(function(cc){
   window.CAL_CONS = cc;
@@ -646,6 +660,9 @@ fetch('../data/calendar_consensus.json?v='+Date.now()).then(function(r){return r
 .fcchip i{font-style:normal;color:var(--gold);opacity:.7;margin-left:3px;letter-spacing:-1px}
 .fcchip .fctm{color:var(--gold);opacity:.85;margin-right:6px;font-variant-numeric:tabular-nums}
 .fcchip .fcac{color:var(--up)}
+.fcchip.em{opacity:.75;border-style:dashed}
+.fcchip.em .fctm{color:var(--dim)}
+.fcchip.em.ev{border-color:var(--gold);color:var(--txt)}
 </style>
 </body>
 </html>
