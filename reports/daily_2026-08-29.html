@@ -553,31 +553,22 @@ function renderLive(S){
     `<table><tr><th>预测市场（Yes=达成/恢复）</th><th style="text-align:right;">概率</th><th style="text-align:right;">成交额</th><th>变动</th></tr>${mk}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">最新进展：</div>${iev}
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(ir.src)} · 数据日 ${ir.asof}</div>`;
-  // 日历（置顶横排 + 按钮切换）
+  // 金十式数据日历（本周/下周/关键节点 按钮切换;每卡仅显最重要1条,其余折叠"其他+N"）
   let cal = S.calendar;
-  let seg = document.getElementById('calSeg');
-  seg.innerHTML = cal.weeks.map((w,i)=>`<button data-i="${i}" class="${i===0?'on':''}">${w.label}</button>`).join('');
-  function showWeek(i){
-    seg.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on', j===i));
-    window.__calI=i;
-    document.getElementById('calTopBox').innerHTML = cal.weeks[i].items.map(it=>{
+  document.getElementById('calSeg').style.display='none';
+  function calFallback(){
+    document.getElementById('calTopBox').innerHTML = cal.weeks[0].items.map(it=>{
       const star = (it[1].match(/★/g)||[]).length;
-      const chips = window.calChips ? window.calChips(it[0]) : '';
-      return `<div class="calitem ${star>=4?'hot':''}"><div class="cald">${it[0]}</div><div class="calt">${it[1]}${chips}</div></div>`;
+      return `<div class="calitem ${star>=4?'hot':''}"><div class="cald">${it[0]}</div><div class="calt">${it[1]}</div></div>`;
     }).join('');
+    document.getElementById('calNote').textContent = cal.note + ' · 数据日 ' + cal.asof;
   }
-  window.__calRe=function(){ showWeek(window.__calI||0); };
-  seg.querySelectorAll('button').forEach(b=>b.onclick=()=>showWeek(+b.dataset.i));
-  showWeek(0);
-  document.getElementById('calNote').textContent = cal.note + ' · 数据日 ' + cal.asof;
-  // 金十式数据日历（重要数据平铺、次要折叠"其他+N"）,加载成功则替换上方简版周视图
   if(window.loadEconCal){
     window.loadEconCal('calTopBox','../data/econ_calendar.json',{btnHostId:'calBtnBar'},function(ec){
-      document.getElementById('calSeg').style.display='none';
       var tb=document.getElementById('calTopBox'); if(tb) tb.classList.remove('calrow');
       document.getElementById('calNote').textContent='';
-    });
-  }
+    }, calFallback);
+  } else { calFallback(); }
   // 关键数据时间表（结论上方）
   if(cal.keydates){
     document.getElementById('keyDateBar').innerHTML = cal.keydates.map(k=>

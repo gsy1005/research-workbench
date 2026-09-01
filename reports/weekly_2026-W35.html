@@ -492,17 +492,18 @@ function renderLive(S){
     `<table><tr><th>预测市场（Yes=达成/恢复）</th><th style="text-align:right;">概率</th><th style="text-align:right;">成交额</th><th>变动</th></tr>${mk}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">最新进展：</div>${iev}
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(ir.src)} · 数据日 ${ir.asof}</div>`;
-  // 日历
+  // 金十式数据日历（本周/下周/关键节点 按钮切换;每卡仅显最重要1条,其余折叠"其他+N"）
   let cal = S.calendar;
-  document.getElementById('calBox').innerHTML = cal.weeks.map(w=>
-    `<div class="mini"><h4>${w.label}</h4>${w.items.map(it=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><b style="color:var(--blue);">${it[0]}</b> ${it[1]}</div>`).join('')}</div>`
-  ).join('') + `<div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(cal.note)}</div>`;
-  // 金十式数据日历（重要数据平铺、次要折叠"其他+N"）,加载成功则替换上方简版周视图
+  function calFallback(){
+    document.getElementById('calBox').innerHTML = cal.weeks.map(w=>
+      `<div class="mini"><h4>${w.label}</h4>${w.items.map(it=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><b style="color:var(--blue);">${it[0]}</b> ${it[1]}</div>`).join('')}</div>`
+    ).join('') + `<div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(cal.note)}</div>`;
+  }
   if(window.loadEconCal){
     window.loadEconCal('calBox','../data/econ_calendar.json',{btnHostId:'calBtnBar'},function(){
       var cb=document.getElementById('calBox'); if(cb) cb.classList.remove('grid3');
-    });
-  }
+    }, calFallback);
+  } else { calFallback(); }
   document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='数据快照：'+S.asof);
 }
 function refreshLive(){
