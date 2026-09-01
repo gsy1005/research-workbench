@@ -90,6 +90,46 @@
   .zonebar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:8px 0 4px;}
   .zonebar div{flex:1;}
   .ch-tag{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:10px;padding:2px 10px;margin-right:6px;display:inline-block;margin-bottom:4px;}
+  /* 消息跑马灯 */
+  .tickerWrap{display:flex;align-items:stretch;background:var(--card);border:1px solid var(--line);border-radius:6px;margin-bottom:16px;overflow:hidden;}
+  .tkLabel{flex:0 0 auto;background:var(--gold);color:#111;font-size:12px;font-weight:700;display:flex;align-items:center;padding:0 12px;}
+  .tickerClip{flex:1;overflow:hidden;position:relative;}
+  .tickerInner{display:inline-block;white-space:nowrap;padding:7px 0;animation-name:tickmove;animation-timing-function:linear;animation-iteration-count:infinite;animation-duration:60s;will-change:transform;}
+  .tickerClip:hover .tickerInner{animation-play-state:paused;}
+  @keyframes tickmove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .tk{font-size:12px;color:var(--txt);margin:0 14px;}
+  .tk b{color:var(--dim);font-weight:400;font-size:11px;margin-right:4px;}
+  .tk i{font-style:normal;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;margin-right:5px;}
+  .tk.imp{color:#fff;}
+  .tkSep{color:#3a4356;font-size:10px;}
+  /* 数据总览 */
+  .ovGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:8px;}
+  .ovCard{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;}
+  .ovN{font-size:12px;color:var(--txt);}
+  .ovU{font-size:10px;color:var(--dim);margin-left:4px;}
+  .ovV{font-size:20px;font-weight:700;font-family:Georgia,serif;margin:2px 0;}
+  .ovChips{display:flex;flex-wrap:wrap;gap:3px 10px;font-size:11px;}
+  .ovChips span{white-space:nowrap;}
+  .ovC{font-size:11px;color:var(--gold);border-top:1px dashed var(--line);margin-top:6px;padding-top:5px;line-height:1.5;}
+  .ovD{font-size:10px;color:var(--dim);margin-top:4px;}
+  /* 日历折叠 */
+  .calMoreBtn{background:#1c2333;color:var(--blue);border:1px dashed var(--line);border-radius:10px;padding:1px 10px;font-size:11px;cursor:pointer;margin:0 6px 2px 0;font-family:inherit;}
+  .calMoreBtn:hover{border-color:var(--blue);}
+  .calOther{display:none;}
+  .calOther.open{display:inline;}
+  /* 特朗普专区 & 预测市场墙 */
+  .tznote{font-size:11px;color:var(--dim);margin-top:6px;}
+  details.tzEv{background:none;border:none;border-top:1px dashed var(--line);border-radius:0;padding:7px 0;margin:0;}
+  details.tzEv summary{font-size:12px;color:var(--txt);font-weight:400;}
+  details.tzEv p{font-size:11.5px;color:var(--dim);margin:4px 0 0;line-height:1.6;}
+  .tg{font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 5px;margin-right:6px;font-style:normal;}
+  .st-强{color:var(--up);border-color:#5a3a3a;}
+  .st-中{color:var(--gold);border-color:#4a3f2d;}
+  .st-中强{color:#e8956b;border-color:#5a453a;}
+  .st-弱{color:var(--dim);}
+  .pm-hot{border-color:rgba(212,169,68,.55)!important;background:rgba(212,169,68,.05);}
+  .pmQ{font-size:12px;color:var(--txt);line-height:1.4;min-height:34px;}
+  .pmBig{font-size:18px;font-weight:700;color:var(--gold);font-family:Georgia,serif;}
 </style>
 </head>
 <body>
@@ -113,6 +153,7 @@
   <button data-dp="dp1" class="on">总览</button>
   <button data-dp="dp2">观点与证伪</button>
   <button data-dp="dp3">政策与地缘</button>
+  <button data-dp="dp8">特朗普专区</button>
   <button data-dp="dp4">数据图表</button>
   <button data-dp="dp7">数据发布</button>
   <button data-dp="dp5">数据总表</button>
@@ -120,6 +161,8 @@
 </div>
 
 <section class="dp on" id="dp1">
+<!-- ============ 消息跑马灯（三源快讯滚动 · BJT07-23点每60秒拉取/其余5分钟） ============ -->
+<div class="tickerWrap"><div class="tkLabel">快讯滚动</div><div class="tickerClip"><div class="tickerInner" id="tickerInner">加载快讯快照…</div></div></div>
 <!-- ============ 宏观日历（置顶·横排·按钮切换） ============ -->
 <h2 style="margin-top:0">宏观日历<span class="en">MACRO CALENDAR · 未来两周与关键节点</span></h2>
 <div class="card" style="padding:14px 16px;">
@@ -127,6 +170,10 @@
   <div id="calTopBox" class="calrow"></div>
   <div style="font-size:11px;color:var(--dim);margin-top:10px;" id="calNote"></div>
 </div>
+
+<!-- ============ 数据总览（价格+变动+一行点评） ============ -->
+<h2>数据总览<span class="en">MARKET SNAPSHOT · 只放价格与变动 · 点评为⚙️自建规则生成</span></h2>
+<div class="ovGrid" id="ovGrid"></div>
 
 <!-- ============ 一、今日三条边际变化（置顶） ============ -->
 <h2 style="margin-top:0">一、今日三条边际变化<span class="en">THREE CHANGES · 注意力约束</span></h2>
@@ -203,6 +250,21 @@
   <div class="mini"><h4>特朗普 TACO 压力指数</h4><div id="tacoBox"></div></div>
 </div>
 <div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div></div>
+<div class="mini" style="margin-top:12px;"><h4>预测市场图表墙 · Polymarket（Yes概率历史走势）</h4>
+<div class="chart-note" style="margin-bottom:8px;">霍尔木兹海峡复航、美联储加息概率置顶金框重点展示；折线为Yes概率历史（CLOB，最长400日），数据由云端管线每日更新。</div>
+<div id="pmWall" class="mw-g"></div>
+<div class="mw-d" id="pmNote" style="margin-top:6px;"></div></div>
+
+</section>
+<section class="dp" id="dp8">
+<!-- ============ 特朗普专区（TACO压力指数·支持率·事件复盘） ============ -->
+<h2>特朗普专区<span class="en">TRUMP ZONE · TACO压力 · 支持率 · 事件复盘 · L3·第三方ocmacro</span></h2>
+<div class="grid2">
+  <div class="mini"><h4>TACO 压力指数 · 折线（越高→TACO回撤概率越高）</h4><div id="tzPressure" style="width:100%;height:280px;"></div><div class="tznote" id="tzNote"></div></div>
+  <div class="mini"><h4>净支持率（赞成−反对）· 折线</h4><div id="tzAppr" style="width:100%;height:280px;"></div><div class="tznote" id="tzApprNote"></div></div>
+</div>
+<div class="mini"><h4>TACO 事件复盘（30条 · 点击展开威胁/退缩细节）</h4><div id="tzEvents" style="max-height:460px;overflow-y:auto;"></div>
+<div class="tznote">分项贡献、Truths跟踪、完整方法论见 <a href="../panels/trump_zone.html" style="color:var(--gold);">特朗普专区独立面板 ↗</a> · 数据源 L3·第三方ocmacro，仅作情绪跟踪不作交易依据</div></div>
 
 </section>
 <section class="dp" id="dp4">
@@ -512,6 +574,8 @@ document.getElementById('dtabs').addEventListener('click', function(e){
   if(b.dataset.dp === 'dp4'){ setTimeout(function(){ try{ chart.resize(); }catch(err){} }, 40); }
   window.scrollTo(0, 0);
 });
+/* 深链接：?dp=dp8 直达某页签 */
+(function(){var m=/[?&]dp=(dp\d+)/.exec(location.search);if(!m)return;var b=document.querySelector('#dtabs button[data-dp="'+m[1]+'"]');if(b)b.click();})();
 </script>
 <script>
 /* tacoBox 接入特朗普专区真实数据（覆盖快照占位渲染） */
@@ -616,50 +680,59 @@ document.querySelectorAll('[data-dp="dp7"]').forEach(function(b){b.addEventListe
 if(!document.querySelector('[data-dp="dp7"]'))mountRp();
 </script>
 <script>
-/* 宏观日历芯片：金十WS(主,T-2~T+13含预期/前值/公布) + FF周历/东财(兜底), 每日管线刷新 */
+/* 宏观日历芯片：金十WS(主,T-2~T+13含预期/前值/公布) + FF周历/东财(兜底), 每日管线刷新
+   分级显示：主显=带公布/预期/高星的条目，其余收进“其他+N”按钮可展开 */
 window.calChips = function(caldText){
   var cc = window.CAL_CONS; if(!cc) return '';
   var m = /^(\d{1,2}\/\d{1,2})/.exec((caldText||'').trim()); if(!m) return '';
-  var html = '';
+  function wrap(mains, others){
+    if(!mains.length && !others.length) return '';
+    return '<div class="fcwrap">' + mains.join('')
+      + (others.length ? '<button type="button" class="calMoreBtn">其他 +' + others.length + ' ▾</button><span class="calOther">' + others.join('') + '</span>' : '')
+      + '</div>';
+  }
   // 0. 金十日历(主源, PLUS登录, T-2~T+13, 含预期/前值/公布/星级)
   var j10 = (cc.j10 && cc.j10.items ? cc.j10.items : []).filter(function(e){ return e.d === m[1]; });
   if(j10.length){
-    html += '<div class="fcwrap">' + j10.map(function(e){
+    var mains=[], others=[];
+    j10.forEach(function(e){
       var star = e.star >= 5 ? '★★★' : (e.star === 4 ? '★★' : (e.star === 3 ? '★' : ''));
       var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
-      if(e.kind === 'event') return '<span class="fcchip j10 ev">' + tm + e.name + (star ? '<i>' + star + '</i>' : '') + '</span>';
-      var body;
-      if(e.ac){ body = '公布 <b class="fcac">' + e.ac + '</b>' + (e.fc ? ' · 预期 ' + e.fc : '') + (e.pv ? ' · 前值 ' + e.pv : ''); }
-      else if(e.fc){ body = '预期 <b>' + e.fc + '</b>' + (e.pv ? ' · 前值 ' + e.pv : ''); }
-      else { body = e.pv ? '前值 ' + e.pv : ''; }
-      return '<span class="fcchip j10">' + tm + e.name + (star ? '<i>' + star + '</i>' : '') + (body ? ' ' + body : '') + '</span>';
-    }).join('') + '</div>';
-    return html;
+      var chip;
+      if(e.kind === 'event'){
+        chip = '<span class="fcchip j10 ev">' + tm + e.name + (star ? '<i>' + star + '</i>' : '') + '</span>';
+      } else {
+        var body;
+        if(e.ac){ body = '公布 <b class="fcac">' + e.ac + '</b>' + (e.fc ? ' · 预期 ' + e.fc : '') + (e.pv ? ' · 前值 ' + e.pv : ''); }
+        else if(e.fc){ body = '预期 <b>' + e.fc + '</b>' + (e.pv ? ' · 前值 ' + e.pv : ''); }
+        else { body = e.pv ? '前值 ' + e.pv : ''; }
+        chip = '<span class="fcchip j10">' + tm + e.name + (star ? '<i>' + star + '</i>' : '') + (body ? ' ' + body : '') + '</span>';
+      }
+      ((e.star >= 4) || e.ac || e.fc ? mains : others).push(chip);
+    });
+    return wrap(mains, others);
   }
-  // A. FF预期芯片(本周重磅)
+  // A. FF预期芯片(本周重磅)：主显=High/Medium或有实际值
+  var mainsA=[], othersA=[];
   var list = (cc.events||[]).filter(function(e){ return e.d === m[1]; });
-  if(list.length){
-    html += '<div class="fcwrap">' + list.map(function(e){
-      var nm = e.tcn || e.ten;
-      var star = e.imp==='High' ? '★★★' : (e.imp==='Medium' ? '★★' : '');
-      var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
-      var body;
-      if(e.ac){ body = '实际 <b class="fcac">' + e.ac + '</b>' + (e.fc ? ' · 预期 ' + e.fc : '') + (e.pv ? ' · 前值 ' + e.pv : ''); }
-      else { body = (e.fc ? '预期 <b>' + e.fc + '</b>' : '无一致预期') + (e.pv ? ' · 前值 ' + e.pv : ''); }
-      return '<span class="fcchip">' + tm + nm + '<i>' + star + '</i> ' + body + '</span>';
-    }).join('') + '</div>';
-  }
-  // B. 东财全景芯片(14天, 中文, 无预期)
+  list.forEach(function(e){
+    var nm = e.tcn || e.ten;
+    var star = e.imp==='High' ? '★★★' : (e.imp==='Medium' ? '★★' : '');
+    var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
+    var body;
+    if(e.ac){ body = '实际 <b class="fcac">' + e.ac + '</b>' + (e.fc ? ' · 预期 ' + e.fc : '') + (e.pv ? ' · 前值 ' + e.pv : ''); }
+    else { body = (e.fc ? '预期 <b>' + e.fc + '</b>' : '无一致预期') + (e.pv ? ' · 前值 ' + e.pv : ''); }
+    var chip = '<span class="fcchip">' + tm + nm + '<i>' + star + '</i> ' + body + '</span>';
+    ((e.imp==='High' || e.imp==='Medium' || e.ac) ? mainsA : othersA).push(chip);
+  });
+  // B. 东财全景芯片(14天, 中文, 无预期)：前4条主显，其余折叠
   var em = (cc.em||[]).filter(function(e){ return e.d === m[1]; });
-  if(em.length){
-    var MAX = 6;
-    html += '<div class="fcwrap">' + em.slice(0, MAX).map(function(e){
-      var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
-      var cls = e.kind === 'event' ? 'fcchip em ev' : 'fcchip em';
-      return '<span class="' + cls + '">' + tm + e.name + '</span>';
-    }).join('') + (em.length > MAX ? '<span class="fcchip em">+' + (em.length - MAX) + '</span>' : '') + '</div>';
-  }
-  return html;
+  em.forEach(function(e, i){
+    var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
+    var cls = e.kind === 'event' ? 'fcchip em ev' : 'fcchip em';
+    (i < 4 ? mainsA : othersA).push('<span class="' + cls + '">' + tm + e.name + '</span>');
+  });
+  return wrap(mainsA, othersA);
 };
 fetch('../data/calendar_consensus.json?v='+Date.now()).then(function(r){return r.json();}).then(function(cc){
   window.CAL_CONS = cc;
@@ -681,5 +754,175 @@ fetch('../data/calendar_consensus.json?v='+Date.now()).then(function(r){return r
 .fcchip.em .fctm{color:var(--dim)}
 .fcchip.em.ev{border-color:var(--gold);color:var(--txt)}
 </style>
+<script>
+/* ====== 日历“其他”折叠：事件委托（重绘后仍有效） ====== */
+document.addEventListener('click',function(e){
+  var b=e.target&&e.target.closest?e.target.closest('.calMoreBtn'):null; if(!b)return;
+  var o=b.nextElementSibling; if(!o||!o.classList.contains('calOther'))return;
+  var open=o.classList.toggle('open');
+  b.textContent=open?'收起 ▴':('其他 +'+o.querySelectorAll('.fcchip').length+' ▾');
+});
+/* ====== 消息跑马灯：金十/先讯/CS合并横向滚动；BJT 07-23点每60秒拉取，其余时段5分钟 ====== */
+(function(){
+  var inner=document.getElementById('tickerInner'); if(!inner)return;
+  var SRCC={jin10:['金十','#d4a944'],ah:['先讯','#5b9bd5'],cs:['CS','#b08ad9']};
+  function escT(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function bjtHour(){var n=new Date();return new Date(n.getTime()+(n.getTimezoneOffset()+480)*60000).getHours();}
+  function poll(){
+    fetch('../data/news_latest.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
+      var items=[];
+      ['jin10','ah','cs'].forEach(function(k){(d[k]||[]).slice(0,20).forEach(function(it){items.push({t:it.ts||it.time||'',c:it.content||'',s:k,imp:it.important});});});
+      items.sort(function(a,b){return a.t<b.t?1:-1;});
+      items=items.slice(0,40);
+      if(!items.length){inner.textContent='快讯快照为空 · 等待云端管线更新';return;}
+      var html=items.map(function(it){
+        var sc=SRCC[it.s]||['快讯','#8a94a6'];
+        return '<span class="tk'+(it.imp?' imp':'')+'"><i style="color:'+sc[1]+';border-color:'+sc[1]+'55">'+sc[0]+'</i><b>'+escT(it.t).slice(5,16)+'</b>'+escT(it.c)+'</span>';
+      }).join('<span class="tkSep">◆</span>');
+      inner.innerHTML=html+'<span class="tkSep">◆</span>'+html;
+      requestAnimationFrame(function(){inner.style.animationDuration=Math.max(40,Math.round(inner.scrollWidth/2/110))+'s';});
+    }).catch(function(){});
+  }
+  (function loop(){poll();var h=bjtHour();setTimeout(loop,(h>=7&&h<23)?60000:300000);})();
+})();
+/* ====== 数据总览：价格+日/20日/近1年变动+一行⚙️规则点评（序列=CHART_SERIES） ====== */
+(function(){
+  var host=document.getElementById('ovGrid'); if(!host||!window.CHART_SERIES)return;
+  var H=window.CHART_SERIES;
+  var CFG=[
+   {id:'DGS10',n:'美债10Y',u:'%',k:'bp',src:'L1 FRED',c:function(v,d){return (v>=4.5?'≥4.5%高压区':v>=4.0?'4.0–4.5%中性区':'4%下方')+(d>10?'，20日上行'+Math.round(d)+'bp':d<-10?'，20日回落'+Math.round(-d)+'bp':'，20日窄幅');}},
+   {id:'DGS2',n:'美债2Y',u:'%',k:'bp',src:'L1 FRED',c:function(v,d){return '政策敏感端'+(d>10?'，收紧定价升温':d<-10?'，收紧定价降温':'，20日窄幅');}},
+   {id:'T10Y2Y',n:'10Y-2Y利差',u:'%',k:'bp',src:'L1 FRED',c:function(v,d){return (v<0?'倒挂':'利差'+Math.round(v*100)+'bp')+(d>5?'，20日走陡':d<-5?'，20日走平':'，20日持平');}},
+   {id:'DFII10',n:'10Y实际利率',u:'%',k:'bp',src:'L1 FRED',c:function(v){var d=Math.round((2.45-v)*100);return '距2.45%观察线'+(d>=0?'还差'+d+'bp':'已破线'+(-d)+'bp');}},
+   {id:'T10YIE',n:'盈亏平衡通胀10Y',u:'%',k:'bp',src:'L1 FRED',c:function(v,d){return (v>=2.5?'通胀预期偏热':'通胀预期锚定')+(Math.abs(d)>8?'，20日波动加大':'，20日平稳');}},
+   {id:'DTWEXBGS',n:'广义美元指数',u:'点',k:'pct',src:'L1 FRED',c:function(v,d){return d>0.5?'美元20日走强':d<-0.5?'美元20日走弱':'美元20日横盘';}},
+   {id:'VIXCLS',n:'VIX波动率',u:'点',k:'abs',src:'L1 FRED',c:function(v){return v<13?'极度平静，警惕反转':v<18?'低波动区':'波动放大，risk-off警戒';}},
+   {id:'Y_GSPC',n:'标普500',u:'点',k:'pct',src:'L2 行情',c:function(v,d){return d>2?'20日强势':d<-2?'20日回调':'高位震荡';}},
+   {id:'Y_GOLD',n:'COMEX黄金',u:'美元/盎司',k:'pct',src:'L2 行情',c:function(v,d){return d>2?'20日走强':d<-2?'利率压制回撤':'高位拉锯';}},
+   {id:'DCOILWTICO',n:'WTI原油',u:'美元/桶',k:'pct',src:'L1 FRED',c:function(v,d){return '霍尔木兹关闭溢价'+(d>3?'，20日上行':d<-3?'，20日回落':'，区间震荡');}},
+   {id:'IF_000300SH',n:'沪深300',u:'点',k:'pct',src:'L2 iFinD',c:function(v,d){return d>2?'20日走强':d<-2?'20日走弱':'区间震荡';}},
+   {id:'DEXCHUS',n:'美元兑人民币',u:'元/美元',k:'pct',src:'L1 FRED',c:function(v){return v>=7.3?'贬值压力区':v<=6.9?'偏强区':'中间区';}}
+  ];
+  function at(ser,n){return ser[Math.max(0,ser.length-1-n)];}
+  function rel(cfg,a,b){if(!b||!b[1])return 0;return cfg.k==='pct'?(a[1]/b[1]-1):(a[1]-b[1]);}
+  function fmtChg(cfg,d){if(cfg.k==='bp')return (d>=0?'+':'')+Math.round(d*100)+'bp';if(cfg.k==='abs')return (d>=0?'+':'')+d.toFixed(2);return (d>=0?'+':'')+(d*100).toFixed(2)+'%';}
+  function fmtV(v){var a=Math.abs(v);if(a>=10000)return v.toLocaleString('zh-CN',{maximumFractionDigits:0});if(a>=1000)return v.toFixed(1);return v.toFixed(2);}
+  var html='';
+  CFG.forEach(function(cfg){
+    var ser=H[cfg.id]; if(!ser||ser.length<2)return;
+    var a=ser[ser.length-1],b=ser[ser.length-2];
+    var d1=rel(cfg,a,b),d20=rel(cfg,a,at(ser,20)),d250=ser.length>260?rel(cfg,a,at(ser,250)):null;
+    html+='<div class="ovCard"><div><span class="ovN">'+cfg.n+'</span><span class="ovU">'+cfg.u+'</span></div>'
+      +'<div class="ovV">'+fmtV(a[1])+'</div>'
+      +'<div class="ovChips"><span class="'+(d1>0?'up':d1<0?'dn':'flat')+'">日 '+fmtChg(cfg,d1)+'</span>'
+      +'<span class="'+(d20>0?'up':d20<0?'dn':'flat')+'">20日 '+fmtChg(cfg,d20)+'</span>'
+      +(d250!==null?'<span class="flat">近1年 '+fmtChg(cfg,d250)+'</span>':'')+'</div>'
+      +'<div class="ovC">'+cfg.c(a[1],cfg.k==='abs'?d20:d20*100)+'</div>'
+      +'<div class="ovD">截至 '+a[0]+' · '+cfg.src+' · 点评⚙️自建规则</div></div>';
+  });
+  host.innerHTML=html||'<div class="ovD">序列未加载</div>';
+})();
+/* ====== 特朗普专区：TACO压力折线+净支持率折线+事件复盘（懒挂载） ====== */
+var _tzMounted=false;
+function mountTz(){
+  if(_tzMounted)return; _tzMounted=true;
+  function escZ(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  fetch('../data/trump_zone.json?v='+Date.now()).then(function(r){return r.json();}).then(function(tz){
+    var p=tz.pressure||{}, hist=p.history||[];
+    var el1=document.getElementById('tzPressure');
+    if(el1&&hist.length){
+      var evMap={};
+      (tz.taco_events||[]).forEach(function(e){evMap[e.end]=e;});
+      var evPts=[];
+      hist.forEach(function(h){var e=evMap[h[0]];if(e)evPts.push({value:[h[0],h[1]],strength:e.strength,title:e.title});});
+      var c1=echarts.init(el1);
+      c1.setOption({backgroundColor:'transparent',animation:false,
+        grid:{left:42,right:14,top:26,bottom:44},
+        tooltip:{trigger:'axis',backgroundColor:'#1c2333',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11},
+          formatter:function(ps){var s=ps[0].axisValue+'<br>压力 <b>'+ps[0].data[1]+'</b>';var e=evMap[ps[0].axisValue];if(e)s+='<br><span style="color:#d4a944">▲'+e.strength+' · '+escZ(e.title)+'</span>';return s;}},
+        xAxis:{type:'time',axisLabel:{color:'#8a94a6',fontSize:10},axisLine:{lineStyle:{color:'#333'}}},
+        yAxis:{type:'value',scale:true,axisLabel:{color:'#8a94a6',fontSize:10},splitLine:{lineStyle:{color:'#222a3a'}}},
+        dataZoom:[{type:'slider',height:16,bottom:6,backgroundColor:'#1a2130',fillerColor:'rgba(212,169,68,.15)',borderColor:'#333',textStyle:{color:'#8a94a6',fontSize:9}}],
+        series:[
+          {name:'TACO压力',type:'line',showSymbol:false,data:hist.map(function(h){return [h[0],h[1]];}),lineStyle:{color:'#d4a944',width:1.8},areaStyle:{opacity:.07,color:'#d4a944'},
+           markLine:{symbol:'none',label:{color:'#8a94a6',fontSize:9},lineStyle:{color:'#3a4356',type:'dashed'},data:[{yAxis:0}]}},
+          {name:'TACO事件',type:'scatter',symbol:'triangle',symbolSize:9,data:evPts,z:10,
+           itemStyle:{color:function(pp){var s=pp.data.strength;return s==='强'?'#e5534b':s==='中'?'#d4a944':'#8a94a6';}}}
+        ]});
+      var lc=p.latest_contrib||{};
+      document.getElementById('tzNote').innerHTML='当前 <b style="color:'+(p.value>0?'var(--up)':'var(--dn)')+'">'+(p.value>0?'+':'')+p.value+'%</b>（'+p.asof+'）· 最新分项 '+Object.keys(lc).map(function(k){return k+' '+(lc[k]>0?'+':'')+(+lc[k]).toFixed(1);}).join(' / ')+' · ▲=TACO事件（红强/金中/灰弱）· L3·第三方ocmacro';
+    }
+    var el2=document.getElementById('tzAppr'), ap=tz.approval||{};
+    if(el2&&(ap.series||[]).length){
+      var c2=echarts.init(el2);
+      c2.setOption({backgroundColor:'transparent',animation:false,
+        grid:{left:42,right:14,top:26,bottom:44},
+        tooltip:{trigger:'axis',backgroundColor:'#1c2333',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11},formatter:function(ps){return ps[0].axisValue+'<br>净支持率 <b>'+ps[0].data[1]+'%</b>';}},
+        xAxis:{type:'time',axisLabel:{color:'#8a94a6',fontSize:10},axisLine:{lineStyle:{color:'#333'}}},
+        yAxis:{type:'value',scale:true,axisLabel:{color:'#8a94a6',fontSize:10,formatter:'{value}%'},splitLine:{lineStyle:{color:'#222a3a'}}},
+        dataZoom:[{type:'slider',height:16,bottom:6,backgroundColor:'#1a2130',fillerColor:'rgba(91,155,213,.15)',borderColor:'#333',textStyle:{color:'#8a94a6',fontSize:9}}],
+        series:[{name:'净支持率',type:'line',showSymbol:false,data:ap.series,lineStyle:{color:'#5b9bd5',width:1.8},areaStyle:{opacity:.07,color:'#5b9bd5'},
+          markLine:{symbol:'none',label:{color:'#8a94a6',fontSize:9},lineStyle:{color:'#3a4356',type:'dashed'},data:[{yAxis:0}]}}]});
+      document.getElementById('tzApprNote').innerHTML='最新净支持率 <b>'+ap.net+'%</b>（赞成 '+ap.approve+'% / 反对 '+ap.disapprove+'%）· '+ap.asof+' · L3·第三方ocmacro';
+    }
+    var box=document.getElementById('tzEvents'), evs=tz.taco_events||[];
+    if(box&&evs.length){
+      box.innerHTML=evs.map(function(e){
+        return '<details class="tzEv"><summary><i class="tg st-'+e.strength+'">'+e.strength+'</i><span style="color:var(--dim);font-size:11px;">'+e.range+'</span> '+escZ(e.title)+'</summary>'
+          +(e.threat?'<p><b style="color:var(--dim);">威胁：</b>'+escZ(e.threat)+'</p>':'')
+          +(e.retreat?'<p><b style="color:var(--dim);">退缩：</b>'+escZ(e.retreat)+'</p>':'')
+          +(e.reason?'<p><b style="color:var(--dim);">原因：</b>'+escZ(e.reason)+'</p>':'')
+          +(e.implication?'<p><b style="color:var(--dim);">含义：</b>'+escZ(e.implication)+'</p>':'')+'</details>';
+      }).join('');
+    }
+  }).catch(function(){});
+}
+document.querySelectorAll('[data-dp="dp8"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountTz,60);});});
+if(document.getElementById('dp8')&&document.getElementById('dp8').classList.contains('on'))mountTz();
+/* ====== Polymarket 预测市场图表墙：霍尔木兹/加息置顶金框（懒挂载） ====== */
+var _pmMounted=false;
+function mountPm(){
+  if(_pmMounted)return; _pmMounted=true;
+  var host=document.getElementById('pmWall'); if(!host)return;
+  function escP(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  var RE_HORMUZ=/hormuz|strait/i, RE_HIKE=/rate hike|fed[^.]{0,30}hike|hike[^.]{0,20}2026/i;
+  function rank(m){var q=m.question||'';if(RE_HORMUZ.test(q))return 0;if(RE_HIKE.test(q))return 1;return 2;}
+  fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
+    var ms=(d.markets||[]).filter(function(m){return (m.history||[]).length>=2;});
+    ms.sort(function(a,b){var r=rank(a)-rank(b);return r||((b.vol24||0)-(a.vol24||0));});
+    var html='';
+    if(!ms.some(function(m){return RE_HORMUZ.test(m.question||'');})){
+      html+='<div class="mw-c pm-hot"><div class="pmQ"><b>霍尔木兹海峡何时复航？</b></div>'
+        +'<div style="font-size:11px;color:var(--dim);line-height:1.7;">海峡仍处关闭：8/29伊朗与阿曼就通行安排达成谅解、但不自动执行；伊方复航开价=美方永久停止军事行动+解除制裁等5项条件；8/31伊方称一VLCC触雷停航、美军中央司令部否认。当前市场定价（见上方美伊局势表）：9/30前恢复正常≈3.5%、12/31前≈30.5%。折线图待云端管线捕获该市场后自动补上。<span class="ovU">L2·公开报道汇总</span></div></div>';
+    }
+    html+=ms.map(function(m,i){
+      var yo=(m.outcomes||[]).filter(function(o){return /^yes$/i.test(o.name);})[0]||(m.outcomes||[])[0]||{};
+      var h=m.history,last=h[h.length-1],prev=h.length>1?h[h.length-2]:last;
+      var chg=(last[1]-prev[1])*100;
+      return '<div class="mw-c'+(rank(m)<2?' pm-hot':'')+'"><div class="pmQ">'+escP(m.question)+'</div>'
+        +'<div style="display:flex;align-items:baseline;gap:10px;"><span class="pmBig">'+(yo.price!=null?(yo.price*100).toFixed(1)+'%':'—')+'</span>'
+        +'<span style="font-size:11px;color:'+(chg>0?'var(--up)':chg<0?'var(--dn)':'var(--dim)')+'">'+(chg>0?'+':'')+chg.toFixed(1)+'pp</span>'
+        +'<span class="ovU">截止 '+(m.end||'—')+'</span></div>'
+        +'<div class="mw-ch" id="pmc'+i+'"></div>'
+        +'<div class="mw-d">Yes概率 · '+h.length+'点 · 24h量 $'+(m.vol24||0).toLocaleString()+'</div></div>';
+    }).join('');
+    host.innerHTML=html;
+    ms.forEach(function(m,i){
+      var el=document.getElementById('pmc'+i); if(!el)return;
+      var c=echarts.init(el);
+      c.setOption({backgroundColor:'transparent',animation:false,
+        grid:{left:36,right:6,top:6,bottom:16},
+        tooltip:{trigger:'axis',backgroundColor:'#161b26',borderColor:'#262d3d',textStyle:{color:'#d7dde8',fontSize:11},formatter:function(ps){var p=ps[0];return p.axisValue+'<br><b>'+(p.data[1]*100).toFixed(1)+'%</b>';}},
+        xAxis:{type:'time',axisLine:{lineStyle:{color:'#262d3d'}},axisLabel:{color:'#8a94a6',fontSize:9}},
+        yAxis:{type:'value',min:0,max:1,axisLabel:{color:'#8a94a6',fontSize:9,formatter:function(v){return Math.round(v*100)+'%';}},splitLine:{lineStyle:{color:'#1d2330'}}},
+        series:[{type:'line',symbol:'none',data:m.history,lineStyle:{color:'#d4a944',width:1.4},areaStyle:{opacity:.06,color:'#d4a944'}}]});
+    });
+    var note=document.getElementById('pmNote');
+    if(note)note.textContent='共 '+ms.length+' 个市场 · 抓取于 '+(d.fetched_at||'').slice(0,10)+' · L3·Polymarket（链上预测市场，非官方口径）· 云端每日更新';
+  }).catch(function(){});
+}
+document.querySelectorAll('[data-dp="dp3"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountPm,60);});});
+if(document.getElementById('dp3')&&document.getElementById('dp3').classList.contains('on'))mountPm();
+</script>
 </body>
 </html>

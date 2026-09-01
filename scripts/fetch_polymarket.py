@@ -8,9 +8,12 @@ UA = {"User-Agent": "Mozilla/5.0"}
 GAMMA = "https://gamma-api.polymarket.com"
 CLOB = "https://clob.polymarket.com"
 TOPICS = ["US recession", "Fed rate decision", "government shutdown", "Senate 2026", "House 2026",
-          "Trump approval rating", "tariff", "China trade", "Iran", "Fed chair Powell", "midterm elections"]
+          "Trump approval rating", "tariff", "China trade", "Iran", "Fed chair Powell", "midterm elections",
+          "Strait of Hormuz", "Hormuz traffic", "Fed rate hike", "Fed decision September", "oil price"]
 KEYWORDS = ["recession", "fed", "fomc", "rate cut", "rate decision", "senate", "congress",
-            "approval", "tariff", "shutdown", "debt ceiling", "powell", "midterm", "house"]
+            "approval", "tariff", "shutdown", "debt ceiling", "powell", "midterm", "house",
+            "hormuz", "rate hike", "hike", "strait"]
+CAP = 16
 
 def get(url, **kw):
     r = requests.get(url, headers=UA, timeout=30, **kw)
@@ -76,7 +79,7 @@ def main():
     for topic in TOPICS:
         try:
             res = get(f"{GAMMA}/public-search", params={"q": topic, "limit_per_type": 4})
-            pick_from_events(res.get("events") or [], picks, seen, 12)
+            pick_from_events(res.get("events") or [], picks, seen, CAP)
         except Exception as e:
             print("search fail:", topic, str(e)[:80])
     # 2) 高成交量榜补充（带关键词过滤）
@@ -85,7 +88,7 @@ def main():
                                              "order": "volume24hr", "ascending": "false"})
         us = [ev for ev in top if any(k in ((ev.get("title") or "") + " " + (ev.get("description") or "")).lower()
                                       for k in KEYWORDS)]
-        pick_from_events(us, picks, seen, 12)
+        pick_from_events(us, picks, seen, CAP)
     except Exception as e:
         print("top fail:", str(e)[:80])
     # 历史曲线：CLOB优先；失败则沿用上期文件累积今日快照
