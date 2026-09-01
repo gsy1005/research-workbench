@@ -14,8 +14,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install requests pandas lxml html5lib xlrd curl_cffi
+      - run: pip install requests pandas lxml html5lib xlrd curl_cffi websocket-client
       - name: fetch_macro + fetch_extra
+        env:
+          JIN10_TOKEN: ${{ secrets.JIN10_TOKEN }}
         run: |
           python3 scripts/fetch_macro.py || true
           python3 scripts/fetch_extra.py || true

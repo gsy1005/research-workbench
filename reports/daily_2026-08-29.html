@@ -616,11 +616,26 @@ document.querySelectorAll('[data-dp="dp7"]').forEach(function(b){b.addEventListe
 if(!document.querySelector('[data-dp="dp7"]'))mountRp();
 </script>
 <script>
-/* 宏观日历·预期值芯片：ForexFactory免费周历(每日管线刷新) */
+/* 宏观日历芯片：金十WS(主,T-2~T+13含预期/前值/公布) + FF周历/东财(兜底), 每日管线刷新 */
 window.calChips = function(caldText){
   var cc = window.CAL_CONS; if(!cc) return '';
   var m = /^(\d{1,2}\/\d{1,2})/.exec((caldText||'').trim()); if(!m) return '';
   var html = '';
+  // 0. 金十日历(主源, PLUS登录, T-2~T+13, 含预期/前值/公布/星级)
+  var j10 = (cc.j10 && cc.j10.items ? cc.j10.items : []).filter(function(e){ return e.d === m[1]; });
+  if(j10.length){
+    html += '<div class="fcwrap">' + j10.map(function(e){
+      var star = e.star >= 5 ? '★★★' : (e.star === 4 ? '★★' : (e.star === 3 ? '★' : ''));
+      var tm = e.tm ? '<span class="fctm">' + e.tm + '</span>' : '';
+      if(e.kind === 'event') return '<span class="fcchip j10 ev">' + tm + e.name + (star ? '<i>' + star + '</i>' : '') + '</span>';
+      var body;
+      if(e.ac){ body = '公布 <b class="fcac">' + e.ac + '</b>' + (e.fc ? ' · 预期 ' + e.fc : '') + (e.pv ? ' · 前值 ' + e.pv : ''); }
+      else if(e.fc){ body = '预期 <b>' + e.fc + '</b>' + (e.pv ? ' · 前值 ' + e.pv : ''); }
+      else { body = e.pv ? '前值 ' + e.pv : ''; }
+      return '<span class="fcchip j10">' + tm + e.name + (star ? '<i>' + star + '</i>' : '') + (body ? ' ' + body : '') + '</span>';
+    }).join('') + '</div>';
+    return html;
+  }
   // A. FF预期芯片(本周重磅)
   var list = (cc.events||[]).filter(function(e){ return e.d === m[1]; });
   if(list.length){
@@ -660,6 +675,8 @@ fetch('../data/calendar_consensus.json?v='+Date.now()).then(function(r){return r
 .fcchip i{font-style:normal;color:var(--gold);opacity:.7;margin-left:3px;letter-spacing:-1px}
 .fcchip .fctm{color:var(--gold);opacity:.85;margin-right:6px;font-variant-numeric:tabular-nums}
 .fcchip .fcac{color:var(--up)}
+.fcchip.j10{border-color:rgba(212,175,55,.35)}
+.fcchip.j10.ev{border-color:var(--gold);color:var(--txt)}
 .fcchip.em{opacity:.75;border-style:dashed}
 .fcchip.em .fctm{color:var(--dim)}
 .fcchip.em.ev{border-color:var(--gold);color:var(--txt)}

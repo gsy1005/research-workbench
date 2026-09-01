@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # 宏观日历预期值 → data/calendar_consensus.json
-# 双源合并:
+# 三源合并(金十WS为主, FF/东财兜底):
 #   A. ForexFactory 免费公开周历 XML —— 本周 USD/CNY 高/中重要性事件, 带 预期/前值/实际
 #   B. 东方财富财经日历 (RPT_CPH_FECALENDAR) —— 未来14天全球宏观数据+财经会议/大事,
 #      中文名+北京时间, 覆盖中国数据(CPI/PMI/M1/外储/贸易)、欧日英加央行决议等, 但无预期值
 # 合并逻辑: FF供预期值(仅本周), EM供全景骨架(14天); 前端按日期挂芯片
 # 证据分层: L2·权威财经数据商汇编(底层均为官方机构预告)
 # 单源失败不影响另一源; 全失败保留旧文件并标 stale。
-import json, os, re, sys, datetime, xml.etree.ElementTree as ET
+import json, os, re, sys, datetime, struct, xml.etree.ElementTree as ET
 
 APP = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(APP, 'data', 'calendar_consensus.json')
@@ -60,6 +60,201 @@ CN_MAP = {
 }
 KEEP_IMP = {'High', 'Medium', 'Holiday'}
 KEEP_CCY = {'USD', 'CNY'}
+
+# —— 金十WS(私有协议, 登录态cookie) ——
+# PLUS账号走plus节点; 免费节点(wss-flash-2)对数据中心IP不友好, 作降级
+J10_WS_LIST = ('wss://wss-jin10-plus-flash.jin10.com/', 'wss://wss-flash-2.jin10.com/')
+J10_UID = 3749462
+J10_KEEP_COUNTRY = ('美国', '中国', '欧元区', '日本', '英国', '加拿大', '澳大利亚', '瑞士', '德国', '法国', '欧盟', '新西兰')
+J10_MAX_PER_DAY = 10
+
+
+def _j10_wstr(s):
+    b = s.encode('utf-8')
+    return struct.pack('<H', len(b)) + b
+
+
+def _j10_xor(buf, key):
+    kb = key.encode('latin1')
+    off = kb[0]
+    n = len(kb)
+    return bytes(b ^ kb[(i + off) % n] for i, b in enumerate(buf))
+
+
+class _J10R:
+    def __init__(self, buf):
+        self.b = buf
+        self.p = 0
+
+    def u32(self):
+        v = struct.unpack_from('<I', self.b, self.p)[0]
+        self.p += 4
+        return v
+
+    def i16(self):
+        v = struct.unpack_from('<h', self.b, self.p)[0]
+        self.p += 2
+        return v
+
+    def s(self):
+        ln = struct.unpack_from('<H', self.b, self.p)[0]
+        self.p += 2
+        v = self.b[self.p:self.p + ln].decode('utf-8', 'ignore')
+        self.p += ln
+        return v
+
+
+def fetch_j10(bjt_now, days_past=2, days_fwd=13):
+    """金十WS日历: type0宏观数据(前值/预期/公布/星级) + type2大事, 北京时间
+    需 JIN10_TOKEN (x-token cookie)。单连接批量查询, 限速友好。"""
+    import websocket, socket, base64, zlib
+    tok = os.environ.get('JIN10_TOKEN')
+    if not tok:
+        for p in ('/mnt/agents/output/凭证与API档案/jin10_token.json',):
+            if os.path.exists(p):
+                tok = json.load(open(p, encoding='utf-8')).get('token')
+                break
+    if not tok:
+        raise RuntimeError('无JIN10_TOKEN')
+
+    _ga = socket.getaddrinfo
+    socket.getaddrinfo = lambda h, pp, *a, **k: [x for x in _ga(h, pp, *a, **k) if x[0] == socket.AF_INET]
+    ws, last_err = None, None
+    for url in J10_WS_LIST:
+        try:
+            ws = websocket.create_connection(
+                url, timeout=25,
+                header=['Origin: https://rili.jin10.com',
+                        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0 Safari/537.36',
+                        'Cookie: x-token=' + tok])
+            print('J10节点:', url)
+            break
+        except Exception as e:
+            last_err = e
+            print('J10节点失败', url, e)
+    if ws is None:
+        raise RuntimeError('金十WS全部节点不可达: %s' % last_err)
+    try:
+        hs = ws.recv()                      # 16字节密钥握手(明文)
+        r0, i, s = struct.unpack_from('<III', hs, 0)
+        key = '%d.%d' % (s, i)
+
+        def send(b):
+            ws.send_binary(_j10_xor(b, key))
+
+        send(struct.pack('<h', 4002) + struct.pack('<i', J10_UID) + _j10_wstr('')
+             + _j10_wstr('chrome') + struct.pack('<i', 0) + _j10_wstr('calendar'))
+
+        # 等登录回执
+        import time as _t
+        end = _t.time() + 15
+        login_ok = False
+        while _t.time() < end and not login_ok:
+            msg = ws.recv()
+            if isinstance(msg, str):
+                continue
+            r = _J10R(_j10_xor(msg, key))
+            if r.i16() == 4002:
+                resp = r.s()
+                login_ok = '"status":100' in resp
+                if not login_ok:
+                    raise RuntimeError('金十登录失败: ' + resp[:100])
+
+        # 逐日请求 type0(数据)+type2(大事)
+        dates = [(bjt_now + datetime.timedelta(days=k)).strftime('%Y-%m-%d')
+                 for k in range(-days_past, days_fwd + 1)]
+        reqid, pending = 100000, {}
+        for d in dates:
+            for rt in (0, 2):
+                send(struct.pack('<h', 2006) + struct.pack('<I', rt) + _j10_wstr(d) + struct.pack('<I', reqid))
+                pending[reqid] = (rt, d)
+                reqid += 1
+        results = {}
+        end = _t.time() + 45
+        while pending and _t.time() < end:
+            try:
+                msg = ws.recv()
+            except Exception:
+                break
+            if isinstance(msg, str):
+                continue
+            r = _J10R(_j10_xor(msg, key))
+            op = r.i16()
+            if op == 1201:
+                try:
+                    ws.send('')
+                except Exception:
+                    pass
+                continue
+            if op != 2006:
+                continue
+            rt = r.u32(); date = r.s(); rid = r.u32(); js = r.s()
+            lst = None
+            data = json.loads(js).get('data')
+            if data:
+                rawz = base64.b64decode(data)
+                try:
+                    lst = json.loads(zlib.decompress(rawz))
+                except zlib.error:
+                    lst = json.loads(zlib.decompress(rawz, -15))
+            results[pending.pop(rid, (rt, date))] = lst or []
+    finally:
+        try:
+            ws.close()
+        except Exception:
+            pass
+
+    # 整形
+    items = []
+    for (rt, d), lst in results.items():
+        for it in lst:
+            if rt == 0:
+                c = it.get('country') or ''
+                star = it.get('star') or 0
+                if c not in J10_KEEP_COUNTRY:
+                    continue
+                if star < 3 and not (c in ('美国', '中国') and star >= 2):
+                    continue
+                pt = it.get('pub_time') or it.get('actual_time') or ''
+                try:
+                    dt = datetime.datetime.strptime(pt[:16], '%Y-%m-%d %H:%M')
+                    dd, tm = '%d/%d' % (dt.month, dt.day), '%02d:%02d' % (dt.hour, dt.minute)
+                except ValueError:
+                    dd, tm = '%d/%d' % (int(d[5:7]), int(d[8:10])), ''
+                nm = it.get('indicator_name') or ''
+                if c not in ('美国', '中国'):
+                    nm = c + nm
+                if it.get('time_period'):
+                    nm = nm + '(' + it['time_period'] + ')'
+                items.append({'d': dd, 'tm': tm, 'kind': 'data', 'star': star, 'name': nm,
+                              'fc': it.get('consensus') or '', 'pv': it.get('previous') or '',
+                              'ac': it.get('actual') or ''})
+            else:
+                star = it.get('star') or 0
+                if star < 3:
+                    continue
+                et = it.get('event_time') or ''
+                dd = '%d/%d' % (int(d[5:7]), int(d[8:10]))
+                tm = et[11:16] if len(et) >= 16 and et[11:16] != '00:00' else ''
+                nm = (it.get('event_content') or '').strip()
+                if len(nm) > 34:
+                    nm = nm[:33] + '…'
+                items.append({'d': dd, 'tm': tm, 'kind': 'event', 'star': star, 'name': nm,
+                              'fc': '', 'pv': '', 'ac': ''})
+    # 排序+每日限量
+    def _sk(e):
+        mo, da = e['d'].split('/')
+        return (int(mo), int(da), 0 if e['kind'] == 'data' else 1, e['tm'] or '99', -e['star'])
+    items.sort(key=_sk)
+    per, slim = {}, []
+    for e in items:
+        n = per.get(e['d'], 0)
+        if n >= J10_MAX_PER_DAY:
+            continue
+        per[e['d']] = n + 1
+        slim.append(e)
+    return slim
+
 
 # —— 东财日历过滤规则 ——
 EM_URL = ('https://datacenter-web.eastmoney.com/api/data/v1/get?reportName=RPT_CPH_FECALENDAR'
@@ -203,7 +398,12 @@ def main():
         except Exception:
             old = None
 
-    ff_events, em_events, fails = None, None, []
+    ff_events, em_events, j10_items, fails = None, None, None, []
+    try:
+        j10_items = fetch_j10(bjt_now)
+        print('J10 %d条' % len(j10_items))
+    except Exception as e:
+        print('J10_FAIL:', e); fails.append('j10')
     try:
         ff_events = fetch_ff()
     except Exception as e:
@@ -214,11 +414,11 @@ def main():
     except Exception as e:
         print('EM_FAIL:', e); fails.append('em')
 
-    if ff_events is None and em_events is None:
+    if ff_events is None and em_events is None and j10_items is None:
         if old:
             old['stale'] = True
             json.dump(old, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False)
-            print('双源均失败,保留旧数据', old.get('asof'))
+            print('三源均失败,保留旧数据', old.get('asof'))
             return
         sys.exit(1)
 
@@ -227,19 +427,22 @@ def main():
         ff_events = old.get('events', [])
     if em_events is None and old:
         em_events = old.get('em', [])
+    if j10_items is None and old:
+        j10_items = (old.get('j10') or {}).get('items', [])
 
     out = {
         'asof': bjt_now.strftime('%Y-%m-%d %H:%M BJT'),
-        'src': 'L2·预期值:ForexFactory周历 | 全景:东方财富财经日历(均为公开汇编,底层官方预告)',
-        'note': '预期值覆盖本周(FF口径); 全景日历覆盖未来14天(东财口径); 时间均为北京时间',
+        'src': 'L2·金十日历(登录PLUS,WS直连)为主 | 预期值兜底:ForexFactory周历 | 全景兜底:东方财富财经日历(均为公开汇编,底层官方预告)',
+        'note': '金十覆盖T-2至T+13(含预期/前值/公布/星级); FF覆盖本周; 东财覆盖未来14天; 时间均为北京时间',
         'events': ff_events or [],
         'em': em_events or [],
+        'j10': {'asof': bjt_now.strftime('%Y-%m-%d %H:%M BJT'), 'items': j10_items or []},
     }
     if fails:
         out['partial'] = fails
     json.dump(out, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False)
     hi = [e for e in out['events'] if e.get('imp') == 'High']
-    print('OK FF %d条(High %d) + EM %d条 截至%s' % (len(out['events']), len(hi), len(out['em']), out['asof']))
+    print('OK J10 %d条 + FF %d条(High %d) + EM %d条 截至%s' % (len(out['j10']['items']), len(out['events']), len(hi), len(out['em']), out['asof']))
     for e in hi:
         print(' ', e['d'], e['tm'], e['ccy'], e['tcn'] or e['ten'], '| 预期', e['fc'], '前值', e['pv'], '实际', e['ac'])
 
