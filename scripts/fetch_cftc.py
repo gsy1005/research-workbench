@@ -2,7 +2,7 @@
 # CFTC COT持仓(期货版) → data/chart_series.js (CFTC_*) + data/cftc.json (含贵金属杠杆指标)
 # 数据源: cftc.gov 官方年包 deacot{YYYY}.zip (免费免key, 每周五更新, 持仓日为每周二)
 # 首次运行拉 2019-今年 全历史; 之后只拉当年增量(历史键已存chart_series.js)
-# 贵金属杠杆指标(⚙️自建, 仿国君期货方法论):
+# 贵金属杠杆指标(⚙️自建商品杠杆方法论):
 #   期货腿杠杆分位 = 非商业净持仓(手)在2019以来全样本的分位数(0-100)
 #   ETF腿(GLD/SLV份额)经Yahoo快照积累, 未足26周前标"积累中"
 import json, re, os, io, csv, zipfile, datetime, urllib.request, time, sys
@@ -189,7 +189,7 @@ def main():
     meta = {
         'updated': datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).strftime('%Y-%m-%d %H:%M') + ' 北京',
         'src': 'L1·CFTC官网COT周报(免费) · 持仓日=每周二, 周五发布',
-        'method': '⚙️自建仿国君期货: 杠杆水平分位=非商业净持仓(手)在%d以来全样本分位; 杠杆变化分位=13周净持仓变化的分位。ETF腿(GLD/SLV份额)经Yahoo快照积累中, 暂以期货腿为准。' % FIRST_YEAR,
+        'method': '⚙️自建商品杠杆方法论: 杠杆水平分位=非商业净持仓(手)在%d以来全样本分位; 杠杆变化分位=13周净持仓变化的分位。ETF腿(GLD/SLV份额)经Yahoo快照积累中, 暂以期货腿为准。' % FIRST_YEAR,
         'leverage': lev,
         'etf_leg': etf_leg,
         'markets': [{'key': k, 'name': n, 'unit': u, 'sec': s,

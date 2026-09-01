@@ -497,18 +497,37 @@ def main():
     # 写 chart_series.js (只更新本次抓到的键, MM上传的键原样保留)
     with open(cs_path, 'w', encoding='utf-8') as f:
         f.write('window.CHART_SERIES = ' + json.dumps(hist, separators=(',', ':')) + ';')
-    # 板块元数据
+    # 板块元数据(保留脚本清单之外的既有扩展分区,避免每日重建冲掉手工/外部扩展)
     meta = {'updated': datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).strftime('%Y-%m-%d %H:%M') + ' 北京',
             'sections': []}
+    script_keys = {k for k, _ in SECTIONS}
+    extra_secs = []
+    prev_ms = os.path.join(DATA, 'macro_series.json')
+    if os.path.exists(prev_ms):
+        try:
+            prev = json.load(open(prev_ms, encoding='utf-8'))
+            extra_secs = [s for s in prev.get('sections', []) if s.get('key') not in script_keys]
+        except Exception:
+            extra_secs = []
     for key, name in SECTIONS:
         items = [{'id': it['id'], 'name': it['name'], 'unit': it['unit'], 'src': it['src'],
                   'n': len(hist.get(it['id'], [])), 'last': (hist.get(it['id']) or [[None, None]])[-1]}
                  for it in S if it['sec'] == key]
         meta['sections'].append({'key': key, 'name': name, 'items': items})
+    meta['sections'].extend(extra_secs)
     with open(os.path.join(DATA, 'macro_series.json'), 'w', encoding='utf-8') as f:
         json.dump(meta, f, ensure_ascii=False, separators=(',', ':'))
     with open(os.path.join(DATA, 'macro_catalog.js'), 'w', encoding='utf-8') as f:
         cat = [{'id': it['id'], 'name': it['name'], 'unit': it['unit']} for it in S if it['sec']]
+        known = {it['id'] for it in S if it['sec']}
+        prev_cat_path = os.path.join(DATA, 'macro_catalog.js')
+        if os.path.exists(prev_cat_path):
+            try:
+                t = open(prev_cat_path, encoding='utf-8').read()
+                prev_cat = json.loads(t[t.index('['):t.rindex(']') + 1])
+                cat += [c for c in prev_cat if c.get('id') not in known]
+            except Exception:
+                pass
         f.write('window.MACRO_CATALOG = ' + json.dumps(cat, ensure_ascii=False, separators=(',', ':')) + ';')
     log('完成: 成功%d 失败%d | chart_series键数%d' % (len(ok), len(fail), len(hist)))
     log('失败:', ','.join(fail) if fail else '无')

@@ -114,7 +114,7 @@ a.lnk{color:var(--gold);text-decoration:none}
     <button data-p="sec-move" class="macro">国际移动</button>
     <button data-p="p3">TACO事件复盘</button>
     <button data-p="p4">Truths跟踪</button>
-    <button data-p="p-ht" style="border-color:var(--gold)">华泰库</button>
+    <button data-p="p-ht" style="border-color:var(--gold)">宏观库</button>
   </div>
 
   <div class="panel on" id="p1">
@@ -183,7 +183,7 @@ a.lnk{color:var(--gold);text-decoration:none}
   </div>
 
   <div class="panel" id="p-lev">
-    <div class="secnote" id="levNote">贵金属综合杠杆指标 · ⚙️自建仿国君期货方法论 · 期货腿=CFTC非商业净持仓(周) · ETF腿=GLD/SLV份额(快照积累)</div>
+    <div class="secnote" id="levNote">贵金属综合杠杆指标 · ⚙️自建商品杠杆方法论 · 期货腿=CFTC非商业净持仓(周) · ETF腿=GLD/SLV份额(快照积累)</div>
     <div class="stats" id="levCards" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))"></div>
     <div class="card">
       <h3>非商业净持仓（手）· 近3年周频</h3>
@@ -198,7 +198,7 @@ a.lnk{color:var(--gold);text-decoration:none}
   </div>
 
   <div class="panel" id="p-ht">
-    <div class="secnote">华泰固收5库解析入库 · 共<b id="htCnt">…</b>条序列 · L2·华泰固收库（2026-07-05快照，Excel内为iFinD公式，用户刷新后可重新上传更新）· 末尾0值占位已修剪</div>
+    <div class="secnote">终端宏观5库解析入库 · 共<b id="htCnt">…</b>条序列 · L3·第三方终端EDB快照（2026-07-05，Excel内为iFinD公式，用户刷新后可重新上传更新）· 末尾0值占位已修剪</div>
     <div class="filterRow">
       <input id="htQ" placeholder="搜索指标名 / 表名，如：CFTC、社融、10Y、 platinum…">
       <span class="note" id="htHit"></span>
@@ -533,7 +533,7 @@ function pctColor(p){return p>=80?'var(--red)':(p>=60?'var(--orange)':(p>=40?'va
 function renderLev(){
   if(!LEV)return;
   const L=LEV.leverage||{};
-  $('levNote').textContent='贵金属综合杠杆指标 · ⚙️自建仿国君期货方法论 · 更新 '+LEV.updated+' · '+LEV.src;
+  $('levNote').textContent='贵金属综合杠杆指标 · ⚙️自建商品杠杆方法论 · 更新 '+LEV.updated+' · '+LEV.src;
   $('levCards').innerHTML=['gold','silver','platinum','palladium'].map(k=>{
     const d=L[k];if(!d)return'';
     if(d.gap)return `<div class="stat"><div class="k">${d.name}杠杆率</div><div class="v flat">缺口</div><div class="d">CFTC序列不足</div></div>`;
@@ -546,7 +546,7 @@ function renderLev(){
   const etf=LEV.etf_leg||{};
   const etfTxt=['GLD','SLV'].map(s=>{const e=etf[s];return e?`${s}份额已积累${e.n}点${e.ready?'(ETF腿已启用)':'(满26周启用ETF腿)'}`:'';}).filter(x=>x).join(' · ');
   $('levMethod').innerHTML=esc(LEV.method||'')+(etfTxt?'<br><br><b>ETF腿:</b> '+esc(etfTxt):'')+
-    '<br><br><b>对标国君期货2026-08-26《贵金属杠杆信号解构》:</b> 其结论——①极端杠杆极值多源于ETF腿 ②杠杆<b>变化</b>比杠杆<b>水平</b>对价格解释力更高(ETF资金流解释度10.9% vs 杠杆变化3.0%) ③品种间杠杆差异大 ④高分位≠立即见顶(黄金48.6分位已回归中性)。'+
+    '<br><br><b>对标第三方贵金属杠杆信号方法论（2026-08-26）:</b> 其结论——①极端杠杆极值多源于ETF腿 ②杠杆<b>变化</b>比杠杆<b>水平</b>对价格解释力更高(ETF资金流解释度10.9% vs 杠杆变化3.0%) ③品种间杠杆差异大 ④高分位≠立即见顶(黄金48.6分位已回归中性)。'+
     '本面板分位口径与其不同(仅用期货腿·2019以来全样本), 数值不可直接对比, 信号方向参考使用。';
   renderLevChart();
 }
@@ -573,12 +573,12 @@ $('levRng').addEventListener('click',e=>{
   LEV_CUR=b.dataset.k;renderLevChart();
 });
 
-/* ---------- 华泰库 ---------- */
+/* ---------- 终端宏观库 ---------- */
 let HT={lib:null,sheet:null,key:null,loaded:{}};
 function htLoadLib(lib,cb){
   if(HT.loaded[lib])return cb();
   const s=document.createElement('script');
-  s.src='../data/ht_series_'+lib+'.js?v=20260705';
+  s.src='../data/ht_series_'+lib+'.js?v=20260901';
   s.onload=()=>{HT.loaded[lib]=1;cb();};
   s.onerror=()=>{$('htTitle').textContent='数据文件加载失败: ht_series_'+lib+'.js';};
   document.head.appendChild(s);
@@ -629,7 +629,7 @@ function htRenderChart(){
 }
 function initHT(){
   if(!window.HT_CATALOG){
-    const s=document.createElement('script');s.src='../data/ht_catalog.js?v=20260705';
+    const s=document.createElement('script');s.src='../data/ht_catalog.js?v=20260901';
     s.onload=()=>{initHT2();};document.head.appendChild(s);
   }else initHT2();
 }

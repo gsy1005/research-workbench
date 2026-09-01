@@ -88,16 +88,8 @@ a.lnk:hover{background:var(--ink);color:var(--bg)}
 footer{padding:34px 0 46px;font-size:11.5px;color:var(--gray);line-height:2}
 footer .f-sq{float:right}
 @media(max-width:860px){.hero{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.step{border-right:none;border-bottom:1px solid var(--line)}.rules{grid-template-columns:1fr}.rule:nth-child(odd){border-right:none}.rule{border-bottom:1px solid var(--line)}.pipe-row{grid-template-columns:1fr}.pipe-row .l{border-right:none;border-bottom:1px dashed var(--line)}}
-/* ==== 左侧实时消息栏 ==== */
-.newsrail{display:none}
-@media(min-width:1300px){
-  body{padding-left:320px}
-  .newsrail{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:320px;border-right:1px solid var(--ink);background:#ece8e1;z-index:60}
-}
-@media(max-width:1299px){
-  .newsrail{display:flex;flex-direction:column;position:static;width:auto;border-bottom:1px solid var(--ink);background:#ece8e1}
-  .newsrail .nr-viewport{max-height:380px}
-}
+/* ==== 左侧实时消息栏（已按需求下线，2026-09-01） ==== */
+.newsrail{display:none!important}
 .nr-hd{padding:14px 16px 10px;border-bottom:1px solid var(--ink)}
 .nr-hd .t{font-family:var(--serif);font-size:16px;font-weight:900;letter-spacing:1px;display:flex;align-items:center;gap:8px}
 .nr-live{width:8px;height:8px;border-radius:50%;background:var(--red);animation:blink 1.2s infinite}
@@ -123,17 +115,6 @@ footer .f-sq{float:right}
 </style>
 </head>
 <body>
-
-<aside class="newsrail" id="newsrail">
-  <div class="nr-hd">
-    <div class="t"><span class="nr-live"></span>实时消息流</div>
-    <div class="nr-src" id="nr-src">
-      <span class="on">金十·PLUS</span><span class="on" style="border-color:var(--amber);color:var(--amber)">先讯·VIP实时</span><span class="on" style="border-color:var(--green);color:var(--green)">CS财经·实时</span>
-    </div>
-  </div>
-  <div class="nr-viewport"><div class="nr-track" id="nr-track"><div style="padding:14px 16px;font-size:12px;color:var(--gray)">消息加载中…</div></div></div>
-  <div class="nr-ft"><span id="nr-asof" class="num">--</span><a href="news/2026-08-28.html">汇总解读 ↗</a></div>
-</aside>
 
 <header>
   <div class="wrap hd">
@@ -283,7 +264,6 @@ footer .f-sq{float:right}
   </div>
 </footer>
 
-<script src="data/news_fallback.js"></script>
 <script>
 function tick(){
   var d=new Date();
@@ -291,41 +271,7 @@ function tick(){
   document.getElementById('clock').textContent=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())+' 本地';
 }
 tick();setInterval(tick,1000);
-/* ==== 消息栏 ==== */
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function renderFallback(){if(window.NEWS_SNAP){renderNews(window.NEWS_SNAP);var e=document.getElementById('nr-asof');if(e)e.textContent='本地快照 '+(window.NEWS_SNAP.asof||'--');}}
-function renderNews(d){
-  var all=[];
-  (d.jin10||[]).forEach(function(it){
-    all.push({ts:it.ts||it.time||'',t:(it.time||'').slice(5,16),b:'<span class="src">金十</span>',
-      c:(it.important?'<span class="star">★</span> ':'')+esc(it.content)});
-  });
-  (d.ah||[]).forEach(function(it){
-    all.push({ts:it.ts||it.time||'',t:it.time||'',b:'<span class="src ah">先讯</span>',
-      c:esc(it.content)+(it.sentiment?' <span class="src">'+esc(it.sentiment)+'</span>':'')});
-  });
-  (d.cs||[]).forEach(function(it){
-    all.push({ts:it.ts||it.time||'',t:(it.time||'').slice(5,16),b:'<span class="src cs">CS</span>',
-      c:esc(it.content)});
-  });
-  all.sort(function(a,b){return (b.ts||'').localeCompare(a.ts||'');});
-  all=all.slice(0,90);
-  var html='';
-  all.forEach(function(it){
-    html+='<a class="nr-item" href="news/2026-08-28.html"><span class="nt num">'+esc(it.t)+' '+it.b+'</span><span class="nc">'+it.c+'</span></a>';
-  });
-  var track=document.getElementById('nr-track');
-  track.innerHTML=html+html;   /* 双份无缝滚动 */
-  document.getElementById('nr-asof').textContent='快照 '+(d.asof||'--');
-  requestAnimationFrame(function(){
-    var h=track.scrollHeight/2;
-    track.style.animationDuration=Math.max(30,Math.round(h/28))+'s';
-  });
-}
-function loadNews(){
-  fetch('data/news_latest.json?_='+Date.now()).then(function(r){return r.json()}).then(renderNews).catch(renderFallback);
-}
-loadNews();setInterval(loadNews,120000);
+/* 左侧实时消息栏已下线（2026-09-01）：新闻数据仍由云端管线每日更新，见日报页跑马灯与消息流页签 */
 </script>
 </body>
 </html>
