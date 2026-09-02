@@ -82,6 +82,11 @@ def main():
     for slug in TARGET_SLUGS:
         try:
             evs = get(f"{GAMMA}/events", params={"slug": slug})
+            if not evs:
+                # 兜底：部分市场只有 market 级 slug（如众议院控制权）
+                mks = get(f"{GAMMA}/markets", params={"slug": slug})
+                evs = [{"slug": slug, "title": mks[0].get("question") or slug,
+                        "markets": mks}] if mks else []
             pick_from_events(evs or [], picks, seen, CAP)
         except Exception as e:
             print("slug fail:", slug, str(e)[:80])

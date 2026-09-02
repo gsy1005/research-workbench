@@ -15,11 +15,17 @@
     padding:7px 18px;font-size:14px;cursor:pointer;transition:all .15s;}
   .seg button:hover{border-color:var(--gold);}
   .seg button.on{background:var(--gold);border-color:var(--gold);color:#111;font-weight:600;}
-  .author{font-size:14px;color:var(--gold);letter-spacing:.5px;}
+  .author{font-size:14px;color:var(--gold);letter-spacing:.5px;white-space:nowrap;}
   .author b{font-size:15px;}
   iframe{display:block;width:100%;height:calc(100vh - 53px);border:0;background:var(--bg);}
   iframe[hidden]{display:none;}
-  @media (max-width:640px){.seg button{padding:6px 10px;font-size:12px;}.author{font-size:12px;}}
+  @media (max-width:640px){
+    .topbar{padding:8px 10px;gap:6px;}
+    .seg{flex:1;min-width:0;}
+    .seg button{flex:1;padding:8px 4px;font-size:12.5px;border-radius:6px;}
+    .author{font-size:12px;width:100%;text-align:right;}
+    iframe{height:calc(100vh - 78px);}
+  }
 </style>
 </head>
 <body>
@@ -31,9 +37,9 @@
   </div>
   <div class="author">中哲金属 · <b>甘思雨</b></div>
 </div>
-<iframe id="f-daily" src="daily_2026-08-29.html" title="宏观研究日报"></iframe>
-<iframe id="f-weekly" src="weekly_2026-W35.html" title="宏观研究周报" hidden></iframe>
-<iframe id="f-trump" src="../panels/trump_zone.html" title="特朗普执政关注焦点" hidden loading="lazy"></iframe>
+<iframe id="f-daily" src="daily_2026-09-02.html" title="宏观研究日报"></iframe>
+<iframe id="f-weekly" data-lazy="weekly_2026-W35.html" title="宏观研究周报" hidden></iframe>
+<iframe id="f-trump" data-lazy="../panels/trump_zone.html" title="特朗普执政关注焦点" hidden></iframe>
 <script>
 (function(){
   var seg=document.getElementById('seg');
@@ -48,6 +54,15 @@
   seg.addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(b.dataset.v);});
   var m=/[?&]v=(daily|weekly|trump)/.exec(location.search);
   if(m) show(m[1]);
+  // 自动指向最新日报/周报（索引文件随新报告发布更新）
+  fetch('../data/report_index.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(ix){
+    if(!ix) return;
+    if(ix.daily){ var fd=document.getElementById('f-daily');
+      if(fd.dataset.loaded||!fd.hidden){ if(!fd.src.endsWith(ix.daily)) fd.src=ix.daily; } else { fd.dataset.lazy=ix.daily; }
+      fd.dataset.lazy=ix.daily; }
+    if(ix.weekly){ var fw=document.getElementById('f-weekly');
+      if(fw.dataset.loaded){ if(!fw.src.endsWith(ix.weekly)) fw.src=ix.weekly; } else { fw.dataset.lazy=ix.weekly; } }
+  }).catch(function(){});
 })();
 </script>
 </body>
