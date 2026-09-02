@@ -37,7 +37,7 @@
   </div>
   <div class="author">中哲金属 · <b>甘思雨</b></div>
 </div>
-<iframe id="f-daily" src="daily_2026-09-02.html" title="宏观研究日报"></iframe>
+<iframe id="f-daily" src="daily_2026-09-02.html?v=0902" title="宏观研究日报"></iframe>
 <iframe id="f-weekly" data-lazy="weekly_2026-W35.html" title="宏观研究周报" hidden></iframe>
 <iframe id="f-trump" data-lazy="../panels/trump_zone.html" title="特朗普执政关注焦点" hidden></iframe>
 <script>
@@ -57,10 +57,11 @@
   // 自动指向最新日报/周报（索引文件随新报告发布更新）
   fetch('../data/report_index.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(ix){
     if(!ix) return;
-    if(ix.daily){ var fd=document.getElementById('f-daily');
+    var V='?v='+(ix.updated||Date.now());
+    if(ix.daily){ ix.daily+=V; var fd=document.getElementById('f-daily');
       if(fd.dataset.loaded||!fd.hidden){ if(!fd.src.endsWith(ix.daily)) fd.src=ix.daily; } else { fd.dataset.lazy=ix.daily; }
       fd.dataset.lazy=ix.daily; }
-    if(ix.weekly){ var fw=document.getElementById('f-weekly');
+    if(ix.weekly){ ix.weekly+=V; var fw=document.getElementById('f-weekly');
       if(fw.dataset.loaded){ if(!fw.src.endsWith(ix.weekly)) fw.src=ix.weekly; } else { fw.dataset.lazy=ix.weekly; } }
   }).catch(function(){});
 })();

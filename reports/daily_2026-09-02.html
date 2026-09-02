@@ -268,7 +268,7 @@
 <!-- ============ 二、日度结论 ============ -->
 <h2>二、日度结论<span class="en">CONCLUSIONS · 数据→政策→资产</span></h2>
 <div class="card concl">
-  <p><b>【政策腿·主导】</b>ISM"需求降温+价格黏性"组合叠加油价即期冲击，加息预期难退：10Y 4.80%（+4bp）、30Y 5.27%、MOVE 77.88。2Y盘中口径见总览实时卡（CNBC/Tradeweb）。曲线走平格局延续，CME FedWatch定价见政策与地缘页。</p>
+  <p><b>【政策腿·主导】</b>ISM"需求降温+价格黏性"组合叠加油价即期冲击，加息预期难退：10Y 4.80%（+4bp）、30Y 5.27%、MOVE 77.88。2Y盘中口径见总览实时卡（CNBC/Tradeweb）。曲线走平格局延续。CME FedWatch：9月加息25bp概率一周前37%→<b>67.9%</b>（9/2 07:55），10月累计加息定价78.2%。</p>
   <p><b>【通胀腿】</b>能源腿由"平稳"转为"即期冲击"：WTI单日+5.2%至90.2，叠加ISM物价71.1高位持平——"通胀下行舒适期结束"判断<b>被强化</b>，8月CPI实时预测（3.49-3.36%）的停滞判断不变且面临上行风险。</p>
   <p><b>【资产映射】</b>①贵金属：金连续两日收于4500下方（8/31：4431、9/1：4348）→<b>"4500整数关口支撑"结论正式作废</b>。联合阈值规则下——金破4520✅且深化、10Y实际利率2.44%（FRED 08-31）贴2.45%线——<b>A端进入"读秒"：若实际利率确认≥2.45%且金未收复4520，即宣告A胜</b>。②美债：曲线走陡头寸浮盈收窄（FRED口径39bp@08-28），持有但收紧退出纪律。③美股：risk-on首次承压，VIX 16.34/HY OAS 0.98%均未破线，等9/4非农裁决。④原油：83-88区间作废，新锚90-96；霍尔木兹风险溢价与委内瑞拉远期供给叙事并存，波动放大。</p>
 </div>
@@ -667,7 +667,7 @@ function renderLive(S){
   let rows = fw.meetings.map(m=>`<tr><td>${m.date}</td><td>${m.hold}%</td><td class="up">${m.hike25}%</td><td>${m.hike50?m.hike50+'%':'—'}</td></tr>`).join('');
   document.getElementById('fwBox').innerHTML =
     `<table><tr><th>FOMC会议</th><th>维持不变</th><th>加息25bp</th><th>加息50bp</th></tr>${rows}</table>
-     <div style="font-size:11px;color:var(--dim);margin-top:6px;">${esc(fw.src)} · 截至 ${fw.asof} · ${esc(fw.note)}；JH前一日(8/27)：9月维持${fw.prev.hold}% / 加息${fw.prev.hike25}%</div>`;
+     <div style="font-size:11px;color:var(--dim);margin-top:6px;">${esc(fw.src)} · 截至 ${fw.asof} · ${esc(fw.note)}；前一快照(${fw.prev.asof})：9月维持${fw.prev.hold}% / 加息${fw.prev.hike25}%</div>`;
   // TACO
   let t = S.taco;
   let comps = t.comps.map(c=>`<tr><td>${c[0]}</td><td class="${c[1]>=0?'up':'dn'}" style="text-align:right;">${c[1]>0?'+':''}${c[1]}%</td></tr>`).join('');
@@ -712,7 +712,7 @@ function renderLive(S){
       `<div class="kd ${k[2].length>=4?'hot':''}"><div class="kdd">${k[0]}</div><div class="kde">${k[1]}</div><div class="kds">${k[2]}</div></div>`
     ).join('<div class="kdarr">→</div>');
   }
-  document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='数据快照：'+S.asof);
+  document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='FedWatch·事件快照：'+S.asof);
 }
 function refreshLive(){
   const old = document.getElementById('livejs'); if(old) old.remove();
