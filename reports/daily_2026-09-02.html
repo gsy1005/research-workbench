@@ -181,6 +181,8 @@
     section.dp table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;}
     #bankBox table{min-width:600px;}
     #fwFullBox table{min-width:440px;}
+    #dp12 .card table,#dp13 .card table{min-width:640px;}
+    #dp12 table td:first-child,#dp13 table td:first-child{white-space:nowrap;}
     .cw .chart{height:300px !important;}
     .tickerWrap{margin-bottom:10px;}
     .chg p, .concl{font-size:12.5px;line-height:1.8;}
@@ -213,6 +215,8 @@
   <button data-dp="dp3">政策与地缘</button>
   <button data-dp="dp8">特朗普专区</button>
   <button data-dp="dp10" style="border-color:var(--gold)">流动性</button>
+  <button data-dp="dp12" style="border-color:var(--gold)">债市</button>
+  <button data-dp="dp13" style="border-color:var(--gold)">外汇</button>
   <button data-dp="dp4">数据图表</button>
   <button data-dp="dp7">数据发布</button>
   <button data-dp="dp11" style="border-color:var(--gold)">数据预测</button>
@@ -279,14 +283,16 @@
 </section>
 <section class="dp" id="dp2">
 <!-- ============ 三之一、七维状态检视 ============ -->
-<h2>三之一、七维状态检视<span class="en">MULTI-DIMENSION CHECK · 每维指向中心矛盾(A端 vs B端)的方向</span></h2>
+<h2>三之一、九维状态检视<span class="en">MULTI-DIMENSION CHECK · 每维指向中心矛盾(A端 vs B端)的方向</span></h2>
 <table class="radar">
   <tr><th style="width:92px;">维度</th><th>关键证据（数据日 9/1 美盘）</th><th style="width:120px;">当前状态</th><th style="width:130px;">指向</th></tr>
   <tr><td><b>货币政策</b></td><td>FFR 3.50-3.75%；沃什放鹰后FedWatch 9月加息定价68.2%（一周前37%）；10Y实际利率2.44%处2019年来99.3分位</td><td class="dn">紧缩预期急剧重定价</td><td>A端强支撑</td></tr>
+  <tr><td><b>美债</b></td><td>10Y 4.80%(+4bp)/30Y 5.27%；上行全部由实际利率+期限溢价(0.84%)贡献，盈亏平衡走平；TIC日中外资6月同减；CFTC极端净空仓-84万手</td><td class="dn">实际利率熊压，非通胀恐慌</td><td>A端（详见债市页签）</td></tr>
   <tr><td><b>通胀</b></td><td>ISM物价71.1高位持平；8月CPI实时预测3.49-3.36%；5Y盈亏平衡2.30%；9/11核心环比0.2%为鸽鹰分界</td><td class="dn">下行舒适期结束</td><td>A端（滞胀腿）</td></tr>
   <tr><td><b>就业</b></td><td>7月非农-2.3万（罕见负值）；失业率4.1%系劳动力退出压低；时薪环比仅+0.1%；9/4报告为关键检验</td><td class="flat">失速边缘，方向未定</td><td>B端论据积累中</td></tr>
   <tr><td><b>地缘政治</b></td><td>霍尔木兹8/31晚两艘VLCC被击中（UKMTO+彭博）；伊朗革命卫队喊话阿拉伯国家；飓风致得州38.5万桶/日炼厂停电；WTI +5.2%</td><td class="dn">供给冲击升级</td><td>双向：通胀↑助A端 / 避险需求↑助B端实物腿</td></tr>
   <tr><td><b>美元流动性</b></td><td>SOFR-IORB 3bp（95分位）；ON RRP仅7亿$近枯竭；准备金2.92万亿（24分位）；SRF零排队——详见流动性页签</td><td class="flat">充裕→充足过渡早期</td><td>中性偏A（重力渐增）</td></tr>
+  <tr><td><b>美元（汇率）</b></td><td>DXY 99.76（9/2盘中）收复8月中旬失地；USDJPY 160.06日元最弱；USDCNY 6.726持稳；CFTC美元净多仅1.87万手不拥挤</td><td class="dn">紧缩型走强，息差驱动</td><td>A端（详见外汇页签）</td></tr>
   <tr><td><b>头寸与情绪</b></td><td>VIX 16.34（22分位）；高收益OAS 0.98%（1.5分位，极度自满）；MOVE 77.88低位；紧缩首次传导为股债金三杀</td><td class="up">自满定价，脆弱性积累</td><td>反转风险警示</td></tr>
   <tr><td><b>中国因素</b></td><td>上证3979.89（-0.16%）；USDCNY 6.726持稳；央行购金连续21个月；中美10Y利差≈-309bp</td><td class="flat">外压下的稳态</td><td>B端底仓支撑</td></tr>
 </table>
@@ -459,6 +465,96 @@
 <div class="cw" id="cw-liqd3"></div>
 <div class="card"><p style="font-size:11px;color:var(--dim);margin:0;" id="liqMethD"></p></div>
 </section>
+<section class="dp" id="dp12">
+<!-- ============ 债市追踪（美债+全球债市·数据日9/1美盘） ============ -->
+<h2>十一、债市追踪<span class="en">GLOBAL RATES · 美债全期限/信用/拍卖/持仓/全球共振 + 象限裁决</span></h2>
+<div class="card">
+  <p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">债市结论（2026-09-02 冻结）</b>：<b>这是一轮"实际利率+期限溢价"双驱动的承压，不是通胀恐慌——名义10Y上行的全部贡献来自实际利率，盈亏平衡通胀反而走平。</b></p>
+  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
+    <li><b>结构拆解</b>：10Y名义4.80%（9/1收盘，+4bp）中，实际利率2.44%（8/31，+2bp，2019年来99分位）是主引擎，期限溢价0.84%（7月，单月+0.33pt跳升）助攻；5Y盈亏平衡2.30%（-1bp）、10Y盈亏平衡2.31%（-2bp）均走平——<b>市场定价"财政供给+政策高位"，不是通胀失控</b>。</li>
+    <li><b>曲线</b>：10Y-2Y 39bp（8/28，-8bp）、10Y-3M 87bp（9/1，+3bp）——2Y随加息预期上行（沃什放鹰）、30Y 5.27%逼近前高，"熊陡"结构未破坏但节奏被政策预期打断。</li>
+    <li><b>需求端隐忧</b>：8月拍卖投标倍数2Y 2.60/10Y 2.53/30Y 2.39尚平稳；但TIC口径日本6月减持264亿$、中国减持259亿$——<b>两大外资买家同步撤退</b>；CFTC投机净空仓10Y -84.0万手/2Y -86.1万手/30Y -18.7万手，处极端空头区（上周小幅回补10.8万手，反弹燃料在积累）。</li>
+    <li><b>全球共振</b>：英10Y 4.80%、德10Y 2.97%、日10Y 2.67%（6月OECD月度）；中债10Y 1.68%（9/1）——全球长端同步承压，中美利差-297bp，债市无孤岛。</li>
+    <li><b>升级/降级线</b>：10Y名义破4.90%或MOVE（现77.88，低位）破90→"有序重定价"转"无序抛售"；9月FOMC若不加+点阵图中性→极端空仓回补触发快速下行行情。</li>
+  </ul>
+</div>
+<div class="card" style="margin-top:12px;">
+  <p style="font-size:13px;margin:0 0 8px;"><b style="color:var(--gold)">债市看板</b><span style="font-size:11px;color:var(--dim);">（数据日 9/1 美盘收盘；FRED官方序列有1-4日滞后，滞后项已标注）</span></p>
+  <table>
+    <tr><th>板块</th><th>指标</th><th style="text-align:right;">最新</th><th style="text-align:right;">日变动</th><th>数据日/说明</th><th></th></tr>
+    <tr class="hot"><td rowspan="4"><b>美债名义</b></td><td>10Y收益率</td><td style="text-align:right;"><b>4.80%</b></td><td class="up" style="text-align:right;">+4bp</td><td>09-01收盘 Yahoo(^TNX)</td><td><span class="badge b2">L2</span></td></tr>
+    <tr><td>30Y收益率</td><td style="text-align:right;"><b>5.27%</b></td><td class="up" style="text-align:right;">+2bp</td><td>09-01收盘 Yahoo(^TYX)</td><td><span class="badge b2">L2</span></td></tr>
+    <tr><td>2Y收益率</td><td style="text-align:right;"><b>4.20%</b></td><td class="flat" style="text-align:right;">FRED滞后</td><td>FRED 08-27 · 盘中见总览实时卡</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>10Y-2Y / 10Y-3M利差</td><td style="text-align:right;"><b>39 / 87bp</b></td><td class="dn" style="text-align:right;">-8 / +3bp</td><td>FRED 08-28 / 09-01</td><td><span class="badge b1">L1</span></td></tr>
+    <tr class="hot"><td rowspan="3"><b>实际利率<br>通胀预期</b></td><td>10Y TIPS实际利率</td><td style="text-align:right;"><b>2.44%</b></td><td class="up" style="text-align:right;">+2bp</td><td>FRED 08-31 · 2019年来99分位</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>5Y / 10Y盈亏平衡通胀</td><td style="text-align:right;"><b>2.30% / 2.31%</b></td><td class="dn" style="text-align:right;">-1 / -2bp</td><td>FRED 08-28 · 通胀预期锚定</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>5y5y远期通胀 / 期限溢价ACM</td><td style="text-align:right;"><b>2.33% / 0.84%</b></td><td class="up" style="text-align:right;">+2bp / +33bp</td><td>09-01 / 07月月度 · 溢价跳升</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td rowspan="3"><b>信用</b></td><td>高收益债OAS</td><td style="text-align:right;"><b>2.63%</b></td><td class="up" style="text-align:right;">+3bp</td><td>FRED 08-31 · 2019年来1.5分位（极自满）</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>BBB公司债利差</td><td style="text-align:right;"><b>0.98%</b></td><td class="up" style="text-align:right;">+1bp</td><td>FRED 08-31</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>债/股ETF：TLT·LQD·HYG·EMB</td><td style="text-align:right;"><b>全跌</b></td><td class="dn" style="text-align:right;">-0.65~-0.99</td><td>09-01收盘 Yahoo</td><td><span class="badge b2">L2</span></td></tr>
+    <tr><td><b>波动率</b></td><td>MOVE（债市恐慌指数）</td><td style="text-align:right;"><b>77.88</b></td><td class="up" style="text-align:right;">+2.56</td><td>09-01 · 33分位低位</td><td><span class="badge b2">L2</span></td></tr>
+    <tr><td rowspan="2"><b>供给·需求</b></td><td>8月拍卖投标倍数 2Y/10Y/30Y</td><td style="text-align:right;"><b>2.60 / 2.53 / 2.39</b></td><td class="flat" style="text-align:right;">平稳</td><td>08-25/08-12/08-13 财政部</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>TIC外资持仓：日本 / 中国（6月）</td><td style="text-align:right;"><b>11167 / 6334亿$</b></td><td class="dn" style="text-align:right;">-264 / -259亿$</td><td>TIC 06月 · 两大买家同减</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td><b>头寸</b></td><td>CFTC净空仓 10Y/2Y/30Y</td><td style="text-align:right;"><b>-84.0 / -86.1 / -18.7万手</b></td><td class="up" style="text-align:right;">回补+10.8万</td><td>08-25当周 CFTC · 极端空头区</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td rowspan="4"><b>全球债市</b></td><td>英国10Y</td><td style="text-align:right;"><b>4.80%</b></td><td class="dn" style="text-align:right;">-14.6bp</td><td>OECD 06月月度</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>德国10Y</td><td style="text-align:right;"><b>2.97%</b></td><td class="dn" style="text-align:right;">-7.7bp</td><td>OECD 06月月度</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>日本10Y</td><td style="text-align:right;"><b>2.67%</b></td><td class="up" style="text-align:right;">+2bp</td><td>OECD 06月月度 · 日央行鹰派抬头</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td>中国10Y / 中美利差</td><td style="text-align:right;"><b>1.68% / -297bp</b></td><td class="dn" style="text-align:right;">-0.5bp</td><td>09-01 / 08-27</td><td><span class="badge b2">L2</span></td></tr>
+  </table>
+</div>
+<div class="card" style="margin-top:12px;"><p style="font-size:13px;margin:0;"><b style="color:var(--gold)">债市图表工作区</b>：美债曲线/实际利率/通胀预期/信用/拍卖/外资持仓/全球收益率，任选叠加最多4个：</p></div>
+<div class="cw" id="cw-bond"></div>
+<!-- ===== 美国资产象限裁决 ===== -->
+<div class="card" style="margin-top:14px;border-color:var(--gold);">
+  <p style="font-size:13px;margin:0 0 8px;"><b style="color:var(--gold)">美国资产象限裁决（2026-09-02 冻结）</b><span style="font-size:11px;color:var(--dim);">美股 × 美债 × 美元 → 四象限定性，映射本框架中心矛盾</span></p>
+  <table>
+    <tr><th>资产</th><th style="text-align:right;">9/1-9/2表现</th><th>方向</th></tr>
+    <tr><td>美股（标普500）</td><td style="text-align:right;"><b>7631.47（-0.71%）</b></td><td class="dn">跌（9/2亚太跟随，日经-3%）</td></tr>
+    <tr><td>美债（10Y收益率）</td><td style="text-align:right;"><b>4.80%（+4bp）</b></td><td class="dn">跌（收益率升=价格跌）</td></tr>
+    <tr><td>美元（DXY）</td><td style="text-align:right;"><b>99.76（+0.09）</b></td><td class="up">强</td></tr>
+  </table>
+  <p style="font-size:12.5px;margin:10px 0 6px;line-height:1.8;">四象限定位：<b>股涨债涨美元弱=宽松交易 ｜ 股跌债涨=衰退交易 ｜ 股涨债跌美元强=增长/软着陆 ｜ 股跌债跌美元强=滞胀紧缩（现金为王）</b></p>
+  <p style="font-size:13px;margin:0 0 6px;"><b style="color:#e5534b;">当前象限：股跌+债跌+美元强 = 滞胀紧缩象限（现金为王）。</b></p>
+  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
+    <li><b>框架映射</b>：该象限=<b>A端（财政主导+通胀黏性→实际利率与美元高位）全面兑现区</b>——黄金连破4500（-1.88%）、股债金三杀，正是A端象限对各类资产的典型压制顺序。</li>
+    <li><b>象限内的例外</b>：原油+5.2%（霍尔木兹供给冲击）是B端实物腿在本象限内唯一跑赢的资产——验证"地缘政治双向"判断：它同时给A端供通胀、给B端供实物溢价。</li>
+    <li><b>裁决</b>：A端象限<b>已确认</b>，仍在"读秒"的只是幅度（实际利率2.44%距2.45%线1bp）；中心矛盾的B端翻盘需等待象限切换。</li>
+    <li><b>象限切换信号（事前冻结）</b>：DXY回落至98.5下方 + 10Y名义止升 → 向"衰退交易"（股跌债涨）切换，届时黄金先受益、曲线走陡头寸加仓；反之10Y破4.90%+VIX破18 → 象限深化为"无序抛售"，全面降风险。</li>
+  </ul>
+</div>
+</section>
+<section class="dp" id="dp13">
+<!-- ============ 外汇追踪（美元与非美·数据日9/1-9/2） ============ -->
+<h2>十二、外汇追踪<span class="en">FX WATCH · 美元/日元/欧元/人民币 + 头寸与利差驱动</span></h2>
+<div class="card">
+  <p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">外汇结论（2026-09-02 冻结）</b>：<b>美元是"紧缩型走强"——靠息差而非避险，与美债收益率上行同向同因；非美中日元最弱、人民币最稳但脆弱。</b></p>
+  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
+    <li><b>美元</b>：DXY 99.76（9/2盘中，+0.09）收复8月中旬失地，广义贸易加权指数118.75（43分位）不算极端；CFTC美元净多仅+1.87万手且小幅减持——<b>多头不拥挤，走强尚有持续性空间</b>。</li>
+    <li><b>日元最弱</b>：USDJPY 160.06（9/2盘中，+0.31）——日央行鹰派委员高田创连放加息言论，但日美实际利差仍主导定价；CFTC日元净空仓-6.3万手且继续加码（-1.0万手），<b>市场不信日央行能追上利差</b>。</li>
+    <li><b>欧元</b>：EURUSD 1.1582（9/2盘中，-0.4%）——欧央行管委"做好进一步加息准备"的表态未能扭转利差劣势，欧元随美元走强被动回落。</li>
+    <li><b>人民币</b>：USDCNY 6.7260持平、USDCNH 6.7231，在岸离岸几乎无价差——在中美利差-297bp的压力下靠购金储备+结汇盘维持稳态；<b>稳但脆弱：DXY若破100，6.75是第一道考验</b>。</li>
+    <li><b>美元微笑定位</b>：当前处微笑<b>右端</b>（美国紧缩+全球承压→美元强）；若9/4非农再度为负，微笑切换至<b>左端</b>（衰退避险）——美元仍强，但驱动从"息差"换成"避险"，届时美债与金将先于美元转向。</li>
+  </ul>
+</div>
+<div class="card" style="margin-top:12px;">
+  <p style="font-size:13px;margin:0 0 8px;"><b style="color:var(--gold)">外汇看板</b><span style="font-size:11px;color:var(--dim);">（盘中值为9/2亚太时段，官方序列为最近发布）</span></p>
+  <table>
+    <tr><th>板块</th><th>指标</th><th style="text-align:right;">最新</th><th style="text-align:right;">日变动</th><th>数据日/说明</th><th></th></tr>
+    <tr class="hot"><td rowspan="2"><b>美元</b></td><td>美元指数DXY</td><td style="text-align:right;"><b>99.76</b></td><td class="up" style="text-align:right;">+0.09</td><td>09-02盘中 Yahoo · 9/1收99.67</td><td><span class="badge b2">L2</span></td></tr>
+    <tr><td>广义贸易加权美元</td><td style="text-align:right;"><b>118.75</b></td><td class="up" style="text-align:right;">+0.39</td><td>FRED 08-28 · 43分位</td><td><span class="badge b1">L1</span></td></tr>
+    <tr class="hot"><td rowspan="2"><b>日元</b></td><td>美元兑日元USDJPY</td><td style="text-align:right;"><b>160.06</b></td><td class="up" style="text-align:right;">+0.31</td><td>09-02盘中 Yahoo · 160关口</td><td><span class="badge b2">L2</span></td></tr>
+    <tr><td>CFTC日元净持仓</td><td style="text-align:right;"><b>-6.3万手</b></td><td class="dn" style="text-align:right;">-1.0万</td><td>08-25当周 · 空头加码</td><td><span class="badge b1">L1</span></td></tr>
+    <tr><td><b>欧元</b></td><td>欧元兑美元EURUSD</td><td style="text-align:right;"><b>1.1582</b></td><td class="dn" style="text-align:right;">-0.4%</td><td>09-02盘中 Yahoo</td><td><span class="badge b2">L2</span></td></tr>
+    <tr class="hot"><td rowspan="3"><b>人民币</b></td><td>在岸USDCNY</td><td style="text-align:right;"><b>6.7260</b></td><td class="flat" style="text-align:right;">持平</td><td>09-01收盘 Yahoo</td><td><span class="badge b2">L2</span></td></tr>
+    <tr><td>离岸USDCNH</td><td style="text-align:right;"><b>6.7231</b></td><td class="dn" style="text-align:right;">-0.04%</td><td>09-02 07:00 Yahoo</td><td><span class="badge b2">L2</span></td></tr>
+    <tr><td>中美10Y利差（美-中）</td><td style="text-align:right;"><b>+297bp</b></td><td class="flat" style="text-align:right;">-0.1bp</td><td>08-27 ⚙️(FRED-中债)</td><td><span class="badge bc">⚙️</span></td></tr>
+    <tr><td><b>头寸</b></td><td>CFTC美元指数净持仓</td><td style="text-align:right;"><b>+1.87万手</b></td><td class="dn" style="text-align:right;">-397</td><td>08-25当周 · 多头不拥挤</td><td><span class="badge b1">L1</span></td></tr>
+  </table>
+</div>
+<div class="card" style="margin-top:12px;"><p style="font-size:13px;margin:0;"><b style="color:var(--gold)">外汇图表工作区</b>：DXY/广义美元/USDJPY/EURUSD/人民币汇率/CFTC头寸/中美利差，任选叠加最多4个：</p></div>
+<div class="cw" id="cw-fx"></div>
+<div class="card" style="margin-top:12px;"><p style="font-size:12px;color:var(--dim);margin:0;">→ 美股×美债×美元的<b>美国资产象限裁决</b>见「债市」页签底部（当前：股跌+债跌+美元强=滞胀紧缩象限，A端全面兑现）。</p></div>
+</section>
 
 <footer style="margin-top:36px;color:var(--dim);font-size:11px;border-top:1px solid var(--line);padding-top:12px;">
   宏观研究日报 · 数据皆有来源，缺口标灰 · 观点事前冻结 · 框架版本 v1.0（八大版块）<br>
@@ -582,6 +678,18 @@ function mountLiq(){
   }).catch(function(){document.getElementById('liqSumD').innerHTML='<p style="font-size:13px;color:var(--dim);margin:0;">liquidity.json 拉取失败，请刷新重试</p>';});
 }
 document.querySelectorAll('[data-dp="dp10"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountLiq,60);});});
+/* ====== 债市/外汇图表工作区（懒挂载） ====== */
+var _bondDone=false, _fxDone=false;
+function mountBond(){
+  if(_bondDone)return; _bondDone=true;
+  chartWidget('cw-bond', ['DGS2','DGS10','DGS30'], ['DGS2','DGS10','DGS30','T10Y2Y','T10Y3M','DFII10','T5YIE','T10YIE','T5YIFR','ACMTP10','MORTGAGE30US','BAMLH0A0HYM2','BAMLC0A4CBBB','BAMLC0A1CAAA','Y_MOVE','Y_TLT','Y_LQD','Y_HYG','Y_EMB','US_AUC_2Y_BTC','US_AUC_10Y_BTC','US_AUC_30Y_BTC','JP_UST_HOLD','CN_UST_HOLD','UK_UST_HOLD','FO_UST_HOLD','CFTC_TY_NET','CFTC_TU_NET','CFTC_US_NET','IRLTLT01JPM156N','IRLTLT01DEM156N','IRLTLT01GBM156N','EM_CGB2Y','EM_CGB10Y','EM_CGB30Y','SPR_USCN10Y','DFF','SOFR','PD_UST_POS']);
+}
+function mountFx(){
+  if(_fxDone)return; _fxDone=true;
+  chartWidget('cw-fx', ['Y_DXY','Y_USDJPY','Y_EURUSD'], ['Y_DXY','DTWEXBGS','Y_USDJPY','Y_EURUSD','DEXCHUS','CFTC_DX_NET','CFTC_JY_NET','SPR_USCN10Y','DGS10','DFII10','EM_CGB10Y','CN_LPR1Y','CN_SHIBOR3M','ECBDFR','IRLTLT01JPM156N']);
+}
+document.querySelectorAll('[data-dp="dp12"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountBond,60);});});
+document.querySelectorAll('[data-dp="dp13"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountFx,60);});});
 
 /* ---------- 图表区 ---------- */
 const CATALOG = [
