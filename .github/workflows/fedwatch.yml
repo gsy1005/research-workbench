@@ -1,0 +1,29 @@
+name: 每日FedWatch机器人(CME官方加息概率)
+on:
+  schedule:
+    - cron: "5 2 * * *"   # 每天 10:05 北京时间（美盘收盘后、晨报前）
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install playwright
+      - run: python -m playwright install chromium --with-deps
+      - name: 抓取 CME FedWatch（无头渲染 quikstrike iframe）
+        run: python scripts/fetch_fedwatch.py
+      - name: commit & push
+        run: |
+          git config user.name "data-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/fedwatch.json
+          git diff --cached --quiet || git commit -m "FedWatch $(date -u +%F)"
+          git pull --rebase origin main || (git rebase --abort && git pull --no-rebase -X ours origin main)
+          git push

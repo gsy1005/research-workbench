@@ -179,6 +179,8 @@
     .calrow>div{flex:0 0 240px;}
     .kdbar{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;}
     section.dp table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;}
+    #bankBox table{min-width:600px;}
+    #fwFullBox table{min-width:440px;}
     .cw .chart{height:300px !important;}
     .tickerWrap{margin-bottom:10px;}
     .chg p, .concl{font-size:12.5px;line-height:1.8;}
@@ -213,6 +215,7 @@
   <button data-dp="dp10" style="border-color:var(--gold)">流动性</button>
   <button data-dp="dp4">数据图表</button>
   <button data-dp="dp7">数据发布</button>
+  <button data-dp="dp11" style="border-color:var(--gold)">数据预测</button>
   <button data-dp="dp5">数据总表</button>
   <button data-dp="dp9">图表工作区</button>
   <button data-dp="dp6">消息解读</button>
@@ -367,6 +370,12 @@
 <div id="rp-host"></div>
 </div>
 
+</section>
+<section class="dp" id="dp11">
+<!-- ============ 六之三、数据预测（FedWatch官方+投行预测矩阵+重要逻辑） ============ -->
+<h2>六之三、数据预测<span class="en">FORECAST · CME FedWatch官方加息概率（管线每日自动更新） + 投行对非农/CPI/FOMC预测 + 重要逻辑</span></h2>
+<div class="mini"><h4>CME FedWatch · 各次会议加息概率<span style="float:right;font-size:11px;color:var(--dim);font-weight:400;" id="fwFullAsof"></span></h4><div id="fwFullBox">加载中…</div></div>
+<div class="mini" style="margin-top:14px;"><h4>投行预测矩阵 · 非农 / CPI / FOMC<span style="float:right;font-size:11px;color:var(--dim);font-weight:400;" id="bankAsof"></span></h4><div id="bankBox">加载中…</div></div>
 </section>
 <section class="dp" id="dp5">
 <!-- ============ 六、日度数据总表 ============ -->
@@ -718,11 +727,73 @@ function refreshLive(){
   const old = document.getElementById('livejs'); if(old) old.remove();
   const s = document.createElement('script'); s.id='livejs';
   s.src = '../data/live_snapshot.js?t=' + Date.now();
-  s.onload = ()=>{ renderLive(window.LIVE_SNAPSHOT); liveUST(); const m=document.getElementById('updMsg'); if(m) m.textContent='已更新 · ' + window.LIVE_SNAPSHOT.asof + ' · 美债盘中实时'; };
+  s.onload = ()=>{ renderLive(window.LIVE_SNAPSHOT); liveUST(); loadForecast(); const m=document.getElementById('updMsg'); if(m) m.textContent='已更新 · ' + window.LIVE_SNAPSHOT.asof + ' · 美债盘中实时'; };
   s.onerror = ()=>{ const m=document.getElementById('updMsg'); if(m) m.textContent='拉取失败，请稍后重试'; };
   document.head.appendChild(s);
 }
-document.addEventListener('DOMContentLoaded', ()=>{ if(window.LIVE_SNAPSHOT) renderLive(window.LIVE_SNAPSHOT); });
+// ===== 数据预测页签（dp11）：FedWatch官方全会议表 + 投行预测矩阵 =====
+function renderFwFull(F){
+  const rows = F.meetings.map((m,i)=>{
+    const hi = m.hike>=50 ? 'up' : (m.ease>=50 ? 'dn' : '');
+    return `<tr style="${i===0?'background:rgba(212,169,68,.08);':''}"><td>${m.meeting}${i===0?' ◀最近':''}</td>`+
+      `<td style="text-align:right;">${m.ease}%</td><td style="text-align:right;">${m.no_change}%</td>`+
+      `<td class="${hi}" style="text-align:right;font-weight:700;">${m.hike}%</td>`+
+      `<td style="text-align:right;color:var(--dim);">${m.mid||'—'}</td></tr>`;
+  }).join('');
+  document.getElementById('fwFullBox').innerHTML =
+    `<table><tr><th>FOMC会议</th><th style="text-align:right;">降息</th><th style="text-align:right;">维持</th><th style="text-align:right;">加息</th><th style="text-align:right;">中间价</th></tr>${rows}</table>
+     <div style="font-size:11px;color:var(--dim);margin-top:6px;">L2·交易所口径：${esc(F.source)} · ${esc(F.contract||'')} · 截至 ${F.asof} · 每日10:05 BJT管线自动更新（手动「更新最新数据」即时拉取）</div>`;
+  document.getElementById('fwFullAsof').textContent = F.asof;
+}
+function fwFullFallback(){
+  if(!window.LIVE_SNAPSHOT) return;
+  const fw = window.LIVE_SNAPSHOT.fedwatch;
+  document.getElementById('fwFullBox').innerHTML =
+    `<table><tr><th>FOMC会议</th><th>维持不变</th><th>加息25bp</th><th>加息50bp</th></tr>`+
+    fw.meetings.map(m=>`<tr><td>${m.date}</td><td>${m.hold}%</td><td class="up">${m.hike25}%</td><td>${m.hike50?m.hike50+'%':'—'}</td></tr>`).join('')+
+    `</table><div style="font-size:11px;color:var(--dim);margin-top:6px;">${esc(fw.src)} · 截至 ${fw.asof}（fedwatch.json暂缺，回落到手工快照口径）</div>`;
+  document.getElementById('fwFullAsof').textContent = fw.asof + '（快照）';
+}
+function renderBanks(F){
+  document.getElementById('bankAsof').textContent = F.asof;
+  document.getElementById('bankBox').innerHTML = F.events.map(ev=>{
+    const subs = (ev.subs&&ev.subs.length) ?
+      `<div style="font-size:12px;margin:6px 0 2px;color:var(--dim);">分项共识：</div><table><tr><th>分项</th><th style="text-align:right;">共识</th><th>前值</th></tr>`+
+      ev.subs.map(s=>`<tr><td>${s[0]}</td><td style="text-align:right;color:var(--gold);">${s[1]}</td><td style="color:var(--dim);">${s[2]}</td></tr>`).join('')+`</table>` : '';
+    const banks = (ev.banks&&ev.banks.length) ?
+      `<table style="margin-top:8px;"><tr><th>机构</th><th>数字预测</th><th>核心观点/逻辑</th><th style="text-align:right;">口径日期</th></tr>`+
+      ev.banks.map(b=>`<tr><td style="white-space:nowrap;"><b>${b.bank}</b></td>`+
+        `<td style="white-space:nowrap;${b.fc.indexOf('—')===0?'color:var(--dim);':'color:var(--gold);font-weight:700;'}">${b.fc}</td>`+
+        `<td style="font-size:12px;">${b.view}</td>`+
+        `<td style="text-align:right;font-size:11px;color:var(--dim);white-space:nowrap;">${b.date} · ${b.src}</td></tr>`).join('')+`</table>` :
+      `<div style="font-size:12px;color:var(--dim);margin-top:6px;">投行数字预测尚未披露（一般公布前1-2日），当前缺口标灰待补。</div>`;
+    const bnote = ev.banks_note ? `<div style="font-size:11px;color:var(--dim);margin-top:4px;">◈ ${ev.banks_note}</div>` : '';
+    const logic = `<div style="font-size:12px;margin:10px 0 4px;color:var(--gold);"><b>重要逻辑</b></div><ol style="margin:0;padding-left:20px;">`+
+      ev.logic.map(l=>`<li style="font-size:12.5px;line-height:1.75;margin-bottom:5px;">${l}</li>`).join('')+`</ol>`;
+    return `<div style="border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:baseline;">
+        <b style="font-size:14px;">${ev.name}</b>
+        <span style="font-size:12px;color:var(--gold);">公布：${ev.release}</span>
+      </div>
+      <div style="font-size:12px;margin-top:6px;">共识：<b style="color:${ev.consensus.indexOf('—')===0?'var(--dim)':'var(--gold)'};">${ev.consensus}</b>
+        <span style="color:var(--dim);margin-left:14px;">前值：${ev.previous}</span></div>
+      ${subs}${banks}${bnote}${logic}</div>`;
+  }).join('') +
+  `<div style="font-size:11px;color:var(--dim);">${esc(F.src)} · 整理截至 ${F.asof}</div>`;
+}
+async function loadForecast(){
+  try{
+    const r = await fetch('../data/fedwatch.json?v='+Date.now());
+    if(!r.ok) throw 0;
+    renderFwFull(await r.json());
+  }catch(e){ fwFullFallback(); }
+  try{
+    const r2 = await fetch('../data/forecasts.json?v='+Date.now());
+    if(!r2.ok) throw 0;
+    renderBanks(await r2.json());
+  }catch(e){ document.getElementById('bankBox').innerHTML='<div style="color:var(--dim);font-size:12px;">forecasts.json 加载失败</div>'; }
+}
+document.addEventListener('DOMContentLoaded', ()=>{ if(window.LIVE_SNAPSHOT) renderLive(window.LIVE_SNAPSHOT); loadForecast(); });
 </script>
 <script>
 document.getElementById('dtabs').addEventListener('click', function(e){
