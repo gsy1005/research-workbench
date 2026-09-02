@@ -14,7 +14,9 @@ TOPICS = ["Iran nuclear deal", "Strait of Hormuz", "Iran", "Hormuz traffic",
 KEYWORDS = ["recession", "fed", "fomc", "rate cut", "rate decision", "senate", "congress",
             "approval", "tariff", "shutdown", "debt ceiling", "powell", "midterm", "house",
             "hormuz", "rate hike", "hike", "strait", "iran", "nuclear"]
-CAP = 24
+CAP = 28
+# 必抓市场（按slug定点, 放在名单最前）：参众两院控制权（2026中期选举）
+TARGET_SLUGS = ["which-party-will-win-the-senate-in-2026", "which-party-will-win-the-house-in-2026"]
 
 def get(url, **kw):
     r = requests.get(url, headers=UA, timeout=30, **kw)
@@ -76,6 +78,13 @@ def fetch_history(token, days=400):
 
 def main():
     picks, seen = [], set()
+    # 0) 必抓定点市场（slug直取, 最优先）
+    for slug in TARGET_SLUGS:
+        try:
+            evs = get(f"{GAMMA}/events", params={"slug": slug})
+            pick_from_events(evs or [], picks, seen, CAP)
+        except Exception as e:
+            print("slug fail:", slug, str(e)[:80])
     # 1) 定向主题搜索
     for topic in TOPICS:
         try:

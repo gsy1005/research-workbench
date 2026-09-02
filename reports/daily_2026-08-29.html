@@ -301,15 +301,10 @@
 
 </section>
 <section class="dp" id="dp8">
-<!-- ============ 特朗普专区（TACO压力指数·支持率·事件复盘） ============ -->
-<h2>特朗普专区<span class="en">TRUMP ZONE · TACO压力 · 支持率 · 事件复盘 · L3·第三方ocmacro</span></h2>
-<div class="grid2">
-  <div class="mini"><h4>TACO 压力指数 · 折线（越高→TACO回撤概率越高）</h4><div id="tzPressure" style="width:100%;height:280px;"></div><div class="tznote" id="tzNote"></div></div>
-  <div class="mini"><h4>净支持率（赞成−反对）· 折线</h4><div id="tzAppr" style="width:100%;height:280px;"></div><div class="tznote" id="tzApprNote"></div></div>
-</div>
-<div class="mini"><h4>TACO 事件复盘（30条 · 点击展开威胁/退缩细节）</h4><div id="tzEvents" style="max-height:460px;overflow-y:auto;"></div>
-<div class="tznote">分项贡献、Truths跟踪、完整方法论见 <a href="../panels/trump_zone.html" style="color:var(--gold);">特朗普专区独立面板 ↗</a> · 数据源 L3·第三方ocmacro，仅作情绪跟踪不作交易依据</div></div>
-
+<!-- ============ 特朗普执政关注焦点（完整面板嵌入：压力指数·民调含参众两院·政策预期·TACO·Truths） ============ -->
+<h2>特朗普执政关注焦点<span class="en">TRUMP ZONE · 政策压力 · 民调（含2026参众两院控制权） · TACO · Truth Social · 数据每日管线更新</span></h2>
+<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">完整面板内嵌：压力指数 / 民调（净支持率 + <b style="color:#e5534b">共和党拿下参议院</b> / <b style="color:#e5534b">共和党赢得众议院</b>概率）/ 市场政策预期 / 美中竞赛 / 财政 / 贸易 / 物价 / 利率 / 流动性 / 就业 / 能源 / 资产 / TACO事件复盘 / Truths跟踪。数据源 L3·ocmacro + L2·Polymarket交易所，每日管线自动更新。<a href="../panels/trump_zone.html" style="color:var(--gold);">新窗口打开 ↗</a></p></div>
+<iframe src="../panels/trump_zone.html" style="width:100%;height:2450px;border:0;border-radius:8px;background:#0d1117;" loading="lazy" title="特朗普执政关注焦点"></iframe>
 </section>
 <section class="dp" id="dp4">
 <h2>六、数据图表<span class="en">CHARTS · 宏观图表墙 + 点选指标叠加</span></h2>
@@ -1083,8 +1078,7 @@ function mountTz(){
     }
   }).catch(function(){});
 }
-document.querySelectorAll('[data-dp="dp8"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountTz,60);});});
-if(document.getElementById('dp8')&&document.getElementById('dp8').classList.contains('on'))mountTz();
+/* dp8已改为完整面板iframe嵌入，mountTz不再触发（函数保留备用，元素缺失时自动跳过） */
 /* ====== Polymarket 预测市场图表墙：霍尔木兹/加息置顶金框（懒挂载） ====== */
 var _pmMounted=false;
 function mountPm(){

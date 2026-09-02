@@ -18,6 +18,13 @@ h1 em{font-style:normal;background:linear-gradient(transparent 62%,rgba(212,169,
 .sub{color:var(--dim);font-size:12.5px;margin:4px 0 18px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.midgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-top:6px}
+.midC{background:#171a20;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.midC .mt{font-size:13px;color:var(--dim)}
+.midC .mv{font-size:30px;font-weight:700;font-family:Georgia,serif;color:#e5534b;margin:2px 0}
+.midC .md{font-size:12px;color:#5b9bd5;margin-bottom:6px}
+.midbar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:#22262e;margin:4px 0 6px}
+.midbar i{display:block;height:8px}
 .stat .k{color:var(--dim);font-size:12px}
 .stat .v{font-size:24px;font-weight:700;margin-top:2px}
 .stat .d{color:var(--dim);font-size:11px;margin-top:2px}
@@ -136,6 +143,11 @@ a.lnk{color:var(--gold);text-decoration:none}
       </div>
       <div class="chart" id="chApproval"></div>
       <div class="note">短标=关键政策节点。数据源：Silver Bulletin / The Economist（经ocmacro整理）。</div>
+    </div>
+    <div class="card">
+      <h3>2026中期选举 · 国会控制权（Polymarket预测市场 · 每日管线更新）</h3>
+      <div class="midgrid" id="midGrid"><div class="note">加载中…</div></div>
+      <div class="note" id="midNote"></div>
     </div>
     <div id="pollExtra"></div>
   </div>
@@ -676,6 +688,52 @@ $('htQ').addEventListener('input',()=>{
   pend.forEach(l=>htLoadLib(l,()=>{pend=pend.filter(x=>x!==l);if(!pend.length)htRenderList();}));
 });
 
+/* ---------- 2026中期选举·参众两院控制权（Polymarket） ---------- */
+function renderMidterm(){
+  const host=$('midGrid'); if(!host)return;
+  fetch('../data/polymarket.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(pm=>{
+    if(!pm||!pm.markets){host.innerHTML='<div class="note">polymarket.json 未加载</div>';return;}
+    const bySlug={}; pm.markets.forEach(m=>{if(m.slug)bySlug[m.slug]=m;});
+    const defs=[
+      {slug:'which-party-will-win-the-senate-in-2026', title:'共和党拿下参议院', dem:'民主党控制参议院'},
+      {slug:'which-party-will-win-the-house-in-2026',  title:'共和党赢得众议院', dem:'民主党控制众议院'}
+    ];
+    host.innerHTML=defs.map((d,i)=>{
+      const m=bySlug[d.slug];
+      if(!m) return `<div class="midC"><div class="mt">${d.title}</div><div class="mv" style="color:var(--dim);font-size:18px;">—</div><div class="note">已加入每日抓取管线（09:05 BJT），明日起出数出图</div></div>`;
+      let gop=null, dem=null;
+      const rOut=m.outcomes.find(o=>/republican/i.test(o.name)), dOut=m.outcomes.find(o=>/democratic/i.test(o.name));
+      if(rOut){gop=rOut.price; dem=dOut?dOut.price:null;}
+      else{const y=m.outcomes.find(o=>o.name==='Yes'); if(y&&/democratic/i.test(m.question)){dem=y.price; gop=1-y.price;}}
+      if(gop==null) return `<div class="midC"><div class="mt">${d.title}</div><div class="note">市场口径待解析：${esc(m.question)}</div></div>`;
+      const gp=(gop*100).toFixed(1), dp=dem!=null?(dem*100).toFixed(1):null;
+      return `<div class="midC"><div class="mt">${d.title}概率</div>
+        <div class="mv">${gp}%</div>
+        ${dp?`<div class="md">${d.dem} ${dp}%</div>`:''}
+        ${dp?`<div class="midbar"><i style="width:${gp}%;background:#e5534b"></i><i style="width:${dp}%;background:#5b9bd5"></i></div>`:''}
+        ${(m.history&&m.history.length>1)?`<div id="midc_${d.slug.slice(-12)}" style="width:100%;height:140px;margin-top:6px"></div>`:''}
+        <div class="note">问法：${esc(m.question)} · 截止 ${esc(m.end||'2026-11-03')} · 24h成交 $${(m.vol24||0).toLocaleString()}</div></div>`;
+    }).join('');
+    $('midNote').innerHTML='红=共和党 · 蓝=民主党 · 曲线=共和党胜率（由市场首项推算）· 更新 '+esc(pm.fetched_at||'').slice(0,16).replace('T',' ')+' UTC · L2·交易所Polymarket';
+    defs.forEach(d=>{
+      const m=bySlug[d.slug]; if(!m||!m.history||m.history.length<2)return;
+      const el=document.getElementById('midc_'+d.slug.slice(-12)); if(!el)return;
+      const first=(m.outcomes[0]||{}).name||'';
+      const gopLine=/yes|democratic/i.test(first); /* 首项为民主党侧→取反 */
+      const data=m.history.map(p=>[p[0], gopLine?+(1-p[1]).toFixed(4):p[1]]);
+      const c=echarts.init(el); CH['mid'+d.slug]=c;
+      c.setOption({backgroundColor:'transparent',animation:false,
+        grid:{left:36,right:10,top:10,bottom:20},
+        tooltip:{trigger:'axis',backgroundColor:'#171a20',borderColor:'#2a2e37',textStyle:{color:'#e8e6e1',fontSize:11},
+          formatter:ps=>ps[0].axisValue+'<br>共和党胜率 <b>'+(ps[0].data[1]*100).toFixed(1)+'%</b>'},
+        xAxis:{type:'category',data:data.map(p=>p[0]),axisLine:{lineStyle:{color:'#2a2e37'}},axisLabel:{color:'#9a958c',fontSize:9}},
+        yAxis:{type:'value',min:0,max:v=>Math.max(0.1,Math.min(1,Math.ceil(v.max*10)/10)),axisLabel:{color:'#9a958c',fontSize:9,formatter:v=>(v*100).toFixed(0)+'%'},splitLine:{lineStyle:{color:'#22262e'}}},
+        series:[{type:'line',symbol:'none',data:data.map(p=>p[1]),lineStyle:{color:'#e5534b',width:1.6},areaStyle:{opacity:.08,color:'#e5534b'},
+          markLine:{symbol:'none',label:{color:'#9a958c',fontSize:9},lineStyle:{color:'#3a4356',type:'dashed'},data:[{yAxis:0.5}]}}]});
+    });
+  }).catch(()=>{host.innerHTML='<div class="note">Polymarket 数据拉取失败，请刷新重试</div>';});
+}
+
 /* ---------- 启动 ---------- */
 Promise.all([
   fetch('../data/trump_zone.json?v='+Date.now()).then(r=>r.json()),
@@ -683,7 +741,7 @@ Promise.all([
   fetch('../data/macro_series.json?v='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null)
 ]).then(([tz,tr,mac])=>{
   TZ=tz;TR=tr;MACRO=mac;
-  renderStats();renderPressure(365);renderApproval(365);renderEvents('');renderPosts();renderMarkets();
+  renderStats();renderPressure(365);renderApproval(365);renderEvents('');renderPosts();renderMarkets();renderMidterm();
   renderMacro('poll',$('pollExtra'));
 }).catch(e=>{
   document.body.insertAdjacentHTML('beforeend','<div class="empty">数据文件缺失：请先运行 scripts/fetch_trump.py</div>');
