@@ -1,0 +1,30 @@
+{
+ "asof": "2026-09-02 21:14 BJT",
+ "src": "L2·Yahoo Finance 服务端快照(每2小时)",
+ "quotes": {
+  "Y_DXY": {
+   "sym": "DX-Y.NYB",
+   "price": 99.746,
+   "chg": 0.046,
+   "chg_pct": 0.046,
+   "time": "2026-09-02 13:00 UTC",
+   "currency": "USD"
+  },
+  "Y_TNX": {
+   "sym": "^TNX",
+   "price": 4.792,
+   "chg": 0.12,
+   "chg_pct": 2.568,
+   "time": "2026-09-02 12:55 UTC",
+   "currency": "USD"
+  },
+  "Y_TYX": {
+   "sym": "^TYX",
+   "price": 5.264,
+   "chg": 0.073,
+   "chg_pct": 1.406,
+   "time": "2026-09-02 12:55 UTC",
+   "currency": "USD"
+  }
+ }
+}

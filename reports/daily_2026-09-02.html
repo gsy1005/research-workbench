@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>宏观研究日报 · 2026-09-02</title>
 <script src="../lib/echarts.min.js"></script>
-<script src="../data/chart_series.js"></script>
+<script src="../data/chart_series.js" id="csjs"></script>
 <script src="../data/macro_catalog.js" onerror="window.MACRO_CATALOG=null"></script>
 <script src="../lib/research_toolbox.js"></script>
 <script src="../lib/release_panels.js"></script>
@@ -1055,13 +1055,52 @@ function renderLive(S){
   }
   document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='FedWatch·事件快照：'+S.asof);
 }
+/* ====== 总览实时卡·盘中补丁②：管线Yahoo快照(每2小时,CNBC被墙时兜底+覆盖更多键) ====== */
+function liveQuotes(cb){
+  fetch('../data/live_quotes.json?v='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(Q){
+    var F=window._ovFmt;
+    if(F){Object.keys(Q.quotes||{}).forEach(function(k){
+      var card=document.querySelector('.ovCard[data-ovid="'+k+'"]'); if(!card)return;
+      /* CNBC已写入盘中价的卡不覆盖(看ovD是否含CNBC实时) */
+      var od=card.querySelector('.ovD'); if(od&&od.textContent.indexOf('CNBC实时')>=0)return;
+      var q=Q.quotes[k]; if(q.price==null)return;
+      card.querySelector('.ovV').textContent=F.fmtV(q.price);
+      var chips=card.querySelectorAll('.ovChips span');
+      if(chips[0]&&q.chg_pct!=null){var pc=q.chg_pct;chips[0].className=pc>0?'up':pc<0?'dn':'flat';chips[0].textContent='日 '+(pc>0?'+':'')+pc.toFixed(2)+'%';}
+      if(od)od.innerHTML='<span style="color:#d4a944">快照 '+Q.asof+' · L2·Yahoo管线(每2小时)</span> · 点评⚙️自建规则';
+    });}
+    /* 顶部FedWatch/事件快照标签旁的行情时间 */
+    if(cb)cb(Q);
+  }).catch(function(){ if(cb)cb(null); });
+}
+
 function refreshLive(){
+  const m=document.getElementById('updMsg');
+  const prevFw=(window.__fwAsof||'');
+  if(m)m.textContent='刷新中：穿透缓存拉取5路快照…';
+  /* ① chart_series底稿重载(日度管线, 每日2更) → 重建总览卡 */
+  const ocs=document.getElementById('csjs'); if(ocs)ocs.remove();
+  const cs=document.createElement('script'); cs.id='csjs';
+  cs.src='../data/chart_series.js?t='+Date.now();
+  cs.onload=()=>{ try{ buildOvCards(); if(window._ovDone){window._ovDone=false; if(typeof mountOv==='function')mountOv();} }catch(e){} };
+  document.head.appendChild(cs);
+  /* ② live_snapshot(手工策划快照) */
   const old = document.getElementById('livejs'); if(old) old.remove();
-  const s = document.createElement('script'); s.id='livejs';
-  s.src = '../data/live_snapshot.js?t=' + Date.now();
-  s.onload = ()=>{ renderLive(window.LIVE_SNAPSHOT); liveUST(); loadForecast(); loadNewsDigest(); const m=document.getElementById('updMsg'); if(m) m.textContent='已更新 · ' + window.LIVE_SNAPSHOT.asof + ' · 美债盘中实时 · 快讯已重拉'; };
-  s.onerror = ()=>{ const m=document.getElementById('updMsg'); if(m) m.textContent='拉取失败，请稍后重试'; };
-  document.head.appendChild(s);
+  const s2 = document.createElement('script'); s2.id='livejs';
+  s2.src = '../data/live_snapshot.js?t=' + Date.now();
+  s2.onload = ()=>{ renderLive(window.LIVE_SNAPSHOT); };
+  document.head.appendChild(s2);
+  /* ③ FedWatch+投行预测 ④ 行情管线快照 ⑤ 快讯 */
+  loadForecast(); loadNewsDigest(); liveUST(); liveCNBC();
+  liveQuotes(function(Q){
+    setTimeout(function(){
+      const fwA=(document.getElementById('fwFullAsof')||{}).textContent||'';
+      const same=prevFw&&fwA&&prevFw===fwA;
+      if(m)m.textContent='已更新 · FedWatch快照 '+(fwA||'—')+(same?'(已是最新)':'(有更新✅)')
+        +' · 行情 '+(Q?Q.asof:'直连中')+' · 快讯已重拉 · FRED底稿每日07:40/20:40两更';
+    },1200);
+  });
+  window.__fwAsof=(document.getElementById('fwFullAsof')||{}).textContent||'';
 }
 // ===== 数据预测页签（dp11）：FedWatch官方全会议表 + 投行预测矩阵 =====
 function renderFwFull(F){
@@ -1074,8 +1113,9 @@ function renderFwFull(F){
   }).join('');
   document.getElementById('fwFullBox').innerHTML =
     `<table><tr><th>FOMC会议</th><th style="text-align:right;">降息</th><th style="text-align:right;">维持</th><th style="text-align:right;">加息</th><th style="text-align:right;">中间价</th></tr>${rows}</table>
-     <div style="font-size:11px;color:var(--dim);margin-top:6px;">L2·交易所口径：${esc(F.source)} · ${esc(F.contract||'')} · 截至 ${F.asof} · 每日10:05 BJT管线自动更新（手动「更新最新数据」即时拉取）</div>`;
+     <div style="font-size:11px;color:var(--dim);margin-top:6px;">L2·交易所口径：${esc(F.source)} · ${esc(F.contract||'')} · 截至 ${F.asof} · 工作日07-23点每2小时管线自动更新·「更新最新数据」即时穿透拉取最新快照</div>`;
   document.getElementById('fwFullAsof').textContent = F.asof;
+  window.__fwAsof=F.asof;
 }
 function fwFullFallback(){
   if(!window.LIVE_SNAPSHOT) return;
@@ -1375,7 +1415,7 @@ document.addEventListener('click',function(e){
   (function loop(){poll();var h=bjtHour();setTimeout(loop,(h>=7&&h<23)?60000:300000);})();
 })();
 /* ====== 数据总览：价格+日/20日/近1年变动+一行⚙️规则点评（序列=CHART_SERIES） ====== */
-(function(){
+function buildOvCards(){
   var host=document.getElementById('ovGrid'); if(!host||!window.CHART_SERIES)return;
   var H=window.CHART_SERIES;
   var CFG=[
@@ -1414,8 +1454,31 @@ document.addEventListener('click',function(e){
   });
   host.innerHTML=html||'<div class="ovD">序列未加载</div>';
   window._ovCFG=CFG; window._ovH=H; window._ovFmt={at:at,rel:rel,fmtChg:fmtChg,fmtV:fmtV};
-  liveUST();
-})();
+  liveUST(); liveCNBC(); liveQuotes();
+}
+buildOvCards();
+/* ====== 总览实时卡·盘中补丁①：CNBC浏览器直连（美元/金/油/股/日元/VIX） ====== */
+function liveCNBC(){
+  var F=window._ovFmt; if(!F)return;
+  var MAP={'.SPX':'Y_GSPC','@GC.1':'Y_GOLD','@CL.1':'DCOILWTICO','JPY=':'Y_USDJPY','.VIX':'VIXCLS','.DXY':'Y_DXY','@SI.1':'Y_SLV'};
+  fetch('https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols='+Object.keys(MAP).join('|')+'&output=json&_='+Date.now())
+    .then(function(r){return r.json();}).then(function(d){
+      var qs=(d.FormattedQuoteResult||{}).FormattedQuote||[]; if(!qs.length)return;
+      qs.forEach(function(q){
+        var ov=MAP[q.symbol]; if(!ov)return;
+        var card=document.querySelector('.ovCard[data-ovid="'+ov+'"]'); if(!card)return;
+        var v=parseFloat(String(q.last).replace(/[%$,]/g,'')); if(isNaN(v))return;
+        var chg=parseFloat(q.change); var chgPct=parseFloat(String(q.change_pct||'').replace('%',''));
+        card.querySelector('.ovV').textContent=F.fmtV(v);
+        var chips=card.querySelectorAll('.ovChips span');
+        if(chips[0]&&!isNaN(chgPct)){chips[0].className=chgPct>0?'up':chgPct<0?'dn':'flat'; chips[0].textContent='日 '+(chgPct>0?'+':'')+chgPct.toFixed(2)+'%';}
+        var tstr=q.last_time||''; var et='';
+        try{et=new Date(tstr).toLocaleString('zh-CN',{timeZone:'America/New_York',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})+' ET';}catch(e){}
+        card.querySelector('.ovD').innerHTML='<span style="color:#d4a944">盘中 '+et+' · L2·CNBC实时</span> · 点评⚙️自建规则';
+      });
+    }).catch(function(){/* CNBC不可达时静默,由liveQuotes管线快照兜底 */});
+}
+
 /* ====== 美债2Y/10Y/30Y 盘中实时补丁：CNBC quote API（CORS开放，Tradeweb行情） ====== */
 function liveUST(){
   var CFG=window._ovCFG,H=window._ovH,F=window._ovFmt;
