@@ -382,9 +382,10 @@
 <h2>十、流动性追踪<span class="en">USD LIQUIDITY · 日频更新 · 压力分位与缩表阶段</span></h2>
 <div class="card" id="liqSumD"><p style="font-size:13px;color:var(--dim);margin:0;">流动性总览加载中…</p></div>
 <div class="lqGrid" id="liqGridD"></div>
-<div class="card"><p style="font-size:13px;margin:0;"><b style="color:var(--gold)">利率管道</b>（SOFR/EFFR/ON RRP利率与利差）与<b style="color:var(--gold)">数量维度</b>（联储总资产/准备金/RRP余额/TGA）双维追踪，任选叠加：</p></div>
+<div class="card"><p style="font-size:13px;margin:0;"><b style="color:var(--gold)">利率管道</b>（SOFR/EFFR/ON RRP利率与利差）·<b style="color:var(--gold)">数量维度</b>（联储总资产/准备金/RRP余额/TGA）·<b style="color:var(--gold)">波动率</b>（债市MOVE+股市VIX）三维追踪，任选叠加：</p></div>
 <div class="cw" id="cw-liqd1"></div>
 <div class="cw" id="cw-liqd2"></div>
+<div class="cw" id="cw-liqd3"></div>
 <div class="card"><p style="font-size:11px;color:var(--dim);margin:0;" id="liqMethD"></p></div>
 </section>
 
@@ -480,6 +481,7 @@ function mountLiq(){
     /* 双维图：利率管道 + 数量 */
     chartWidget('cw-liqd1', ['SOFR','EFFR','RRPONTSYAWARD'], ['SOFR','SOFR99','TGCRRATE','OBFR','EFFR','IORB','RRPONTSYAWARD','DCPF1M','SPR_SOFR_IORB','SPR_TGCR_IORB','SPR_SOFR_EFFR','SPR_SOFR99','SPR_SOFR_ONRRP','SPR_CP_SOFR','SPR_SOFR99_ONRRP','SPR_TGCR_ONRRP','LIQ_SRF']);
     chartWidget('cw-liqd2', ['WALCL','WRESBAL','RRPONTSYD'], ['WALCL','WRESBAL','RRPONTSYD','WDTGAL','WTREGEN','NETLIQ','WREPOFOR','SWPT','M2SL','M1SL','MMMFFAQ027S','LIQ_EZM3','LIQ_CNM2','CA_M2','ECBASSETSW','JPNASSETS','GM2_YOY','M2SL_YOY','LIQ_CNM2_YOY']);
+    chartWidget('cw-liqd3', ['Y_MOVE','VIXCLS'], ['Y_MOVE','VIXCLS','BAMLH0A0HYM2','Y_TLT','Y_HYG','Y_GLD','NFCI','STFSI4']);
   }).catch(function(){document.getElementById('liqSumD').innerHTML='<p style="font-size:13px;color:var(--dim);margin:0;">liquidity.json 拉取失败，请刷新重试</p>';});
 }
 document.querySelectorAll('[data-dp="dp10"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountLiq,60);});});

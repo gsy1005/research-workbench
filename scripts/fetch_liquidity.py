@@ -205,6 +205,17 @@ def main():
     if srf: series['LIQ_SRF'] = srf; log('  LIQ_SRF n=%d last=%s 年内峰值=%.2fbn' % (len(srf), srf[-1], max(v for _, v in srf)))
     else: fails.append('LIQ_SRF')
 
+    # MOVE美债波动率: Y_MOVE(Yahoo ^MOVE日度, fetch_macro每日刷新) + EDB_GLB_MOVE(L3·第三方终端EDB快照底座) 拼接去重
+    mv = {}
+    for k in ('EDB_GLB_MOVE', 'Y_MOVE'):
+        for d_, v in (cs.get(k) or []):
+            if v: mv[d_] = float(v)
+    if mv:
+        series['MOVE_X'] = sorted(mv.items())
+        log('  MOVE_X n=%d last=%s' % (len(series['MOVE_X']), series['MOVE_X'][-1]))
+    else:
+        fails.append('MOVE_X')
+
     log('== 3/5 衍生利差/同比 ⚙️ ==')
     d = {}
     def has(k): return k in series and len(series[k]) >= 3
@@ -240,7 +251,7 @@ def main():
     comp_defs = [
         ('SPR_SOFR_IORB', 'SOFR-IORB利差', 1), ('SPR_SOFR99', 'SOFR尾部99分位差', 1),
         ('SPR_CP_SOFR', '商票-SOFR利差', 1), ('BAMLH0A0HYM2', '高收益OAS', 1),
-        ('VIXCLS', 'VIX', 1),
+        ('VIXCLS', 'VIX(股市波动)', 1), ('MOVE_X', 'MOVE(债市波动)', 1),
     ]
     comp_pct = []
     for k, name, _w in comp_defs:
@@ -262,7 +273,7 @@ def main():
                   'components': [{'id': k, 'name': n, 'pct': p} for k, n, p in comp_pct]}
         log('  综合压力分位=%.1f (%d项)' % (stress_val, len(comp_pct)))
     # 广义2σ信号(对标GMF: 美元指数/真实利率/HY/VIX 63日变化 z≥2 → 冲击极值=买入窗口)
-    for k, name in [('DTWEXBGS', '美元指数'), ('DFII10', '10Y实际利率'), ('BAMLH0A0HYM2', '高收益OAS'), ('VIXCLS', 'VIX')]:
+    for k, name in [('DTWEXBGS', '美元指数'), ('DFII10', '10Y实际利率'), ('BAMLH0A0HYM2', '高收益OAS'), ('VIXCLS', 'VIX'), ('MOVE_X', 'MOVE')]:
         s = series.get(k, [])
         if len(s) > 200:
             deltas = [s[i][1] - s[i - 63][1] for i in range(63, len(s))]
@@ -301,7 +312,8 @@ def main():
         card('netliq', '净流动性(总资产-TGA-RRP)', 'NETLIQ', '万亿$'),
         card('srf', 'SRF常备回购用量', 'LIQ_SRF', '十亿$'),
         card('hy', '高收益债OAS', 'BAMLH0A0HYM2', '%'),
-        card('vix', 'VIX', 'VIXCLS', '点'),
+        card('move', 'MOVE美债波动率(债市)', 'MOVE_X', '点'),
+        card('vix', 'VIX(股市)', 'VIXCLS', '点'),
         card('real10y', '10Y实际利率', 'DFII10', '%'),
         card('dxy', '广义美元指数', 'DTWEXBGS', '点'),
         card('gm2', '全球M2同比⚙️简单平均', 'GM2_YOY', '%'),
@@ -322,8 +334,8 @@ def main():
                  '一级交易商持仓(FR2004网页抓取待做)', '高盛/彭博金融条件指数(商业数据)',
                  '日本M2现行值(FRED/OECD序列已停更, 待BOJ直抓)', '英国/加拿大M2(免费序列缺失)',
                  'CP-OIS真实值(此处以1M商票-SOFR代理)'],
-        'methodology': '综合压力分位=8项分量(5项水平分位+3项63日变化分位, 2019以来全样本)等权平均; '
-                       '广义信号=美元指数/真实利率/HY/VIX 63日变化z≥2(对标GMF>2σ买入窗口); '
+        'methodology': '综合压力分位=9项分量(6项水平分位+3项63日变化分位, 2019以来全样本; MOVE分位自2020H2, Yahoo ^MOVE日度+L3·第三方终端EDB快照拼接)等权平均; '
+                       '广义信号=美元指数/真实利率/HY/VIX/MOVE 63日变化z≥2(对标GMF>2σ买入窗口); '
                        '融资警报=SOFR-IORB/尾部/商票 20日变化z≥2; 阶段判定=ON RRP<1000亿$→阶段2',
     }
     with open(OUT_JSON, 'w', encoding='utf-8') as f:
