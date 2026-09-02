@@ -220,6 +220,8 @@
   <button data-dp="dp13" style="border-color:var(--gold)">外汇</button>
   <button data-dp="dp4">数据图表</button>
   <button data-dp="dp7">分项贡献</button>
+  <button data-dp="dp15" style="border-color:var(--gold)">今日新出数据</button>
+  <button data-dp="dp16" style="border-color:var(--gold)">每日财经图表</button>
   <button data-dp="dp11" style="border-color:var(--gold)">数据预测</button>
   <button data-dp="dp5">数据总表</button>
   <button data-dp="dp9">图表工作区</button>
@@ -480,7 +482,21 @@
 <div class="chart-panel">
 <div id="rp-host"></div>
 </div>
+<div class="card" style="margin-top:14px;" id="joltsCard">JOLTS就业数据加载中…</div>
 
+</section>
+<section class="dp" id="dp15">
+<!-- ============ 六之二·补、今日新出数据（本周已公布·按日留存·周一清空换新） ============ -->
+<h2>六之二·补、今日新出数据<span class="en">NEW RELEASES TODAY · 本周已公布数据按日留存 · 每周一管线自动清空换新</span></h2>
+<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">本周已公布的重要数据按日卡片留存（<b style="color:var(--txt)">公布值金粗</b>，<b style="color:#e5534b">红=高于预期</b>／<b style="color:#4caf7d">绿=低于预期</b>，前值为灰色）。来源：金十财经日历(L3)汇总官方公布值；下周一起自动清空换新，历史每日数据请查「数据总表」。今日待公布项目在「数据预测」页同步跟踪。</p></div>
+<div id="newDataBox" style="margin-top:12px;">加载中…</div>
+</section>
+<section class="dp" id="dp16">
+<!-- ============ 六之四、每日财经图表（自有管线每日自动重绘） ============ -->
+<h2>六之四、每日财经图表<span class="en">DAILY CHART PACK · 自有管线每日自动重绘 · FRED(L1)+行情(L2)数据源</span></h2>
+<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">每日由数据管线用 <b style="color:var(--txt)">FRED官方(L1)＋行情源(L2)</b> 自动重绘的框架图集，与全站数据同源、每日两次随管线刷新。按主题分五类，点按钮过滤。点开大图可另存。</p></div>
+<div id="chartCatBar" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;"></div>
+<div id="chartGallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;">加载中…</div>
 </section>
 <section class="dp" id="dp11">
 <!-- ============ 六之三、数据预测（FedWatch官方+投行预测矩阵+重要逻辑） ============ -->
@@ -847,6 +863,112 @@ function mountOv(){
   }).catch(function(){document.getElementById('ovHormuzLines').textContent='地缘时间线读取失败';});
 }
 document.querySelectorAll('[data-dp="dp14"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountOv,60);});});
+
+/* ============ JOLTS就业五件套（dp7） ============ */
+function _csLast2(key){
+  var a=(window.CHART_SERIES||{})[key]||[];
+  a=a.filter(function(p){return p[1]!=null;});
+  return a.slice(-2);
+}
+function joltsCard(){
+  var el=document.getElementById('joltsCard'); if(!el||el._done)return; el._done=1;
+  if(!window.CHART_SERIES){setTimeout(joltsCard,300);el._done=0;return;}
+  var defs=[
+    ['JTSJOL','职位空缺','万',function(v){return (v/10).toFixed(1);}],
+    ['JTSJOR','空缺率','%',function(v){return v.toFixed(1);}],
+    ['JTSHIR','雇用率','%',function(v){return v.toFixed(1);}],
+    ['JTSQUR','离职率(主动)','%',function(v){return v.toFixed(1);}],
+    ['UNEMPLOY','失业人数','万',function(v){return (v/10).toFixed(1);}]
+  ];
+  var rows='',latest={};
+  defs.forEach(function(d){
+    var p=_csLast2(d[0]);
+    if(!p.length){rows+='<tr><td>'+d[1]+'</td><td colspan="4" style="color:var(--dim)">缺口</td></tr>';return;}
+    var cur=p[p.length-1],prev=p.length>1?p[p.length-2]:null;
+    latest[d[0]]=cur[1];
+    var cv=d[3](cur[1]),pv=prev?d[3](prev[1]):'—';
+    var dir='';
+    if(prev){dir=cur[1]>prev[1]?'<span style="color:#e5534b">↑</span>':(cur[1]<prev[1]?'<span style="color:#4caf7d">↓</span>':'→');}
+    rows+='<tr><td style="text-align:left">'+d[1]+'</td><td style="color:var(--gold);font-weight:700">'+cv+'<span style="font-size:10px;color:var(--dim);font-weight:400"> '+d[2]+'</span></td><td>'+dir+'</td><td style="color:var(--dim)">'+pv+'</td><td style="color:var(--dim);font-size:11px">'+cur[0]+'</td></tr>';
+  });
+  var ratio='—';
+  if(latest.JTSJOL&&latest.UNEMPLOY){ratio=(latest.JTSJOL/latest.UNEMPLOY).toFixed(2);}
+  el.innerHTML='<p style="font-size:13px;margin:0 0 8px;"><b style="color:var(--gold)">JOLTS 就业五件套</b>'
+    +'<span class="badge b1" style="margin-left:8px">L1·BLS</span>'
+    +'<span style="float:right;font-size:11px;color:var(--dim)">空缺÷失业 = <b style="color:var(--gold);font-size:13px">'+ratio+'</b>（疫情前约1.2，2022峰值2.0）</span></p>'
+    +'<table style="margin:0"><tr><th style="text-align:left">指标</th><th>最新(7月)</th><th>环比</th><th>前值(6月)</th><th>数据日</th></tr>'+rows+'</table>'
+    +'<p style="font-size:11.5px;color:var(--dim);margin:8px 0 0;line-height:1.7;">⚙️框架读法：空缺回升但<b style="color:var(--txt)">雇用率↓＋离职率↓</b>＝企业「不裁人也不招人」的冻结态——雇主与雇员双方都在观望。离职率是信心最敏感的温度计（敢跳槽=看好外面机会），降至1.9%已贴近疫情前低点区。<b style="color:var(--txt)">9/9 QCEW基准修正</b>前，这是检验「就业失速」成色的关键交叉验证：若非农再弱而空缺率继续回升，则弱非农更可能是供给端噪音而非需求崩塌。</p>';
+}
+
+/* ============ 今日新出数据（dp15） ============ */
+var _ndDone=0;
+function mountNewData(){
+  var box=document.getElementById('newDataBox'); if(!box||_ndDone)return; _ndDone=1;
+  fetch('../data/econ_calendar.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
+    var html='',shown=0;
+    (d.days||[]).forEach(function(day){
+      if(day.grp!=='本周')return;
+      var done=(day.events||[]).filter(function(e){return e[3]!=null;});
+      if(!done.length)return;
+      shown++;
+      var rows='';
+      done.forEach(function(e){
+        var stars='';for(var i=0;i<(e[2]||1);i++)stars+='★';
+        var bstyle='color:var(--gold)',btip='';
+        if(e[4]!=null){
+          if(e[3]>e[4]){bstyle='color:#e5534b';btip=' title="高于预期"';}
+          else if(e[3]<e[4]){bstyle='color:#4caf7d';btip=' title="低于预期"';}
+        }
+        rows+='<tr><td style="color:var(--dim)">'+e[0]+'</td><td style="text-align:left">'+e[1]+' <span style="color:var(--gold);font-size:10px">'+stars+'</span></td>'
+          +'<td'+btip+'><b style="'+bstyle+';font-size:14px">'+e[3]+'</b></td>'
+          +'<td style="color:var(--dim)">'+(e[4]!=null?e[4]:'—')+'</td><td style="color:var(--dim)">'+(e[5]!=null?e[5]:'—')+'</td></tr>';
+      });
+      html+='<div class="card" style="margin-bottom:12px;"><p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">'+day.date+'</b><span style="color:var(--dim);font-size:11px;margin-left:8px">'+done.length+' 项已公布</span></p>'
+        +'<table style="margin:0"><tr><th>时间</th><th style="text-align:left">数据</th><th>公布值</th><th>预期</th><th>前值</th></tr>'+rows+'</table></div>';
+    });
+    if(!shown)html='<div class="card"><p style="color:var(--dim);font-size:13px;margin:0;">本周暂无可展示的已公布数据（或日历尚未刷新）。</p></div>';
+    box.innerHTML=html+'<p style="font-size:11px;color:var(--dim);margin-top:4px;">日历更新：'+(d.updated||'—')+' · 来源：'+(d.src||'金十日历(L3)')+' · 每周一起自动清空换新</p>';
+  }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">日历数据加载失败，点顶部「更新最新数据」重试。</p></div>';});
+}
+
+/* ============ 每日财经图表（dp16） ============ */
+var _cgDone=0,_cgCat='all',_cgData=null;
+function mountCharts(){
+  var gal=document.getElementById('chartGallery'); if(!gal||_cgDone)return; _cgDone=1;
+  fetch('../charts/catalog.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
+    _cgData=d;
+    var bar=document.getElementById('chartCatBar');
+    var btns='<button class="tag2" data-cat="all" style="border-color:var(--gold);color:var(--gold)">全部</button>';
+    (d.cats||[]).forEach(function(c){btns+='<button class="tag2" data-cat="'+c[0]+'">'+c[1]+'</button>';});
+    bar.innerHTML=btns+'<span style="font-size:11px;color:var(--dim);align-self:center;margin-left:auto;">图集生成：'+(d.asof||'—')+' · 每日两次随管线重绘</span>';
+    bar.querySelectorAll('[data-cat]').forEach(function(b){
+      b.addEventListener('click',function(){
+        _cgCat=b.getAttribute('data-cat');
+        bar.querySelectorAll('[data-cat]').forEach(function(x){x.style.borderColor='';x.style.color='';});
+        b.style.borderColor='var(--gold)';b.style.color='var(--gold)';
+        drawGallery();
+      });
+    });
+    drawGallery();
+  }).catch(function(){gal.innerHTML='<div class="card"><p style="color:var(--dim)">图集目录加载失败。</p></div>';});
+}
+function drawGallery(){
+  var gal=document.getElementById('chartGallery'); if(!_cgData)return;
+  var html='';
+  (_cgData.charts||[]).forEach(function(c){
+    if(_cgCat!=='all'&&c.cat!==_cgCat)return;
+    html+='<a href="../charts/'+c.file+'" target="_blank" style="text-decoration:none;"><div class="card" style="margin:0;padding:10px;">'
+      +'<img src="../charts/'+c.file+'?v='+encodeURIComponent(_cgData.asof||'')+'" loading="lazy" style="width:100%;border-radius:6px;display:block;">'
+      +'<p style="font-size:13px;margin:8px 0 2px;color:var(--txt);font-weight:700;">'+c.title+'</p>'
+      +'<p style="font-size:11px;margin:0;color:var(--dim);">'+c.sub+'</p></div></a>';
+  });
+  gal.innerHTML=html||'<div class="card"><p style="color:var(--dim)">该分类暂无图。</p></div>';
+}
+
+document.querySelectorAll('[data-dp="dp15"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountNewData,60);});});
+document.querySelectorAll('[data-dp="dp16"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountCharts,60);});});
+document.querySelectorAll('[data-dp="dp7"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(joltsCard,200);});});
+
 
 
 /* ---------- 图表区 ---------- */

@@ -24,11 +24,12 @@ jobs:
           python3 scripts/fetch_cn_macro.py || true
           python3 scripts/fetch_calendar.py || true
           python3 scripts/fetch_trump.py || true
+          python3 scripts/gen_charts.py || true
       - name: 提交更新
         run: |
           git config user.name "data-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json data/calendar_consensus.json data/j10_store.json data/trump_zone.json data/truth_posts.json
+          git add charts/ data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json data/calendar_consensus.json data/j10_store.json data/trump_zone.json data/truth_posts.json
           git diff --cached --quiet || git commit -m "每日数据 $(date +%F)"
           git pull --rebase origin main || true
           git push
