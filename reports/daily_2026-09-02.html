@@ -211,6 +211,7 @@
 <!-- ============ 板块页签 ============ -->
 <div class="dtabs" id="dtabs">
   <button data-dp="dp1" class="on">总览</button>
+  <button data-dp="dp14" style="border-color:var(--gold)">重要数据总览</button>
   <button data-dp="dp2">观点与证伪</button>
   <button data-dp="dp3">政策与地缘</button>
   <button data-dp="dp8">特朗普专区</button>
@@ -281,6 +282,23 @@
 </div>
 
 </section>
+<section class="dp" id="dp14">
+<!-- ============ 重要数据总览（美元/美债/外汇/霍尔木兹·自动读管线快照） ============ -->
+<h2>一之二、重要数据总览<span class="en">KEY DATA · 美元/美债/外汇/霍尔木兹 · 全表直读 chart_series 管线快照，每日自动跟新</span></h2>
+<div class="card">
+  <p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">总览结论（2026-09-02 冻结）</b>：<b>美元紧缩型走强 + 美债熊陡 + 油价因霍尔木兹高位——四条线同指"滞胀紧缩象限"。</b></p>
+  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
+    <li><b>美元</b>：走强靠息差而非避险（DXY逼近100关口），CFTC净多不拥挤，趋势有持续性空间；</li>
+    <li><b>美债</b>：熊陡形态——2Y随加息预期上、10Y上得更多，10Y-2Y利差走阔至+40bp；实际利率2.44%（99分位）是估值真正的压力源；</li>
+    <li><b>外汇</b>：日元最弱（160关口、空头加码）、人民币稳但脆弱（中美利差-306bp）、欧元被动回落；</li>
+    <li><b>霍尔木兹</b>：海峡仍关闭（2/28起），但8月油价仅微涨（Brent月+0.4%）——<b>市场对断供叙事已部分钝化，再升级才有新冲击</b>；汽油零售价4.07美元/加仑是特朗普的政治约束线。</li>
+  </ul>
+  <p style="font-size:11.5px;color:var(--dim);margin:8px 0 0;">本页数据全部自动读取管线最新快照（各行为独立数据日，注意时效徽标）；详细分析与象限裁决见「债市」「外汇」「流动性」页签。</p>
+</div>
+<div id="ovGrid14"></div>
+<div class="card" style="margin-top:12px;" id="ovHormuz"><p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">霍尔木兹海峡 · 事件时间线（近三条）</b><span style="font-size:11px;color:var(--dim);"> L2·权威媒体汇编，事实不含观点</span></p><div id="ovHormuzLines" style="font-size:12.5px;line-height:1.9;color:var(--dim);">读取中…</div></div>
+</section>
+
 <section class="dp" id="dp2">
 <!-- ============ 三之一、七维状态检视 ============ -->
 <h2>三之一、九维状态检视<span class="en">MULTI-DIMENSION CHECK · 每维指向中心矛盾(A端 vs B端)的方向</span></h2>
@@ -690,6 +708,74 @@ function mountFx(){
 }
 document.querySelectorAll('[data-dp="dp12"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountBond,60);});});
 document.querySelectorAll('[data-dp="dp13"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountFx,60);});});
+/* ---------- 重要数据总览(dp14) ---------- */
+var OV_SPEC=[
+ {sec:'美元',rows:[
+  {k:'Y_DXY',n:'美元指数DXY',u:'',s:'L2·Yahoo盘中',b:'b2',t:'pct',d:2},
+  {k:'DTWEXBGS',n:'广义贸易加权美元指数',u:'',s:'L1·FRED(周度节奏)',b:'b1',t:'pct',d:2},
+  {k:'DFF',n:'联邦基金有效利率EFFR',u:'%',s:'L1·FRED/NYFed(T+1)',b:'b1',t:'bp',d:2},
+  {k:'GOLD_SILVER_RATIO',n:'金银比(避险/美元信用温度计)',u:'倍',s:'⚙️自建(金/银)',b:'bc',t:'pct',d:1}]},
+ {sec:'美债',rows:[
+  {k:'DGS10',n:'美债10Y收益率',u:'%',s:'L1·FRED/财政部',b:'b1',t:'bp',d:2},
+  {k:'DGS2',n:'美债2Y收益率',u:'%',s:'L1·FRED/财政部',b:'b1',t:'bp',d:2},
+  {k:'DGS30',n:'美债30Y收益率',u:'%',s:'L1·FRED/财政部',b:'b1',t:'bp',d:2},
+  {k:'T10Y2Y',n:'10Y-2Y利差(曲线形态)',u:'bp',s:'L1·FRED',b:'b1',t:'bp',d:0,x100:true},
+  {k:'T10Y3M',n:'10Y-3M利差(衰退概率计)',u:'bp',s:'L1·FRED',b:'b1',t:'bp',d:0,x100:true},
+  {k:'DFII10',n:'10Y TIPS实际利率',u:'%',s:'L1·FRED',b:'b1',t:'bp',d:2},
+  {k:'T10YIE',n:'10Y盈亏平衡通胀',u:'%',s:'L1·FRED',b:'b1',t:'bp',d:2},
+  {k:'T5YIE',n:'5Y盈亏平衡通胀',u:'%',s:'L1·FRED',b:'b1',t:'bp',d:2},
+  {k:'ACMTP10',n:'10Y期限溢价ACM(月度)',u:'%',s:'L1·NYFed',b:'b1',t:'bp',d:2},
+  {k:'Y_MOVE',n:'MOVE债市波动率',u:'',s:'L2·Yahoo',b:'b2',t:'abs',d:1}]},
+ {sec:'外汇',rows:[
+  {k:'Y_USDJPY',n:'美元兑日元USDJPY',u:'',s:'L2·Yahoo盘中',b:'b2',t:'pct',d:2},
+  {k:'Y_EURUSD',n:'欧元兑美元EURUSD',u:'',s:'L2·Yahoo盘中',b:'b2',t:'pct',d:4},
+  {k:'DEXCHUS',n:'人民币兑美元(官方周度)',u:'',s:'L1·FRED/财政部H.10',b:'b1',t:'pct',d:4},
+  {k:'SPR_USCN10Y',n:'中美10Y利差(美-中)',u:'bp',s:'⚙️自建(FRED-中债)',b:'bc',t:'bp',d:0,x100:true},
+  {k:'CFTC_DX_NET',n:'CFTC美元指数净持仓',u:'手',s:'L1·CFTC(周度)',b:'b1',t:'abs',d:0},
+  {k:'CFTC_JY_NET',n:'CFTC日元净持仓',u:'手',s:'L1·CFTC(周度)',b:'b1',t:'abs',d:0}]},
+ {sec:'霍尔木兹·能源链',rows:[
+  {k:'DCOILWTICO',n:'WTI原油现货',u:'美元/桶',s:'L1·EIA(发布滞后约1周)',b:'b1',t:'pct',d:2},
+  {k:'DCOILBRENTEU',n:'布伦特原油现货',u:'美元/桶',s:'L1·EIA(发布滞后约1周)',b:'b1',t:'pct',d:2},
+  {k:'INE原油主连',n:'上海INE原油主连',u:'元/桶',s:'L3·新浪(INE)',b:'bg2',t:'pct',d:1},
+  {k:'DHHNGSP',n:'亨利港天然气',u:'美元/MMBtu',s:'L1·EIA',b:'b1',t:'pct',d:2},
+  {k:'GASREGW',n:'美国汽油零售价(政治约束线)',u:'美元/加仑',s:'L1·EIA(周度)',b:'b1',t:'pct',d:3}]}
+];
+function ovFmt(v,d){return v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function ovRow(r){
+  var s=(window.CHART_SERIES||{})[r.k];
+  if(!s||!s.length)return '<tr><td>'+r.n+'</td><td style="text-align:right;color:var(--dim)">—</td><td style="text-align:right;color:var(--dim)">缺口</td><td>待管线补齐</td><td><span class="badge bg2">灰</span></td></tr>';
+  var a=s[s.length-1],pv=s.length>1?s[s.length-2][1]:null;
+  var vv=r.x100?a[1]*100:a[1];
+  var chg='<span class="flat">—</span>';
+  if(pv!==null){
+    var pvv=r.x100?pv*100:pv,diff=vv-pvv,cls=diff>0?'up':(diff<0?'dn':'flat'),txt;
+    if(r.t==='bp')txt=(diff>0?'+':'')+diff.toFixed(0)+'bp';
+    else if(r.t==='pct')txt=(diff>0?'+':'')+(pvv?diff/Math.abs(pvv)*100:0).toFixed(2)+'%';
+    else txt=(diff>0?'+':'')+diff.toFixed(r.d);
+    chg='<span class="'+cls+'">'+txt+'</span>';
+  }
+  return '<tr><td>'+r.n+'</td><td style="text-align:right;"><b>'+ovFmt(vv,r.d)+'</b>'+r.u+'</td><td style="text-align:right;">'+chg+'</td><td>'+a[0]+' · '+r.s+'</td><td><span class="badge '+r.b+'">'+(r.b==='b1'?'L1':r.b==='b2'?'L2':r.b==='bc'?'⚙️':'L3')+'</span></td></tr>';
+}
+function mountOv(){
+  if(window._ovDone)return; window._ovDone=true;
+  var h='';
+  OV_SPEC.forEach(function(g){
+    h+='<div class="card" style="margin-top:12px;"><p style="font-size:13px;margin:0 0 8px;"><b style="color:var(--gold)">'+g.sec+'</b></p>'+
+      '<table><tr><th>指标</th><th style="text-align:right;">最新</th><th style="text-align:right;">日变动</th><th>数据日 · 来源</th><th></th></tr>'+
+      g.rows.map(ovRow).join('')+'</table></div>';
+  });
+  document.getElementById('ovGrid14').innerHTML=h;
+  fetch('../data/geopolitics.json?v='+Date.now()).then(function(r){return r.json();}).then(function(g){
+    var line=(g.lines||[]).find(function(x){return x.id==='usiran';});
+    var el=document.getElementById('ovHormuzLines');
+    if(!line){el.textContent='未找到美伊·霍尔木兹线索';return;}
+    el.innerHTML=line.events.slice(-3).reverse().map(function(e){
+      return '<div>· <b>'+e[0]+'</b> '+e[1]+'——'+e[3]+'</div>';
+    }).join('')+'<div style="margin-top:4px;font-size:11px;">更新: '+g.updated+' · '+g.src+'</div>';
+  }).catch(function(){document.getElementById('ovHormuzLines').textContent='地缘时间线读取失败';});
+}
+document.querySelectorAll('[data-dp="dp14"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountOv,60);});});
+
 
 /* ---------- 图表区 ---------- */
 const CATALOG = [

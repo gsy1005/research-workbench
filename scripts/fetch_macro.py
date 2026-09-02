@@ -96,14 +96,19 @@ def fred_batch(sids, limit=1700):
             for sid in chunk:
                 out[sid] = []
         time.sleep(1.0)
-    # 失败的序列只做一轮单条回退(前提:批次有成功=FRED在线;全败=限流则直接放弃,明日自愈)
+    # 批失败回退单条: 批量端点易被Akamai按批限流而单条可用(9/2实测), 全败也逐条尝试
     got = sum(1 for s in sids if out.get(s))
     missing = [s for s in sids if not out.get(s)]
-    if missing and got > 0 and len(missing) <= 12:
-        log('  单条回退', len(missing), '条')
-        for sid in missing:
+    if missing and (got > 0 and len(missing) <= 12 or got == 0):
+        log('  单条回退', len(missing), '条(批成功%d)' % got)
+        ok = 0
+        for _i, sid in enumerate(missing):
             out[sid] = fred(sid)
-            time.sleep(0.8)
+            if out[sid]: ok += 1
+            time.sleep(1.2)
+            if got == 0 and ok == 0 and _i >= 4:
+                log('  单条连续全败, 判定FRED整体不可达, 放弃剩余', len(missing) - _i - 1, '条')
+                break
     elif missing:
         log('  FRED疑似限流(成功%d/%d), 放弃回退, 保留旧数据明日自愈' % (got, len(sids)))
     return out
