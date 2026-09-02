@@ -222,6 +222,7 @@
   <button data-dp="dp7">分项贡献</button>
   <button data-dp="dp15" style="border-color:var(--gold)">今日新出数据</button>
   <button data-dp="dp16" style="border-color:var(--gold)">每日财经图表</button>
+  <button data-dp="dp17">外资研报观点</button>
   <button data-dp="dp11" style="border-color:var(--gold)">数据预测</button>
   <button data-dp="dp5">数据总表</button>
   <button data-dp="dp9">图表工作区</button>
@@ -497,6 +498,12 @@
 <div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">每日由数据管线用 <b style="color:var(--txt)">FRED官方(L1)＋行情源(L2)</b> 自动重绘的框架图集，与全站数据同源、每日两次随管线刷新。按主题分五类，点按钮过滤。点开大图可另存。</p></div>
 <div id="chartCatBar" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;"></div>
 <div id="chartGallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;">加载中…</div>
+</section>
+<section class="dp" id="dp17">
+<!-- ============ 六之五、外资研报观点（每日供稿·转述引用·7天滚动） ============ -->
+<h2>六之五、外资研报观点<span class="en">SELL-SIDE DAILY · 用户供稿转述 · 观点事实引用+数据点提取 · 7天滚动</span></h2>
+<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;line-height:1.8;">每日把外资研报（高盛/大摩/小摩/花旗/野村…）或财经图表发给助手 → 当晚管线写入：<b style="color:var(--txt)">核心观点转述（自己语言，非原文复制）</b>＋<b style="color:var(--txt)">关键数据点</b>＋<b style="color:var(--txt)">与本框架九维/三角评分的交叉验证</b>（支持✅/冲突⚠️/新变量🆕）。图表类供稿：提取图中数据事实，经自有管线验证后<b>重绘</b>进「每日财经图表」，原图与水印不上站。观点卡保留7天滚动。标注规则：机构+报告日期+「用户供稿·转述」。</p></div>
+<div id="notesBox" style="margin-top:12px;">加载中…</div>
 </section>
 <section class="dp" id="dp11">
 <!-- ============ 六之三、数据预测（FedWatch官方+投行预测矩阵+重要逻辑） ============ -->
@@ -967,6 +974,34 @@ function drawGallery(){
 
 document.querySelectorAll('[data-dp="dp15"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountNewData,60);});});
 document.querySelectorAll('[data-dp="dp16"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountCharts,60);});});
+
+/* ============ 外资研报观点（dp17） ============ */
+var _ntDone=0;
+function mountNotes(){
+  var box=document.getElementById('notesBox'); if(!box||_ntDone)return; _ntDone=1;
+  fetch('../data/research_notes.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
+    var notes=(d.notes||[]);
+    var html='';
+    if(!notes.length){
+      html='<div class="card"><p style="font-size:13px;color:var(--dim);margin:0;line-height:1.8;">📮 <b style="color:var(--txt)">今日供稿位空置</b>。把研报PDF/截图或财经图表发给助手，当晚写入本页：<br>· 研报 → 机构+日期+核心观点转述+关键数据+框架交叉验证<br>· 图表 → 数据事实提取，自有管线验证后重绘进「每日财经图表」</p></div>';
+    }else{
+      notes.slice().reverse().forEach(function(n){
+        var pts=(n.points||[]).map(function(x){return '<li style="margin:3px 0;">'+x+'</li>';}).join('');
+        var kd=(n.key_data||[]).map(function(x){return '<span class="tag2" style="margin:2px 4px 2px 0;display:inline-block;">'+x+'</span>';}).join('');
+        html+='<div class="card" style="margin-bottom:12px;"><p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">'+n.org+'</b>'
+          +'<span style="color:var(--dim);font-size:11px;margin-left:8px">'+n.date+' · '+n.title+'</span>'
+          +'<span class="badge bg2" style="margin-left:8px">用户供稿·转述</span></p>'
+          +'<ul style="margin:6px 0 6px 18px;padding:0;font-size:12.5px;line-height:1.8;">'+pts+'</ul>'
+          +(kd?'<div style="margin:4px 0;">'+kd+'</div>':'')
+          +(n.xcheck?'<p style="font-size:11.5px;color:var(--dim);margin:6px 0 0;border-top:1px dashed rgba(255,255,255,.08);padding-top:6px;">⚙️框架交叉验证：'+n.xcheck+'</p>':'')
+          +'</div>';
+      });
+    }
+    box.innerHTML=html+'<p style="font-size:11px;color:var(--dim);margin-top:4px;">更新：'+(d.updated||'—')+' · 观点为转述引用，不代表本框架立场 · 7天滚动</p>';
+  }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">研报观点加载失败。</p></div>';});
+}
+document.querySelectorAll('[data-dp="dp17"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountNotes,60);});});
+
 document.querySelectorAll('[data-dp="dp7"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(joltsCard,200);});});
 
 
