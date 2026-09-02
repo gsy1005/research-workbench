@@ -218,7 +218,7 @@
   <button data-dp="dp12" style="border-color:var(--gold)">债市</button>
   <button data-dp="dp13" style="border-color:var(--gold)">外汇</button>
   <button data-dp="dp4">数据图表</button>
-  <button data-dp="dp7">数据发布</button>
+  <button data-dp="dp7">分项贡献</button>
   <button data-dp="dp11" style="border-color:var(--gold)">数据预测</button>
   <button data-dp="dp5">数据总表</button>
   <button data-dp="dp9">图表工作区</button>
@@ -385,8 +385,8 @@
 
 </section>
 <section class="dp" id="dp7">
-<!-- ============ 六之二、数据发布·分项贡献 ============ -->
-<h2>六之二、数据发布·分项贡献<span class="en">RELEASES · 非农/CPI/PCE/GDP分项 + FedWatch · 全部L1官方源,官网更新管线即跟新</span></h2>
+<!-- ============ 六之二、分项贡献·数据发布 ============ -->
+<h2>六之二、分项贡献（数据发布）<span class="en">RELEASES · 非农/CPI/PCE/GDP分项 + FedWatch · 全部L1官方源,官网更新管线即跟新</span></h2>
 <div class="chart-panel">
 <div id="rp-host"></div>
 </div>
@@ -1080,7 +1080,7 @@ function mountRtb(){
 if(document.getElementById('dp4')&&(document.getElementById('dp4').classList.contains('on')||document.getElementById('dp4').offsetParent!==null)){mountRtb();}
 document.querySelectorAll('[data-dp="dp4"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountRtb,60);});});
 if(!document.querySelector('[data-dp="dp4"]'))mountRtb();
-/* 数据发布·分项贡献面板：懒挂载 */
+/* 分项贡献（数据发布）面板：懒挂载 */
 var _rpMounted=false;
 function mountRp(){
   if(_rpMounted)return;
