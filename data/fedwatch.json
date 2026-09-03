@@ -1,5 +1,5 @@
 {
-  "asof": "2026-09-03 09:23 BJT",
+  "asof": "2026-09-03 13:29 BJT",
   "source": "CME FedWatch（cmegroup.cn 官方）",
   "contract": "30天联邦基金期货（ZQ）",
   "meetings": [
@@ -28,7 +28,7 @@
       "meeting": "27 Jan27",
       "ease": 29.2,
       "no_change": 29.1,
-      "hike": 41.5,
+      "hike": 41.1,
       "mid": 95.9925
     },
     {
@@ -42,7 +42,7 @@
       "meeting": "28 Apr27",
       "ease": 33.6,
       "no_change": 34.1,
-      "hike": 32.2,
+      "hike": 32.8,
       "mid": 95.8375
     },
     {
