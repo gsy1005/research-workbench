@@ -536,7 +536,7 @@ def main():
 
     out = {
         'asof': bjt_now.strftime('%Y-%m-%d %H:%M BJT'),
-        'src': 'L2·金十日历(登录PLUS,WS直连)为主 | 预期值兜底:ForexFactory周历 | 全景兜底:东方财富财经日历(均为公开汇编,底层官方预告)',
+        'src': 'L2·财经日历快照(多源汇编,底层官方预告)',
         'note': '金十覆盖T-2至T+13(含预期/前值/公布/星级); FF覆盖本周; 东财覆盖未来14天; 时间均为北京时间',
         'events': ff_events or [],
         'em': em_events or [],
