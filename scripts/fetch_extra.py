@@ -54,6 +54,8 @@ FRED_S = [
     ('ECIALLCIV', 'ECIALLCIV', 'ECI雇佣成本指数', '点'),
     ('T5YIFR', 'T5YIFR', '5y5y远期通胀预期', '%'),
     ('CCSA', 'CCSA', '续请失业金', '人'),
+    ('CUSR0000SASLE', 'CUSR0000SASLE', '超级核心CPI·服务剔除住房租金(季调)', '点'),
+    ('CUUR0000SASLE', 'CUUR0000SASLE', '超级核心CPI·服务剔除住房租金(非季调)', '点'),
     ('JTSJOR', 'JTSJOR', 'JOLTS职位空缺率', '%'),
     ('JTSQUR', 'JTSQUR', 'JOLTS离职率(主动)', '%'),
     ('JTSHIR', 'JTSHIR', 'JOLTS雇用率', '%'),
