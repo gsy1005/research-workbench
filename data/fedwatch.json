@@ -1,5 +1,5 @@
 {
-  "asof": "2026-09-09 21:22 BJT",
+  "asof": "2026-09-09 23:20 BJT",
   "source": "CME FedWatch（cmegroup.cn 官方）",
   "contract": "30天联邦基金期货（ZQ）",
   "meetings": [
@@ -20,58 +20,58 @@
     {
       "meeting": "9 Dec26",
       "ease": 0.0,
-      "no_change": 13.4,
-      "hike": 86.6,
-      "mid": 96.05
+      "no_change": 12.8,
+      "hike": 87.2,
+      "mid": 96.0525
     },
     {
       "meeting": "27 Jan27",
       "ease": 0.0,
-      "no_change": 10.0,
-      "hike": 90.0,
-      "mid": 96.0075
+      "no_change": 9.6,
+      "hike": 90.4,
+      "mid": 96.0025
     },
     {
       "meeting": "17 Mar27",
       "ease": 0.0,
-      "no_change": 5.9,
-      "hike": 94.1,
+      "no_change": 5.7,
+      "hike": 94.3,
       "mid": 95.8975
     },
     {
       "meeting": "28 Apr27",
       "ease": 0.0,
-      "no_change": 4.9,
-      "hike": 95.1,
-      "mid": 95.8475
+      "no_change": 4.8,
+      "hike": 95.2,
+      "mid": 95.8425
     },
     {
       "meeting": "9 Jun27",
       "ease": 0.0,
-      "no_change": 3.8,
-      "hike": 96.2,
+      "no_change": 3.6,
+      "hike": 96.4,
       "mid": 95.7675
     },
     {
       "meeting": "28 Jul27",
       "ease": 0.0,
-      "no_change": 3.5,
-      "hike": 96.5,
-      "mid": 95.7475
+      "no_change": 3.3,
+      "hike": 96.7,
+      "mid": 95.7425
     },
     {
       "meeting": "15 Sep27",
       "ease": 0.0,
-      "no_change": 3.3,
-      "hike": 96.7,
+      "no_change": 3.2,
+      "hike": 96.8,
       "mid": 95.7225
     },
     {
       "meeting": "27 Oct27",
       "ease": 0.0,
-      "no_change": 3.2,
-      "hike": 96.8,
-      "mid": 95.715
+      "no_change": 3.1,
+      "hike": 96.9,
+      "mid": 95.7125
     }
   ]
 }
