@@ -1,77 +1,77 @@
 {
-  "asof": "2026-09-09 17:20 BJT",
+  "asof": "2026-09-09 21:22 BJT",
   "source": "CME FedWatch（cmegroup.cn 官方）",
   "contract": "30天联邦基金期货（ZQ）",
   "meetings": [
     {
       "meeting": "16 Sep26",
       "ease": 0.0,
-      "no_change": 39.6,
-      "hike": 60.4,
+      "no_change": 39.8,
+      "hike": 60.2,
       "mid": 96.3013
     },
     {
       "meeting": "28 Oct26",
       "ease": 0.0,
-      "no_change": 29.1,
-      "hike": 70.9,
+      "no_change": 28.3,
+      "hike": 71.7,
       "mid": 96.2125
     },
     {
       "meeting": "9 Dec26",
       "ease": 0.0,
-      "no_change": 13.2,
-      "hike": 86.8,
-      "mid": 96.0575
+      "no_change": 13.4,
+      "hike": 86.6,
+      "mid": 96.05
     },
     {
       "meeting": "27 Jan27",
-      "ease": 33.8,
-      "no_change": 34.0,
-      "hike": 30.8,
+      "ease": 0.0,
+      "no_change": 10.0,
+      "hike": 90.0,
       "mid": 96.0075
     },
     {
       "meeting": "17 Mar27",
       "ease": 0.0,
-      "no_change": 5.8,
-      "hike": 94.2,
-      "mid": 95.9025
+      "no_change": 5.9,
+      "hike": 94.1,
+      "mid": 95.8975
     },
     {
       "meeting": "28 Apr27",
       "ease": 0.0,
-      "no_change": 4.8,
-      "hike": 95.2,
+      "no_change": 4.9,
+      "hike": 95.1,
       "mid": 95.8475
     },
     {
       "meeting": "9 Jun27",
       "ease": 0.0,
-      "no_change": 3.7,
-      "hike": 96.3,
+      "no_change": 3.8,
+      "hike": 96.2,
       "mid": 95.7675
     },
     {
       "meeting": "28 Jul27",
       "ease": 0.0,
-      "no_change": 3.4,
-      "hike": 96.6,
+      "no_change": 3.5,
+      "hike": 96.5,
       "mid": 95.7475
     },
     {
       "meeting": "15 Sep27",
       "ease": 0.0,
-      "no_change": 3.2,
-      "hike": 96.8,
+      "no_change": 3.3,
+      "hike": 96.7,
       "mid": 95.7225
     },
     {
       "meeting": "27 Oct27",
       "ease": 0.0,
-      "no_change": 3.1,
-      "hike": 96.9,
-      "mid": 95.7125
+      "no_change": 3.2,
+      "hike": 96.8,
+      "mid": 95.715
     }
   ]
 }
