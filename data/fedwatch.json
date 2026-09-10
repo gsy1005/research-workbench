@@ -1,5 +1,5 @@
 {
-  "asof": "2026-09-10 11:20 BJT",
+  "asof": "2026-09-10 13:19 BJT",
   "source": "CME FedWatch（cmegroup.cn 官方）",
   "contract": "30天联邦基金期货（ZQ）",
   "meetings": [
@@ -8,7 +8,7 @@
       "ease": 0.0,
       "no_change": 39.8,
       "hike": 60.2,
-      "mid": 96.3
+      "mid": 96.3013
     },
     {
       "meeting": "28 Oct26",
@@ -20,58 +20,58 @@
     {
       "meeting": "9 Dec26",
       "ease": 0.0,
-      "no_change": 12.7,
-      "hike": 87.3,
-      "mid": 96.0775
+      "no_change": 11.7,
+      "hike": 88.3,
+      "mid": 96.045
     },
     {
       "meeting": "27 Jan27",
       "ease": 0.0,
-      "no_change": 6.9,
-      "hike": 93.1,
-      "mid": 95.995
+      "no_change": 8.7,
+      "hike": 91.3,
+      "mid": 95.9925
     },
     {
       "meeting": "17 Mar27",
-      "ease": 2.4,
-      "no_change": 14.1,
-      "hike": 83.5,
-      "mid": 95.89
+      "ease": 0.0,
+      "no_change": 5.3,
+      "hike": 94.7,
+      "mid": 95.8925
     },
     {
       "meeting": "28 Apr27",
-      "ease": 31.8,
-      "no_change": 34.6,
-      "hike": 34.3,
-      "mid": 95.97
+      "ease": 0.0,
+      "no_change": 4.4,
+      "hike": 95.6,
+      "mid": 95.835
     },
     {
       "meeting": "9 Jun27",
-      "ease": 0.5,
-      "no_change": 4.2,
-      "hike": 95.3,
-      "mid": 95.79
+      "ease": 0.0,
+      "no_change": 3.3,
+      "hike": 96.7,
+      "mid": 95.755
     },
     {
       "meeting": "28 Jul27",
-      "ease": 0.4,
-      "no_change": 3.9,
-      "hike": 95.7,
-      "mid": 95.735
+      "ease": 0.0,
+      "no_change": 3.1,
+      "hike": 96.9,
+      "mid": 95.7325
     },
     {
       "meeting": "15 Sep27",
-      "ease": 0.4,
-      "no_change": 3.8,
-      "hike": 95.8,
+      "ease": 0.0,
+      "no_change": 2.8,
+      "hike": 97.2,
       "mid": 95.71
     },
     {
       "meeting": "27 Oct27",
-      "ease": 0.4,
-      "no_change": 3.8,
-      "hike": 95.8,
-      "mid": 95.705
+      "ease": 0.0,
+      "no_change": 3.0,
+      "hike": 97.0,
+      "mid": 95.7
     }
   ]
 }
