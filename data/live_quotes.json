@@ -1,13 +1,13 @@
 {
- "asof": "2026-09-10 17:23 BJT",
+ "asof": "2026-09-10 21:21 BJT",
  "src": "L2·Yahoo Finance 服务端快照(每2小时)",
  "quotes": {
   "VIXCLS": {
    "sym": "^VIX",
-   "price": 16.44,
-   "chg": 1.91,
-   "chg_pct": 13.145,
-   "time": "2026-09-10 09:08 UTC",
+   "price": 17.55,
+   "chg": 3.02,
+   "chg_pct": 20.785,
+   "time": "2026-09-10 13:06 UTC",
    "currency": "USD"
   },
   "Y_GSPC": {
@@ -28,90 +28,90 @@
   },
   "Y_GOLD": {
    "sym": "GC=F",
-   "price": 4437.0,
-   "chg": 7.2,
-   "chg_pct": 0.163,
-   "time": "2026-09-10 09:13 UTC",
+   "price": 4389.0,
+   "chg": -40.8,
+   "chg_pct": -0.921,
+   "time": "2026-09-10 13:11 UTC",
    "currency": "USD"
   },
   "Y_SLV": {
    "sym": "SI=F",
-   "price": 67.315,
-   "chg": 1.268,
-   "chg_pct": 1.92,
-   "time": "2026-09-10 09:13 UTC",
+   "price": 65.01,
+   "chg": -1.037,
+   "chg_pct": -1.57,
+   "time": "2026-09-10 13:11 UTC",
    "currency": "USD"
   },
   "DCOILWTICO": {
    "sym": "CL=F",
-   "price": 97.18,
-   "chg": 5.7,
-   "chg_pct": 6.231,
-   "time": "2026-09-10 09:13 UTC",
+   "price": 100.13,
+   "chg": 8.65,
+   "chg_pct": 9.456,
+   "time": "2026-09-10 13:11 UTC",
    "currency": "USD"
   },
   "DCOILBRENTEU": {
    "sym": "BZ=F",
-   "price": 102.04,
-   "chg": 5.76,
-   "chg_pct": 5.983,
-   "time": "2026-09-10 09:13 UTC",
+   "price": 105.23,
+   "chg": 8.95,
+   "chg_pct": 9.296,
+   "time": "2026-09-10 13:11 UTC",
    "currency": "USD"
   },
   "Y_COPPER": {
    "sym": "HG=F",
-   "price": 6.817,
-   "chg": 0.22,
-   "chg_pct": 3.335,
-   "time": "2026-09-10 09:13 UTC",
+   "price": 6.564,
+   "chg": -0.033,
+   "chg_pct": -0.5,
+   "time": "2026-09-10 13:11 UTC",
    "currency": "USD"
   },
   "Y_USDJPY": {
    "sym": "JPY=X",
-   "price": 153.684,
-   "chg": -1.976,
-   "chg_pct": -1.269,
-   "time": "2026-09-10 09:23 UTC",
+   "price": 154.255,
+   "chg": -1.405,
+   "chg_pct": -0.903,
+   "time": "2026-09-10 13:21 UTC",
    "currency": "JPY"
   },
   "Y_EURUSD": {
    "sym": "EURUSD=X",
-   "price": 1.1641,
-   "chg": 0.0013,
-   "chg_pct": 0.112,
-   "time": "2026-09-10 09:22 UTC",
+   "price": 1.1605,
+   "chg": -0.0023,
+   "chg_pct": -0.198,
+   "time": "2026-09-10 13:21 UTC",
    "currency": "USD"
   },
   "Y_DXY": {
    "sym": "DX-Y.NYB",
-   "price": 98.754,
-   "chg": -0.406,
-   "chg_pct": -0.409,
-   "time": "2026-09-10 09:13 UTC",
+   "price": 99.101,
+   "chg": -0.059,
+   "chg_pct": -0.059,
+   "time": "2026-09-10 13:12 UTC",
    "currency": "USD"
   },
   "Y_TNX": {
    "sym": "^TNX",
-   "price": 4.837,
-   "chg": 0.041,
-   "chg_pct": 0.855,
-   "time": "2026-09-09 18:59 UTC",
+   "price": 4.912,
+   "chg": 0.15,
+   "chg_pct": 3.15,
+   "time": "2026-09-10 13:06 UTC",
    "currency": "USD"
   },
   "Y_TYX": {
    "sym": "^TYX",
-   "price": 5.286,
-   "chg": 0.019,
-   "chg_pct": 0.361,
-   "time": "2026-09-09 18:59 UTC",
+   "price": 5.346,
+   "chg": 0.103,
+   "chg_pct": 1.965,
+   "time": "2026-09-10 13:06 UTC",
    "currency": "USD"
   },
   "Y_BTC": {
    "sym": "BTC-USD",
-   "price": 78171.12,
-   "chg": -2178.93,
-   "chg_pct": -2.712,
-   "time": "2026-09-10 09:23 UTC",
+   "price": 76873.23,
+   "chg": -3476.82,
+   "chg_pct": -4.327,
+   "time": "2026-09-10 13:21 UTC",
    "currency": "USD"
   }
  }
