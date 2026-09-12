@@ -162,6 +162,78 @@ try:
 except Exception as e:
     keep_old('cpi', repr(e)[:120])
 
+# ================= 2b. CPI 环比贡献历史(13个月·四大类, 供彭博式堆积图) =================
+# 权重=BLS相对重要性2025-12快照近似(食品13.54/能源7.35/核心商品18.84/核心服务60.27)
+CPI_HIST_ITEMS = [
+    ('食品', 'CUSR0000SAF1', 13.540), ('能源', 'CUSR0000SA0E', 7.347),
+    ('核心商品', 'CUSR0000SACL1E', 18.842), ('核心服务', 'CUSR0000SASLE', 60.272),
+]
+try:
+    log('== CPI环比贡献历史 ==')
+    ids = [x[1] for x in CPI_HIST_ITEMS] + ['CUSR0000SA0', 'CUSR0000SA0L1E']
+    d = bls_fetch(ids, 2024, 2026)
+    def _mom_series(s):
+        dd = dict(s)
+        out = []
+        for per, v in s:
+            base = dd.get(_shift(per, -1))
+            if base is None: continue
+            out.append([per, round((v / base - 1) * 100, 3)])
+        return out[-13:]
+    groups = {}
+    for name, sid, w in CPI_HIST_ITEMS:
+        groups[name] = {'w': w, 'mom': _mom_series(d.get(sid, []))}
+    panel['blocks']['cpi_hist'] = {
+        'groups': groups,
+        'headline': _mom_series(d.get('CUSR0000SA0', [])),
+        'core': _mom_series(d.get('CUSR0000SA0L1E', [])),
+        'src': 'L1·BLS CPI季调环比(四大类); 权重=BLS相对重要性2025-12快照近似',
+        'note': '环比贡献(pp)≈权重×分项环比/100; 合计与整体环比存在舍入/交互项差异'}
+    log('  cpi_hist months:', len(panel['blocks']['cpi_hist']['headline']))
+except Exception as e:
+    keep_old('cpi_hist', repr(e)[:120])
+
+# ================= 2c. BLS PPI 最终需求(四大之PPI) =================
+PPI_ITEMS = [  # (中文名, SA序列, NSA序列)
+    ('最终需求', 'WPSFD4', 'WPUFD4'),
+    ('核心(除食品能源贸易)', 'WPSFD4131', 'WPUFD4131'),
+    ('最终需求商品', 'WPSFD4111', 'WPUFD4111'),
+    ('最终需求服务', 'WPSFD42', 'WPUFD42'),
+]
+try:
+    log('== PPI最终需求 ==')
+    ids = [x[1] for x in PPI_ITEMS] + [x[2] for x in PPI_ITEMS]
+    d = bls_fetch(ids, 2024, 2026)
+    def _shift2(per, months):
+        y, m = int(per[:4]), int(per[5:7]) + months
+        y += (m - 1) // 12; m = (m - 1) % 12 + 1
+        return '%04d-%02d' % (y, m)
+    def _mom2(s):
+        if len(s) < 2: return None
+        dd = dict(s); per, v = s[-1]
+        base = dd.get(_shift2(per, -1), s[-2][1])
+        return round((v / base - 1) * 100, 2)
+    def _yoy2(s):
+        if len(s) < 2: return None
+        dd = dict(s); per, v = s[-1]
+        base = dd.get(_shift2(per, -12))
+        return round((v / base - 1) * 100, 2) if base else None
+    got = {}
+    for name, sa, nsa in PPI_ITEMS:
+        if d.get(sa) or d.get(nsa):
+            got[name] = {'mom': _mom2(d.get(sa, [])), 'yoy': _yoy2(d.get(nsa, []))}
+    if not got.get('最终需求'):
+        raise RuntimeError('PPI主序列无数据')
+    hist = _mom_series(d.get('WPSFD4', [])) if '_mom_series' in dir() else []
+    panel['blocks']['ppi'] = {
+        'period': (d.get('WPSFD4') or d.get('WPUFD4'))[-1][0],
+        'src': 'L1·BLS PPI最终需求(环比=季调,同比=非季调)',
+        'items': got, 'history': hist[-13:],
+        'next': '每月CPI前后一日 20:30北京(冬令21:30)'}
+    log('  PPI', panel['blocks']['ppi']['period'], 'headline mom', got['最终需求']['mom'])
+except Exception as e:
+    keep_old('ppi', repr(e)[:120])
+
 # ================= 3. BEA PCE价格贡献(月)/实际PCE贡献(月)/GDP贡献(季) =================
 def bea_table(tab, freq, years):
     url = ('https://apps.bea.gov/api/data/?UserID=%s&method=GETDATA&DataSetName=NIPA&TableName=%s&Frequency=%s&Year=%s&ResultFormat=JSON'

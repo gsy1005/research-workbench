@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<script src="../lib/access_gate.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>宏观研究日报 · 2026-09-02</title>
+<title>宏观研究日报 · 自动更新</title>
 <script src="../lib/echarts.min.js"></script>
 <script src="../data/chart_series.js" id="csjs"></script>
+<script src="../lib/conclusion_engine.js"></script>
+<script src="../lib/big4_panel.js"></script>
 <script src="../data/macro_catalog.js" onerror="window.MACRO_CATALOG=null"></script>
 <script src="../lib/research_toolbox.js"></script>
 <script src="../lib/release_panels.js"></script>
@@ -73,6 +76,7 @@
   .cw .cn{font-size:10px;color:var(--dim);margin-top:4px;}
   .tag2{font-size:12px;padding:3px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;color:var(--dim);background:#12161f;}
   .tag2.on{border-color:var(--gold);color:var(--gold);background:rgba(212,169,68,.08);}
+  .tag2 .axb{display:inline-block;margin-left:6px;padding:0 5px;font-size:10px;line-height:15px;border:1px solid var(--gold);border-radius:4px;color:var(--gold);background:rgba(212,169,68,.15);cursor:pointer;}
   .tag2 .u{font-size:10px;opacity:.7;}
   #chartBox{width:100%;height:520px;}
   .dtabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;position:sticky;top:0;z-index:50;background:var(--bg);padding:10px 0;}
@@ -198,18 +202,18 @@
 <header>
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
     <div>
-      <h1>宏观研究日报 · 永动版 <span style="font-size:14px;color:var(--gold);font-weight:400;margin-left:10px;">中哲金属 · 甘思雨</span></h1>
-      <div class="meta">永动自动版 · 数据日 <b id="autoDate">读取中…</b> · 边际变化=⚙️规则自动扫描 · 观点冻结于最近人工版（<a href="daily_2026-09-02.html" style="color:var(--gold)">9/2存档 ↗</a>）· 事后数据不回填 · <b class="snapAsof"></b></div>
+      <h1>宏观研究日报 · 自动更新 <span style="font-size:14px;color:var(--gold);font-weight:400;margin-left:10px;">中哲金属 · 甘思雨</span></h1>
+      <div class="meta">自动更新版 · 数据日 <b id="autoDate">读取中…</b> · 全部结论文字由⚙️规则引擎按最新数据自动生成（<a href="../lib/conclusion_engine.js" style="color:var(--gold)">规则公开 ↗</a>）· 人工旧观点<a href="daily_2026-09-02.html" style="color:var(--gold)">9/2存档 ↗</a> · 事后数据不回填 · <b class="snapAsof"></b></div>
     </div>
     <div style="display:flex;align-items:center;">
-      <button class="updbtn" onclick="refreshAll()">⟳ 更新全部内容</button>
+      <button class="updbtn" onclick="runPipeline()" title="跑一遍数据管线并刷新本页">▶ 一键更新全部数据与观点</button>
       <span id="updMsg"></span>
     </div>
   </div>
 </header>
 
 <!-- ============ 板块页签 ============ -->
-<div style="background:rgba(76,175,125,.07);border:1px solid rgba(76,175,125,.3);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:var(--dim);line-height:1.7;">⚡ <b style="color:var(--txt)">永动版</b>：全站数据每日 07:40/20:40（北京）管线自动更新；「今日边际变化」为<b>⚙️规则自动扫描</b>（339条序列全扫，阈值突破+单日变动榜）；深度观点冻结于最近人工版，追加修正以注记形式呈现。本页<b>零人工维护</b>，打开即最新。</div>
+<div style="background:rgba(76,175,125,.07);border:1px solid rgba(76,175,125,.3);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:var(--dim);line-height:1.7;">⚡ <b style="color:var(--txt)">自动更新版</b>：数据每日 07:40/20:40（北京）管线自动更新；<b>本页全部结论文字（日度结论/九维/证伪雷达/债市/外汇/象限/评分）由⚙️规则引擎按最新数据在打开页面时现场生成，数据变→文字自动变，不再有人工冻结</b>；顶部「▶ 一键更新」= 跳转到管线页手动跑一次（登录GitHub后点 Run workflow，约3分钟生效）。本页<b>零人工维护</b>，打开即最新。</div>
 <div class="dtabs" id="dtabs">
   <button data-dp="dp1" class="on">总览</button>
   <button data-dp="dp14" style="border-color:var(--gold)">重要数据总览</button>
@@ -262,21 +266,12 @@
 
 <!-- ============ 二、日度结论 ============ -->
 <h2>二、日度结论<span class="en">CONCLUSIONS · 数据→政策→资产</span></h2>
-<div id="viewsBox">加载中…</div>
+<div id="ceDailyConclusion">加载中…</div>
 </section>
 <section class="dp" id="dp14">
 <!-- ============ 重要数据总览（美元/美债/外汇/霍尔木兹·自动读管线快照） ============ -->
 <h2>一之二、重要数据总览<span class="en">KEY DATA · 美元/美债/外汇/霍尔木兹 · 全表直读 chart_series 管线快照，每日自动跟新</span></h2>
-<div class="card">
-  <p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">总览结论（2026-09-02 冻结）</b>：<b>美元紧缩型走强 + 美债熊陡 + 油价因霍尔木兹高位——四条线同指"滞胀紧缩象限"。</b></p>
-  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
-    <li><b>美元</b>：走强靠息差而非避险（DXY逼近100关口），CFTC净多不拥挤，趋势有持续性空间；</li>
-    <li><b>美债</b>：熊陡形态——2Y随加息预期上、10Y上得更多，10Y-2Y利差走阔至+40bp；实际利率2.44%（99分位）是估值真正的压力源；</li>
-    <li><b>外汇</b>：日元最弱（160关口、空头加码）、人民币稳但脆弱（中美利差-306bp）、欧元被动回落；</li>
-    <li><b>霍尔木兹</b>：海峡仍关闭（2/28起），但8月油价仅微涨（Brent月+0.4%）——<b>市场对断供叙事已部分钝化，再升级才有新冲击</b>；汽油零售价4.07美元/加仑是特朗普的政治约束线。</li>
-  </ul>
-  <p style="font-size:11.5px;color:var(--dim);margin:8px 0 0;">本页数据全部自动读取管线最新快照（各行为独立数据日，注意时效徽标）；详细分析与象限裁决见「债市」「外汇」「流动性」页签。</p>
-</div>
+<div id="ceOverview">加载中…</div>
 <div id="ovGrid14"></div>
 <div class="card" style="margin-top:12px;" id="ovHormuz"><p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">霍尔木兹海峡 · 事件时间线（近三条）</b><span style="font-size:11px;color:var(--dim);"> L2·权威媒体汇编，事实不含观点</span></p><div id="ovHormuzLines" style="font-size:12.5px;line-height:1.9;color:var(--dim);">读取中…</div></div>
 </section>
@@ -284,105 +279,18 @@
 <section class="dp" id="dp2">
 <!-- ============ 三之一、七维状态检视 ============ -->
 <h2>三之一、九维状态检视<span class="en">MULTI-DIMENSION CHECK · 每维指向中心矛盾(A端 vs B端)的方向</span></h2>
-<table class="radar">
-  <tr><th style="width:92px;">维度</th><th>关键证据（数据日 9/1 美盘）</th><th style="width:120px;">当前状态</th><th style="width:130px;">指向</th></tr>
-  <tr><td><b>货币政策</b></td><td>FFR 3.50-3.75%；沃什放鹰后FedWatch 9月加息定价68.2%（一周前37%）；10Y实际利率2.44%处2019年来99.3分位</td><td class="dn">紧缩预期急剧重定价</td><td>A端强支撑</td></tr>
-  <tr><td><b>美债</b></td><td>10Y 4.80%(+4bp)/30Y 5.27%；上行全部由实际利率+期限溢价(0.84%)贡献，盈亏平衡走平；TIC日中外资6月同减；CFTC极端净空仓-84万手</td><td class="dn">实际利率熊压，非通胀恐慌</td><td>A端（详见债市页签）</td></tr>
-  <tr><td><b>通胀</b></td><td>ISM物价71.1高位持平；8月CPI实时预测3.49-3.36%；5Y盈亏平衡2.30%；9/11核心环比0.2%为鸽鹰分界</td><td class="dn">下行舒适期结束</td><td>A端（滞胀腿）</td></tr>
-  <tr><td><b>就业</b></td><td>7月非农-2.3万（罕见负值）；失业率4.1%系劳动力退出压低；时薪环比仅+0.1%；9/4报告为关键检验</td><td class="flat">失速边缘，方向未定</td><td>B端论据积累中</td></tr>
-  <tr><td><b>地缘政治</b></td><td>霍尔木兹8/31晚两艘VLCC被击中（UKMTO+彭博）；伊朗革命卫队喊话阿拉伯国家；飓风致得州38.5万桶/日炼厂停电；WTI +5.2%</td><td class="dn">供给冲击升级</td><td>双向：通胀↑助A端 / 避险需求↑助B端实物腿</td></tr>
-  <tr><td><b>美元流动性</b></td><td>SOFR-IORB 3bp（95分位）；ON RRP仅7亿$近枯竭；准备金2.92万亿（24分位）；SRF零排队——详见流动性页签</td><td class="flat">充裕→充足过渡早期</td><td>中性偏A（重力渐增）</td></tr>
-  <tr><td><b>美元（汇率）</b></td><td>DXY 99.76（9/2盘中）收复8月中旬失地；USDJPY 160.06日元最弱；USDCNY 6.726持稳；CFTC美元净多仅1.87万手不拥挤</td><td class="dn">紧缩型走强，息差驱动</td><td>A端（详见外汇页签）</td></tr>
-  <tr><td><b>头寸与情绪</b></td><td>VIX 16.34（22分位）；高收益OAS 0.98%（1.5分位，极度自满）；MOVE 77.88低位；紧缩首次传导为股债金三杀</td><td class="up">自满定价，脆弱性积累</td><td>反转风险警示</td></tr>
-  <tr><td><b>中国因素</b></td><td>上证3979.89（-0.16%）；USDCNY 6.726持稳；央行购金连续21个月；中美10Y利差≈-309bp</td><td class="flat">外压下的稳态</td><td>B端底仓支撑</td></tr>
-</table>
-
+<div id="ceNineDim">加载中…</div>
 <!-- ============ 三之二、证伪雷达 ============ -->
 <h2>三之二、证伪雷达<span class="en">FALSIFICATION RADAR · 触发线量化，事后不回填</span></h2>
-<table class="radar">
-  <tr><th>活跃结论</th><th>证伪触发器</th><th>当前状态</th></tr>
-  <tr><td>A端：实际利率与美元高位压制实物资产</td><td>10Y实际利率确认破2.45%且金破4520</td><td class="flat">金4348深破✅ / 实际利率2.44%(08-31)距线1bp → 读秒中</td></tr>
-  <tr><td>通胀下行舒适期结束（核心环比年化重回3%+）</td><td>8月核心CPI环比≤0.15%</td><td class="flat">待9/11；ISM物价71.1+油价+5.2%双向强化</td></tr>
-  <tr><td>美股risk-on结构未破</td><td>HY OAS破1.20%且VIX破18</td><td class="up">OAS 0.98% / VIX 16.34 → 首次承压，方向逼近</td></tr>
-  <tr><td>曲线走陡头寸浮盈</td><td>10Y-2Y利差回落至&lt;20bp</td><td class="up">L1·39bp(08-28)；2Y盘中见总览实时</td></tr>
-  <tr><td>就业失速（7月非农-2.3万非噪音）<span style="font-size:10px;color:var(--dim)">新增</span></td><td>8月非农再度为负，或失业率破4.3%</td><td class="flat">待9/4 20:30；共识+5.5万，ADP今晚先验</td></tr>
-  <tr><td>货币市场利率压力常态化<span style="font-size:10px;color:var(--dim)">新增</span></td><td>SOFR-IORB回落至0bp下方（压力消退）</td><td class="flat">3bp(95分位) · 早期信号，未达警报线10bp</td></tr>
-  <tr><td><s>金4500整数关口支撑</s></td><td>连续两日收盘&lt;4500</td><td class="dn">已触发：8/31收4431、9/1收4348 → 结论作废</td></tr>
-  <tr><td>金4363-4366双底支撑（8/13、8/18低点）<span style="font-size:10px;color:var(--dim)">0902·16:30新增</span></td><td>连续两日收盘&lt;4360 → 下看4220（MA50)与4030-4070(7月密集区)</td><td class="flat">9/2盘中4359已贴线测试，未确认破位</td></tr>
-  <tr><td>霍尔木兹通行受控</td><td>两周内无新增袭船且复航率回升</td><td class="dn">8/31晚两艘VLCC被击中 + 伊朗喊话 → 恶化</td></tr>
-</table>
-
-
+<div id="ceFalsify">加载中…</div>
 <!-- ============ 三之二·补、A/B端检验说明书（0902 16:30补丁） ============ -->
-<div class="card" style="margin-top:14px;">
-  <p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">A端/B端检验说明书（0902 16:30补丁）</b><span style="font-size:11px;color:var(--dim);"> 把中心矛盾翻译成白话</span></p>
-  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.9;">
-    <li><b>A端 = "紧缩压制"主线</b>：财政发债多+通胀黏住下不来 → 实际利率和美元停在高位 → 黄金白银这类实物资产被压着打。<b>A端检验</b>就是盯它什么时候"官宣胜利"：联合阈值=<b>10Y实际利率≥2.45% 且 金价收不回4520</b>。现在的状态：金已破（4348/4359两日在下），实际利率2.44%离触发线只差1bp——<b>读秒阶段</b>。</li>
-    <li><b>B端 = "实物重估"主线</b>：央行连续21个月买金+矿山供给紧+AI抢电抢铜 → 实物资产该重估涨价。<b>B端检验</b>盯的是翻盘信号：联合阈值=<b>DXY回落到98.5下方 且 金价收复4700</b>——目前两个都远没够着，B端只剩"底仓支撑"（央行购金没停），没有"进攻信号"。</li>
-    <li><b>一句话</b>：A端是"现在进行时"（差1bp官宣），B端是"中场休息"（支撑还在但攻不出去）。九维表里每一维的"指向"列，就是在给这两端投票。</li>
-  </ul>
-</div>
-
+<div id="ceAB">加载中…</div>
 <!-- ============ 三之三、黄金×有色 利空利多坐标象限（0902 16:30补丁） ============ -->
 <h2 style="margin-top:20px;">三之三、黄金×有色 · 利空利多坐标象限<span class="en">QUADRANT · X=A端压制力(利空) Y=B端支撑力(利多) · ⚙️规则量化0-10</span></h2>
-<div class="card">
-<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;">
-<svg viewBox="0 0 460 460" style="width:100%;max-width:460px;background:#10131a;border:1px solid var(--line);border-radius:8px;">
-  <rect x="230" y="30" width="200" height="200" fill="#2a2410" opacity="0.35"/>
-  <rect x="230" y="230" width="200" height="200" fill="#3d1518" opacity="0.35"/>
-  <rect x="30" y="30" width="200" height="200" fill="#10301e" opacity="0.35"/>
-  <rect x="30" y="230" width="200" height="200" fill="#151a24" opacity="0.35"/>
-  <line x1="230" y1="20" x2="230" y2="440" stroke="#3a4256" stroke-width="1.5"/>
-  <line x1="20" y1="230" x2="440" y2="230" stroke="#3a4256" stroke-width="1.5"/>
-  <text x="436" y="222" fill="#8a94a6" font-size="11" text-anchor="end">A端压制力（利空）→</text>
-  <text x="238" y="32" fill="#8a94a6" font-size="11">↑ B端支撑力（利多）</text>
-  <text x="330" y="55" fill="#c9a227" font-size="12" text-anchor="middle" font-weight="bold">高压制×高支撑</text>
-  <text x="330" y="70" fill="#8a94a6" font-size="10" text-anchor="middle">拉锯震荡·看哪边先破</text>
-  <text x="335" y="420" fill="#c96a5d" font-size="12" text-anchor="middle" font-weight="bold">高压制×低支撑</text>
-  <text x="335" y="434" fill="#8a94a6" font-size="10" text-anchor="middle">趋势利空</text>
-  <text x="128" y="55" fill="#5fae7f" font-size="12" text-anchor="middle" font-weight="bold">低压制×高支撑</text>
-  <text x="128" y="70" fill="#8a94a6" font-size="10" text-anchor="middle">趋势利多</text>
-  <text x="128" y="420" fill="#5b6478" font-size="12" text-anchor="middle" font-weight="bold">双低</text>
-  <text x="128" y="434" fill="#8a94a6" font-size="10" text-anchor="middle">无方向·垃圾时间</text>
-  <circle cx="367" cy="111" r="7" fill="#e8c34a"/>
-  <text x="367" y="98" fill="#e8c34a" font-size="12" text-anchor="middle" font-weight="bold">黄金(7.6, 6.6)</text>
-  <circle cx="378" cy="140" r="7" fill="#c8ccd4"/>
-  <text x="378" y="163" fill="#c8ccd4" font-size="12" text-anchor="middle" font-weight="bold">白银(8.2, 5.0)</text>
-  <circle cx="354" cy="129" r="7" fill="#c97b4a"/>
-  <text x="336" y="152" fill="#c97b4a" font-size="12" text-anchor="middle" font-weight="bold">铜(6.9, 5.6)</text>
-</svg>
-<div style="flex:1;min-width:300px;">
-<table style="font-size:12px;">
-  <tr><th>品种</th><th>压制分构成（X/利空）</th><th>支撑分构成（Y/利多）</th><th style="width:150px;">读法</th></tr>
-  <tr><td><b style="color:#e8c34a">黄金</b><br>X=7.6 Y=6.6</td><td>实际利率99.3分位+9 · 紧缩定价68%+8 · 美元走强+7 · 净多24.3万手拥挤+6 → 加权7.6</td><td>央行购金21个月+8 · 霍尔木兹避险+7 · 财政/美元信用+6 · 实金贴水+5 → 加权6.6</td><td>利空略占优但非趋势空：<b>逢支撑看反弹，不追空</b></td></tr>
-  <tr><td><b style="color:#c8ccd4">白银</b><br>X=8.2 Y=5.0</td><td>同金+波动率放大器+9 · 头寸更挤+7 → 8.2</td><td>工业需求（光伏/AI)+5 · 避险跟随+5 → 5.0</td><td>三者中<b>最偏空</b>：跌起来比金快</td></tr>
-  <tr><td><b style="color:#c97b4a">铜/有色</b><br>X=6.9 Y=5.6</td><td>利率敏感低于金+6 · 美元+6 · 就业失速→需求担忧+8 → 6.9</td><td>AI电力资本开支+8 · 矿紧+7 · 中国企稳+4 → 5.6</td><td>短期跟实际利率摇摆，<b>9/4非农定方向</b></td></tr>
-</table>
-<p style="font-size:11.5px;color:var(--dim);margin:8px 0 0;">⚙️评分为规则化主观量化（每项0-10，按弹性加权），输入全部来自本报告L1/L2数据；坐标含义：X越右=利空越重，Y越上=利多越厚。三品种同处"高压制×高支撑"象限=拉锯震荡区——这本身就是结论：<b>不是趋势利空，是等裁决的高波动平衡</b>。</p>
-</div>
-</div>
-</div>
-
+<div id="ceMetalQuad">加载中…</div>
 <!-- ============ 三之四、美元-美股-美债 三角稳定评分（0902 16:30补丁） ============ -->
 <h2 style="margin-top:20px;">三之四、美元-美股-美债 · 三角稳定评分<span class="en">TRIANGLE STABILITY SCORE · ⚙️自建量化 0-100 · 越高越稳</span></h2>
-<div class="card">
-  <p style="font-size:14px;margin:0 0 4px;"><b style="color:var(--gold)">当前评分：54 / 100 —— 脆弱平衡区</b><span style="font-size:11px;color:var(--dim);">（≥70稳态扩张 · 55-70正常波动 · 40-54脆弱平衡 · &lt;40失序边缘 · &lt;25危机）</span></p>
-  <table style="font-size:12px;margin-top:8px;">
-    <tr><th>腿</th><th style="width:70px;">得分/20</th><th>评分依据（全部本报告数据）</th><th>失序警报线</th></tr>
-    <tr><td><b>美债秩序</b></td><td class="dn"><b>9</b></td><td>10Y 4.80%/30Y 5.27%高位但上行有序；MOVE 77.9仍低位；期限溢价0.84%一个月急升+0.33pt（最危险的暗涌）；拍卖倍数2.39-2.60尚可；TIC日中6月同减（外资撤）</td><td>10Y破4.90%且MOVE破90 → 直接扣到5以下</td></tr>
-    <tr><td><b>美股秩序</b></td><td><b>15</b></td><td>VIX 16.34（22分位）；回撤仅-0.7~-1.0%；HY OAS 0.98%极度自满（双刃剑：没恐慌=也没缓冲）</td><td>HY OAS破1.20%且VIX破18（证伪雷达原线）</td></tr>
-    <tr><td><b>美元秩序</b></td><td><b>13</b></td><td>DXY 99.76上行有序、净多不拥挤；但USDJPY 160.06已在干预雷区（2024年160触发过实弹干预）——日元是唯一可能"被迫失序"的点</td><td>日本干预落地→DXY单日波动>1.5%</td></tr>
-    <tr><td><b>流动性缓冲</b></td><td class="dn"><b>9</b></td><td>综合压力47.9；ON RRP仅7亿$（缓冲垫耗尽）；准备金2.92万亿（24分位）；SOFR-IORB 3bp（95分位）——垫子没了，冲击直接打到价格上</td><td>SOFR-IORB破10bp或SRF周用量超500亿</td></tr>
-    <tr><td><b>政策可信度</b></td><td class="dn"><b>8</b></td><td>沃什放鹰 vs 7月非农-2.3万，信号自相矛盾；FedWatch一周内37%→68%剧烈摇摆=市场不知道该信谁；政治干预联储独立性的叙事未消</td><td>9/16点阵图与市场定价再度背离>30bp</td></tr>
-  </table>
-  <ul style="margin:10px 0 0;padding-left:20px;font-size:12.5px;line-height:1.9;">
-    <li><b>哪条腿最容易失序：美债（收益率无序上行）</b>。传导链：拍卖遇冷/TIC减持延续+油价推通胀 → 10Y破4.90-5.00% → MOVE从78跳向100+ → 股（估值）汇（美元先强后乱）连锁。次风险点是<b>日元160干预</b>——唯一可能由官方主动制造的波动源。</li>
-    <li><b>后续受什么影响</b>：9/4非农（负值=紧缩叙事崩塌，债涨股慌）、9/11 CPI（核心环比>0.2%=滞胀确认，债股双杀）、9/16点阵图（可信度腿的重置机会）、霍尔木兹油价（通胀腿）、日债拍卖与干预（美元腿）。</li>
-    <li><b>美国手里的政策工具（按动用顺序）</b>：①财政部<b>发行端</b>：缩短久期多发短票（压长端溢价）、债券回购常态化托市；②联储<b>量价端</b>：沃什口头转鸽→暂停加息→停QT→SRF/贴现窗口放量→重启央行互换额度；极端情形=变相收益率曲线控制（对长端设"软上限"）；③<b>汇率端</b>：默许/联手日本干预日元，给美元降温；④<b>供给端</b>：SPR释放压油价（直接打通胀腿）。<b>当前最可能先动的：发行端调整+口头干预（零成本），最难回头的是YCC（信誉代价）。</b></li>
-  </ul>
-  <p style="font-size:11px;color:var(--dim);margin:8px 0 0;">⚙️评分方法：五腿各20分，规则化打分（阈值表存档于框架库），输入=本报告L1/L2数据，每周随数据刷新重算，分数本身也进"事后检验"档案。</p>
-</div>
-
+<div id="ceTriangle">加载中…</div>
 <!-- ============ 四、存续结论档案 ============ -->
 <h2>四、存续结论档案<span class="en">STANDING VIEWS · 触发证伪线前不作废</span></h2>
 <details open><summary>0828面板·中心矛盾（A端 vs B端）与联合阈值</summary>
@@ -448,7 +356,8 @@
   </div>
   <div class="tags" id="tagBox"></div>
   <div id="chartBox"></div>
-  <div class="chart-note">折线模式：多指标自动分配左右轴，拖动下方滑块缩放。季节性模式：同一指标按年份叠线（当年加粗金色），适合库存/能源/贵金属等强季节性品种；多选时各指标分图显示。</div>
+  <div id="chartConcl" style="margin-top:8px;"></div>
+  <div class="chart-note">折线模式：选中指标上的小标可手动指定坐标轴（<b>自</b>=按量纲自动分配 / <b>右</b>=次坐标轴 / <b>左</b>=强制左轴），每个选中指标下方自动生成⚙️规则文字结论，拖动下方滑块缩放。季节性模式：同一指标按年份叠线（当年加粗金色），适合库存/能源/贵金属等强季节性品种；多选时各指标分图显示。</div>
 </div>
 
 <h3 style="margin:22px 0 4px;color:var(--gold,#d4a944);">研究工具箱<span class="en" style="font-size:11px;color:#8a94a6;margin-left:8px;">RESEARCH TOOLBOX · 全量指标库 × 四则运算 × 八模式图表</span></h3>
@@ -467,8 +376,8 @@
 </section>
 <section class="dp" id="dp15">
 <!-- ============ 六之二·补、今日新出数据（本周已公布·按日留存·周一清空换新） ============ -->
-<h2>六之二·补、今日新出数据<span class="en">NEW RELEASES TODAY · 本周已公布数据按日留存 · 每周一管线自动清空换新</span></h2>
-<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">本周已公布的重要数据按日卡片留存（<b style="color:var(--txt)">公布值金粗</b>，<b style="color:#e5534b">红=高于预期</b>／<b style="color:#4caf7d">绿=低于预期</b>，前值为灰色）。来源：财经日历(L3)汇总官方公布值；下周一起自动清空换新，历史每日数据请查「数据总表」。今日待公布项目在「数据预测」页同步跟踪。</p></div>
+<h2>六之二·补、今日新出数据<span class="en">BIG-4 RELEASES · 只保留 非农/CPI/PPI/PCE 四大发布 · 每周一自动换新 · 贡献拆解+⚙️规则解读</span></h2>
+<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">只跟踪四大最重要发布：<b style="color:var(--txt)">非农 / CPI / PPI / PCE</b>（其余小数据见「政策与地缘」页宏观日历）。每期自动给出<b style="color:var(--txt)">分项环比贡献拆解</b>（口径同彭博贡献图）与 <b style="color:var(--txt)">⚙️规则解读</b>（GMF框架：定性→拆解→持续性→政策含义）。数据源全部L1官方（BLS/BEA），官网发布当晚管线自动跟新；每周一旧卡片自动换新。</p></div>
 <div id="newDataBox" style="margin-top:12px;">加载中…</div>
 </section>
 <section class="dp" id="dp16">
@@ -539,15 +448,8 @@
         <td style="font-size:12px;">MOVE / VIX / 高收益债OAS</td>
         <td style="font-size:12px;">MOVE是债市恐慌指数、VIX是股市恐慌指数；高收益OAS是垃圾债风险溢价——<b>极低分位=市场自满</b>，与货币市场的紧张形成反差时最危险。</td></tr>
   </table>
-  <div style="border-top:1px dashed var(--line);margin-top:10px;padding-top:10px;">
-    <p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">本页结论（2026-09-02 冻结）</b>：<b>美元不是"紧缺"，而是"缓冲垫耗尽后的正常化压力"——正处充裕(abundant)→充足(ample)过渡区的早期。</b></p>
-    <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
-      <li><b>价格在微涨</b>：SOFR持续站在IORB上方3bp、高出货币基金地板18bp（双双92分位以上）——机构隔夜融资开始付溢价；但尾部99分位差仅9bp（15分位），<b>没有出现"抢钱"尖刺</b>。</li>
-      <li><b>余粮已见底</b>：ON RRP仅剩约7亿美元（2021年峰值2.3万亿），货币基金缓冲耗尽——此后缩表直接抽银行准备金（2.92万亿，24分位），这是9月中旬国债供给潮前的结构脆弱点。</li>
-      <li><b>应急窗口没人排队</b>：SRF常备回购用量仅0.01十亿$——银行体系尚未"喊渴"，<b>不符合"短期美元紧缺"的定义</b>（紧缺需要SOFR-IORB大幅走阔+尾部飙升+SRF/贴现窗口放量同时出现）。</li>
-      <li><b>真正的紧缩在利率水平本身</b>：10Y实际利率2.44%处于2019年以来99.3分位——压力不在货币市场管道，而在政策利率的绝对高度。</li>
-      <li><b>升级/降级线</b>：SOFR-IORB破10bp、或SRF单周用量超500亿→升级为"融资压力警报"；联储宣布停止缩表、准备金企稳→对久期与贵金属的流动性压制缓解。</li>
-    </ul>
+  <div style="border-top:1px dashed var(--line);margin-top:10px;padding-top:10px;" id="liqConclusionD">
+    <p style="font-size:13px;margin:0;"><b style="color:var(--gold)">本页结论</b>：<span style="color:var(--dim);">随流动性数据加载…</span></p>
   </div>
 </div>
 <div class="lqGrid" id="liqGridD"></div>
@@ -560,89 +462,18 @@
 <section class="dp" id="dp12">
 <!-- ============ 债市追踪（美债+全球债市·数据日9/1美盘） ============ -->
 <h2>十一、债市追踪<span class="en">GLOBAL RATES · 美债全期限/信用/拍卖/持仓/全球共振 + 象限裁决</span></h2>
-<div class="card">
-  <p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">债市结论（2026-09-02 冻结）</b>：<b>这是一轮"实际利率+期限溢价"双驱动的承压，不是通胀恐慌——名义10Y上行的全部贡献来自实际利率，盈亏平衡通胀反而走平。</b></p>
-  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
-    <li><b>结构拆解</b>：10Y名义4.80%（9/1收盘，+4bp）中，实际利率2.44%（8/31，+2bp，2019年来99分位）是主引擎，期限溢价0.84%（7月，单月+0.33pt跳升）助攻；5Y盈亏平衡2.30%（-1bp）、10Y盈亏平衡2.31%（-2bp）均走平——<b>市场定价"财政供给+政策高位"，不是通胀失控</b>。</li>
-    <li><b>曲线</b>：10Y-2Y 39bp（8/28，-8bp）、10Y-3M 87bp（9/1，+3bp）——2Y随加息预期上行（沃什放鹰）、30Y 5.27%逼近前高，"熊陡"结构未破坏但节奏被政策预期打断。</li>
-    <li><b>需求端隐忧</b>：8月拍卖投标倍数2Y 2.60/10Y 2.53/30Y 2.39尚平稳；但TIC口径日本6月减持264亿$、中国减持259亿$——<b>两大外资买家同步撤退</b>；CFTC投机净空仓10Y -84.0万手/2Y -86.1万手/30Y -18.7万手，处极端空头区（上周小幅回补10.8万手，反弹燃料在积累）。</li>
-    <li><b>全球共振</b>：英10Y 4.80%、德10Y 2.97%、日10Y 2.67%（6月OECD月度）；中债10Y 1.68%（9/1）——全球长端同步承压，中美利差-297bp，债市无孤岛。</li>
-    <li><b>升级/降级线</b>：10Y名义破4.90%或MOVE（现77.88，低位）破90→"有序重定价"转"无序抛售"；9月FOMC若不加+点阵图中性→极端空仓回补触发快速下行行情。</li>
-  </ul>
-</div>
-<div class="card" style="margin-top:12px;">
-  <p style="font-size:13px;margin:0 0 8px;"><b style="color:var(--gold)">债市看板</b><span style="font-size:11px;color:var(--dim);">（数据日 9/1 美盘收盘；官方序列有1-4日滞后，滞后项已标注）</span></p>
-  <table>
-    <tr><th>板块</th><th>指标</th><th style="text-align:right;">最新</th><th style="text-align:right;">日变动</th><th>数据日/说明</th><th></th></tr>
-    <tr class="hot"><td rowspan="4"><b>美债名义</b></td><td>10Y收益率</td><td style="text-align:right;"><b>4.80%</b></td><td class="up" style="text-align:right;">+4bp</td><td>09-01收盘 L2行情</td><td><span class="badge b2">L2</span></td></tr>
-    <tr><td>30Y收益率</td><td style="text-align:right;"><b>5.27%</b></td><td class="up" style="text-align:right;">+2bp</td><td>09-01收盘 L2行情</td><td><span class="badge b2">L2</span></td></tr>
-    <tr><td>2Y收益率</td><td style="text-align:right;"><b>4.20%</b></td><td class="flat" style="text-align:right;">官方滞后</td><td>L1·08-27 · 盘中见总览实时卡</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>10Y-2Y / 10Y-3M利差</td><td style="text-align:right;"><b>39 / 87bp</b></td><td class="dn" style="text-align:right;">-8 / +3bp</td><td>L1·08-28 / 09-01</td><td><span class="badge b1">L1</span></td></tr>
-    <tr class="hot"><td rowspan="3"><b>实际利率<br>通胀预期</b></td><td>10Y TIPS实际利率</td><td style="text-align:right;"><b>2.44%</b></td><td class="up" style="text-align:right;">+2bp</td><td>L1·08-31 · 2019年来99分位</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>5Y / 10Y盈亏平衡通胀</td><td style="text-align:right;"><b>2.30% / 2.31%</b></td><td class="dn" style="text-align:right;">-1 / -2bp</td><td>L1·08-28 · 通胀预期锚定</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>5y5y远期通胀 / 期限溢价ACM</td><td style="text-align:right;"><b>2.33% / 0.84%</b></td><td class="up" style="text-align:right;">+2bp / +33bp</td><td>09-01 / 07月月度 · 溢价跳升</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td rowspan="3"><b>信用</b></td><td>高收益债OAS</td><td style="text-align:right;"><b>2.63%</b></td><td class="up" style="text-align:right;">+3bp</td><td>L1·08-31 · 2019年来1.5分位（极自满）</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>BBB公司债利差</td><td style="text-align:right;"><b>0.98%</b></td><td class="up" style="text-align:right;">+1bp</td><td>L1·08-31</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>债/股ETF：TLT·LQD·HYG·EMB</td><td style="text-align:right;"><b>全跌</b></td><td class="dn" style="text-align:right;">-0.65~-0.99</td><td>09-01收盘 L2行情</td><td><span class="badge b2">L2</span></td></tr>
-    <tr><td><b>波动率</b></td><td>MOVE（债市恐慌指数）</td><td style="text-align:right;"><b>77.88</b></td><td class="up" style="text-align:right;">+2.56</td><td>09-01 · 33分位低位</td><td><span class="badge b2">L2</span></td></tr>
-    <tr><td rowspan="2"><b>供给·需求</b></td><td>8月拍卖投标倍数 2Y/10Y/30Y</td><td style="text-align:right;"><b>2.60 / 2.53 / 2.39</b></td><td class="flat" style="text-align:right;">平稳</td><td>08-25/08-12/08-13 财政部</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>TIC外资持仓：日本 / 中国（6月）</td><td style="text-align:right;"><b>11167 / 6334亿$</b></td><td class="dn" style="text-align:right;">-264 / -259亿$</td><td>TIC 06月 · 两大买家同减</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td><b>头寸</b></td><td>CFTC净空仓 10Y/2Y/30Y</td><td style="text-align:right;"><b>-84.0 / -86.1 / -18.7万手</b></td><td class="up" style="text-align:right;">回补+10.8万</td><td>08-25当周 CFTC · 极端空头区</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td rowspan="4"><b>全球债市</b></td><td>英国10Y</td><td style="text-align:right;"><b>4.80%</b></td><td class="dn" style="text-align:right;">-14.6bp</td><td>OECD 06月月度</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>德国10Y</td><td style="text-align:right;"><b>2.97%</b></td><td class="dn" style="text-align:right;">-7.7bp</td><td>OECD 06月月度</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>日本10Y</td><td style="text-align:right;"><b>2.67%</b></td><td class="up" style="text-align:right;">+2bp</td><td>OECD 06月月度 · 日央行鹰派抬头</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td>中国10Y / 中美利差</td><td style="text-align:right;"><b>1.68% / -297bp</b></td><td class="dn" style="text-align:right;">-0.5bp</td><td>09-01 / 08-27</td><td><span class="badge b2">L2</span></td></tr>
-  </table>
-</div>
+<div id="ceBond">加载中…</div>
+<div id="ceBondBoard">加载中…</div>
 <div class="card" style="margin-top:12px;"><p style="font-size:13px;margin:0;"><b style="color:var(--gold)">债市图表工作区</b>：美债曲线/实际利率/通胀预期/信用/拍卖/外资持仓/全球收益率，任选叠加最多4个：</p></div>
 <div class="cw" id="cw-bond"></div>
-<!-- ===== 美国资产象限裁决 ===== -->
-<div class="card" style="margin-top:14px;border-color:var(--gold);">
-  <p style="font-size:13px;margin:0 0 8px;"><b style="color:var(--gold)">美国资产象限裁决（2026-09-02 冻结）</b><span style="font-size:11px;color:var(--dim);">美股 × 美债 × 美元 → 四象限定性，映射本框架中心矛盾</span></p>
-  <table>
-    <tr><th>资产</th><th style="text-align:right;">9/1-9/2表现</th><th>方向</th></tr>
-    <tr><td>美股（标普500）</td><td style="text-align:right;"><b>7631.47（-0.71%）</b></td><td class="dn">跌（9/2亚太跟随，日经-3%）</td></tr>
-    <tr><td>美债（10Y收益率）</td><td style="text-align:right;"><b>4.80%（+4bp）</b></td><td class="dn">跌（收益率升=价格跌）</td></tr>
-    <tr><td>美元（DXY）</td><td style="text-align:right;"><b>99.76（+0.09）</b></td><td class="up">强</td></tr>
-  </table>
-  <p style="font-size:12.5px;margin:10px 0 6px;line-height:1.8;">四象限定位：<b>股涨债涨美元弱=宽松交易 ｜ 股跌债涨=衰退交易 ｜ 股涨债跌美元强=增长/软着陆 ｜ 股跌债跌美元强=滞胀紧缩（现金为王）</b></p>
-  <p style="font-size:13px;margin:0 0 6px;"><b style="color:#e5534b;">当前象限：股跌+债跌+美元强 = 滞胀紧缩象限（现金为王）。</b></p>
-  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
-    <li><b>框架映射</b>：该象限=<b>A端（财政主导+通胀黏性→实际利率与美元高位）全面兑现区</b>——黄金连破4500（-1.88%）、股债金三杀，正是A端象限对各类资产的典型压制顺序。</li>
-    <li><b>象限内的例外</b>：原油+5.2%（霍尔木兹供给冲击）是B端实物腿在本象限内唯一跑赢的资产——验证"地缘政治双向"判断：它同时给A端供通胀、给B端供实物溢价。</li>
-    <li><b>裁决</b>：A端象限<b>已确认</b>，仍在"读秒"的只是幅度（实际利率2.44%距2.45%线1bp）；中心矛盾的B端翻盘需等待象限切换。</li>
-    <li><b>象限切换信号（事前冻结）</b>：DXY回落至98.5下方 + 10Y名义止升 → 向"衰退交易"（股跌债涨）切换，届时黄金先受益、曲线走陡头寸加仓；反之10Y破4.90%+VIX破18 → 象限深化为"无序抛售"，全面降风险。</li>
-  </ul>
-</div>
+<!-- ===== 美国资产象限裁决（⚙️规则引擎自动生成） ===== -->
+<div id="ceUSQuad">加载中…</div>
 </section>
 <section class="dp" id="dp13">
 <!-- ============ 外汇追踪（美元与非美·数据日9/1-9/2） ============ -->
 <h2>十二、外汇追踪<span class="en">FX WATCH · 美元/日元/欧元/人民币 + 头寸与利差驱动</span></h2>
-<div class="card">
-  <p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">外汇结论（2026-09-02 冻结）</b>：<b>美元是"紧缩型走强"——靠息差而非避险，与美债收益率上行同向同因；非美中日元最弱、人民币最稳但脆弱。</b></p>
-  <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">
-    <li><b>美元</b>：DXY 99.76（9/2盘中，+0.09）收复8月中旬失地，广义贸易加权指数118.75（43分位）不算极端；CFTC美元净多仅+1.87万手且小幅减持——<b>多头不拥挤，走强尚有持续性空间</b>。</li>
-    <li><b>日元最弱</b>：USDJPY 160.06（9/2盘中，+0.31）——日央行鹰派委员高田创连放加息言论，但日美实际利差仍主导定价；CFTC日元净空仓-6.3万手且继续加码（-1.0万手），<b>市场不信日央行能追上利差</b>。</li>
-    <li><b>欧元</b>：EURUSD 1.1582（9/2盘中，-0.4%）——欧央行管委"做好进一步加息准备"的表态未能扭转利差劣势，欧元随美元走强被动回落。</li>
-    <li><b>人民币</b>：USDCNY 6.7260持平、USDCNH 6.7231，在岸离岸几乎无价差——在中美利差-297bp的压力下靠购金储备+结汇盘维持稳态；<b>稳但脆弱：DXY若破100，6.75是第一道考验</b>。</li>
-    <li><b>美元微笑定位</b>：当前处微笑<b>右端</b>（美国紧缩+全球承压→美元强）；若9/4非农再度为负，微笑切换至<b>左端</b>（衰退避险）——美元仍强，但驱动从"息差"换成"避险"，届时美债与金将先于美元转向。</li>
-  </ul>
-</div>
-<div class="card" style="margin-top:12px;">
-  <p style="font-size:13px;margin:0 0 8px;"><b style="color:var(--gold)">外汇看板</b><span style="font-size:11px;color:var(--dim);">（盘中值为9/2亚太时段，官方序列为最近发布）</span></p>
-  <table>
-    <tr><th>板块</th><th>指标</th><th style="text-align:right;">最新</th><th style="text-align:right;">日变动</th><th>数据日/说明</th><th></th></tr>
-    <tr class="hot"><td rowspan="2"><b>美元</b></td><td>美元指数DXY</td><td style="text-align:right;"><b>99.76</b></td><td class="up" style="text-align:right;">+0.09</td><td>09-02盘中 L2 · 9/1收99.67</td><td><span class="badge b2">L2</span></td></tr>
-    <tr><td>广义贸易加权美元</td><td style="text-align:right;"><b>118.75</b></td><td class="up" style="text-align:right;">+0.39</td><td>L1·08-28 · 43分位</td><td><span class="badge b1">L1</span></td></tr>
-    <tr class="hot"><td rowspan="2"><b>日元</b></td><td>美元兑日元USDJPY</td><td style="text-align:right;"><b>160.06</b></td><td class="up" style="text-align:right;">+0.31</td><td>09-02盘中 L2 · 160关口</td><td><span class="badge b2">L2</span></td></tr>
-    <tr><td>CFTC日元净持仓</td><td style="text-align:right;"><b>-6.3万手</b></td><td class="dn" style="text-align:right;">-1.0万</td><td>08-25当周 · 空头加码</td><td><span class="badge b1">L1</span></td></tr>
-    <tr><td><b>欧元</b></td><td>欧元兑美元EURUSD</td><td style="text-align:right;"><b>1.1582</b></td><td class="dn" style="text-align:right;">-0.4%</td><td>09-02盘中 L2</td><td><span class="badge b2">L2</span></td></tr>
-    <tr class="hot"><td rowspan="3"><b>人民币</b></td><td>在岸USDCNY</td><td style="text-align:right;"><b>6.7260</b></td><td class="flat" style="text-align:right;">持平</td><td>09-01收盘 L2行情</td><td><span class="badge b2">L2</span></td></tr>
-    <tr><td>离岸USDCNH</td><td style="text-align:right;"><b>6.7231</b></td><td class="dn" style="text-align:right;">-0.04%</td><td>09-02 07:00 L2行情</td><td><span class="badge b2">L2</span></td></tr>
-    <tr><td>中美10Y利差（美-中）</td><td style="text-align:right;"><b>+297bp</b></td><td class="flat" style="text-align:right;">-0.1bp</td><td>08-27 ⚙️(官方-中债)</td><td><span class="badge bc">⚙️</span></td></tr>
-    <tr><td><b>头寸</b></td><td>CFTC美元指数净持仓</td><td style="text-align:right;"><b>+1.87万手</b></td><td class="dn" style="text-align:right;">-397</td><td>08-25当周 · 多头不拥挤</td><td><span class="badge b1">L1</span></td></tr>
-  </table>
-</div>
+<div id="ceFx">加载中…</div>
+<div id="ceFxBoard">加载中…</div>
 <div class="card" style="margin-top:12px;"><p style="font-size:13px;margin:0;"><b style="color:var(--gold)">外汇图表工作区</b>：DXY/广义美元/USDJPY/EURUSD/人民币汇率/CFTC头寸/中美利差，任选叠加最多4个：</p></div>
 <div class="cw" id="cw-fx"></div>
 <div class="card" style="margin-top:12px;"><p style="font-size:12px;color:var(--dim);margin:0;">→ 美股×美债×美元的<b>美国资产象限裁决</b>见「债市」页签底部（当前：股跌+债跌+美元强=滞胀紧缩象限，A端全面兑现）。</p></div>
@@ -658,7 +489,7 @@
 const N = {"jin10": [{"src": "jin10", "time": "2026-09-02 12:21:42", "ts": "2026-09-02 12:21:42", "content": "美国总统特朗普的最新表态不仅暗示美国高阶精确制导弹药的确短缺，更暴露出美军正准备依赖“老旧库存”来维持一场可能永无休止的中东消耗战……点击查看...", "important": 1, "vip": 0, "tags": [], "id": "20260902122142848800"}, {"src": "jin10", "time": "2026-09-02 12:19:24", "ts": "2026-09-02 12:19:24", "content": "【新加坡经济学家上调2026年经济增长预期至5%】金十数据9月2日讯，新加坡金管局周三公布的一项调查显示，经济学家上调了对新加坡2026年经济增长的预期，同时小幅下调了通胀预测。在新加坡金管局第三季度调查中，约一半受访者将中东冲突持续或升级列为新加坡面临的主要下行风险之一，另有29.4%的经济学家担心人工智能泡沫可能破裂。调查显示，受访者对新加坡今年经济增长的预测中值升至5%，高于6月调查中的3.5%；对2027年经济增长的预测也从2.5%上调至3.1%。受访者预计，新加坡2026年核心通胀率为1.9%，整体通胀率为2.1%，均低于上次调查分别为2%和2.3%的预测。", "important": 0, "vip": 0, "tags": [], "id": "20260902121924542800"}, {"src": "jin10", "time": "2026-09-02 12:17:53", "ts": "2026-09-02 12:17:53", "content": "1. 贵金属：随着对通胀和金融压制的担忧加剧，贵金属受到了提振。黄金价格8月上涨9.7%，至每盎司4437美元，白银上涨15.6%至66.58美元/盎司。2. 农业商品：霍尔木兹海峡仍然关闭，厄尔尼诺影响仍存，食品价格飙升。小麦价格8月大幅上涨18.3%，玉米上涨16.8%，糖价上涨21.5%。3. 油气：8月份油价小幅上涨，7月份时曾大幅反弹。布伦特原油8本月上涨0.4%，至每桶90.49美元，WTI原油上涨1.3%，至每桶85.76美元。同时，欧洲天然气期货上涨18.2%、美国天然气期货上涨6.8%。4. 股票：强劲的全球数据和财报让这个月的股票表现不错。标普500指数8月上涨2.7%，欧洲斯托克600指数上涨0.5%以及 MSCI 新兴市场指数上涨+3.4%。（以上数据来自德意志银行的最新月度回顾）", "important": 0, "vip": 0, "tags": [], "id": "20260902121753194800"}, {"src": "jin10", "time": "2026-09-02 12:13:47", "ts": "2026-09-02 12:13:47", "content": "花旗数据显示，欧美和中国的Token 价格正在趋近。原因是欧美高价被竞争压低，而中国低价战开始修复。好处是AI应用成本下降、企业议价增强、模型API商品化加速。对中国模型厂商来说，有助于改善收入质量和毛利率。但对单纯卖API、卖推理服务的厂商，定价权会持续受到挑战。最终市场会从“谁模型最强”转向“谁能用更低成本把AI变成稳定现金流”。", "important": 0, "vip": 0, "tags": [], "id": "20260902121347624800"}, {"src": "jin10", "time": "2026-09-02 12:13:43", "ts": "2026-09-02 12:13:43", "content": "杰富瑞：将甲骨文(ORCL.N)目标价从320美元下调至290美元。", "important": 0, "vip": 0, "tags": [], "id": "20260902121343920800"}, {"src": "jin10", "time": "2026-09-02 12:12:49", "ts": "2026-09-02 12:12:49", "content": "日经225指数日内大跌3.00%，现报64225.19点。", "important": 1, "vip": 0, "tags": [], "id": "20260902121249734800"}, {"src": "jin10", "time": "2026-09-02 12:11:37", "ts": "2026-09-02 12:11:37", "content": "【蓝色起源获得火星通信网络开发合同】金十数据9月2日讯，美国航空航天局9月1日表示，已授予蓝色起源公司一份合同，由其负责开发火星通信网络，旨在为当前及未来火星探测任务提供可靠的高带宽通信及导航服务。据美航空航天局介绍，这份固定总价合同的最高潜在价值约为7亿美元。根据合同，蓝色起源公司将负责火星通信网络的设计、开发、整合、发射和运营，并在2028年12月31日前向美航空航天局交付一个高性能的火星通信轨道器。", "important": 0, "vip": 0, "tags": [], "id": "20260902121137003800"}, {"src": "jin10", "time": "2026-09-02 12:10:14", "ts": "2026-09-02 12:10:14", "content": "【欧洲央行管委马赫鲁夫：欧洲央行必须做好进一步加息的准备】金十数据9月2日讯，据英国金融时报报道，欧洲央行一位高级政策制定者表示，如果通胀“开始朝着错误的方向发展”，欧洲央行不应回避进一步加息。欧洲央行管委马赫鲁夫表示，欧元区通胀率徘徊在3%以上，而经济增长比夏季之前预测的“略强”，这让他感到“不安”。马赫鲁夫表示：“我们下周将做出的决定不会让任何人感到意外。”他还补充说，他预计欧洲央行今年也会“小幅”上调欧元区经济增长预期。马赫鲁夫强调，即使利率达到2.5%，欧洲央行的基准存款利率仍不会抑制经济活动。“政策并非限制性的，”他表示，并补充说，限制性政策“大致来说，要等到利率超过2.75%才会开始”。此外他认为，目前尚不明确在预计下周加息之后是否还需要进一步加息，欧洲央行应坚持其“逐次会议”的策略，避免提供前瞻性指引。他表示，通胀预期“处于良好状态”，且没有迹象表明存在“工资方面的第二轮通胀效应。我们看到相关风险正在得到管控。”", "important": 0, "vip": 0, "tags": [], "id": "20260902121014165800"}, {"src": "jin10", "time": "2026-09-02 12:04:12", "ts": "2026-09-02 12:04:12", "content": "据英国金融时报：欧洲央行管委马赫鲁夫表示，欧洲央行必须做好进一步加息的准备。", "important": 1, "vip": 0, "tags": [], "id": "20260902120412317800"}, {"src": "jin10", "time": "2026-09-02 12:03:38", "ts": "2026-09-02 12:03:38", "content": "【港股午评：恒指收跌0.96%，生物医药股局部活跃】金十数据9月2日讯，今日早盘，港股两大指数低开后震荡走低。截至中午收盘，恒生指数收跌0.96%，恒生科技指数收跌1.54%。生物医药股局部活跃，百奥赛图-B(02315.HK)涨超11%，再鼎医药(09688.HK)涨超5%；除此以外，婴童用品、教育、百货业等板块涨幅居前。黄金股连日回调，招金矿业(01818.HK)、紫金黄金国际(02259.HK)均跌超4%；中资券商股大跌，中金(03908.HK)跌超6%，中信证券(06030.HK)跌超3%；光通信股走低，华虹宏力(01347.HK)跌超4%，中际旭创(03308.HK)跌超3%；除此以外，电力设备、零售、物流、新能源车企、芯片、建材水泥等板块跌幅居前。个股方面，理想汽车(02015.HK)跌超4%，创上市以来新低。", "important": 0, "vip": 0, "tags": [], "id": "20260902120338884800"}, {"src": "jin10", "time": "2026-09-02 12:03:17", "ts": "2026-09-02 12:03:17", "content": "新加坡金管局调查：经济学家将新加坡2026年非油气产品出口（NODX）增长预测从6.1%上调至17.0%。", "important": 0, "vip": 0, "tags": [], "id": "20260902120317244800"}, {"src": "jin10", "time": "2026-09-02 12:02:56", "ts": "2026-09-02 12:02:56", "content": "新加坡金管局调查：经济学家将新加坡2027年GDP增长预测从2.5%上调至3.1%。", "important": 0, "vip": 0, "tags": [], "id": "20260902120256659800"}, {"src": "jin10", "time": "2026-09-02 12:02:40", "ts": "2026-09-02 12:02:40", "content": "新加坡金管局调查：经济学家将新加坡2026年通胀预期从2.3%下调至2.1%。", "important": 0, "vip": 0, "tags": [], "id": "20260902120240541800"}, {"src": "jin10", "time": "2026-09-02 12:02:26", "ts": "2026-09-02 12:02:26", "content": "【国家药监局：愈美制剂非处方药转换为处方药】金十数据9月2日讯，国家药监局最新发布公告，为保障公众用药安全，我国将愈美制剂非处方药转换为处方药，按处方药管理。公告要求相关品种的药品上市许可持有人应依据《药品注册管理办法》等有关规定，在2026年11月30日前向国家药监局药品审评中心提出修订说明书的补充申请，说明书其他内容按照处方药要求进行修订，药品标签应当一并进行修订。药品修改说明书的补充申请批准后，相关品种的药品上市许可持有人应在9个月内对已出厂的药品说明书及标签予以更换，或以其他形式告知患者。同时应及时收集并报告不良反应信息，做好风险控制及药物警戒工作。国家药监局要求，相关品种的药品上市许可持有人、生产经营企业、临床使用单位，应严格按照处方药的相关管理要求生产、销售和使用本品。", "important": 0, "vip": 0, "tags": [], "id": "20260902120226309800"}, {"src": "jin10", "time": "2026-09-02 12:02:14", "ts": "2026-09-02 12:02:14", "content": "新加坡金管局调查：55%的受访者预计在十月份的货币政策审查中，新加坡元名义有效汇率的斜率将保持不变。", "important": 0, "vip": 0, "tags": [], "id": "20260902120214928800"}, {"src": "jin10", "time": "2026-09-02 12:01:21", "ts": "2026-09-02 12:01:21", "content": "新加坡金管局调查：经济学家预计2026年经济增长将达到5%，之前预期为3.5%。", "important": 0, "vip": 0, "tags": [], "id": "20260902120121395800"}, {"src": "jin10", "time": "2026-09-02 12:01:04", "ts": "2026-09-02 12:01:04", "content": "新加坡金管局调查：经济学家预计2026年核心通胀率为1.9%，此前预估为2%。", "important": 0, "vip": 0, "tags": [], "id": "20260902120104037800"}, {"src": "jin10", "time": "2026-09-02 12:00:29", "ts": "2026-09-02 12:00:29", "content": "【地面兵装，逆市大爆发】金十数据9月2日讯，9月2日早盘，内蒙一机被一笔1.81亿元的大单直接拉到涨停板，并封死涨停，这也是该股连续第二天涨停。随后，长城军工也封死涨停板。北方长龙、天秦装备、建设工业、国科军工等股票大幅拉升。这些股票都属于地面兵装板块。机构分析人士认为，军贸是“十五五”时期的重要增量方向，但上半年军贸链整体表现偏弱，市场对订单兑现仍比较谨慎。随着我国装备实战能力得以持续验证、珠海航展临近以及外贸订单后续披露，有望重新获得资金关注。", "important": 0, "vip": 0, "tags": [], "id": "20260902120029218800"}, {"src": "jin10", "time": "2026-09-02 11:59:36", "ts": "2026-09-02 11:59:36", "content": "【飓风“爱德华”过境后，瓦莱罗得州炼厂遭遇停电】金十数据9月2日讯，知情人士称，热带风暴“爱德华”（Edouard）过境后，瓦莱罗能源公司位于得克萨斯州亚瑟港、日产能38.5万桶的炼油厂周二晚间遭遇部分停电。美国能源信息署（EIA）数据显示，瓦莱罗亚瑟港炼油厂占美国全国炼油产能的2%。目前美国炼厂开工率为全国日产能1803万桶的97.4%，这意味着该炼厂的产能相当于美国当前尚未投入使用的炼油产能中的大部分。“爱德华”周二登陆期间，得州东部另外3家炼油厂均维持正常运营。沙特阿美旗下Motiva Enterprises公司位于亚瑟港、日产能65.64万桶的炼油厂周二在热带风暴期间继续正常运营。该炼油厂是美国规模最大的炼油厂。埃克森美孚位于得克萨斯州博蒙特、日产能61.2万桶的最大炼油厂也在“爱德华”登陆期间继续运行。道达尔能源位于亚瑟港、日产能23.8万桶的炼油厂同样维持运营。", "important": 0, "vip": 0, "tags": [], "id": "20260902115936190800"}, {"src": "jin10", "time": "2026-09-02 11:55:57", "ts": "2026-09-02 11:55:57", "content": "【伊朗高官强硬喊话阿拉伯国家：要么驱逐美军，要么准备承受打击】金十数据9月2日讯，伊朗革命卫队政治副司令亚多拉·贾瓦尼向阿拉伯国家发出警告，要求它们驱逐美国军队，否则将面临毁灭性的军事回应。贾瓦尼在塔斯尼姆通讯社发布的一份声明中表示：“最好将美国人驱逐出你们的国家，收回这些军事基地。”他警告称，伊朗军方已经证明，只要任何地点被用于发动针对伊朗的攻击，伊朗都将对相关地点实施坚决报复，并特别点名科威特、巴林和约旦。", "important": 0, "vip": 0, "tags": [], "id": "20260902115557800800"}], "ah": [{"src": "ah", "time": "09-01 12:20", "ts": "2026-09-01 12:20", "content": "无人机袭击俄罗斯萨马拉地区的诺沃库比舍夫斯克：俄罗斯通讯社援引州长消息", "logic": "无人机袭击俄罗斯境内区域加剧了地缘政治紧张局势，可能导致能源供应链波动或市场避险情绪升温。需关注国防军工板块及大宗商品价格走势，警惕冲突升级带来的市场波动风险。", "sentiment": "利空", "level": "S", "source": "VIP终端", "importance": 100}, {"src": "ah", "time": "09-01 12:19", "ts": "2026-09-01 12:19", "content": "WPP削减最多1000个更多职位，因人工智能重塑广告行业 – FT", "logic": "人工智能技术的快速发展正在对广告行业产生深远影响，企业为适应变化而进行裁员，这可能对相关股票和行业信心造成负面影响。", "sentiment": "利空", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 12:16", "ts": "2026-09-01 12:16", "content": "Dogecoin和Bitcoin在8月份上涨，但这个基于Solana的代币涨幅近100%，并超过了它们", "logic": "加密货币上涨，相关概念板块受益", "sentiment": "利多", "level": "B", "source": "Benzinga", "importance": 67}, {"src": "ah", "time": "09-01 12:15", "ts": "2026-09-01 12:15", "content": "美国电池安装量预计在2026年创纪录，行业报告称", "logic": "电池安装量增长预示电动车需求上升", "sentiment": "利多", "level": "B", "source": "Bloomberg", "importance": 60}, {"src": "ah", "time": "09-01 12:14", "ts": "2026-09-01 12:14", "content": "卡尼的自由党在加拿大赢得三次特别选举", "logic": "加拿大政治稳定利好经济，相关板块受益", "sentiment": "利多", "level": "B", "source": "Bloomberg", "importance": 60}, {"src": "ah", "time": "09-01 12:13", "ts": "2026-09-01 12:13", "content": "英国银行在政府施压后对新冠贷款违约者采取行动 – FT", "logic": "银行对新冠贷款违约者的严格处理可能增加企业负担，影响市场信心。", "sentiment": "利空", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 12:13", "ts": "2026-09-01 12:13", "content": "日本面临政策清算时刻，贝森特宣布结束大规模刺激措施", "logic": "日本政策变动影响全球市场，科技股受影响较大", "sentiment": "利空", "level": "B", "source": "Reuters", "importance": 59}, {"src": "ah", "time": "09-01 12:12", "ts": "2026-09-01 12:12", "content": "霍尔木兹海峡商品船通行量保持在个位数，数据显示", "logic": "海峡通行量下降，可能增加能源运输成本，利好能源和航运板块。", "sentiment": "利多", "level": "B", "source": "Reuters", "importance": 59}, {"src": "ah", "time": "09-01 12:10", "ts": "2026-09-01 12:10", "content": "欧洲央行官员雷恩警告称，伊朗可能陷入“消耗战”冲突，这可能导致通胀居高不下 - FT", "logic": "地缘政治冲突加剧可能引发能源价格波动，进而推高通胀预期。这会增加欧洲央行维持高利率的时间，从而对全球风险资产及新兴市场货币构成压力。需关注能源板块及通胀数据表现。", "sentiment": "利空", "level": "S", "source": "VIP终端", "importance": 100}, {"src": "ah", "time": "09-01 12:04", "ts": "2026-09-01 12:04", "content": "英国首相在政治斗争线日益分明之际暗示将采取新的生活成本措施 – 金融时报", "logic": "英国首相暗示将采取新措施应对生活成本问题，可能对经济和市场情绪产生积极影响，但具体效果取决于政策内容和实施方式。", "sentiment": "利多", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 12:02", "ts": "2026-09-01 12:02", "content": "最新消息：约翰·特努斯正式成为苹果公司 $AAPL 首席执行官，接替蒂姆·库克。", "logic": "规则兜底识别为可能引发波动的重要事件，方向取决于具体资产和市场预期。", "sentiment": "利多/利空", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 12:02", "ts": "2026-09-01 12:02", "content": "Shein在香港上市首日股价暴跌，IPO之路波折", "logic": "海外电商巨头股价波动影响国内相关行业", "sentiment": "利空", "level": "B", "source": "Bloomberg", "importance": 68}, {"src": "ah", "time": "09-01 11:58", "ts": "2026-09-01 11:58", "content": "韩国议员称朝鲜和美国显示出恢复对话的迹象", "logic": "地缘政治缓和利好相关产业链", "sentiment": "利多", "level": "B", "source": "Reuters", "importance": 59}, {"src": "ah", "time": "09-01 11:58", "ts": "2026-09-01 11:58", "content": "缅甸敏昂莱本周将访问越南，继续推动重新接触", "logic": "地缘政治关系改善，利好相关板块投资", "sentiment": "利多", "level": "B", "source": "Reuters", "importance": 59}, {"src": "ah", "time": "09-01 11:58", "ts": "2026-09-01 11:58", "content": "埃杜阿尔德可能在抵达西北墨西哥湾海岸前接近飓风强度，NHC表示", "logic": "极端天气影响能源供应和保险赔付", "sentiment": "利空", "level": "B", "source": "Reuters", "importance": 59}, {"src": "ah", "time": "09-01 11:56", "ts": "2026-09-01 11:56", "content": "Jefferies将Novonesis目标价从480丹麦克朗上调至540丹麦克朗", "logic": "分析师上调目标价表明对该公司前景持乐观态度，可能推动股价上涨。", "sentiment": "利多", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:54", "ts": "2026-09-01 11:54", "content": "日本10年期债券发行需求与12个月平均值一致 - BBG", "logic": "该消息表明日本10年期债券的市场需求处于正常水平，未出现明显波动，对市场影响有限。", "sentiment": "中性", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:53", "ts": "2026-09-01 11:53", "content": "Jefferies 将 Robertet 目标股价下调 20 欧元至 930 欧元", "logic": "机构将目标股价下调，表明对该公司未来表现的预期有所降低，可能对股价产生压力。", "sentiment": "利空", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:47", "ts": "2026-09-01 11:47", "content": "Jefferies 将 RWE 目标价从 68 欧元上调至 75 欧元", "logic": "该消息表明机构对 RWE 的股价前景更加乐观，可能推动投资者对该股票的兴趣增加。", "sentiment": "利多", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:44", "ts": "2026-09-01 11:44", "content": "印度央行可能在市场开盘前介入以提振卢比 - 交易员", "logic": "央行干预货币直接利好相关行业", "sentiment": "利多", "level": "B", "source": "Reuters", "importance": 59}, {"src": "ah", "time": "09-01 11:44", "ts": "2026-09-01 11:44", "content": "印度尼西亚火灾引发区域烟雾警报和学校关闭", "logic": "环境问题引发政策关注，相关板块受益", "sentiment": "利空", "level": "B", "source": "Bloomberg", "importance": 60}, {"src": "ah", "time": "09-01 11:37", "ts": "2026-09-01 11:37", "content": "韩联社报道，韩国情报机构获得了一枚朝鲜导弹的蓝图。", "logic": "规则兜底判断为偏负面事件；AI不可用时请结合受影响资产复核。", "sentiment": "利空", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:34", "ts": "2026-09-01 11:34", "content": "朝鲜似乎正在为金朱爱接替金正恩做准备，韩国议员称", "logic": "该消息涉及朝鲜领导层可能的权力交接，但未直接提及经济或市场相关因素，因此对金融市场影响不明确。", "sentiment": "中性", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:34", "ts": "2026-09-01 11:34", "content": "朝鲜和美国显示出重新启动对话的迹象，韩国议员表示。", "logic": "规则兜底暂无法确定方向，为避免漏掉新型重要事件已保守保留。", "sentiment": "利多/利空", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:32", "ts": "2026-09-01 11:32", "content": "*日本10年期收益率升至3%，自1996年以来首次...", "logic": "规则兜底判断为偏正面事件；AI不可用时请结合受影响资产复核。", "sentiment": "利多", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:30", "ts": "2026-09-01 11:30", "content": "美国-委内瑞拉石油交易成形，以下是关键点", "logic": "国际石油交易利好相关产业链", "sentiment": "利多", "level": "B", "source": "Bloomberg", "importance": 68}, {"src": "ah", "time": "09-01 11:30", "ts": "2026-09-01 11:30", "content": "特朗普与委内瑞拉的石油交易引发一些主要生产商的担忧，消息人士称", "logic": "国际石油交易影响全球能源市场", "sentiment": "利空", "level": "B", "source": "Reuters", "importance": 67}, {"src": "ah", "time": "09-01 11:27", "ts": "2026-09-01 11:27", "content": "斯科特·贝森特的债券回购计划使货币贬值问题再次成为焦点——加密货币和黄金获得动力", "logic": "货币贬值预期增强，避险资产价格上涨", "sentiment": "利多", "level": "A", "source": "Benzinga", "importance": 75}, {"src": "ah", "time": "09-01 11:27", "ts": "2026-09-01 11:27", "content": "乌克兰无人机携带更大威力，深入俄罗斯境内 - WSJ", "logic": "该新闻可能对俄罗斯构成军事威胁，对乌克兰具有战略意义，可能影响相关国家的军事和政治局势，进而对能源、军工等资产产生影响。", "sentiment": "利多/利空", "level": "S", "source": "先讯终端", "importance": 100}, {"src": "ah", "time": "09-01 11:18", "ts": "2026-09-01 11:18", "content": "习近平会见外国领导人：追踪，2026年8月 - SCMP", "logic": "该快讯仅提及国家领导人的活动，未涉及具体经济政策或市场数据，因此对金融市场影响不明确。", "sentiment": "中性", "level": "S", "source": "先讯终端", "importance": 100}], "cs": [{"src": "cs", "time": "2026-09-02 12:15:12", "ts": "2026-09-02 12:15:12", "content": "日经225指数低开低走大跌3%，现报64265点。", "tags": ["环球市场情报"], "id": 245204}, {"src": "cs", "time": "2026-09-02 12:14:22", "ts": "2026-09-02 12:14:22", "content": "杰富瑞将甲骨文目标价从320美元下调至290美元。", "tags": ["美股动态"], "id": 245203}, {"src": "cs", "time": "2026-09-02 12:13:58", "ts": "2026-09-02 12:13:58", "content": "巴克莱将阿迪达斯评级从“持有（Equal Weight）”上调至“超配（Overweight）”，同时将目标价从190欧元上调至210欧元。", "tags": ["外汇期货", "欧股动态"], "id": 245202}, {"src": "cs", "time": "2026-09-02 12:09:24", "ts": "2026-09-02 12:09:24", "content": "【上海发布中心城区雷电黄色预警】上海市气象台2026年09月02日12时01分发布中心城区雷电黄色预警信号：预计今天半夜以前，中心城区大部将发生雷电活动，可能会造成雷电灾害事故，请注意防范。", "tags": ["天气变化"], "id": 245201}, {"src": "cs", "time": "2026-09-02 12:05:49", "ts": "2026-09-02 12:05:49", "content": "欧洲央行管委马赫鲁夫表示，欧洲央行必须做好进一步加息的准备。", "tags": ["期货市场情报", "欧洲央行动态"], "id": 245200}, {"src": "cs", "time": "2026-09-02 12:05:18", "ts": "2026-09-02 12:05:18", "content": "【中国气象局：9月或有5到7个台风生成】中国气象局举行新闻发布会。国家气候中心副主任高荣介绍，预计9月，西北太平洋和南海海域有5~7个台风生成，接近常年同期（5.1个）到偏多；有2~3个台风登陆或明显影响我国，较常年同期（1.6个）偏多；强度总体偏强，主要影响华东和华南沿海地区，存在较强台风北上影响我国北方地区的风险。", "tags": ["天气变化", "航运期货"], "id": 245199}, {"src": "cs", "time": "2026-09-02 12:04:16", "ts": "2026-09-02 12:04:16", "content": "【财联社9月2日午间新闻精选】\n1、截至午间收盘，沪指跌0.82%，深证成指跌1.71%，创业板指跌2.18%。\n2、港股午间收盘，恒生指数跌0.96%，恒生科技指数跌1.54%。\n3、国家能源局召开新型电网建设工作部署会，加快输电通道等重大电网工程核准建设。\n4、美国10年期国债收益率一度攀升至4.8102%，为2023年末以来最高水平。\n5、当地时间9月1日，美国总统特朗普表示，他并未像美国媒体所报道的那样，试图逼迫伊朗重返谈判桌，并称自己并不在意伊朗是否签署一份“毫无价值的协议”。", "tags": [], "id": 245198}, {"src": "cs", "time": "2026-09-02 12:00:48", "ts": "2026-09-02 12:00:48", "content": "港股午间收盘，恒生指数跌0.96%，恒生科技指数跌1.54%。大型科网股多数下跌，百度跌2.61%，阿里巴巴跌近2%，腾讯控股跌逾1%。", "tags": [], "id": 245197}, {"src": "cs", "time": "2026-09-02 12:00:31", "ts": "2026-09-02 12:00:31", "content": "【我国在高端遥感动态成像关键技术领域取得重要突破】市场监管总局消息，近日，我国在高端遥感动态成像关键技术领域取得重要突破。针对无人机、卫星、机器人等领域亟待解决的轻量化、低功耗、高动态成像性能相互制约的矛盾，依托中国计量大学建立的国家市场监督管理总局重点实验室（光传感与图像计量）联合北京航空航天大学等单位组织开展技术攻关，实现了小型低功耗约束下厘米级超高分辨率三维成像，解决了低空经济和智能视觉等产业对场景信息的精准捕捉与解析问题。据介绍，研究团队突破了“小型化低功耗超高分辨率成像、高精度传递函数动态像差补偿、强噪声环境三维高精度重建”等核心关键技术，相关成果具有自主知识产权，总体技术达到国际先进水平，其中部分技术处于国际领先水平。目前，相关技术成果已应用于无人机、航空航天、森林防火、安防、边海防、工业机器人、特种设备监测、智慧城市等领域，经济与社会效益显著。", "tags": ["无人机", "机器人", "航空航天", "智慧城市", "低空经济"], "id": 245196}, {"src": "cs", "time": "2026-09-02 11:54:28", "ts": "2026-09-02 11:54:28", "content": "【大普微：SCM SSD产品具备批量供应能力】大普微在互动平台表示，公司SCM SSD产品具备批量供应能力，公司将根据客户需求持续推进相关产品的迭代研发与市场拓展。", "tags": ["互动平台精选"], "id": 245195}, {"src": "cs", "time": "2026-09-02 11:54:03", "ts": "2026-09-02 11:54:03", "content": "MSCI亚太指数下跌2%至273.46点。", "tags": ["环球市场情报"], "id": 245194}, {"src": "cs", "time": "2026-09-02 11:52:41", "ts": "2026-09-02 11:52:41", "content": "Melius Research将戴尔科技目标价格从650美元上调至735美元。", "tags": ["TMT行业观察", "美股动态"], "id": 245193}, {"src": "cs", "time": "2026-09-02 11:51:31", "ts": "2026-09-02 11:51:31", "content": "【国家医保局：特例单议保障医疗机构收治疑难重症的积极性与合理性】国家医保局召开新闻发布会，发布按病种付费3.0版分组方案和技术规范。国家医保局有关负责人介绍，特例单议是按病种付费的重要配套机制，重点支持医疗机构使用新药耗新技术、收治疑难复杂重症，由医疗机构自主向医保经办机构申报，经专家审核评议后，符合条件的可给予合理补偿。根据3.0版分组方案，DRG付费的统筹地区特例单议数量不超过DRG出院总病例的5%；DIP付费的统筹地区特例单议数量进行适度调整优化，2027年起可不超过DIP出院总病例的1%，更好满足医疗机构实际运行疑难重症申报需求。", "tags": [], "id": 245192}, {"src": "cs", "time": "2026-09-02 11:50:48", "ts": "2026-09-02 11:50:48", "content": "本田计划到2030年削减1.5万亿日元成本。", "tags": ["外汇期货", "汽车大新闻"], "id": 245191}, {"src": "cs", "time": "2026-09-02 11:48:42", "ts": "2026-09-02 11:48:42", "content": "【防范挤压夹伤风险 家用儿童学习桌椅国家标准发布】今天了解到，市场监管总局近日批准发布《家用儿童学习桌、椅》国家标准，针对家用儿童学习桌椅产品建立专项安全与性能指标体系。标准明确适用于3岁至14岁儿童阅读、书写、绘画的家用学习桌椅，充分兼顾当前市场产品在升降、角度调节、带电功能等方面的创新设计，系统规定产品技术要求与对应试验方法，为产品生产制造、质量检测、消费选购提供技术支撑。标准确立电动升降遇阻回退安全保护机制，一键升降桌面受到外力阻碍时，必须在5秒内将挤压力下降至安全阈值，有效防止儿童发生挤压、夹伤事故；松开操作按键后，桌面位移不得超过10毫米，保障升降操作即时响应、可控可停。同时标准明确禁止使用声控、远程控制实现升降调节，从产品设计源头消除儿童误操作引发的机械安全风险。 （央视新闻）", "tags": ["期货市场情报", "促消费举措"], "id": 245190}, {"src": "cs", "time": "2026-09-02 11:46:10", "ts": "2026-09-02 11:46:10", "content": "印度NIFTY指数下跌1%至23,812.05点。", "tags": ["期货市场情报", "环球市场情报"], "id": 245189}, {"src": "cs", "time": "2026-09-02 11:43:49", "ts": "2026-09-02 11:43:49", "content": "【德尔股份：固态电池PACK中试线已经建成 电芯中试线在建设中】德尔股份在互动平台表示，公司固态电池PACK中试线已经建成，电芯中试线在建设中。", "tags": ["互动平台精选", "固态电池"], "id": 245188}, {"src": "cs", "time": "2026-09-02 11:39:13", "ts": "2026-09-02 11:39:13", "content": "【9月2日午间涨停分析】今日午盘全市场共40股涨停，连板股总数13只，16股封板未遂，封板率为71%（不含ST股、退市股）。焦点股方面，PTFE概念股沃特股份9天5板，AI应用概念股竞业达4连板，零售板块国芳集团4连板。", "tags": ["盘面直播"], "id": 245187}, {"src": "cs", "time": "2026-09-02 11:38:23", "ts": "2026-09-02 11:38:23", "content": "【OpenAI即将发布新AI模型Astra】据报道，OpenAI计划很快推出一款名为Astra的AI模型。该模型前期执行高级网络安全相关任务的能力将仅限于部分测试人员。之后，该公司将通过“Daybreak Blue”计划向更多用户开放该模型，用于防御性网络安全工作。OpenAI周二表示，他们认为该模型已达到“关键网络安全门槛”，公司已加强Astra模型的安全防护措施，以防止其被滥用。", "tags": ["人工智能", "网络安全"], "id": 245186}, {"src": "cs", "time": "2026-09-02 11:36:09", "ts": "2026-09-02 11:36:09", "content": "现货黄金日内跌幅扩大至1%，报4283.74美元/盎司。", "tags": ["期货市场情报", "有色金属", "黄金"], "id": 245185}, {"src": "cs", "time": "2026-09-02 11:36:05", "ts": "2026-09-02 11:36:05", "content": "【奇点国峰盘中大涨超5成】奇点国峰(01280.HK)震荡上扬，截至发稿涨44%报2.35港元，创近4个月新高。该公司日前发布2026年中期业绩。收入约为人民币2.35亿元，同比增约29.4%，主要由白酒业务快速放量及AI人工智能产品及服务收入等新业务新增贡献带动。公司拥有人应占亏损约为人民币3510万元，同比扩大约82.0%。", "tags": ["港股动态"], "id": 245184}, {"src": "cs", "time": "2026-09-02 11:35:19", "ts": "2026-09-02 11:35:19", "content": "【伊朗官员说美军最新袭击造成至少7人死亡】据伊朗媒体2日报道，伊朗西南部胡齐斯坦省负责安全事务的副省长说，美军前一晚对该省发动的袭击造成7人死亡，8人受伤。伊朗媒体1日报道，美国当天夜间对伊朗南部多地发动袭击，波及霍尔木兹甘省库赫斯塔克一场婚礼活动现场，已造成4人死亡、50人受伤。", "tags": ["期货市场情报", "中东冲突"], "id": 245183}, {"src": "cs", "time": "2026-09-02 11:32:23", "ts": "2026-09-02 11:32:23", "content": "【午评：创业板指半日跌超2% 全市场近4000只个股下挫】市场早盘震荡调整，创业板指走势较弱。沪深两市半日成交额1.21万亿，较上个交易日缩量1403亿。盘面上热点较为杂乱，全市场近4000只个股下跌。从板块来看，军工板块逆势走强，内蒙一机2连板，建设工业、长城军工涨停。电网设备板块震荡反弹，太阳电缆、神马电力涨停。PCB概念表现活跃，沃特股份5天4板，山东玻纤涨停。互联金融概念日内震荡回升，恒宝股份2连板。光纤概念盘中震荡拉升，杭电股份涨停。下跌方面，农业板块震荡调整，登海种业触及跌停，华绿生物、康农种业、秋乐种业纷纷下挫。截至收盘，沪指跌0.82%，深成指跌1.71%，创业板指跌2.18%。", "tags": ["盘面直播"], "id": 245181}, {"src": "cs", "time": "2026-09-02 11:31:43", "ts": "2026-09-02 11:31:43", "content": "【国内期货主力合约涨跌不一 SC原油涨超9%】国内期货主力合约涨跌不一，SC原油涨超9%，集运欧线、乙二醇（EG）涨超5%，甲醇涨近5%，燃料油涨超4%，低硫燃料油（LU）、液化石油气（LPG）涨超3%，纯苯涨近3%。跌幅方面，钯跌近6%，沪银、铂跌超4%，碳酸锂、沪金跌超3%，20号胶、沪锡、棉花跌超2%。", "tags": ["期货市场情报", "环球市场情报", "原油市场动态", "海外大宗商品", "盐湖提锂", "锂电池"], "id": 245180}, {"src": "cs", "time": "2026-09-02 11:23:22", "ts": "2026-09-02 11:23:22", "content": "【中国人民解放军南部战区位中国黄岩岛领海领空及周边区域组织战备警巡】中国人民解放军南部战区今日组织海空兵力位中国黄岩岛领海领空及周边海空域开展战备警巡。黄岩岛是中国固有领土。8月份以来，战区部队组织海空兵力持续加强黄岩岛领海周边海空域巡逻警戒，进一步强化有关海空域管控力度，有力有效应对各类侵权挑衅行径，坚决捍卫国家主权安全，坚定维护南海地区和平稳定。", "tags": [], "id": 245178}, {"src": "cs", "time": "2026-09-02 11:21:27", "ts": "2026-09-02 11:21:27", "content": "文件显示，本田已指示供应商大幅降价，本田计划将部分关键零部件的成本削减30%，其中就包括软件定义汽车相关的零部件。", "tags": [], "id": 245177}, {"src": "cs", "time": "2026-09-02 11:19:48", "ts": "2026-09-02 11:19:48", "content": "【第十五届中国知识产权年会将围绕人工智能与知识产权设置多个议题】从第十五届中国知识产权年会媒体吹风会上了解到，年会将围绕人工智能与知识产权设置多个议题。聚焦AI知识产权治理的法律维度，围绕大模型训练数据的版权合法性、AIGC生成物的可版权性、人机共创场景下的侵权责任分担、AI工具在专利检索和商标监测中的实务应用等前沿议题展开研讨，从司法、行政、产业三个维度探讨AI时代知识产权规则的演进方向。聚焦人工智能产业发展的技术维度，围绕AI原生技术与下一代创新范式、具身智能与未来产业变革、AI重构企业组织与生产方式等议题展开，邀请人工智能产业工作委员会知识产权中心、工信部电子知识产权中心、具身智能企业代表等出席，共同探讨AI如何从数字世界走向物理世界、从技术突破走向产业变革。 （央视新闻）", "tags": ["TMT行业观察", "人工智能", "知识产权", "AIGC"], "id": 245176}, {"src": "cs", "time": "2026-09-02 11:18:29", "ts": "2026-09-02 11:18:29", "content": "【我驻泰使馆：泰国调整免签政策不影响中泰双边免签协定】中国驻泰国大使馆9月2日发布关于泰国调整免签政策的领事提醒，中国公民持有效护照赴泰仍可享受免签待遇，泰方取消此前面向包括中国在内的93个国家和地区实施的单方面停留期60日免签政策。", "tags": [], "id": 245175}, {"src": "cs", "time": "2026-09-02 11:16:08", "ts": "2026-09-02 11:16:08", "content": "【康诺思腾与美敦力达成战略合作】近日，康诺思腾（Cornerstone Robotics）宣布，与美敦力（Medtronic）达成战略合作。根据合作协议，美敦力将向康诺思腾战略投资约7亿美元，并有权在美国以外的部分已获批市场分销康诺思腾的Sentire思腾®腔镜手术机器人。", "tags": ["期货市场情报", "机器人"], "id": 245174}, {"src": "cs", "time": "2026-09-02 11:15:01", "ts": "2026-09-02 11:15:01", "content": "【军工板块涨势扩大 晟楠科技30cm涨停】军工板块盘中涨势扩大，晟楠科技30cm涨停，此前内蒙一机、建设工业、长城军工、博云新材涨停，北方长龙、通易航天、天秦装备均涨超10%。", "tags": ["盘面直播", "军工"], "id": 245173}]};
 
 /* ---------- 数据总表渲染（动态·直读管线底稿） ---------- */
-buildSnapD();
+if(typeof buildSnapD==='function')buildSnapD();
 
 /* ---------- 消息解读区渲染（关键字自动归类·重要置顶·⚙️规则生成 · 动态拉取news_latest.json） ---------- */
 function renderNewsDigest(NN){
@@ -729,6 +560,42 @@ function mountWSd(){ if(_wsdDone)return; chartWidget('cw-wsd', ['DGS10','DGS30',
 document.querySelectorAll('[data-dp="dp9"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountWSd,60);});});
 /* ====== 流动性追踪（日频·读 data/liquidity.json，管线每日09:05 BJT更新） ====== */
 var _liqDone=false;
+function renderLiqConclusion(j){
+  var host=document.getElementById('liqConclusionD'); if(!host)return;
+  var by={}; (j.cards||[]).forEach(function(c){by[c.id]=c;});
+  function C(id){return by[id]||{};}
+  function num(v,d){return (typeof v==='number'&&isFinite(v))?v.toFixed(d):'—';}
+  function pct(c){return (typeof c.pct==='number')?Math.round(c.pct)+'%':'—';}
+  function sign(v,d){return (typeof v==='number'&&isFinite(v))?((v>0?'+':'')+v.toFixed(d)):'—';}
+  function bnYi(v){return (typeof v==='number'&&isFinite(v))?num(v*10,1)+'亿$':'—';}
+  function chgBnYi(v){return (typeof v==='number'&&isFinite(v))?((v>0?'+':'')+num(v*10,1)+'亿$'):'—';}
+  var sofr=C('sofr_iorb'), tail=C('sofr_tail'), cp=C('cp_sofr'), onrrp=C('onrrp'), res=C('reserves'), tga=C('tga'), net=C('netliq'), srf=C('srf'), real=C('real10y');
+  var st=(j.stress&&typeof j.stress.value==='number')?j.stress.value:null;
+  var state, stateC='var(--gold)';
+  if(j.funding_alert){state='融资压力警报已触发';stateC='#e5534b';}
+  else if((typeof sofr.val==='number'&&sofr.val>=10)||(typeof srf.val==='number'&&srf.val>=50)){state='接近融资压力线';stateC='#e5534b';}
+  else if(j.buy_signal){state='广义冲击信号出现，但融资管道未报警';stateC='#4caf7d';}
+  else if(typeof sofr.val==='number'&&sofr.val>0){state='融资溢价仍在，但尚未构成美元紧缺';}
+  else{state='管道价格暂未报警，缓冲层仍偏薄';}
+  var bufferTxt=(typeof onrrp.val==='number'&&onrrp.val<100)?'货币基金缓冲仍接近枯竭，缩表冲击会更直接传导到银行准备金。':'ON RRP仍有一定余量，货币基金缓冲尚未耗尽。';
+  var srfTxt=(typeof srf.val==='number'&&srf.val===0)?'零用量，银行体系尚未通过应急窗口“喊渴”。':'用量为 '+num(srf.val,2)+' 十亿$，需观察是否连续放量。';
+  var radarRow=document.getElementById('liqRadarRow');
+  if(radarRow){
+    radarRow.innerHTML='<td><b>美元流动性</b></td><td>SOFR-IORB '+sign(sofr.val,0)+'bp（'+pct(sofr)+'）；ON RRP '+bnYi(onrrp.val)+'仍近枯竭；准备金 '+num(res.val,2)+'万亿$（'+pct(res)+'）；SRF '+num(srf.val,2)+'十亿$——详见流动性页签</td><td class="flat">'+state+'</td><td>中性偏A（缓冲薄）</td>';
+  }
+  var falsifyRow=document.getElementById('liqFalsifyRow');
+  if(falsifyRow){
+    falsifyRow.innerHTML='<td>货币市场缓冲垫维持低位</td><td>SOFR-IORB重新站上+10bp，或SRF单周用量超过500亿$</td><td class="'+(j.funding_alert?'dn':'flat')+'">'+sign(sofr.val,0)+'bp（'+pct(sofr)+'） · SRF '+num(srf.val,2)+'十亿$ · 综合压力 '+(st==null?'—':st.toFixed(1))+'/100 → '+(j.funding_alert?'已触发警报':'未触发警报')+'</td>';
+  }
+  host.innerHTML='<p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">本页结论（随数据更新 · 数据截至 '+(j.asof||'—')+'）</b>：<b style="color:'+stateC+'">'+state+'</b></p>'
+    +'<ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.85;">'
+    +'<li><b>管道价格</b>：SOFR-IORB为 <b>'+sign(sofr.val,0)+'bp</b>（'+(sofr.date||'—')+'，分位 '+pct(sofr)+'）；SOFR尾部差 '+num(tail.val,0)+'bp（分位 '+pct(tail)+'），商票-SOFR '+num(cp.val,0)+'bp（分位 '+pct(cp)+'）——<b>未出现“抢钱”尖刺</b>。</li>'
+    +'<li><b>缓冲垫</b>：ON RRP余额 <b>'+bnYi(onrrp.val)+'</b>（日变动 '+chgBnYi(onrrp.chg)+'，分位 '+pct(onrrp)+'）；银行准备金 '+num(res.val,2)+'万亿$（分位 '+pct(res)+'），TGA '+bnYi(tga.val)+'（日变动 '+chgBnYi(tga.chg)+'）。'+bufferTxt+'</li>'
+    +'<li><b>应急窗口</b>：SRF常备回购'+srfTxt+'<b>这不符合“短期美元紧缺”的定义</b>；真正的紧缺需要SOFR-IORB大幅走阔、尾部飙升和SRF/贴现窗口放量同时出现。</li>'
+    +'<li><b>主要压力源</b>：10Y实际利率 <b>'+num(real.val,2)+'%</b>（'+(real.date||'—')+'，分位 '+pct(real)+'），净流动性 '+num(net.val,2)+'万亿$，综合压力分位 '+(st==null?'—':st.toFixed(1))+'/100——压力仍主要来自政策利率绝对高度，而非货币市场管道断裂。</li>'
+    +'<li><b>升级/降级线</b>：SOFR-IORB重新站上 +10bp，或SRF单周用量超过500亿$，升级为“融资压力警报”；若SOFR-IORB持续≤0、准备金企稳且缩表停止，则对久期与贵金属的流动性压制缓解。</li>'
+    +'</ul>';
+}
 function mountLiq(){
   if(_liqDone)return; _liqDone=true;
   fetch('../data/liquidity.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(j){
@@ -738,6 +605,7 @@ function mountLiq(){
     var sig=(j.buy_signal||j.funding_alert)?((j.buy_signal?'<span style="color:#4caf7d">广义冲击买入窗口</span> ':'')+(j.funding_alert?'<span style="color:#e5534b">融资压力警报</span>':'')):'无';
     document.getElementById('liqSumD').innerHTML='<p style="font-size:13px;margin:0;"><b style="color:var(--gold)">流动性总览</b>（更新 '+j.updated+' · 数据截至 '+j.asof+' · 管线每日09:05 BJT刷新）<br>'
       +'综合压力分位 <b style="color:'+stC+';font-size:18px;">'+(st.value!=null?st.value:'—')+'/100</b>（'+(st.n_comp||0)+'项分量等权，2019以来全样本）· 缩表阶段 <b style="color:var(--gold)">'+(rg.stage!=null?rg.stage:'—')+'</b>（ON RRP '+(rg.onrrp_bn!=null?rg.onrrp_bn.toFixed(2):'—')+'十亿$，'+(rg.desc||'')+'）· 信号：'+sig+'</p>';
+    renderLiqConclusion(j);
     /* 14张分量卡：最新值+日变动+2019以来分位条 */
     var pctC=function(p){return p>=80?'#e5534b':p>=50?'#d4a944':'#4caf7d';};
     var h='';
@@ -757,7 +625,10 @@ function mountLiq(){
     chartWidget('cw-liqd1', ['SOFR','EFFR','RRPONTSYAWARD'], ['SOFR','SOFR99','TGCRRATE','OBFR','EFFR','IORB','RRPONTSYAWARD','DCPF1M','SPR_SOFR_IORB','SPR_TGCR_IORB','SPR_SOFR_EFFR','SPR_SOFR99','SPR_SOFR_ONRRP','SPR_CP_SOFR','SPR_SOFR99_ONRRP','SPR_TGCR_ONRRP','LIQ_SRF']);
     chartWidget('cw-liqd2', ['WALCL','WRESBAL','RRPONTSYD'], ['WALCL','WRESBAL','RRPONTSYD','WDTGAL','WTREGEN','NETLIQ','WREPOFOR','SWPT','M2SL','M1SL','MMMFFAQ027S','LIQ_EZM3','LIQ_CNM2','CA_M2','ECBASSETSW','JPNASSETS','GM2_YOY','M2SL_YOY','LIQ_CNM2_YOY']);
     chartWidget('cw-liqd3', ['Y_MOVE','VIXCLS'], ['Y_MOVE','VIXCLS','BAMLH0A0HYM2','Y_TLT','Y_HYG','Y_GLD','NFCI','STFSI4']);
-  }).catch(function(){document.getElementById('liqSumD').innerHTML='<p style="font-size:13px;color:var(--dim);margin:0;">liquidity.json 拉取失败，请刷新重试</p>';});
+  }).catch(function(){
+    document.getElementById('liqSumD').innerHTML='<p style="font-size:13px;color:var(--dim);margin:0;">liquidity.json 拉取失败，请刷新重试</p>';
+    document.getElementById('liqConclusionD').innerHTML='<p style="font-size:13px;margin:0;color:var(--dim);">流动性结论加载失败，请刷新重试。</p>';
+  });
 }
 document.querySelectorAll('[data-dp="dp10"]').forEach(function(b){b.addEventListener('click',function(){setTimeout(mountLiq,60);});});
 /* ====== 债市/外汇图表工作区（懒挂载） ====== */
@@ -876,35 +747,11 @@ function joltsCard(){
     +'<p style="font-size:11.5px;color:var(--dim);margin:8px 0 0;line-height:1.7;">⚙️框架读法：空缺回升但<b style="color:var(--txt)">雇用率↓＋离职率↓</b>＝企业「不裁人也不招人」的冻结态——雇主与雇员双方都在观望。离职率是信心最敏感的温度计（敢跳槽=看好外面机会），降至1.9%已贴近疫情前低点区。<b style="color:var(--txt)">9/9 QCEW基准修正</b>前，这是检验「就业失速」成色的关键交叉验证：若非农再弱而空缺率继续回升，则弱非农更可能是供给端噪音而非需求崩塌。</p>';
 }
 
-/* ============ 今日新出数据（dp15） ============ */
+/* ============ 今日新出数据（dp15）· 四大发布面板 ============ */
 var _ndDone=0;
 function mountNewData(){
-  var box=document.getElementById('newDataBox'); if(!box||_ndDone)return; _ndDone=1;
-  fetch('../data/econ_calendar.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
-    var html='',shown=0;
-    (d.days||[]).forEach(function(day){
-      if(day.grp!=='本周')return;
-      var done=(day.events||[]).filter(function(e){return e[3]!=null;});
-      if(!done.length)return;
-      shown++;
-      var rows='';
-      done.forEach(function(e){
-        var stars='';for(var i=0;i<(e[2]||1);i++)stars+='★';
-        var bstyle='color:var(--gold)',btip='';
-        if(e[4]!=null){
-          if(e[3]>e[4]){bstyle='color:#e5534b';btip=' title="高于预期"';}
-          else if(e[3]<e[4]){bstyle='color:#4caf7d';btip=' title="低于预期"';}
-        }
-        rows+='<tr><td style="color:var(--dim)">'+e[0]+'</td><td style="text-align:left">'+e[1]+' <span style="color:var(--gold);font-size:10px">'+stars+'</span></td>'
-          +'<td'+btip+'><b style="'+bstyle+';font-size:14px">'+e[3]+'</b></td>'
-          +'<td style="color:var(--dim)">'+(e[4]!=null?e[4]:'—')+'</td><td style="color:var(--dim)">'+(e[5]!=null?e[5]:'—')+'</td></tr>';
-      });
-      html+='<div class="card" style="margin-bottom:12px;"><p style="font-size:13px;margin:0 0 6px;"><b style="color:var(--gold)">'+day.date+'</b><span style="color:var(--dim);font-size:11px;margin-left:8px">'+done.length+' 项已公布</span></p>'
-        +'<table style="margin:0"><tr><th>时间</th><th style="text-align:left">数据</th><th>公布值</th><th>预期</th><th>前值</th></tr>'+rows+'</table></div>';
-    });
-    if(!shown)html='<div class="card"><p style="color:var(--dim);font-size:13px;margin:0;">本周暂无可展示的已公布数据（或日历尚未刷新）。</p></div>';
-    box.innerHTML=html+'<p style="font-size:11px;color:var(--dim);margin-top:4px;">日历更新：'+(d.updated||'—')+' · 来源：'+(d.src||'财经日历(L3)')+' · 每周一起自动清空换新</p>';
-  }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">日历数据加载失败，点顶部「更新全部内容」重试。</p></div>';});
+  if(_ndDone)return; _ndDone=1;
+  renderBig4Panel('newDataBox','../data/release_panels.json');
 }
 
 /* ============ 每日财经图表（dp16） ============ */
@@ -1009,6 +856,8 @@ const CATALOG = [
 ];
 if(window.MACRO_CATALOG){window.MACRO_CATALOG.forEach(function(m){if(!CATALOG.some(function(c){return c.id===m.id;}))CATALOG.push({id:m.id,name:m.name,unit:m.unit||'',src:'L1'});});}
 let HIST = null, sel = ['DGS10','DFII10','T5YIE'], mode = 'line', rng = 3;
+/* 坐标轴手动指定：axisPref[id]=1右轴(次坐标轴)/0左轴/缺省=自动按量纲分配 */
+const axisPref = {};
 const chart = echarts.init(document.getElementById('chartBox'), null, {renderer:'canvas'});
 
 HIST = window.CHART_SERIES || {};
@@ -1020,8 +869,20 @@ function renderTags(){
     const t = document.createElement('span');
     t.className = 'tag2' + (sel.includes(c.id)?' on':'');
     t.innerHTML = `${c.name}<span class="u"> ${c.unit}</span>`;
+    if(sel.includes(c.id)){
+      const ax = document.createElement('span');
+      ax.className = 'axb';
+      ax.textContent = axisPref[c.id]===1 ? '右' : axisPref[c.id]===0 ? '左' : '自';
+      ax.title = '坐标轴：点按循环 自动→次坐标轴(右)→左轴';
+      ax.onclick = (e)=>{
+        e.stopPropagation();
+        axisPref[c.id] = axisPref[c.id]===undefined ? 1 : (axisPref[c.id]===1 ? 0 : undefined);
+        renderTags(); render();
+      };
+      t.appendChild(ax);
+    }
     t.onclick = ()=>{
-      if(sel.includes(c.id)){ sel = sel.filter(x=>x!==c.id); }
+      if(sel.includes(c.id)){ sel = sel.filter(x=>x!==c.id); delete axisPref[c.id]; }
       else { if(sel.length>=4){ alert('最多同时叠加4个指标'); return; } sel.push(c.id); }
       renderTags(); render();
     };
@@ -1050,29 +911,45 @@ const PALETTE = ['#d4a944','#5b9bd5','#4caf7d','#e5534b'];
 function render(){
   if(!HIST) return;
   if(mode==='seasonal') renderSeasonal(); else renderLine();
+  renderConcl();
+}
+/* 每个选中指标一条⚙️规则文字结论（规则公开：lib/conclusion_engine.js） */
+function renderConcl(){
+  const host = document.getElementById('chartConcl');
+  if(!host) return;
+  if(!window.CE || !CE.seriesConclusion){ host.innerHTML=''; return; }
+  const lines = sel.map(id=>{
+    const c = CATALOG.find(x=>x.id===id);
+    try{ return CE.seriesConclusion(id, c?c.name:id, c?c.unit:''); }catch(e){ return ''; }
+  }).filter(Boolean);
+  host.innerHTML = lines.length ? lines.join('') + (CE.stamp?CE.stamp():'') : '';
 }
 function renderLine(){
   const cut = cutoffDate();
-  const axes = {}, series = [], yAxis = [];
-  let axisIdx = 0;
+  const defs = [];
   sel.forEach((id,i)=>{
     const c = CATALOG.find(x=>x.id===id);
     const data = (HIST[id]||[]).filter(p=>p[0]>=cut);
     if(!data.length) return;
-    // 轴分配：首个左轴，量纲差异大的后续右轴
+    // 轴分配：手动指定优先；否则首指标左轴、量纲不同的后续右轴
     let yi = 0;
-    if(i>0){
-      const firstUnit = CATALOG.find(x=>x.id===sel[0]).unit;
-      if(c.unit!==firstUnit){ if(axisIdx<1){axisIdx++;} yi = axisIdx; }
-    }
-    if(!yAxis[yi]){
-      yAxis[yi] = {type:'value', name:c.unit, position: yi===0?'left':'right',
-        axisLabel:{color:'#8a94a6',fontSize:10}, splitLine:{lineStyle:{color:'#222a3a'}}, scale:true};
-    }
-    const sers={name:`${c.name}(${c.unit})`, type:mode==='bar'?'bar':'line', yAxisIndex:yi, showSymbol:false,
-      data:data, lineStyle:{width:1.6, color:PALETTE[i%4]}, itemStyle:{color:PALETTE[i%4]}};
+    if(axisPref[id]!==undefined) yi = axisPref[id];
+    else if(defs.length>0 && c.unit!==defs[0].c.unit) yi = 1;
+    defs.push({c:c, data:data, yi:yi, i:i});
+  });
+  const used = [...new Set(defs.map(d=>d.yi))].sort((a,b)=>a-b);
+  const idxMap = {}, yAxis = [];
+  used.forEach(u=>{
+    idxMap[u] = yAxis.length;
+    const d0 = defs.find(d=>d.yi===u);
+    yAxis.push({type:'value', name:d0?d0.c.unit:'', position: u===0?'left':'right',
+      axisLabel:{color:'#8a94a6',fontSize:10}, splitLine:{lineStyle:{color:'#222a3a'}}, scale:true});
+  });
+  const series = defs.map(d=>{
+    const sers={name:`${d.c.name}(${d.c.unit})`, type:mode==='bar'?'bar':'line', yAxisIndex:idxMap[d.yi], showSymbol:false,
+      data:d.data, lineStyle:{width:1.6, color:PALETTE[d.i%4]}, itemStyle:{color:PALETTE[d.i%4]}};
     if(mode==='bar'){ sers.barMaxWidth=14; delete sers.lineStyle; }
-    series.push(sers);
+    return sers;
   });
   chart.clear();
   chart.setOption({
@@ -1129,12 +1006,14 @@ window.addEventListener('resize', ()=>chart.resize());
 <script>
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function renderLive(S){
-  // FedWatch
+  // FedWatch（若官方管线 fedwatch.json 已成功渲染，则跳过手工快照，避免旧值覆盖新值）
+  if(!window.__fwFresh){
   let fw = S.fedwatch;
   let rows = fw.meetings.map(m=>`<tr><td>${m.date}</td><td>${m.hold}%</td><td class="up">${m.hike25}%</td><td>${m.hike50?m.hike50+'%':'—'}</td></tr>`).join('');
   document.getElementById('fwBox').innerHTML =
     `<table><tr><th>FOMC会议</th><th>维持不变</th><th>加息25bp</th><th>加息50bp</th></tr>${rows}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:6px;">${esc(fw.src)} · 截至 ${fw.asof} · ${esc(fw.note)}；前一快照(${fw.prev.asof})：9月维持${fw.prev.hold}% / 加息${fw.prev.hike25}%</div>`;
+  }
   // TACO
   let t = S.taco;
   let comps = t.comps.map(c=>`<tr><td>${c[0]}</td><td class="${c[1]>=0?'up':'dn'}" style="text-align:right;">${c[1]>0?'+':''}${c[1]}%</td></tr>`).join('');
@@ -1222,6 +1101,7 @@ function refreshAll(){
     if(typeof mountWSd==='function')mountWSd();
     if(typeof autoChg==='function')autoChg();
     if(typeof buildSnapD==='function')buildSnapD();
+    if(window.CE&&CE.renderDaily){CE._reset();CE.renderDaily();}
   }catch(e){} };
   document.head.appendChild(cs);
   /* ② 手工策划快照 */
@@ -1245,8 +1125,17 @@ function refreshAll(){
   });
 }
 function refreshLive(){ refreshAll(); }
+/* ▶ 一键更新全部数据与观点：跳转到管线页手动跑一次 + 本页穿透缓存刷新 */
+function runPipeline(){
+  var m=document.getElementById('updMsg');
+  if(m)m.innerHTML='已打开管线页👉 点 <b style="color:var(--gold)">Run workflow</b>（需登录GitHub）→ 约3分钟后回到本页再点此按钮即全部最新';
+  window.open('https://github.com/gsy1005/research-workbench/actions/workflows/daily_data.yml','_blank');
+  try{refreshAll();}catch(e){}
+}
+/* 页面加载完成后：规则引擎生成全部结论文字 */
+window.addEventListener('load',function(){ try{ if(window.CE&&CE.renderDaily)CE.renderDaily(); }catch(e){} });
 
-/* ================= 永动版专属 ================= */
+/* ================= 自动更新版专属 ================= */
 /* --- 自动数据日 --- */
 function autoDate(){
   var el=document.getElementById('autoDate'); if(!el)return;
@@ -1429,12 +1318,34 @@ function renderBanks(F){
   }).join('') +
   `<div style="font-size:11px;color:var(--dim);">${esc(F.src)} · 整理截至 ${F.asof}</div>`;
 }
+/* 五、政策定价面板·FedWatch小表：直读官方管线 fedwatch.json（fedwatch.yml 工作日每2小时更新），
+   不再读手工快照 live_snapshot.js（该文件无管线维护、9/2起冻结）；加载失败才回落快照 */
+async function loadFwMini(){
+  try{
+    const r = await fetch('../data/fedwatch.json?v='+Date.now());
+    if(!r.ok) throw 0;
+    const F = await r.json();
+    const rows = F.meetings.map((m,i)=>{
+      const hi = m.hike>=50?'up':(m.ease>=50?'dn':'');
+      return `<tr style="${i===0?'background:rgba(212,169,68,.08);':''}"><td>${m.meeting}${i===0?' ◀最近':''}</td>`+
+        `<td style="text-align:right;">${m.ease}%</td><td style="text-align:right;">${m.no_change}%</td>`+
+        `<td class="${hi}" style="text-align:right;font-weight:700;">${m.hike}%</td></tr>`;
+    }).join('');
+    const concl = (window.CE&&window.CE.fwConclusion)?window.CE.fwConclusion(F):'';
+    window.__fwFresh = true;
+    document.getElementById('fwBox').innerHTML =
+      `<table><tr><th>FOMC会议</th><th style="text-align:right;">降息</th><th style="text-align:right;">维持</th><th style="text-align:right;">加息</th></tr>${rows}</table>`+
+      concl+
+      `<div style="font-size:11px;color:var(--dim);margin-top:6px;">L2·${esc(F.source)} · ${esc(F.contract||'')} · 截至 ${F.asof} · 工作日07-23点每2小时管线自动更新</div>`;
+  }catch(e){ /* 保留 renderLive 写入的 LIVE_SNAPSHOT 快照作兜底 */ }
+}
 async function loadForecast(){
   try{
     const r = await fetch('../data/fedwatch.json?v='+Date.now());
     if(!r.ok) throw 0;
     renderFwFull(await r.json());
   }catch(e){ fwFullFallback(); }
+  loadFwMini();
   try{
     const r2 = await fetch('../data/forecasts.json?v='+Date.now());
     if(!r2.ok) throw 0;

@@ -27,6 +27,7 @@ MKTS = [
     ('CFTC_ES_NET', '13874A', '标普E-mini非商业净持仓','手','asset', None, None),
     ('CFTC_BTC_NET','133741', '比特币期货非商业净持仓','手','asset', None, None),
     ('CFTC_HG_NET', '085692', '铜非商业净持仓',     '手', 'asset', None, None),
+    ('CFTC_CL_NET', '067651', 'WTI原油非商业净持仓',  '手', 'asset', None, None),
 ]
 LEV_KEYS = {'gold': 'CFTC_GC_NET', 'silver': 'CFTC_SI_NET',
             'platinum': 'CFTC_PL_NET', 'palladium': 'CFTC_PA_NET'}
@@ -158,6 +159,20 @@ def main():
         if dd:
             cs[key] = sorted(old.items())
             n_ok += 1
+    # HT仓位镜像: HT_asset_仓位_* 本质=CFTC免费周报的拷贝, 直接镜像免手工Excel
+    HT_MIRROR = {
+        'CFTC_TY_NET': 'HT_asset_仓位_10Y美债-非商业_非商业多头净持仓',
+        'CFTC_US_NET': 'HT_asset_仓位_超长债-非商业_非商业多头净持仓',
+        'CFTC_GC_NET': 'HT_asset_仓位_COMEX黄金-非商业_非商业多头净持仓',
+        'CFTC_DX_NET': 'HT_asset_仓位_美元指数-非商业_非商业多头净持仓',
+        'CFTC_HG_NET': 'HT_asset_仓位_LME铜-非商业_非商业多头净持仓',
+        'CFTC_CL_NET': 'HT_asset_仓位_WTI原油-非商业_非商业多头净持仓',
+        'CFTC_BZ_NET': 'HT_asset_仓位_IPE原油-非商业_非商业多头净持仓',
+    }
+    for src_key, ht_key in HT_MIRROR.items():
+        if src_key in cs and cs[src_key]:
+            cs[ht_key] = [list(p) for p in cs[src_key]]
+            log('HT镜像:', ht_key, '<-', src_key)
     if n_ok or etf:
         save_cs(cs)
         log('合并%d条CFTC序列' % n_ok)

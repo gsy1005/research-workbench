@@ -1,0 +1,37 @@
+上传回 GitHub · 最简单步骤（2026-09-13 自动观点版）
+=====================================================
+
+1. 解压本 ZIP，得到文件夹 research-workbench-upload-root
+
+2. 打开 GitHub Desktop → 左上角 Current Repository 选 research-workbench
+   → 菜单 Repository → Open in Explorer（打开仓库文件夹）
+
+3. 把仓库文件夹里【除了 .git 以外的所有文件】全部删除
+   （.git 是隐藏文件夹，千万别动它）
+
+4. 把解压出来的 research-workbench-upload-root 文件夹里的
+   【全部文件和文件夹】复制进仓库文件夹
+
+5. 回到 GitHub Desktop，左下角 Summary 填：自动观点版 2026-09-13
+   → 点 Commit to main → 点 Push origin
+
+6. 等 3-5 分钟，打开网站强制刷新（Ctrl+F5）验证：
+   · 日报「日度结论/九维/证伪雷达/债市/外汇」每节标题都带
+     「⚙️规则引擎自动生成 · 数据日 2026-09-11」——文字不再是 9/2 冻结
+   · 「今日新出数据」页签：CPI 卡片标 🔥本周新出，带贡献堆积图和规则解读
+   · 顶部按钮变成「▶ 一键更新全部数据与观点」
+   · 「五、政策定价」FedWatch 表显示「截至 2026-09-11」（不再卡 9/2），
+     表下带一条「⚙️定价解读」
+   · 「六、数据图表」：点选任意指标后，指标上出现「自/右/左」小标
+     （点它循环切换 自动→次坐标轴→左轴），图下方每个选中指标
+     各有一条⚙️规则文字结论
+
+7. 想手动跑一次最新数据：点页面顶部「▶ 一键更新」按钮
+   → 自动打开 GitHub 管线页 → 点右上角「Run workflow」→「Run workflow」
+   → 约 3 分钟后回网站再点一次该按钮，全部数据+文字即最新
+   （前提：你已登录 GitHub 且是仓库主人 gsy1005）
+
+※ Secrets 检查（之前已配好就跳过）：
+  仓库 Settings → Secrets and variables → Actions 里应有：
+  IFIND_MCP_KEY（iFinD 数据）· JIN10_TOKEN · BLS_KEY · BEA_KEY
+  缺哪个补哪个；BLS/BEA 缺失只会让四大面板的部分块保留旧值，不影响网站打开。

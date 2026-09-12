@@ -11,6 +11,7 @@ import json, os, re, sys, datetime, struct, xml.etree.ElementTree as ET
 
 APP = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(APP, 'data', 'calendar_consensus.json')
+ECON_OUT = os.path.join(APP, 'data', 'econ_calendar.json')
 URL = 'https://nfs.faireconomy.media/ff_calendar_thisweek.xml'
 
 CN_MAP = {
@@ -545,6 +546,75 @@ def main():
     if fails:
         out['partial'] = fails
     json.dump(out, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False)
+
+    # 同步生成页面顶部宏观日历使用的 econ_calendar.json。
+    # 之前只提交 calendar_consensus.json，导致页面日历停留在旧日期。
+    try:
+        base = bjt_now.date()
+        week_start = base - datetime.timedelta(days=base.weekday())
+        week_end = week_start + datetime.timedelta(days=6)
+        next_end = week_end + datetime.timedelta(days=7)
+        default_grp = '下周' if base.weekday() == 6 else '本周'
+        weeks = ['一', '二', '三', '四', '五', '六', '日']
+        imp_star = {'High': 4, 'Medium': 3, 'Low': 2, 'Holiday': 0}
+
+        def parse_day(d):
+            m, d2 = map(int, d.split('/'))
+            dt = datetime.date(base.year, m, d2)
+            if (dt - base).days > 180:
+                dt = datetime.date(base.year - 1, m, d2)
+            if (base - dt).days > 180:
+                dt = datetime.date(base.year + 1, m, d2)
+            return dt
+
+        def norm(x):
+            return None if x in (None, '') else str(x)
+
+        bucket = {}
+        def add(dt, tm, name, star, ac=None, fc=None, pv=None):
+            bucket.setdefault(dt, []).append((tm or '', name, star, ac, fc, pv))
+
+        for e in out.get('events', []):
+            try:
+                dt = parse_day(e.get('d', ''))
+            except Exception:
+                continue
+            name = e.get('tcn') or e.get('ten') or ''
+            if not name:
+                continue
+            if e.get('ten') and e.get('tcn') and e.get('ten') != e.get('tcn'):
+                name += ' · ' + e['ten']
+            add(dt, e.get('tm', ''), name, imp_star.get(e.get('imp'), 1), norm(e.get('ac')), norm(e.get('fc')), norm(e.get('pv')))
+        for e in out.get('em', []):
+            try:
+                dt = parse_day(e.get('d', ''))
+            except Exception:
+                continue
+            if e.get('name'):
+                add(dt, e.get('tm', ''), e['name'], 1)
+
+        days = []
+        for dt in sorted(bucket):
+            grp = '本周' if week_start <= dt <= week_end else ('下周' if week_end < dt <= next_end else '关键节点')
+            evs = sorted(bucket[dt], key=lambda x: (x[0] or '99:99', -(x[2] or 0), x[1]))
+            days.append({'date': '%d/%d 周%s' % (dt.month, dt.day, weeks[dt.weekday()]), 'grp': grp, 'events': [list(x) for x in evs]})
+        if default_grp == '下周':
+            order = {'下周': 0, '本周': 1, '关键节点': 2}
+        else:
+            order = {'本周': 0, '下周': 1, '关键节点': 2}
+        days.sort(key=lambda x: (order.get(x['grp'], 9), parse_day(x['date'].split()[0])))
+        econ = {
+            'updated': bjt_now.strftime('%Y-%m-%d'),
+            'default_grp': default_grp,
+            'src': 'L2·财经日历快照（由 calendar_consensus.json 同步生成；底层官方预告/财经数据商汇编）',
+            'tz': '北京时间',
+            'rule': '周日自动默认显示下周，其他日期默认显示本周；本周/下周/关键节点可手动切换；每卡仅显星级最高的1条，其余折叠进「其他+N」；公布值红/绿，预期金，前值灰',
+            'days': days,
+        }
+        json.dump(econ, open(ECON_OUT, 'w', encoding='utf-8'), ensure_ascii=False)
+        print('ECON_CAL_SYNC:', ECON_OUT, len(days), 'days')
+    except Exception as e:
+        print('ECON_CAL_SYNC_FAIL:', e)
     hi = [e for e in out['events'] if e.get('imp') == 'High']
     print('OK J10 %d条 + FF %d条(High %d) + EM %d条 截至%s' % (len(out['j10']['items']), len(out['events']), len(hi), len(out['em']), out['asof']))
     for e in hi:

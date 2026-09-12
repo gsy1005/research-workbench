@@ -1,0 +1,8 @@
+{
+  "updated": "2026-09-13 01:23:03 北京",
+  "source": "iFinD MCP",
+  "ok": [],
+  "failed": {},
+  "skipped": "未配置 GitHub Secret IFIND_MCP_KEY，已保留及时免费公开源数据",
+  "note": "及时免费 API 优先；滞后免费源才由 iFinD 替代；密钥不写入仓库"
+}
