@@ -193,6 +193,38 @@ try:
 except Exception as e:
     keep_old('cpi_hist', repr(e)[:120])
 
+# ================= 2b+. CPI核心服务八明细(彭博ECVO式分项贡献) =================
+# 权重=BLS相对重要性2025-12快照(与用户彭博终端一致); 家庭经营=核心服务减七项的残差权重
+CPI_DETAIL_ITEMS = [
+    ('住所', 'CUSR0000SAH1', 35.343),
+    ('医疗保健服务', 'CUSR0000SAM2', 6.864),
+    ('交通运输服务', 'CUSR0000SAS4', 6.310),
+    ('教育与通讯服务', 'CUSR0000SAE', 4.928),
+    ('休闲服务', 'CUSR0000SARS', 3.154),
+    ('其他个人服务', 'CUSR0000SEGD', 1.606),
+    ('供水污水和垃圾收集', 'CUSR0000SEHG', 1.145),
+    ('家庭经营', 'CUSR0000SEHH02', 0.922),
+]
+try:
+    if '_mom_series' not in dir():
+        raise RuntimeError('mom_series未就绪(上游cpi_hist失败)')
+    log('== CPI核心服务八明细 ==')
+    ids = [x[1] for x in CPI_DETAIL_ITEMS]
+    d = bls_fetch(ids, 2024, 2026)
+    items = []
+    for name, sid, w in CPI_DETAIL_ITEMS:
+        mom = _mom_series(d.get(sid, []))
+        if not mom:
+            log('  明细缺数据:', name, sid)
+        items.append({'name': name, 'w': w, 'sid': sid, 'mom': mom})
+    panel['blocks']['cpi_detail'] = {
+        'items': items,
+        'src': 'L1·BLS CPI季调环比(核心服务八明细); 权重=BLS相对重要性2025-12快照(与彭博一致)',
+        'note': '环比贡献(pp)≈权重×分项环比/100; 八项合计与核心服务存在舍入/口径残差'}
+    log('  cpi_detail items:', len(items))
+except Exception as e:
+    keep_old('cpi_detail', repr(e)[:120])
+
 # ================= 2c. BLS PPI 最终需求(四大之PPI) =================
 PPI_ITEMS = [  # (中文名, SA序列, NSA序列)
     ('最终需求', 'WPSFD4', 'WPUFD4'),

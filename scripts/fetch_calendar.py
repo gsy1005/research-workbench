@@ -593,6 +593,29 @@ def main():
             if e.get('name'):
                 add(dt, e.get('tm', ''), e['name'], 1)
 
+        # —— 静态注入：FOMC官方会议日程（美联储提前一年公布，L1官方）——
+        # 抓取源只覆盖当周/未来14天，会议经常缺席；官方日程固定，直接注入确保永远在历。
+        # 声明=会议第二日14:00 ET → 北京时间次日02:00(夏令)/03:00(冬令)；记者会+30分钟。
+        FOMC_BJT = [
+            ('2026-09-17', '02:00'), ('2026-10-29', '02:00'), ('2026-12-10', '03:00'),
+            ('2027-01-28', '03:00'), ('2027-03-18', '02:00'), ('2027-04-29', '02:00'),
+            ('2027-06-17', '02:00'), ('2027-07-29', '02:00'), ('2027-09-16', '02:00'),
+            ('2027-10-28', '02:00'), ('2027-12-08', '03:00'),
+        ]
+        for iso, tm in FOMC_BJT:
+            try:
+                dt = datetime.date.fromisoformat(iso)
+            except Exception:
+                continue
+            if abs((dt - base).days) > 180:
+                continue
+            names = ' '.join(str(x[1]) for x in bucket.get(dt, []))
+            if 'FOMC' in names or '联邦基金利率' in names or '利率决议' in names:
+                continue
+            add(dt, tm, '美联储FOMC利率决议+声明 · FOMC Statement', 5)
+            hh, mm = int(tm[:2]), int(tm[3:])
+            add(dt, '%02d:%02d' % (hh, mm + 30), '美联储主席记者会 · FOMC Press Conference', 4)
+
         days = []
         for dt in sorted(bucket):
             grp = '本周' if week_start <= dt <= week_end else ('下周' if week_end < dt <= next_end else '关键节点')

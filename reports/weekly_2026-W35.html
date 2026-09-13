@@ -8,6 +8,7 @@
 <script src="../lib/echarts.min.js"></script>
 <script src="../data/chart_series.js"></script>
 <script src="../lib/conclusion_engine.js"></script>
+<script src="../lib/owner_edit.js"></script>
 <script src="../data/live_snapshot.js"></script>
 <script src="../data/mm_catalog.js" onerror="window.MM_CATALOG=null"></script>
 <script src="../data/macro_catalog.js" onerror="window.MACRO_CATALOG=null"></script>
@@ -122,7 +123,6 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
       <div class="meta">板块正文=8/24–8/28 当周存档 · <b style="color:var(--gold)">本页顶部结论/资产表/证伪清单由⚙️规则引擎按最新数据自动生成</b> · <b class="snapAsof" style="color:var(--gold);"></b></div>
     </div>
     <div style="display:flex;align-items:center;">
-      <button class="updbtn" onclick="runPipeline()" title="跑一遍数据管线并刷新本页">▶ 一键更新全部数据与观点</button>
       <span id="updMsg"></span>
     </div>
   </div>
@@ -465,16 +465,20 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 <script src="../lib/chart_widget.js"></script>
 <script src="../lib/econ_calendar.js"></script>
+<script src="../lib/fresh_panels.js"></script>
 
 <script>function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function renderLive(S){
-  // FedWatch
+  // FedWatch（若 fresh_panels.js 已用 fedwatch.json 渲染，则跳过快照）
+  if(!window.__fwFresh){
   let fw = S.fedwatch;
   let rows = fw.meetings.map(m=>`<tr><td>${m.date}</td><td>${m.hold}%</td><td class="up">${m.hike25}%</td><td>${m.hike50?m.hike50+'%':'—'}</td></tr>`).join('');
   document.getElementById('fwBox').innerHTML =
     `<table><tr><th>FOMC会议</th><th>维持不变</th><th>加息25bp</th><th>加息50bp</th></tr>${rows}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:6px;">${esc(fw.src)} · 截至 ${fw.asof} · ${esc(fw.note)}；JH前一日(8/27)：9月维持${fw.prev.hold}% / 加息${fw.prev.hike25}%</div>`;
-  // TACO
+  }
+  // TACO（若 fresh_panels.js 已渲染则跳过）
+  if(!window.__tacoFresh){
   let t = S.taco;
   let comps = t.comps.map(c=>`<tr><td>${c[0]}</td><td class="${c[1]>=0?'up':'dn'}" style="text-align:right;">${c[1]>0?'+':''}${c[1]}%</td></tr>`).join('');
   let evs = t.events.map(e=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><span style="color:var(--dim);font-size:11px;">${e[0]}</span> ${e[1]}</div>`).join('');
@@ -488,7 +492,9 @@ function renderLive(S){
      <table>${comps}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:10px;">近期TACO事件：</div>${evs}
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(t.src)} · 数据日 ${t.asof} · ${esc(t.method)}</div>`;
-  // 美伊
+  }
+  // 美伊（若 fresh_panels.js 已渲染则跳过）
+  if(!window.__iranFresh){
   let ir = S.iran;
   let mk = ir.markets.map(m=>`<tr><td>${m.q}</td><td class="up" style="text-align:right;font-weight:700;">${m.yes}%</td><td style="text-align:right;">${m.vol}</td><td style="font-size:11px;color:var(--dim);">${m.chg}</td></tr>`).join('');
   let iev = ir.events.map(e=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><span style="color:var(--dim);font-size:11px;">${e[0]}</span> ${e[1]}</div>`).join('');
@@ -496,6 +502,7 @@ function renderLive(S){
     `<table><tr><th>预测市场（Yes=达成/恢复）</th><th style="text-align:right;">概率</th><th style="text-align:right;">成交额</th><th>变动</th></tr>${mk}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">最新进展：</div>${iev}
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(ir.src)} · 数据日 ${ir.asof}</div>`;
+  }
   // 金十式数据日历（本周/下周/关键节点 按钮切换;每卡仅显最重要1条,其余折叠"其他+N"）
   let cal = S.calendar;
   function calFallback(){
@@ -510,13 +517,11 @@ function renderLive(S){
   } else { calFallback(); }
   document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='数据快照：'+S.asof);
 }
-function runPipeline(){
-  var m=document.getElementById('updMsg');
-  if(m)m.innerHTML='已打开管线页👉 点 <b style="color:var(--gold)">Run workflow</b>（需登录GitHub）→ 约3分钟后回本页再点此按钮即全部最新';
-  window.open('https://github.com/gsy1005/research-workbench/actions/workflows/daily_data.yml','_blank');
-  try{refreshLive();}catch(e){}
-}
-window.addEventListener('load',function(){ try{ if(window.CE&&CE.renderWeekly)CE.renderWeekly(); }catch(e){} });
+/* 一键更新按钮已移至站长页（../panels/owner.html，站长密码进入）——本页不再展示 */
+window.addEventListener('load',function(){
+  try{ if(window.CE&&CE.renderWeekly)CE.renderWeekly(); }catch(e){}
+  try{ if(window.RW_OWNER){ window.RW_OWNER.applyOverrides(); if(window.RW_OWNER.isOwner())window.RW_OWNER.arm(); } }catch(e){}
+});
 function refreshLive(){
   const old = document.getElementById('livejs'); if(old) old.remove();
   const s = document.createElement('script'); s.id='livejs';

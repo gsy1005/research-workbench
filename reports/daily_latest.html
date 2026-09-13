@@ -9,6 +9,8 @@
 <script src="../data/chart_series.js" id="csjs"></script>
 <script src="../lib/conclusion_engine.js"></script>
 <script src="../lib/big4_panel.js"></script>
+<script src="../lib/owner_edit.js"></script>
+<script src="../lib/fresh_panels.js"></script>
 <script src="../data/macro_catalog.js" onerror="window.MACRO_CATALOG=null"></script>
 <script src="../lib/research_toolbox.js"></script>
 <script src="../lib/release_panels.js"></script>
@@ -206,14 +208,13 @@
       <div class="meta">自动更新版 · 数据日 <b id="autoDate">读取中…</b> · 全部结论文字由⚙️规则引擎按最新数据自动生成（<a href="../lib/conclusion_engine.js" style="color:var(--gold)">规则公开 ↗</a>）· 人工旧观点<a href="daily_2026-09-02.html" style="color:var(--gold)">9/2存档 ↗</a> · 事后数据不回填 · <b class="snapAsof"></b></div>
     </div>
     <div style="display:flex;align-items:center;">
-      <button class="updbtn" onclick="runPipeline()" title="跑一遍数据管线并刷新本页">▶ 一键更新全部数据与观点</button>
       <span id="updMsg"></span>
     </div>
   </div>
 </header>
 
 <!-- ============ 板块页签 ============ -->
-<div style="background:rgba(76,175,125,.07);border:1px solid rgba(76,175,125,.3);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:var(--dim);line-height:1.7;">⚡ <b style="color:var(--txt)">自动更新版</b>：数据每日 07:40/20:40（北京）管线自动更新；<b>本页全部结论文字（日度结论/九维/证伪雷达/债市/外汇/象限/评分）由⚙️规则引擎按最新数据在打开页面时现场生成，数据变→文字自动变，不再有人工冻结</b>；顶部「▶ 一键更新」= 跳转到管线页手动跑一次（登录GitHub后点 Run workflow，约3分钟生效）。本页<b>零人工维护</b>，打开即最新。</div>
+<div style="background:rgba(76,175,125,.07);border:1px solid rgba(76,175,125,.3);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:var(--dim);line-height:1.7;">⚡ <b style="color:var(--txt)">自动更新版</b>：数据每日 07:40/20:40（北京）管线自动更新；<b>本页全部结论文字（日度结论/九维/证伪雷达/债市/外汇/象限/评分）由⚙️规则引擎按最新数据在打开页面时现场生成，数据变→文字自动变，不再有人工冻结</b>。本页<b>零人工维护</b>，打开即最新。</div>
 <div class="dtabs" id="dtabs">
   <button data-dp="dp1" class="on">总览</button>
   <button data-dp="dp14" style="border-color:var(--gold)">重要数据总览</button>
@@ -258,7 +259,7 @@
 <div class="ovGrid" id="ovGrid"></div>
 
 <!-- ============ 一、今日三条边际变化（置顶） ============ -->
-<h2 style="margin-top:0">一、今日边际变化（自动扫描）<span class="en">AUTO SCAN · 339条序列全扫 · 阈值突破优先 · ⚙️规则生成无人工观点</span></h2>
+<h2 style="margin-top:0">一、今日三条边际变化<span class="en">THREE CHANGES · 框架同9/2人工版：事件+定量+证伪点 · ⚙️规则按边际分每日取前三（霍尔木兹/FOMC/通胀/就业/美债/黄金/美元/流动性/中国）</span></h2>
 <div id="autoChg">扫描中…</div>
 
 <!-- ============ 关键数据时间表（结论上方） ============ -->
@@ -482,6 +483,7 @@
 <footer style="margin-top:36px;color:var(--dim);font-size:11px;border-top:1px solid var(--line);padding-top:12px;">
   宏观研究日报 · 数据皆有来源，缺口标灰 · 观点事前冻结 · 框架版本 v1.0（八大版块）<br>
   <a href="weekly_2026-W35.html">最新周报 ↗</a> · <a href="../panels/trump_zone.html">特朗普执政关注焦点 ↗</a> · 中哲金属 · 甘思雨
+  <a href="../panels/owner.html" style="float:right;color:#3a4356;text-decoration:none;font-size:10px;" title="站长入口">·</a>
 </footer>
 </div>
 
@@ -797,7 +799,7 @@ function mountNotes(){
   var box=document.getElementById('notesBox'); if(!box||_ntDone)return; _ntDone=1;
   fetch('../data/research_notes.json?v='+Date.now()).then(function(r){return r.json();}).then(function(d){
     var notes=(d.notes||[]);
-    var html='';
+    var html='<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">用户供稿制 · 整理截至 '+(d.asof||'—')+' · 新供稿（研报PDF/截图）发Kimi当晚入库</div>';
     if(!notes.length){
       html='<div class="card"><p style="font-size:13px;color:var(--dim);margin:0;line-height:1.8;">📮 <b style="color:var(--txt)">今日供稿位空置</b>。把研报PDF/截图或财经图表发给助手，当晚写入本页：<br>· 研报 → 机构+日期+核心观点转述+关键数据+框架交叉验证<br>· 图表 → 数据事实提取，自有管线验证后重绘进「每日财经图表」</p></div>';
     }else{
@@ -1014,7 +1016,8 @@ function renderLive(S){
     `<table><tr><th>FOMC会议</th><th>维持不变</th><th>加息25bp</th><th>加息50bp</th></tr>${rows}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:6px;">${esc(fw.src)} · 截至 ${fw.asof} · ${esc(fw.note)}；前一快照(${fw.prev.asof})：9月维持${fw.prev.hold}% / 加息${fw.prev.hike25}%</div>`;
   }
-  // TACO
+  // TACO（若 fresh_panels.js 已用 trump_zone.json 渲染，则跳过快照）
+  if(!window.__tacoFresh){
   let t = S.taco;
   let comps = t.comps.map(c=>`<tr><td>${c[0]}</td><td class="${c[1]>=0?'up':'dn'}" style="text-align:right;">${c[1]>0?'+':''}${c[1]}%</td></tr>`).join('');
   let evs = t.events.map(e=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><span style="color:var(--dim);font-size:11px;">${e[0]}</span> ${e[1]}</div>`).join('');
@@ -1028,7 +1031,9 @@ function renderLive(S){
      <table>${comps}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:10px;">近期TACO事件：</div>${evs}
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(t.src)} · 数据日 ${t.asof} · ${esc(t.method)}</div>`;
-  // 美伊
+  }
+  // 美伊（若 fresh_panels.js 已用 polymarket.json+geopolitics.json 渲染，则跳过快照）
+  if(!window.__iranFresh){
   let ir = S.iran;
   let mk = ir.markets.map(m=>`<tr><td>${m.q}</td><td class="up" style="text-align:right;font-weight:700;">${m.yes}%</td><td style="text-align:right;">${m.vol}</td><td style="font-size:11px;color:var(--dim);">${m.chg}</td></tr>`).join('');
   let iev = ir.events.map(e=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><span style="color:var(--dim);font-size:11px;">${e[0]}</span> ${e[1]}</div>`).join('');
@@ -1036,6 +1041,7 @@ function renderLive(S){
     `<table><tr><th>预测市场（Yes=达成/恢复）</th><th style="text-align:right;">概率</th><th style="text-align:right;">成交额</th><th>变动</th></tr>${mk}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">最新进展：</div>${iev}
      <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(ir.src)} · 数据日 ${ir.asof}</div>`;
+  }
   // 金十式数据日历（本周/下周/关键节点 按钮切换;每卡仅显最重要1条,其余折叠"其他+N"）
   let cal = S.calendar;
   document.getElementById('calSeg').style.display='none';
@@ -1052,8 +1058,8 @@ function renderLive(S){
       document.getElementById('calNote').textContent='';
     }, calFallback);
   } else { calFallback(); }
-  // 关键数据时间表（结论上方）
-  if(cal.keydates){
+  // 关键数据时间表（结论上方）（若 fresh_panels.js 已用 calendar_consensus 渲染则跳过）
+  if(cal.keydates && !window.__kdFresh){
     document.getElementById('keyDateBar').innerHTML = cal.keydates.map(k=>
       `<div class="kd ${k[2].length>=4?'hot':''}"><div class="kdd">${k[0]}</div><div class="kde">${k[1]}</div><div class="kds">${k[2]}</div></div>`
     ).join('<div class="kdarr">→</div>');
@@ -1102,6 +1108,7 @@ function refreshAll(){
     if(typeof autoChg==='function')autoChg();
     if(typeof buildSnapD==='function')buildSnapD();
     if(window.CE&&CE.renderDaily){CE._reset();CE.renderDaily();}
+    if(window.RW_OWNER){window.RW_OWNER.applyOverrides();if(window.RW_OWNER.isOwner())window.RW_OWNER.arm();}
   }catch(e){} };
   document.head.appendChild(cs);
   /* ② 手工策划快照 */
@@ -1125,15 +1132,12 @@ function refreshAll(){
   });
 }
 function refreshLive(){ refreshAll(); }
-/* ▶ 一键更新全部数据与观点：跳转到管线页手动跑一次 + 本页穿透缓存刷新 */
-function runPipeline(){
-  var m=document.getElementById('updMsg');
-  if(m)m.innerHTML='已打开管线页👉 点 <b style="color:var(--gold)">Run workflow</b>（需登录GitHub）→ 约3分钟后回到本页再点此按钮即全部最新';
-  window.open('https://github.com/gsy1005/research-workbench/actions/workflows/daily_data.yml','_blank');
-  try{refreshAll();}catch(e){}
-}
-/* 页面加载完成后：规则引擎生成全部结论文字 */
-window.addEventListener('load',function(){ try{ if(window.CE&&CE.renderDaily)CE.renderDaily(); }catch(e){} });
+/* 本页全自动更新，无人工维护入口 */
+/* 页面加载完成后：规则引擎生成全部结论文字 → 再应用站长本机人工修订（如有） */
+window.addEventListener('load',function(){
+  try{ if(window.CE&&CE.renderDaily)CE.renderDaily(); }catch(e){}
+  try{ if(window.RW_OWNER){ window.RW_OWNER.applyOverrides(); if(window.RW_OWNER.isOwner())window.RW_OWNER.arm(); } }catch(e){}
+});
 
 /* ================= 自动更新版专属 ================= */
 /* --- 自动数据日 --- */
@@ -1189,34 +1193,37 @@ function _fmtChg(o){
 function _fmtV(o){return o.mode==='bp100'?(o.v*100).toFixed(0)+'bp':(o.v>=1000?o.v.toFixed(1):o.v.toFixed(2))+o.u;}
 function autoChg(){
   var box=document.getElementById('autoChg'); if(!box)return;
-  if(!window.CHART_SERIES){setTimeout(autoChg,400);return;}
-  var hits=[],moves=[];
-  CHG_RULES.forEach(function(r){
-    var d1=_csP(r.k,1); if(!d1)return;
-    var d5=_csP(r.k,5);
-    var o={r:r,v:d1.cur[1],dt:d1.cur[0],prev:d1.prev[1],chg:d1.cur[1]-d1.prev[1],chg5:d5?d1.cur[1]-d5.prev[1]:null};
-    o.hit=r.thr?r.thr(o.v):null;
-    o.mag=r.mode==='pct'?Math.abs(o.chg/o.prev*100):Math.abs(o.chg*100);
-    if(o.hit)hits.push(o);else moves.push(o);
-  });
-  moves.sort(function(a,b){return b.mag-a.mag;});
-  var picks=hits.concat(moves).slice(0,4);
-  if(!picks.length){box.innerHTML='<div class="card"><p style="color:var(--dim)">底稿未加载。</p></div>';return;}
-  var h='';
-  picks.forEach(function(o,i){
-    var tag=o.hit?'<span style="color:#e5534b">⚠ 阈值突破</span>':'<span style="color:var(--dim)">单日变动榜#'+(i+1)+'</span>';
-    var c5='';
-    if(o.chg5!=null){
-      if(o.r.mode==='pct')c5=' · 5日 '+(o.chg5>=0?'+':'')+(o.chg5/(o.v-o.chg5)*100).toFixed(2)+'%';
-      else if(o.r.mode==='abs')c5=' · 5日 '+(o.chg5>=0?'+':'')+o.chg5.toFixed(2);
-      else c5=' · 5日 '+(o.chg5*100>=0?'+':'')+(o.chg5*100).toFixed(0)+'bp';
+  if(!window.CHART_SERIES||!window.CE||!window.CE.threeEdges){setTimeout(autoChg,400);return;}
+  /* 并发取地缘时间线与Polymarket（失败不阻塞，主题卡自动降级为纯数据版） */
+  var gp=fetch('../data/geopolitics.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+  var pp=fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+  Promise.all([gp,pp]).then(function(rs){
+    var h='';
+    try{ h+=window.CE.threeEdges(rs[0],rs[1]); }catch(e){ h+='<div class="card"><p style="color:var(--dim)">主题卡生成失败：'+e+'</p></div>'; }
+    /* 折叠备查：序列扫描全榜（原自动扫描保留） */
+    var rows=[];
+    CHG_RULES.forEach(function(r){
+      var d1=_csP(r.k,1); if(!d1)return;
+      var o={r:r,v:d1.cur[1],dt:d1.cur[0],prev:d1.prev[1],chg:d1.cur[1]-d1.prev[1]};
+      o.hit=r.thr?r.thr(o.v):null;
+      o.mag=r.mode==='pct'?Math.abs(o.chg/o.prev*100):Math.abs(o.chg*100);
+      rows.push(o);
+    });
+    rows.sort(function(a,b){return b.mag-a.mag;});
+    if(rows.length){
+      h+='<details class="card" style="padding:10px 14px;"><summary style="cursor:pointer;font-size:12.5px;color:var(--dim);">序列扫描全榜（'+rows.length+'条规则·阈值+单日变动排序，备查）▼</summary>'
+        +'<table style="margin-top:8px;"><tr><th>指标</th><th style="text-align:right;">最新</th><th style="text-align:right;">日变动</th><th>信号</th></tr>';
+      rows.slice(0,12).forEach(function(o){
+        h+='<tr><td>'+o.r.n+'</td><td style="text-align:right;">'+_fmtV({v:o.v,mode:o.r.mode==='bp100'?'bp100':'x',u:o.r.u})+'</td>'
+          +'<td style="text-align:right;">'+(o.chg>=0?'<span class="dn">':'<span class="up">')+_fmtChg({chg:o.chg,prev:o.prev,mode:o.r.mode})+'</span></td>'
+          +'<td>'+(o.hit?'<span style="color:#e5534b">'+o.hit+'</span>':'<span style="color:var(--dim)">—</span>')+'</td></tr>';
+      });
+      h+='</table></details>';
     }
-    h+='<div class="card chg"><h3>'+'①②③④'[i]+' '+o.r.n+'：'+_fmtV({v:o.v,mode:o.r.mode==='bp100'?'bp100':'x',u:o.r.u})
-      +'（'+(o.chg>=0?'<span class="dn">':'<span class="up">')+_fmtChg({chg:o.chg,prev:o.prev,mode:o.r.mode})+'</span>）'+(o.hit?' '+o.hit:'')+'</h3>'
-      +'<p style="margin:0;">'+tag+' · 数据日 '+o.dt+' · 1日 '+_fmtChg({chg:o.chg,prev:o.prev,mode:o.r.mode})+c5
-      +' · <span style="color:var(--dim)">⚙️自动扫描：阈值规则+339键单日变动绝对值排序，无人工观点；深度解读见人工版/观点与证伪页</span></p></div>';
+    if(window.CE.edgeSummary){ try{ h+=window.CE.edgeSummary(); }catch(e){} }
+    box.innerHTML=h;
+    if(window.RW_OWNER){ try{ window.RW_OWNER.applyOverrides(); if(window.RW_OWNER.isOwner())window.RW_OWNER.arm(); }catch(e){} }
   });
-  box.innerHTML=h;
 }
 autoChg();
 
@@ -1346,11 +1353,7 @@ async function loadForecast(){
     renderFwFull(await r.json());
   }catch(e){ fwFullFallback(); }
   loadFwMini();
-  try{
-    const r2 = await fetch('../data/forecasts.json?v='+Date.now());
-    if(!r2.ok) throw 0;
-    renderBanks(await r2.json());
-  }catch(e){ document.getElementById('bankBox').innerHTML='<div style="color:var(--dim);font-size:12px;">forecasts.json 加载失败</div>'; }
+  /* bankBox 由 fresh_panels.js 渲染：共识日历（calendar_consensus·管线）置顶 + forecasts.json 投行矩阵（人工维护带保鲜提醒） */
 }
 document.addEventListener('DOMContentLoaded', ()=>{ if(window.LIVE_SNAPSHOT) renderLive(window.LIVE_SNAPSHOT); loadForecast(); });
 </script>
@@ -1366,23 +1369,8 @@ document.getElementById('dtabs').addEventListener('click', function(e){
 (function(){var m=/[?&]dp=(dp\d+)/.exec(location.search);if(!m)return;var b=document.querySelector('#dtabs button[data-dp="'+m[1]+'"]');if(b)b.click();})();
 </script>
 <script>
-/* tacoBox 接入特朗普专区真实数据（覆盖快照占位渲染） */
-fetch('../data/trump_zone.json?v='+Date.now()).then(function(r){return r.json();}).then(function(tz){
-  var p = tz.pressure, box = document.getElementById('tacoBox'); if(!box || !p) return;
-  var names = {approval:'净支持', dgs10:'10Y', move:'MOVE', sp500:'S&P', vix:'VIX', bkevenpy02:'CPI Now'};
-  var c = p.latest_contrib || {};
-  var chips = Object.keys(names).map(function(k){
-    var v = c[k]; if(v == null) return '';
-    return '<span style="font-size:11px;border:1px solid var(--line);border-radius:10px;padding:2px 8px;margin:2px 4px 2px 0;display:inline-block;">'
-      + names[k] + ' <b style="color:' + (v>0?'var(--up)':'var(--dn)') + '">' + (v>0?'+':'') + v.toFixed(1) + '</b></span>';
-  }).join('');
-  box.innerHTML = '<div style="display:flex;align-items:baseline;gap:14px;">'
-    + '<span class="big" style="color:' + (p.value>0?'var(--up)':'var(--dn)') + ';">' + (p.value>0?'+':'') + p.value + '%</span>'
-    + '<span style="font-size:12px;color:var(--dim);">截至 ' + p.asof + ' · L3·ocmacro</span></div>'
-    + '<div style="margin-top:6px;">' + chips + '</div>'
-    + '<div style="font-size:11px;color:var(--dim);margin-top:8px;">压力越高→TACO回撤概率越高；30条事件复盘、支持率、Truths跟踪见 '
-    + '<a href="../panels/trump_zone.html" style="color:var(--gold);text-decoration:none;">特朗普专区 ↗</a></div>';
-}).catch(function(){});
+/* tacoBox / iranBox / fwBox / bankBox 均由 lib/fresh_panels.js 直读管线JSON渲染（trump_zone/polymarket/fedwatch/calendar_consensus），
+   不再读 9/2 手工快照；本页 renderLive 中的快照渲染已被 __tacoFresh/__iranFresh/__fwFresh 守卫跳过 */
 </script>
 <style>
 .mw-sec{margin-bottom:16px}
@@ -1772,8 +1760,13 @@ function mountPm(){
     ms.sort(function(a,b){var r=rank(a)-rank(b);return r||((b.vol24||0)-(a.vol24||0));});
     var html='';
     if(!ms.some(function(m){return RE_HORMUZ.test(m.question||'');})){
+      /* 无足够历史的霍尔木兹市场时：用现有市场现价拼动态摘要，不写死数字 */
+      var hs=(d.markets||[]).filter(function(m){return RE_HORMUZ.test(m.question||'');}).map(function(m){
+        var y=(m.outcomes&&m.outcomes[0])?m.outcomes[0].price*100:null;
+        return y==null?null:((m.end||'').slice(0,7)+'到期 '+(y<1?y.toFixed(2):y.toFixed(1))+'%');
+      }).filter(Boolean).join(' / ');
       html+='<div class="mw-c pm-hot"><div class="pmQ"><b>霍尔木兹海峡何时复航？</b></div>'
-        +'<div style="font-size:11px;color:var(--dim);line-height:1.7;">海峡仍处关闭：8/29伊朗与阿曼就通行安排达成谅解、但不自动执行；伊方复航开价=美方永久停止军事行动+解除制裁等5项条件；8/31伊方称一VLCC触雷停航、美军中央司令部否认。当前市场定价（见上方美伊局势表）：9/30前恢复正常≈3.5%、12/31前≈30.5%。折线图待云端管线捕获该市场后自动补上。<span class="ovU">L2·公开报道汇总</span></div></div>';
+        +'<div style="font-size:11px;color:var(--dim);line-height:1.7;">当前市场定价：'+(hs||'暂无报价')+'（最新进展见「政策与地缘」美伊局势卡，时间线由 geopolitics.json 维护）。折线图待云端管线捕获该市场历史后自动补上。<span class="ovU">L3·Polymarket管线</span></div></div>';
     }
     html+=ms.map(function(m,i){
       var yo=(m.outcomes||[]).filter(function(o){return /^yes$/i.test(o.name);})[0]||(m.outcomes||[])[0]||{};
@@ -1812,7 +1805,7 @@ function num(v,dp){return v==null?'<span style="color:var(--dim)">—</span>':(+
 fetch('../data/cs_snapshot.json').then(function(r){return r.ok?r.json():null;}).then(function(S){
   if(!S)return;
   var box=document.getElementById('snapBox'); if(!box)return;
-  var h='';
+  var h='<div style="background:rgba(212,169,68,.07);border:1px solid rgba(212,169,68,.3);border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:11px;color:var(--dim);">⚠ 本区块为 <b>'+(S.asof||'—')+'</b> 第三方终端EDB人工快照（无管线自动更新），最新数值以本页「数据总览」与图表区为准；需要刷新时把终端导出发给Kimi。</div>';
   /* 1. 大类资产表现（债券类行为bp变动，其余为百分比） */
   var ap=S.tables.asset_perf;
   function chg(v,bp){if(v==null)return '<span style="color:var(--dim)">—</span>';var cls=v>0?'up':v<0?'dn':'flat';return '<span class="'+cls+'">'+(bp?((v>0?'+':'')+v.toFixed(1)+'bp'):((v*100).toFixed(1)+'%'))+'</span>';}
