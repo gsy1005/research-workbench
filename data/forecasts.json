@@ -1,68 +1,153 @@
 {
- "asof": "2026-09-13 12:00 BJT",
+ "asof": "2026-09-13 18:00 BJT",
  "src": "投行预测为 L2·权威媒体公开报道口径（非原始研报，附口径日期）；共识值 L2·金十数据日历（PLUS）/CME FedWatch/Polymarket；实际值 L1·BLS/BEA；缺口标灰",
  "events": [
   {
    "key": "fomc",
    "name": "FOMC议息会议（沃什主持）",
    "release": "9/16-17（决议+声明 9/17 周四 02:00 BJT，记者会 02:30）",
-   "consensus": "CME FedWatch：加息25bp概率 88.9%（9/12）；Polymarket 9月加息 88.5%（9/12，一周+17pp）",
+   "consensus": "CME FedWatch：加息25bp概率 88.9%（9/12）；Polymarket 88.5%（9/12）；WSJ汇总19家投行：8家明确9月加息、5家按兵不动、5家2027年才降息、1家12月降息（9/10）",
    "previous": "维持不变（上次会议）",
    "actual": null,
    "banks": [
     {
-     "bank": "高盛",
-     "fc": "9月不加",
-     "view": "按兵不动为基准；9月加息需8月CPI/PPI双双超预期走强——⚠该前提已触发：8月CPI同比3.4%、核心环比+0.29%高于其+0.2%路径，PPI环比+0.4%同步走强（9/13复核）",
-     "date": "8/29",
-     "src": "新浪财经"
+     "bank": "Bank of America",
+     "fc": "9月加息",
+     "view": "2026年累计+75bp（9月起）",
+     "date": "6/22",
+     "src": "WSJ·Timiraos汇总(9/10)"
     },
     {
-     "bank": "摩根大通",
+     "bank": "Barclays",
+     "fc": "9月加息",
+     "view": "2026年累计+50bp",
+     "date": "8/28",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "BNPP",
+     "fc": "9月加息",
+     "view": "2026年累计+50bp",
+     "date": "9/6",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "Citigroup",
+     "fc": "2027年降息",
+     "view": "2026年不动",
+     "date": "9/4",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "Deutsche Bank",
+     "fc": "9月加息",
+     "view": "2026年累计+50bp",
+     "date": "6/19",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "Goldman Sachs",
+     "fc": "2027年降息",
+     "view": "2026年不动",
+     "date": "6/5",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "HSBC",
+     "fc": "无限期按兵不动",
+     "view": "2026年不动",
+     "date": "2025/12/5",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "Jefferies",
+     "fc": "12月降息",
+     "view": "2026年累计-25bp",
+     "date": "7/10",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "JP Morgan",
      "fc": "12月加息",
-     "view": "维持12月为首次加息时点的基准预测；9月是否行动取决于8月非农+CPI组合（Feroli）——组合结果：非农+16.2万大超预期、CPI再加速，时点前提面临上修压力（9/13复核）",
-     "date": "8/29",
-     "src": "新浪财经"
+     "view": "2026年累计+25bp",
+     "date": "7/29",
+     "src": "WSJ·Timiraos汇总(9/10)"
     },
     {
-     "bank": "法兴银行",
-     "fc": "9月+12月各25bp",
-     "view": "全街最鹰：9月、12月各加25bp，2027年3月再加一次——目前与市场定价（88.9%）最接近的大行",
-     "date": "9/2",
-     "src": "老虎社区·谋周记"
+     "bank": "Morgan Stanley",
+     "fc": "2027年降息",
+     "view": "2026年不动",
+     "date": "5/14",
+     "src": "WSJ·Timiraos汇总(9/10)"
     },
     {
-     "bank": "富国投资研究院",
-     "fc": "今年一次+明年一次",
-     "view": "预测今年加息一次、明年再加一次（两次摊在两年）",
-     "date": "9/2",
-     "src": "老虎社区·谋周记"
+     "bank": "MPA Macro",
+     "fc": "无限期按兵不动",
+     "view": "2026年不动",
+     "date": "5/8",
+     "src": "WSJ·Timiraos汇总(9/10)"
     },
     {
-     "bank": "野村",
-     "fc": "风险偏鹰",
-     "view": "年内加息风险上升（未给具体点位）",
-     "date": "9/2",
-     "src": "老虎社区·谋周记"
+     "bank": "MUFG",
+     "fc": "2027年降息",
+     "view": "2026年不动",
+     "date": "8/21",
+     "src": "WSJ·Timiraos汇总(9/10)"
     },
     {
-     "bank": "法国巴黎银行",
-     "fc": "12月起三次",
-     "view": "2026年12月起连续加息三次",
-     "date": "6月",
-     "src": "华尔街见闻"
+     "bank": "Nomura",
+     "fc": "无限期按兵不动",
+     "view": "2026年不动",
+     "date": "5/29",
+     "src": "WSJ·Timiraos汇总(9/10)"
     },
     {
-     "bank": "花旗",
-     "fc": "年内三次降息",
-     "view": "9/10/12月连续降息（Hollenhorst）——与市场88.9%加息定价完全相反，极端鸽派离群值，权重应打折",
-     "date": "6月",
-     "src": "公开报道"
+     "bank": "Oxford Economics",
+     "fc": "2027年降息",
+     "view": "2026年不动",
+     "date": "7/10",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "RBC",
+     "fc": "无限期按兵不动",
+     "view": "2025/12/8口径",
+     "date": "2025/12/8",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "Societe Generale",
+     "fc": "9月加息",
+     "view": "2026年累计+50bp",
+     "date": "8/28",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "TD Securities",
+     "fc": "无限期按兵不动",
+     "view": "2026年不动",
+     "date": "6/17",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "UBS",
+     "fc": "9月加息",
+     "view": "2026年累计+50bp",
+     "date": "9/4",
+     "src": "WSJ·Timiraos汇总(9/10)"
+    },
+    {
+     "bank": "Wells Fargo",
+     "fc": "无限期按兵不动",
+     "view": "2026年不动",
+     "date": "7/16",
+     "src": "WSJ·Timiraos汇总(9/10)"
     }
    ],
    "logic": [
-    "市场已几乎完全定价9月加息25bp（FedWatch 88.9%）——『不加』反而成为尾部意外，若按兵不动，短端利率与美元将剧烈重定价",
-    "8月数据组合（非农+16.2万远超共识、CPI同比3.4%再加速）站在鹰派一侧；记者会关注点：沃什对『一次还是连续』的措辞"
+    "市场几乎完全定价9月加息25bp（FedWatch 88.9%）——但投行阵营分裂：19家里明确9月加息的只有8家（美银/巴克莱/法巴/德银/法兴/瑞银等），高盛、大摩、花旗、牛津经济都看到2027年才动",
+    "8月数据组合（非农+16.2万远超共识、CPI同比3.4%再加速）站在鹰派一侧；记者会关注点：沃什对『一次还是连续』的措辞——押2026累计+50~75bp的有6家",
+    "注意立场日期：部分『不动』阵营的口径停留在6-8月（CPI落地前），9/11 CPI后存在集体上修风险——这也是Timiraos表最大的跟踪价值"
    ]
   },
   {
@@ -139,21 +224,148 @@
    "key": "pce",
    "name": "8月PCE物价指数（美联储首选通胀口径）",
    "release": "9/26（周五）20:30 BJT",
-   "consensus": "—（金十日历T-2窗口覆盖后自动补）",
-   "previous": "7月PCE价格环比 +0.2%（商品-0.03pp/服务+0.19pp）；实际PCE环比 0.0%",
+   "consensus": "核心环比中位 +0.25%（区间0.19~0.32）、整体环比中位 +0.33%、核心同比中位 3.3%——WSJ·Timiraos汇总19家（9/10）",
+   "previous": "7月：整体环比 +0.16%、核心环比 +0.25%、核心同比 3.3%（同口径）",
    "actual": null,
    "banks": [
     {
-     "bank": "高盛",
-     "fc": "核心环比 ≈+0.2%",
-     "view": "预计8月核心PCE环比约0.2%（与核心CPI同路径）——核心CPI已落在+0.29%，该预测面临上修风险",
-     "date": "8/29",
-     "src": "新浪财经"
+     "bank": "Bank of America",
+     "fc": "核心0.30%/3.4%",
+     "view": "整体—/—",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Barclays",
+     "fc": "核心0.25%/3.4%",
+     "view": "—",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Citi",
+     "fc": "核心0.29%",
+     "view": "—",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Employ America",
+     "fc": "核心0.28%/3.1%",
+     "view": "整体0.34%/3.5%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Evercore ISI",
+     "fc": "核心0.25%",
+     "view": "—",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Goldman Sachs",
+     "fc": "核心0.26%/3.2%",
+     "view": "整体0.32%/3.5%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Inflation Insights",
+     "fc": "核心0.26%/3.3%",
+     "view": "—",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Jefferies",
+     "fc": "核心0.23%/3.3%",
+     "view": "整体0.31%/3.8%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "JP Morgan",
+     "fc": "核心0.25%/3.3%",
+     "view": "—",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Morgan Stanley",
+     "fc": "核心0.25%/3.3%",
+     "view": "整体0.31%/3.7%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Oxford Economics",
+     "fc": "核心0.19%/3.3%",
+     "view": "整体0.27%/3.7%——全街最低",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Nomura",
+     "fc": "核心0.28%/3.4%",
+     "view": "整体0.34%/3.8%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Pantheon Macro",
+     "fc": "核心0.28%/3.4%",
+     "view": "整体0.34%/3.6%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Piper Sandler",
+     "fc": "核心0.22%",
+     "view": "整体0.29%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Renaissance Macro",
+     "fc": "核心0.24%",
+     "view": "—",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Societe Generale",
+     "fc": "核心0.25%/3.4%",
+     "view": "整体0.35%/3.8%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "TD Securities",
+     "fc": "核心0.32%/3.4%",
+     "view": "整体0.38%/3.8%——全街最高",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "UBS",
+     "fc": "核心0.25%/3.2%",
+     "view": "整体0.30%/—",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
+    },
+    {
+     "bank": "Underlying Inflation",
+     "fc": "核心0.31%",
+     "view": "整体0.36%",
+     "date": "9/10",
+     "src": "WSJ·Timiraos汇总"
     }
    ],
    "logic": [
-    "FOMC（9/17）之后最重要的通胀验证点：决定『9月一次』还是『9月+12月连续』",
-    "7月结构：服务（+0.19pp）是主要推手，商品通缩收窄；住房贡献仅+0.04pp"
+    "中位+0.25%与7月持平，但分布偏热：TD看到+0.32%，高盛+0.26%；核心同比中位3.3%意味着通胀平台期未破",
+    "该表与CPI后FOMC定价联动：若实际≥+0.30%（美银/TD/Underlying Inflation一侧），12月连续加息定价将跟进；≤+0.22%则『9月一次后停』叙事回归",
+    "来源：Nick Timiraos（WSJ首席经济记者，『美联储通讯社』）X账号推文配图，9/10发布"
    ]
   },
   {
@@ -181,5 +393,6 @@
     "与10月FOMC同日公布——若GDP显著走弱，将给连续加息定价制造变数"
    ]
   }
- ]
+ ],
+ "note": "投行预测矩阵含 WSJ·Timiraos 汇总表（其X账号推文配图，9/10）：FOMC=Fed call 19家、PCE=8月PCE预测19家；以后他再发同类图表，截图发Kimi即当日入库"
 }

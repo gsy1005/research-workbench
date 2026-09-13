@@ -232,9 +232,15 @@ PPI_ITEMS = [  # (中文名, SA序列, NSA序列)
     ('最终需求商品', 'WPSFD4111', 'WPUFD4111'),
     ('最终需求服务', 'WPSFD42', 'WPUFD42'),
 ]
+PPI_DETAIL = [  # 分项（BLS不公布FD权重，只能看分项环比，不能精确算贡献）
+    ('能源商品', 'WPSFD41112'),
+    ('贸易服务', 'WPSFD421'),
+    ('运输仓储服务', 'WPSFD422'),
+    ('其他服务', 'WPSFD423'),
+]
 try:
     log('== PPI最终需求 ==')
-    ids = [x[1] for x in PPI_ITEMS] + [x[2] for x in PPI_ITEMS]
+    ids = [x[1] for x in PPI_ITEMS] + [x[2] for x in PPI_ITEMS] + [x[1] for x in PPI_DETAIL]
     d = bls_fetch(ids, 2024, 2026)
     def _shift2(per, months):
         y, m = int(per[:4]), int(per[5:7]) + months
@@ -257,10 +263,17 @@ try:
     if not got.get('最终需求'):
         raise RuntimeError('PPI主序列无数据')
     hist = _mom_series(d.get('WPSFD4', [])) if '_mom_series' in dir() else []
+    # 分项环比历史（商品/服务 totals + 四个分项）
+    detail = []
+    for nm, sid in [('最终需求商品', 'WPSFD4111'), ('最终需求服务', 'WPSFD42')] + PPI_DETAIL:
+        ser = d.get(sid, [])
+        if ser:
+            mm = _mom_series(ser)
+            detail.append({'name': nm, 'mom': mm[-13:], 'latest': mm[-1][1] if mm else None})
     panel['blocks']['ppi'] = {
         'period': (d.get('WPSFD4') or d.get('WPUFD4'))[-1][0],
         'src': 'L1·BLS PPI最终需求(环比=季调,同比=非季调)',
-        'items': got, 'history': hist[-13:],
+        'items': got, 'history': hist[-13:], 'detail': detail,
         'next': '每月CPI前后一日 20:30北京(冬令21:30)'}
     log('  PPI', panel['blocks']['ppi']['period'], 'headline mom', got['最终需求']['mom'])
 except Exception as e:
