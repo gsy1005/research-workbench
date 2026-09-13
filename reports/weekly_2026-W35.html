@@ -517,7 +517,7 @@ function renderLive(S){
   } else { calFallback(); }
   document.querySelectorAll('.snapAsof').forEach(e=>e.textContent='数据快照：'+S.asof);
 }
-/* 一键更新按钮已移至站长页（../panels/owner.html，站长密码进入）——本页不再展示 */
+/* 更新按钮仅在站长页展示 */
 window.addEventListener('load',function(){
   try{ if(window.CE&&CE.renderWeekly)CE.renderWeekly(); }catch(e){}
   try{ if(window.RW_OWNER){ window.RW_OWNER.applyOverrides(); if(window.RW_OWNER.isOwner())window.RW_OWNER.arm(); } }catch(e){}
@@ -583,5 +583,8 @@ fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.ok?r.js
 }).catch(function(){});
 })();
 </script>
+<div style="margin:26px auto 0;max-width:1180px;padding:0 16px;text-align:right;">
+  <a href="../panels/owner.html" style="color:#5a6a82;text-decoration:none;font-size:11px;" title="站长入口（需站长密码）">· 站长</a>
+</div>
 </body>
 </html>

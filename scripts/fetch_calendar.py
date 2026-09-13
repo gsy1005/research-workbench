@@ -495,6 +495,40 @@ def main():
     if j10_items is None and old:
         j10_items = (old.get('j10') or {}).get('items', [])
 
+    # —— 静态注入：FOMC官方会议日程（L1官方，提前一年公布）——
+    # 抓取源只覆盖当周/未来14天，会议经常缺席；注入到 em 列表，保证共识表/关键日期/宏观日历三处永远在历。
+    FOMC_BJT = [
+        ('2026-09-17', '02:00'), ('2026-10-29', '02:00'), ('2026-12-10', '03:00'),
+        ('2027-01-28', '03:00'), ('2027-03-18', '02:00'), ('2027-04-29', '02:00'),
+        ('2027-06-17', '02:00'), ('2027-07-29', '02:00'), ('2027-09-16', '02:00'),
+        ('2027-10-28', '02:00'), ('2027-12-08', '03:00'),
+    ]
+    try:
+        if em_events is None:
+            em_events = []
+        if ff_events is None:
+            ff_events = []
+        _now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
+        for iso, tm in FOMC_BJT:
+            dt = datetime.date.fromisoformat(iso)
+            if abs((dt - _now.date()).days) > 180:
+                continue
+            tag = '%d/%d' % (dt.month, dt.day)
+            hh, mm = int(tm[:2]), int(tm[3:])
+            tm2 = '%02d:%02d' % (hh, mm + 30)
+            if not any(x.get('d') == tag and ('FOMC' in str(x.get('name', '')) or '利率决议' in str(x.get('name', ''))) for x in em_events):
+                em_events.append({'d': tag, 'tm': tm, 'name': '美联储FOMC利率决议+声明 · FOMC Statement', 'kind': 'event', 'src': 'L1·美联储官方日程'})
+                em_events.append({'d': tag, 'tm': tm2, 'name': '美联储主席记者会 · FOMC Press Conference', 'kind': 'event', 'src': 'L1·美联储官方日程'})
+            if not any(x.get('d') == tag and ('FOMC' in str(x.get('tcn', '')) + str(x.get('ten', ''))) for x in ff_events):
+                ff_events.append({'d': tag, 'tm': tm, 'ccy': 'USD', 'imp': 'High',
+                                  'tcn': '美联储FOMC利率决议+声明', 'ten': 'FOMC Statement', 'fc': '', 'pv': '', 'ac': ''})
+                ff_events.append({'d': tag, 'tm': tm2, 'ccy': 'USD', 'imp': 'Medium',
+                                  'tcn': '美联储主席记者会', 'ten': 'FOMC Press Conference', 'fc': '', 'pv': '', 'ac': ''})
+        em_events.sort(key=lambda x: (tuple(int(p) for p in x.get('d', '0/0').split('/')), x.get('tm', '')))
+        ff_events.sort(key=lambda x: (tuple(int(p) for p in str(x.get('d', '0/0')).split('/')), x.get('tm', '')))
+    except Exception as e:
+        print('FOMC_INJECT_FAIL:', e)
+
     # —— 金十收割积累: j10_store.json → chart_series.js + macro_catalog.js ——
     if j10_harvest:
         try:
@@ -572,7 +606,14 @@ def main():
 
         bucket = {}
         def add(dt, tm, name, star, ac=None, fc=None, pv=None):
-            bucket.setdefault(dt, []).append((tm or '', name, star, ac, fc, pv))
+            # 同源事件经 events/em 双通道进入时去重，保留最高星级
+            lst = bucket.setdefault(dt, [])
+            for i, x in enumerate(lst):
+                if x[0] == (tm or '') and x[1] == name:
+                    if (star or 0) > (x[2] or 0):
+                        lst[i] = (tm or '', name, star, ac, fc, pv)
+                    return
+            lst.append((tm or '', name, star, ac, fc, pv))
 
         for e in out.get('events', []):
             try:
@@ -591,7 +632,10 @@ def main():
             except Exception:
                 continue
             if e.get('name'):
-                add(dt, e.get('tm', ''), e['name'], 1)
+                star = 1
+                if 'FOMC' in e['name'] or '利率决议' in e['name']:
+                    star = 5 if '声明' in e['name'] or 'Statement' in e['name'] else 4
+                add(dt, e.get('tm', ''), e['name'], star)
 
         # —— 静态注入：FOMC官方会议日程（美联储提前一年公布，L1官方）——
         # 抓取源只覆盖当周/未来14天，会议经常缺席；官方日程固定，直接注入确保永远在历。

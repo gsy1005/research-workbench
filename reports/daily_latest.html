@@ -226,7 +226,7 @@
   <button data-dp="dp13" style="border-color:var(--gold)">外汇</button>
   <button data-dp="dp4">数据图表</button>
   <button data-dp="dp7">分项贡献</button>
-  <button data-dp="dp15" style="border-color:var(--gold)">今日新出数据</button>
+  <button data-dp="dp15" style="border-color:var(--gold)">近日新出数据</button>
   <button data-dp="dp16" style="border-color:var(--gold)">每日财经图表</button>
   <button data-dp="dp17">外资研报观点</button>
   <button data-dp="dp11" style="border-color:var(--gold)">数据预测</button>
@@ -376,8 +376,8 @@
 
 </section>
 <section class="dp" id="dp15">
-<!-- ============ 六之二·补、今日新出数据（本周已公布·按日留存·周一清空换新） ============ -->
-<h2>六之二·补、今日新出数据<span class="en">BIG-4 RELEASES · 只保留 非农/CPI/PPI/PCE 四大发布 · 每周一自动换新 · 贡献拆解+⚙️规则解读</span></h2>
+<!-- ============ 六之二·补、近日新出数据（本周已公布·按日留存·周一清空换新） ============ -->
+<h2>六之二·补、近日新出数据<span class="en">BIG-4 RELEASES · 只保留 非农/CPI/PPI/PCE 四大发布 · 每周一自动换新 · 贡献拆解+⚙️规则解读</span></h2>
 <div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">只跟踪四大最重要发布：<b style="color:var(--txt)">非农 / CPI / PPI / PCE</b>（其余小数据见「政策与地缘」页宏观日历）。每期自动给出<b style="color:var(--txt)">分项环比贡献拆解</b>（口径同彭博贡献图）与 <b style="color:var(--txt)">⚙️规则解读</b>（GMF框架：定性→拆解→持续性→政策含义）。数据源全部L1官方（BLS/BEA），官网发布当晚管线自动跟新；每周一旧卡片自动换新。</p></div>
 <div id="newDataBox" style="margin-top:12px;">加载中…</div>
 </section>
@@ -483,7 +483,7 @@
 <footer style="margin-top:36px;color:var(--dim);font-size:11px;border-top:1px solid var(--line);padding-top:12px;">
   宏观研究日报 · 数据皆有来源，缺口标灰 · 观点事前冻结 · 框架版本 v1.0（八大版块）<br>
   <a href="weekly_2026-W35.html">最新周报 ↗</a> · <a href="../panels/trump_zone.html">特朗普执政关注焦点 ↗</a> · 中哲金属 · 甘思雨
-  <a href="../panels/owner.html" style="float:right;color:#3a4356;text-decoration:none;font-size:10px;" title="站长入口">·</a>
+  <a href="../panels/owner.html" style="float:right;color:#5a6a82;text-decoration:none;font-size:11px;" title="站长入口（需站长密码）">· 站长</a>
 </footer>
 </div>
 
@@ -624,7 +624,7 @@ function mountLiq(){
     document.getElementById('liqGridD').innerHTML=h||'<div class="lqD">无分量数据</div>';
     document.getElementById('liqMethD').textContent='方法学：'+j.methodology+' · 缺口(标灰不分配权重)：'+((j.gaps||[]).join('；'));
     /* 双维图：利率管道 + 数量 */
-    chartWidget('cw-liqd1', ['SOFR','EFFR','RRPONTSYAWARD'], ['SOFR','SOFR99','TGCRRATE','OBFR','EFFR','IORB','RRPONTSYAWARD','DCPF1M','SPR_SOFR_IORB','SPR_TGCR_IORB','SPR_SOFR_EFFR','SPR_SOFR99','SPR_SOFR_ONRRP','SPR_CP_SOFR','SPR_SOFR99_ONRRP','SPR_TGCR_ONRRP','LIQ_SRF']);
+    chartWidget('cw-liqd1', ['DFEDTARU','SOFR','EFFR','RRPONTSYAWARD'], ['DFEDTARU','DFEDTARL','SOFR','SOFR99','TGCRRATE','OBFR','EFFR','IORB','RRPONTSYAWARD','DCPF1M','SPR_SOFR_IORB','SPR_TGCR_IORB','SPR_SOFR_EFFR','SPR_SOFR99','SPR_SOFR_ONRRP','SPR_CP_SOFR','SPR_SOFR99_ONRRP','SPR_TGCR_ONRRP','LIQ_SRF']);
     chartWidget('cw-liqd2', ['WALCL','WRESBAL','RRPONTSYD'], ['WALCL','WRESBAL','RRPONTSYD','WDTGAL','WTREGEN','NETLIQ','WREPOFOR','SWPT','M2SL','M1SL','MMMFFAQ027S','LIQ_EZM3','LIQ_CNM2','CA_M2','ECBASSETSW','JPNASSETS','GM2_YOY','M2SL_YOY','LIQ_CNM2_YOY']);
     chartWidget('cw-liqd3', ['Y_MOVE','VIXCLS'], ['Y_MOVE','VIXCLS','BAMLH0A0HYM2','Y_TLT','Y_HYG','Y_GLD','NFCI','STFSI4']);
   }).catch(function(){
@@ -749,7 +749,7 @@ function joltsCard(){
     +'<p style="font-size:11.5px;color:var(--dim);margin:8px 0 0;line-height:1.7;">⚙️框架读法：空缺回升但<b style="color:var(--txt)">雇用率↓＋离职率↓</b>＝企业「不裁人也不招人」的冻结态——雇主与雇员双方都在观望。离职率是信心最敏感的温度计（敢跳槽=看好外面机会），降至1.9%已贴近疫情前低点区。<b style="color:var(--txt)">9/9 QCEW基准修正</b>前，这是检验「就业失速」成色的关键交叉验证：若非农再弱而空缺率继续回升，则弱非农更可能是供给端噪音而非需求崩塌。</p>';
 }
 
-/* ============ 今日新出数据（dp15）· 四大发布面板 ============ */
+/* ============ 近日新出数据（dp15）· 四大发布面板 ============ */
 var _ndDone=0;
 function mountNewData(){
   if(_ndDone)return; _ndDone=1;
