@@ -1,77 +1,77 @@
 {
-  "asof": "2026-09-14 17:22 BJT",
+  "asof": "2026-09-14 21:22 BJT",
   "source": "CME FedWatch（cmegroup.cn 官方）",
   "contract": "30天联邦基金期货（ZQ）",
   "meetings": [
     {
       "meeting": "16 Sep26",
       "ease": 0.0,
-      "no_change": 11.5,
-      "hike": 88.5,
-      "mid": 96.2688
+      "no_change": 9.3,
+      "hike": 90.7,
+      "mid": 96.2663
     },
     {
       "meeting": "28 Oct26",
-      "ease": 41.2,
-      "no_change": 42.5,
-      "hike": 15.8,
-      "mid": 96.1375
+      "ease": 0.0,
+      "no_change": 5.2,
+      "hike": 94.8,
+      "mid": 96.1325
     },
     {
       "meeting": "9 Dec26",
       "ease": 0.0,
-      "no_change": 2.1,
-      "hike": 97.9,
-      "mid": 95.9175
+      "no_change": 1.7,
+      "hike": 98.3,
+      "mid": 95.9125
     },
     {
       "meeting": "27 Jan27",
       "ease": 0.0,
-      "no_change": 1.3,
-      "hike": 98.7,
-      "mid": 95.8575
+      "no_change": 1.1,
+      "hike": 98.9,
+      "mid": 95.8525
     },
     {
       "meeting": "17 Mar27",
       "ease": 0.0,
-      "no_change": 0.6,
-      "hike": 99.4,
-      "mid": 95.7075
+      "no_change": 0.4,
+      "hike": 99.6,
+      "mid": 95.7025
     },
     {
       "meeting": "28 Apr27",
       "ease": 0.0,
-      "no_change": 0.4,
-      "hike": 99.6,
-      "mid": 95.6325
+      "no_change": 0.3,
+      "hike": 99.7,
+      "mid": 95.6225
     },
     {
       "meeting": "9 Jun27",
       "ease": 0.0,
-      "no_change": 0.3,
-      "hike": 99.7,
-      "mid": 95.5125
+      "no_change": 0.2,
+      "hike": 99.8,
+      "mid": 95.4975
     },
     {
       "meeting": "28 Jul27",
       "ease": 0.0,
-      "no_change": 0.3,
-      "hike": 99.7,
-      "mid": 95.4875
+      "no_change": 0.2,
+      "hike": 99.8,
+      "mid": 95.4675
     },
     {
       "meeting": "15 Sep27",
       "ease": 0.0,
       "no_change": 0.2,
       "hike": 99.8,
-      "mid": 95.4525
+      "mid": 95.43
     },
     {
       "meeting": "27 Oct27",
       "ease": 0.0,
       "no_change": 0.3,
       "hike": 99.7,
-      "mid": 95.445
+      "mid": 95.42
     }
   ]
 }
