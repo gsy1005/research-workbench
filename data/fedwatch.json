@@ -1,41 +1,41 @@
 {
-  "asof": "2026-09-15 09:22 BJT",
+  "asof": "2026-09-15 11:22 BJT",
   "source": "CME FedWatch（cmegroup.cn 官方）",
   "contract": "30天联邦基金期货（ZQ）",
   "meetings": [
     {
       "meeting": "16 Sep26",
       "ease": 0.0,
-      "no_change": 7.6,
-      "hike": 92.4,
-      "mid": 96.2613
+      "no_change": 6.5,
+      "hike": 93.5,
+      "mid": 96.26
     },
     {
       "meeting": "28 Oct26",
       "ease": 0.0,
-      "no_change": 4.0,
-      "hike": 96.0,
-      "mid": 96.1275
+      "no_change": 3.5,
+      "hike": 96.5,
+      "mid": 96.125
     },
     {
       "meeting": "9 Dec26",
       "ease": 0.0,
       "no_change": 1.2,
       "hike": 98.8,
-      "mid": 95.95
+      "mid": 95.9
     },
     {
       "meeting": "27 Jan27",
       "ease": 0.0,
       "no_change": 0.8,
       "hike": 99.2,
-      "mid": 95.8375
+      "mid": 95.845
     },
     {
       "meeting": "17 Mar27",
-      "ease": 38.1,
-      "no_change": 36.9,
-      "hike": 23.6,
+      "ease": 0.0,
+      "no_change": 0.4,
+      "hike": 99.6,
       "mid": 95.7
     },
     {
