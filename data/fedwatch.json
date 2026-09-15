@@ -1,48 +1,48 @@
 {
-  "asof": "2026-09-15 11:22 BJT",
+  "asof": "2026-09-15 13:20 BJT",
   "source": "CME FedWatch（cmegroup.cn 官方）",
   "contract": "30天联邦基金期货（ZQ）",
   "meetings": [
     {
       "meeting": "16 Sep26",
       "ease": 0.0,
-      "no_change": 6.5,
-      "hike": 93.5,
+      "no_change": 7.6,
+      "hike": 92.4,
       "mid": 96.26
     },
     {
       "meeting": "28 Oct26",
       "ease": 0.0,
-      "no_change": 3.5,
-      "hike": 96.5,
-      "mid": 96.125
+      "no_change": 4.0,
+      "hike": 96.0,
+      "mid": 96.1275
     },
     {
       "meeting": "9 Dec26",
       "ease": 0.0,
-      "no_change": 1.2,
-      "hike": 98.8,
+      "no_change": 1.4,
+      "hike": 98.6,
       "mid": 95.9
     },
     {
       "meeting": "27 Jan27",
       "ease": 0.0,
-      "no_change": 0.8,
-      "hike": 99.2,
+      "no_change": 0.9,
+      "hike": 99.1,
       "mid": 95.845
     },
     {
       "meeting": "17 Mar27",
-      "ease": 0.0,
-      "no_change": 0.4,
-      "hike": 99.6,
-      "mid": 95.7
+      "ease": 37.5,
+      "no_change": 36.9,
+      "hike": 24.4,
+      "mid": 95.6725
     },
     {
       "meeting": "28 Apr27",
       "ease": 0.0,
-      "no_change": 0.3,
-      "hike": 99.7,
+      "no_change": 0.2,
+      "hike": 99.8,
       "mid": 95.63
     },
     {
@@ -50,28 +50,28 @@
       "ease": 0.0,
       "no_change": 0.2,
       "hike": 99.8,
-      "mid": 95.52
+      "mid": 95.4725
     },
     {
       "meeting": "28 Jul27",
       "ease": 0.0,
-      "no_change": 0.2,
-      "hike": 99.8,
-      "mid": 95.495
+      "no_change": 0.1,
+      "hike": 99.9,
+      "mid": 95.445
     },
     {
       "meeting": "15 Sep27",
       "ease": 0.0,
-      "no_change": 0.2,
-      "hike": 99.8,
-      "mid": 95.46
+      "no_change": 0.1,
+      "hike": 99.9,
+      "mid": 95.4075
     },
     {
       "meeting": "27 Oct27",
       "ease": 0.0,
-      "no_change": 0.2,
-      "hike": 99.8,
-      "mid": 95.455
+      "no_change": 0.1,
+      "hike": 99.9,
+      "mid": 95.3975
     }
   ]
 }
