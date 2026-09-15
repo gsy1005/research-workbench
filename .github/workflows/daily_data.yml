@@ -19,6 +19,9 @@ jobs:
         env:
           JIN10_TOKEN: ${{ secrets.JIN10_TOKEN }}
         run: |
+          python3 scripts/fetch_polymarket.py || true
+          python3 scripts/fetch_liquidity.py || true
+          python3 scripts/fetch_cftc.py || true
           python3 scripts/fetch_macro.py || true
           python3 scripts/fetch_extra.py || true
           python3 scripts/fetch_cn_macro.py || true
@@ -29,7 +32,7 @@ jobs:
         run: |
           git config user.name "data-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add charts/ data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json data/calendar_consensus.json data/j10_store.json data/trump_zone.json data/truth_posts.json
+          git add charts/ data/polymarket.json data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json data/calendar_consensus.json data/econ_calendar.json data/j10_store.json data/trump_zone.json data/truth_posts.json
           git diff --cached --quiet || git commit -m "每日数据 $(date +%F)"
           git pull --rebase origin main || true
           git push
