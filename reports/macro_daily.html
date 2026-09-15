@@ -145,13 +145,15 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 </div>
 
 <!-- ============ 流动性 ============ -->
-<div class="sec"><h2>流动性</h2><span>利率走廊 · 联储资产负债表 · 净流动性</span></div>
+<div class="sec"><h2>流动性</h2><span>利率走廊 · 货币市场 · 联储资产负债表 · 净流动性（每图单一单位，坐标轴统一）</span></div>
 <div class="grid3">
-  <div class="cbox"><h4>利率走廊：上限/下限 · EFFR · SOFR · ON RRP</h4><div class="ct" id="cL1"></div></div>
+  <div class="cbox"><h4>利率走廊（%）：上限/下限 · EFFR · SOFR · ON RRP</h4><div class="ct" id="cL1"></div></div>
   <div class="cbox"><h4>货币市场利差（bp）：SOFR-IORB · SOFR-EFFR · 商票-SOFR</h4><div class="ct" id="cL4"></div></div>
-  <div class="cbox"><h4>SOFR分布尾部：99分位 · 常备回购SRF使用</h4><div class="ct" id="cL5"></div></div>
+  <div class="cbox"><h4>SOFR 与 99分位（%）</h4><div class="ct" id="cL5"></div></div>
+  <div class="cbox"><h4>常备回购 SRF 使用量（亿$）</h4><div class="ct" id="cL7"></div></div>
   <div class="cbox"><h4>联储资产负债表（万亿$）：总资产 · 准备金 · TGA</h4><div class="ct" id="cL2"></div></div>
-  <div class="cbox"><h4>净流动性 · 金融条件指数</h4><div class="ct" id="cL3"></div></div>
+  <div class="cbox"><h4>净流动性（万亿$）</h4><div class="ct" id="cL3"></div></div>
+  <div class="cbox"><h4>芝加哥联储金融条件指数 NFCI（>0=收紧）</h4><div class="ct" id="cL8"></div></div>
   <div class="cbox"><h4>中国流动性：M1 · M2 同比（%·月度）</h4><div class="ct" id="cL6"></div></div>
 </div>
 
@@ -229,14 +231,19 @@ function line(hostId, series, opts){
     xAxis:{type:'time',axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
     yAxis:(function(){
       var l={type:'value',scale:true,axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},splitLine:{lineStyle:{color:'#e8eef6'}}};
+      if(opts.ymin!=null) l.min=opts.ymin;
+      if(opts.ymax!=null) l.max=opts.ymax;
       if(!opts.dual) return l;
       return [l,{type:'value',scale:true,axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},splitLine:{show:false}}];
     })(),
     series: series.map(function(s,i){
-      return {name:s.name,type:'line',showSymbol:false,smooth:false,
+      var o={name:s.name,type:s.type||'line',showSymbol:false,smooth:false,
         yAxisIndex:(opts.dual&&s.right)?1:0,
         lineStyle:{width:s.w||1.6,color:s.color},itemStyle:{color:s.color},
         data:s.data};
+      if(s.type==='bar'){o.barMaxWidth=6;o.itemStyle={color:s.color,opacity:.85};delete o.lineStyle;}
+      if(i===0&&opts.zero){o.markLine={silent:true,symbol:'none',label:{show:false},data:[{yAxis:0}],lineStyle:{color:'#9fb0c3',width:1.2,type:'solid'}};}
+      return o;
     })
   });
   window.addEventListener('resize',function(){ch.resize();});
@@ -466,30 +473,34 @@ line('cL1',[
   {name:'EFFR',data:since(ser('EFFR'),2),color:C_WHT},
   {name:'SOFR',data:since(ser('SOFR'),2),color:C_BLUE},
   {name:'ON RRP',data:since(ser('RRPONTSYAWARD'),2),color:C_GRAY}
-]);
+],{ymin:3,ymax:6});
 line('cL2',[
   {name:'总资产',data:since(serS('WALCL',1e-6),3),color:C_RED},
   {name:'准备金',data:since(serS('WRESBAL',1e-6),3),color:C_BLUE},
   {name:'TGA',data:since(serS('WDTGAL',1e-6),3),color:C_WHT}
 ]);
 line('cL3',[
-  {name:'净流动性(万亿$)',data:since(ser('NETLIQ'),3),color:C_BLUE},
-  {name:'芝加哥金融条件NFCI',data:since(ser('NFCI'),3),color:C_RED,right:true}
-],{dual:true});
+  {name:'净流动性(万亿$)',data:since(ser('NETLIQ'),3),color:C_BLUE}
+]);
 line('cL4',[
   {name:'SOFR-IORB',data:since(ser('SPR_SOFR_IORB'),1),color:C_RED},
   {name:'SOFR-EFFR',data:since(ser('SPR_SOFR_EFFR'),1),color:C_BLUE},
   {name:'商票CP-SOFR',data:since(ser('SPR_CP_SOFR'),1),color:C_GRAY}
-]);
+],{ymin:-40,ymax:40,zero:true});
 line('cL5',[
-  {name:'SOFR99分位(%)',data:since(ser('SOFR99'),1),color:C_RED},
-  {name:'SOFR',data:since(ser('SOFR'),1),color:C_BLUE},
-  {name:'SRF使用量(亿$)',data:since(ser('LIQ_SRF'),1),color:C_WHT,right:true}
-],{dual:true});
+  {name:'SOFR',data:since(ser('SOFR'),2),color:C_BLUE},
+  {name:'SOFR99分位',data:since(ser('SOFR99'),2),color:C_RED}
+],{ymin:3,ymax:6});
+line('cL7',[
+  {name:'SRF使用量(亿$)',data:since(ser('LIQ_SRF'),1),color:C_WHT,type:'bar'}
+],{ymin:0});
+line('cL8',[
+  {name:'NFCI',data:since(ser('NFCI'),3),color:C_RED}
+],{zero:true});
 line('cL6',[
   {name:'中国M1同比',data:since(ser('LIQ_CNM1_YOY'),3),color:C_RED},
   {name:'中国M2同比',data:since(ser('LIQ_CNM2_YOY'),3),color:C_BLUE}
-]);
+],{zero:true});
 
 /* ================= 大宗与权益 ================= */
 line('cC1',[
