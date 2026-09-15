@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-15 01:35",
+ "updated": "2026-09-15 12:53",
  "asof": "2026-09-15",
  "regime": {
   "stage": 2,
@@ -7,18 +7,18 @@
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 42.4,
+  "value": 43.1,
   "n_comp": 9,
   "components": [
    {
     "id": "SPR_SOFR_IORB",
     "name": "SOFR-IORB利差",
-    "pct": 79.1
+    "pct": 79.0
    },
    {
     "id": "SPR_SOFR99",
     "name": "SOFR尾部99分位差",
-    "pct": 0.5
+    "pct": 7.3
    },
    {
     "id": "SPR_CP_SOFR",
@@ -106,8 +106,8 @@
    {
     "id": "SPR_SOFR99",
     "name": "SOFR尾部",
-    "z": -0.17,
-    "chg20": -1.0,
+    "z": 0.03,
+    "chg20": 0.0,
     "triggered": false
    },
    {
@@ -127,19 +127,19 @@
    "name": "SOFR-IORB利差",
    "val": -3.0,
    "unit": "bp",
-   "date": "2026-09-11",
+   "date": "2026-09-14",
    "chg": 0.0,
-   "pct": 79.1,
+   "pct": 79.0,
    "key": "SPR_SOFR_IORB"
   },
   {
    "id": "sofr_tail",
    "name": "SOFR尾部(99分位-中位)",
-   "val": 7.0,
+   "val": 8.0,
    "unit": "bp",
-   "date": "2026-09-11",
-   "chg": -1.0,
-   "pct": 0.5,
+   "date": "2026-09-14",
+   "chg": 1.0,
+   "pct": 7.3,
    "key": "SPR_SOFR99"
   },
   {
@@ -147,7 +147,7 @@
    "name": "SOFR-ONRRP利差",
    "val": 12.0,
    "unit": "bp",
-   "date": "2026-09-11",
+   "date": "2026-09-14",
    "chg": 0.0,
    "pct": 74.3,
    "key": "SPR_SOFR_ONRRP"
@@ -207,7 +207,7 @@
    "name": "SRF常备回购用量",
    "val": 0.0,
    "unit": "十亿$",
-   "date": "2026-09-14",
+   "date": "2026-09-15",
    "chg": 0.0,
    "pct": 0.0,
    "key": "LIQ_SRF"
