@@ -225,22 +225,25 @@ try:
 except Exception as e:
     keep_old('cpi_detail', repr(e)[:120])
 
-# ================= 2c. BLS PPI 最终需求(四大之PPI) =================
-PPI_ITEMS = [  # (中文名, SA序列, NSA序列)
+# ================= 2c. BLS PPI 最终需求(四大之PPI, CPI同款贡献分解) =================
+# 权重 = BLS官方相对重要性 2025-12快照(news.release/ppi.t01.htm表1, 每年初随12月数据更新)
+PPI_ITEMS = [  # (中文名, SA序列, NSA序列) — 卡片chips/解读用
     ('最终需求', 'WPSFD4', 'WPUFD4'),
-    ('核心(除食品能源贸易)', 'WPSFD4131', 'WPUFD4131'),
-    ('最终需求商品', 'WPSFD4111', 'WPUFD4111'),
+    ('核心(除食品能源贸易)', 'WPSFD49116', 'WPUFD49116'),
+    ('最终需求商品', 'WPSFD41', 'WPUFD41'),
     ('最终需求服务', 'WPSFD42', 'WPUFD42'),
 ]
-PPI_DETAIL = [  # 分项（BLS不公布FD权重，只能看分项环比，不能精确算贡献）
-    ('能源商品', 'WPSFD41112'),
-    ('贸易服务', 'WPSFD421'),
-    ('运输仓储服务', 'WPSFD422'),
-    ('其他服务', 'WPSFD423'),
+PPI_GROUPS = [  # 大类(完整分割最终需求): (名, SA序列, 权重)
+    ('商品', 'WPSFD41', 29.028), ('服务', 'WPSFD42', 68.338), ('建筑', 'WPSFD43', 2.634),
+]
+PPI_DETAIL_ITEMS = [  # 细分: 商品三分 + 服务三分(建筑权重仅2.634不再细分)
+    ('食品', 'WPSFD411', 5.452), ('能源', 'WPSFD412', 5.061), ('核心商品', 'WPSFD413', 18.515),
+    ('贸易服务', 'WPSFD423', 19.755), ('运输仓储', 'WPSFD422', 4.857), ('其他服务', 'WPSFD421', 43.725),
 ]
 try:
-    log('== PPI最终需求 ==')
-    ids = [x[1] for x in PPI_ITEMS] + [x[2] for x in PPI_ITEMS] + [x[1] for x in PPI_DETAIL]
+    log('== PPI最终需求(贡献分解) ==')
+    ids = ([x[1] for x in PPI_ITEMS] + [x[2] for x in PPI_ITEMS] +
+           [x[1] for x in PPI_GROUPS] + [x[1] for x in PPI_DETAIL_ITEMS])
     d = bls_fetch(ids, 2024, 2026)
     def _shift2(per, months):
         y, m = int(per[:4]), int(per[5:7]) + months
@@ -256,28 +259,50 @@ try:
         dd = dict(s); per, v = s[-1]
         base = dd.get(_shift2(per, -12))
         return round((v / base - 1) * 100, 2) if base else None
+    if '_mom_series' not in dir():
+        def _mom_series(s):
+            dd = dict(s); out = []
+            for per, v in s:
+                base = dd.get(_shift2(per, -1))
+                if base is None: continue
+                out.append([per, round((v / base - 1) * 100, 3)])
+            return out[-13:]
     got = {}
     for name, sa, nsa in PPI_ITEMS:
         if d.get(sa) or d.get(nsa):
             got[name] = {'mom': _mom2(d.get(sa, [])), 'yoy': _yoy2(d.get(nsa, []))}
     if not got.get('最终需求'):
         raise RuntimeError('PPI主序列无数据')
-    hist = _mom_series(d.get('WPSFD4', [])) if '_mom_series' in dir() else []
-    # 分项环比历史（商品/服务 totals + 四个分项）
-    detail = []
-    for nm, sid in [('最终需求商品', 'WPSFD4111'), ('最终需求服务', 'WPSFD42')] + PPI_DETAIL:
-        ser = d.get(sid, [])
-        if ser:
-            mm = _mom_series(ser)
-            detail.append({'name': nm, 'mom': mm[-13:], 'latest': mm[-1][1] if mm else None})
+    hist = _mom_series(d.get('WPSFD4', []))
+    groups = {}
+    for name, sid, w in PPI_GROUPS:
+        groups[name] = {'w': w, 'mom': _mom_series(d.get(sid, []))}
+    det_items = []
+    for name, sid, w in PPI_DETAIL_ITEMS:
+        mm = _mom_series(d.get(sid, []))
+        if not mm:
+            log('  明细缺数据:', name, sid)
+        det_items.append({'name': name, 'w': w, 'sid': sid, 'mom': mm})
     panel['blocks']['ppi'] = {
         'period': (d.get('WPSFD4') or d.get('WPUFD4'))[-1][0],
         'src': 'L1·BLS PPI最终需求(环比=季调,同比=非季调)',
-        'items': got, 'history': hist[-13:], 'detail': detail,
+        'weights_src': 'L1·BLS官方相对重要性2025-12快照(每年初随12月数据更新)',
+        'items': got, 'history': hist[-13:],
         'next': '每月CPI前后一日 20:30北京(冬令21:30)'}
-    log('  PPI', panel['blocks']['ppi']['period'], 'headline mom', got['最终需求']['mom'])
+    panel['blocks']['ppi_hist'] = {
+        'groups': groups, 'headline': hist, 'core': _mom_series(d.get('WPSFD49116', [])),
+        'src': 'L1·BLS PPI季调环比(商品/服务/建筑); 权重=BLS官方相对重要性2025-12快照',
+        'note': '环比贡献(pp)≈权重×分项环比/100; 合计与整体环比存在舍入/权重时滞差异'}
+    panel['blocks']['ppi_detail'] = {
+        'items': det_items,
+        'src': 'L1·BLS PPI季调环比(六细分); 权重=BLS官方相对重要性2025-12快照',
+        'note': '细分=商品三分(食品/能源/核心商品)+服务三分(贸易/运输仓储/其他); 建筑(权重2.634)不再细分'}
+    log('  PPI', panel['blocks']['ppi']['period'], 'headline mom', got['最终需求']['mom'],
+        'groups', len(groups), 'detail', len(det_items))
 except Exception as e:
     keep_old('ppi', repr(e)[:120])
+    keep_old('ppi_hist', repr(e)[:120])
+    keep_old('ppi_detail', repr(e)[:120])
 
 # ================= 3. BEA PCE价格贡献(月)/实际PCE贡献(月)/GDP贡献(季) =================
 def bea_table(tab, freq, years):
