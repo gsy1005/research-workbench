@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>宏观数据日报 · 图表版</title>
+<script src="../lib/access_gate.js"></script>
+<script src="../lib/echarts.min.js"></script>
+<script src="../data/chart_series.js" id="csjs"></script>
+<style>
+:root{
+  --bg:#0a0e1a; --panel:#101728; --panel2:#0d1322; --line:#1e2a44;
+  --red:#e04a3a; --redD:#7a1414; --blue:#4f86c6; --blueL:#7fb3e8;
+  --txt:#e8edf6; --dim:#93a0bb; --wht:#f4f7fc;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--txt);font-family:KaiTi,STKaiti,"楷体","楷体_GB2312",serif;}
+.wrap{max-width:1560px;margin:0 auto;padding:0 14px 30px;}
+/* ===== 红色横幅 ===== */
+.banner{background:linear-gradient(135deg,#6b1010 0%,#a81f1f 55%,#7a1414 100%);border-radius:0 0 10px 10px;padding:16px 22px 14px;margin:0 -14px 14px;box-shadow:0 6px 24px rgba(168,31,31,.25);}
+.banner h1{font-size:26px;letter-spacing:6px;color:#fff;font-weight:700;}
+.banner .brand{float:right;font-size:14px;color:#f3c9c4;letter-spacing:2px;padding-top:8px;}
+.banner .meta{margin-top:6px;font-size:12.5px;color:#efd9d6;letter-spacing:1px;}
+.banner .meta b{color:#fff;}
+/* ===== 分区小标题（红色条） ===== */
+.sec{display:flex;align-items:center;gap:10px;margin:18px 0 10px;}
+.sec::before{content:'';width:6px;height:18px;background:var(--red);border-radius:2px;}
+.sec h2{font-size:17px;letter-spacing:3px;color:var(--wht);font-weight:700;}
+.sec span{font-size:11.5px;color:var(--dim);letter-spacing:1px;}
+/* ===== 关键价格表 ===== */
+table.kv{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--panel);}
+table.kv th{background:#16203a;color:var(--blueL);padding:6px 7px;font-weight:700;letter-spacing:1px;border:1px solid var(--line);white-space:nowrap;}
+table.kv td{padding:5px 7px;border:1px solid var(--line);text-align:right;white-space:nowrap;color:var(--txt);}
+table.kv td.l{text-align:left;color:var(--wht);font-weight:700;}
+table.kv tr:nth-child(even) td{background:var(--panel2);}
+.up{color:var(--red)!important;} .dn{color:var(--blue)!important;}
+/* ===== 今日新出数据 ===== */
+.rel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;}
+.rel-card{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;padding:10px 12px;}
+.rel-card h3{font-size:14px;color:var(--wht);letter-spacing:1px;}
+.rel-card h3 .hot{color:var(--red);font-size:11px;margin-left:6px;}
+.rel-card .num{font-size:20px;color:var(--red);font-weight:700;margin:4px 0 2px;}
+.rel-card .sub{font-size:11.5px;color:var(--dim);}
+.cal-today{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12.5px;line-height:2;color:var(--txt);}
+.cal-today b{color:var(--blueL);}
+.cal-today .ev{display:inline-block;background:#16203a;border:1px solid var(--line);border-radius:4px;padding:1px 8px;margin:2px 6px 2px 0;font-size:12px;}
+/* ===== 图表网格 ===== */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:1100px){.grid3{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:720px){.grid3{grid-template-columns:1fr;}}
+.cbox{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 8px 4px;}
+.cbox h4{font-size:13px;color:var(--wht);letter-spacing:1px;padding:0 4px 4px;border-bottom:1px solid var(--line);margin-bottom:4px;font-weight:700;}
+.cbox h4 span{float:right;font-size:10.5px;color:var(--dim);font-weight:400;letter-spacing:0;}
+.cbox .ct{height:220px;width:100%;}
+/* ===== 日内总结 ===== */
+.sum{background:linear-gradient(135deg,#101728 0%,#1a1220 100%);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;padding:14px 18px;font-size:13.5px;line-height:2.1;}
+.sum b{color:var(--red);}
+.sum .b2{color:var(--blueL);}
+/* ===== 备注 ===== */
+.notes{background:var(--panel2);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;font-size:11.5px;color:var(--dim);line-height:1.9;margin-top:14px;}
+footer{margin-top:18px;text-align:center;font-size:11.5px;color:var(--dim);}
+footer a{color:var(--blueL);text-decoration:none;}
+.backlink{display:inline-block;margin:10px 0 0;font-size:12.5px;color:var(--blueL);text-decoration:none;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="banner">
+  <span class="brand">中哲金属 · 甘思雨</span>
+  <h1>宏观数据日报</h1>
+  <div class="meta">图表版 · 数据日 <b id="autoDate">读取中…</b> · 每日 07:40 / 20:40（北京）管线自动更新 · 数据源：FRED / BLS / BEA / CME / Polymarket / CFTC · <span id="updTs"></span></div>
+</div>
+<a class="backlink" href="daily_latest.html">← 返回宏观研究日报（文字结论版）</a>
+
+<!-- ============ 关键价格一览 ============ -->
+<div class="sec"><h2>关键价格一览</h2><span>近6个交易日 · 红=上行 蓝=下行 · 全部直读管线快照</span></div>
+<div style="overflow-x:auto;"><table class="kv" id="kvTable"><tr><th>指标</th><th style="text-align:right">最新</th><th style="text-align:right">日变动</th><th style="text-align:right">T-1</th><th style="text-align:right">T-2</th><th style="text-align:right">T-3</th><th style="text-align:right">T-4</th><th style="text-align:right">T-5</th></tr></table></div>
+
+<!-- ============ 今日新出数据 ============ -->
+<div class="sec"><h2>今日新出数据</h2><span>四大发布自动跟新 · 🔥=近7日内发布 · 当日日历事件</span></div>
+<div class="rel-grid" id="relGrid"></div>
+<div class="cal-today" id="calToday">今日日历读取中…</div>
+
+<!-- ============ 地缘风险 ============ -->
+<div class="sec"><h2>地缘风险 · Polymarket</h2><span>事件合约概率（%）· 每日更新</span></div>
+<div class="grid3">
+  <div class="cbox"><h4>霍尔木兹海峡通行正常化概率<span>Polymarket</span></h4><div class="ct" id="cG1"></div></div>
+  <div class="cbox"><h4>美伊局势：停火与升级<span>Polymarket</span></h4><div class="ct" id="cG2"></div></div>
+  <div class="cbox"><h4>美国政治风险：中期选举与民调<span>Polymarket</span></h4><div class="ct" id="cG3"></div></div>
+</div>
+
+<!-- ============ 货币政策 ============ -->
+<div class="sec"><h2>货币政策</h2><span>CME FedWatch + Polymarket 双源交叉</span></div>
+<div class="grid3">
+  <div class="cbox"><h4>FedWatch：各次会议加息/不变/降息概率<span id="fwAsof">CME</span></h4><div class="ct" id="cM1"></div></div>
+  <div class="cbox"><h4>Polymarket：2026年加息概率 · 9月会议一致性<span>Polymarket</span></h4><div class="ct" id="cM2"></div></div>
+  <div class="cbox"><h4>衰退概率定价<span>Polymarket</span></h4><div class="ct" id="cM3"></div></div>
+</div>
+
+<!-- ============ 美债 ============ -->
+<div class="sec"><h2>美债</h2><span>收益率 · 利差 · 实际利率 · 信用 · 波动率</span></div>
+<div class="grid3">
+  <div class="cbox"><h4>美债收益率：2Y / 10Y / 30Y<span>FRED·日</span></h4><div class="ct" id="cB1"></div></div>
+  <div class="cbox"><h4>期限利差：10Y-2Y · 10Y-3M<span>FRED·日</span></h4><div class="ct" id="cB2"></div></div>
+  <div class="cbox"><h4>实际利率与通胀预期<span>FRED·日</span></h4><div class="ct" id="cB3"></div></div>
+  <div class="cbox"><h4>信用利差：高收益 OAS · BBB OAS<span>FRED·日</span></h4><div class="ct" id="cB4"></div></div>
+  <div class="cbox"><h4>MOVE 债市波动率<span>日</span></h4><div class="ct" id="cB5"></div></div>
+  <div class="cbox"><h4>一级交易商美债持仓<span>美联储·周</span></h4><div class="ct" id="cB6"></div></div>
+</div>
+
+<!-- ============ 外汇 ============ -->
+<div class="sec"><h2>外汇</h2><span>美元 · 主要货币对 · 人民币</span></div>
+<div class="grid3">
+  <div class="cbox"><h4>美元指数：DXY · 广义美元<span>日</span></h4><div class="ct" id="cF1"></div></div>
+  <div class="cbox"><h4>欧元 · 日元<span>日</span></h4><div class="ct" id="cF2"></div></div>
+  <div class="cbox"><h4>人民币：在岸汇率 · 名义有效汇率<span>FRED·日/周</span></h4><div class="ct" id="cF3"></div></div>
+</div>
+
+<!-- ============ 流动性 ============ -->
+<div class="sec"><h2>流动性</h2><span>利率走廊 · 联储资产负债表 · 净流动性</span></div>
+<div class="grid3">
+  <div class="cbox"><h4>利率走廊：上限/下限 · EFFR · SOFR · ON RRP<span>FRED·日</span></h4><div class="ct" id="cL1"></div></div>
+  <div class="cbox"><h4>联储资产负债表：总资产 · 准备金 · TGA<span>FRED·周</span></h4><div class="ct" id="cL2"></div></div>
+  <div class="cbox"><h4>净流动性 · 金融条件指数<span>FRED·周</span></h4><div class="ct" id="cL3"></div></div>
+</div>
+
+<!-- ============ 大宗与权益 ============ -->
+<div class="sec"><h2>大宗与权益</h2><span>贵金属 · 原油 · 美股 · 中国股市</span></div>
+<div class="grid3">
+  <div class="cbox"><h4>黄金 · 白银<span>日</span></h4><div class="ct" id="cC1"></div></div>
+  <div class="cbox"><h4>原油：WTI · 布伦特<span>FRED·日</span></h4><div class="ct" id="cC2"></div></div>
+  <div class="cbox"><h4>标普500 · VIX<span>日</span></h4><div class="ct" id="cC3"></div></div>
+  <div class="cbox"><h4>沪深300 · 恒生指数<span>日</span></h4><div class="ct" id="cC4"></div></div>
+</div>
+
+<!-- ============ 仓位 ============ -->
+<div class="sec"><h2>仓位 · CFTC</h2><span>非商业净持仓（张）· 周度</span></div>
+<div class="grid3">
+  <div class="cbox"><h4>10Y美债 · 美元指数 净持仓<span>CFTC·周</span></h4><div class="ct" id="cP1"></div></div>
+  <div class="cbox"><h4>黄金 · 原油 净持仓<span>CFTC·周</span></h4><div class="ct" id="cP2"></div></div>
+  <div class="cbox"><h4>铂金 · 钯金 净持仓<span>CFTC·周</span></h4><div class="ct" id="cP3"></div></div>
+</div>
+
+<!-- ============ 日内总结 ============ -->
+<div class="sec"><h2>日内总结</h2><span>规则引擎按最新数据自动生成</span></div>
+<div class="sum" id="daySum">生成中…</div>
+
+<div class="notes">
+注①：本页全部数据直读管线快照（chart_series / polymarket / fedwatch / release_panels / econ_calendar），与日报文字版同一数据源，每日 07:40 / 20:40（北京）自动跟新，零人工维护。<br>
+注②：Polymarket 为事件合约隐含概率（%），非官方统计；FedWatch 为 CME 30天联邦基金期货隐含概率。<br>
+注③：美债/美元/利率类为 FRED 工作日数据，周五数值下周一挂网、周一数值周二晚挂网，周末与节假日后日期滞后一至两天属正常现象。<br>
+注④：CFTC 持仓为每周五发布的周二截面；联储资产负债表/TGA/准备金为周度。
+</div>
+
+<footer>宏观数据日报 · 图表版 · 中哲金属 · <a href="../panels/owner.html">· 站长</a></footer>
+</div>
+
+<script>
+/* ================= 工具 ================= */
+var CS = window.CHART_SERIES || {};
+var KAI = 'KaiTi,STKaiti,"楷体",serif';
+var C_RED = '#e04a3a', C_BLUE = '#4f86c6', C_BLUEL = '#7fb3e8', C_WHT = '#e8edf6', C_GRAY = '#8a94a6', C_PUR = '#9a7fc4';
+function ser(k){ return (CS[k]||[]).filter(function(p){return p[1]!=null;}); }
+function serS(k, f){ return ser(k).map(function(p){ return [p[0], p[1]*f]; }); }
+function since(arr, yrs){
+  if(!yrs) return arr;
+  var cut = new Date(); cut.setFullYear(cut.getFullYear()-yrs);
+  var cs = cut.toISOString().slice(0,10);
+  return arr.filter(function(p){return p[0]>=cs;});
+}
+function fmtD(d){ return d.slice(5).replace('-','/'); }
+function line(hostId, series, opts){
+  opts = opts||{};
+  var el = document.getElementById(hostId); if(!el||!window.echarts) return;
+  var ch = echarts.init(el);
+  ch.setOption({
+    backgroundColor:'transparent', animation:false,
+    textStyle:{fontFamily:KAI},
+    color:[C_BLUE,C_RED,C_WHT,C_GRAY,C_BLUEL,C_PUR],
+    legend:{top:0,textStyle:{color:'#aab4c6',fontSize:10,fontFamily:KAI},itemWidth:14,itemHeight:8,type:'scroll'},
+    grid:{left:46,right:opts.dual?46:12,top:26,bottom:20},
+    tooltip:{trigger:'axis',backgroundColor:'#141b2e',borderColor:'#2a3a58',textStyle:{color:'#d7dde8',fontSize:11,fontFamily:KAI}},
+    xAxis:{type:'time',axisLabel:{color:'#8a94a6',fontSize:9.5,fontFamily:KAI},axisLine:{lineStyle:{color:'#2a3346'}}},
+    yAxis:(function(){
+      var l={type:'value',scale:true,axisLabel:{color:'#8a94a6',fontSize:9.5,fontFamily:KAI},splitLine:{lineStyle:{color:'#1c2438'}}};
+      if(!opts.dual) return l;
+      return [l,{type:'value',scale:true,axisLabel:{color:'#8a94a6',fontSize:9.5,fontFamily:KAI},splitLine:{show:false}}];
+    })(),
+    series: series.map(function(s,i){
+      return {name:s.name,type:'line',showSymbol:false,smooth:false,
+        yAxisIndex:(opts.dual&&s.right)?1:0,
+        lineStyle:{width:s.w||1.6,color:s.color},itemStyle:{color:s.color},
+        data:s.data};
+    })
+  });
+  window.addEventListener('resize',function(){ch.resize();});
+  return ch;
+}
+/* ================= 顶部日期 ================= */
+(function(){
+  var mx='';
+  ['DGS10','Y_GOLD','Y_DXY','T10Y2Y','SOFR','Y_GSPC'].forEach(function(k){
+    var a=ser(k); if(a.length&&a[a.length-1][0]>mx)mx=a[a.length-1][0];
+  });
+  var el=document.getElementById('autoDate');
+  if(el) el.textContent = mx? mx+'（管线最新）':'—';
+})();
+
+/* ================= 关键价格表 ================= */
+var KV_ROWS = [
+  ['美债10Y','DGS10','%',2,'bp'],['美债30Y','DGS30','%',2,'bp'],['美债2Y','DGS2','%',2,'bp'],
+  ['10Y-2Y利差','T10Y2Y','bp',2,'bp1'],
+  ['SOFR','SOFR','%',2,'bp'],['EFFR','EFFR','%',2,'bp'],['ON RRP','RRPONTSYAWARD','%',2,'bp'],
+  ['美元指数','Y_DXY','',2,'pct'],['欧元/美元','Y_EURUSD','',4,'pct'],['美元/日元','Y_USDJPY','',2,'pct'],['美元/人民币','DEXCHUS','',4,'pct'],
+  ['COMEX黄金','Y_GOLD','美元',1,'pct'],['COMEX白银','Y_SLV','美元',2,'pct'],
+  ['WTI原油','DCOILWTICO','美元',2,'pct'],['布油','DCOILBRENTEU','美元',2,'pct'],
+  ['标普500','Y_GSPC','',0,'pct'],['纳指','Y_IXIC','',0,'pct'],['VIX','VIXCLS','',2,'pt'],
+  ['沪深300','Y_000300SS','',0,'pct',1000],['恒指','Y_HSI','',0,'pct']
+];
+(function(){
+  var tb = document.getElementById('kvTable'); if(!tb) return;
+  var h = '';
+  KV_ROWS.forEach(function(r){
+    var a = r[5] ? serS(r[1], r[5]) : ser(r[1]); if(!a.length) return;
+    var last6 = a.slice(-6);
+    var latest = last6[last6.length-1], prev = last6.length>1 ? last6[last6.length-2] : null;
+    var chg = prev ? latest[1]-prev[1] : null;
+    var chgTxt = '—', cls='';
+    if(chg!=null){
+      if(r[4]==='bp') chgTxt = (chg>=0?'+':'')+(chg*100).toFixed(0)+'bp';
+      else if(r[4]==='bp1') chgTxt = (chg>=0?'+':'')+(chg*100).toFixed(0)+'bp';
+      else if(r[4]==='pct') chgTxt = (chg>=0?'+':'')+(chg/prev[1]*100).toFixed(2)+'%';
+      else chgTxt = (chg>=0?'+':'')+chg.toFixed(r[3]);
+      cls = chg>=0?'up':'dn';
+    }
+    h += '<tr><td class="l">'+r[0]+'</td><td><b>'+latest[1].toFixed(r[3])+'</b>'+(r[2]?'<span style="color:var(--dim);font-size:10px;">'+r[2]+'</span>':'')+'</td>'+
+      '<td class="'+cls+'">'+chgTxt+'</td>'+
+      last6.slice(0,-1).reverse().map(function(p){return '<td>'+p[1].toFixed(r[3])+'</td>';}).join('')+
+      (last6.length<6?'<td></td>'.repeat(6-last6.length):'')+'</tr>';
+  });
+  tb.innerHTML += h;
+})();
+
+/* ================= 今日新出数据（四大发布） ================= */
+fetch('../data/release_panels.json?v='+Date.now()).then(function(r){return r.json();}).then(function(P){
+  var B = P.blocks||{}, g = document.getElementById('relGrid'); if(!g) return;
+  var defs = [
+    ['cpi','CPI · 消费者价格',function(b){return b.headline_mom;}],
+    ['nfp','非农就业',function(b){return b.total_chg;}],
+    ['ppi','PPI · 生产者价格',function(b){return (b.items||{})['最终需求'] && b.items['最终需求'].mom;}],
+    ['pce_price','PCE价格',function(b){return b.total;}]
+  ];
+  var now = new Date();
+  var h = '';
+  defs.forEach(function(d){
+    var b = B[d[0]]; if(!b||b.empty) return;
+    var v = d[2](b);
+    var dt = b.period ? new Date(b.period+'-01') : null;
+    var hot = dt && (now-dt) < 40*864e5; /* 发布期在近40天内 */
+    var unit = d[0]==='nfp' ? '千人' : (d[0]==='pce_price'?'pp':'%');
+    var lbl = d[0]==='nfp' ? '环比变动' : '环比';
+    h += '<div class="rel-card"><h3>'+d[1]+(hot?'<span class="hot">🔥近月新发</span>':'')+'</h3>'+
+      '<div class="num">'+(v!=null?(v>=0?'+':'')+(+v).toFixed(2):'—')+' <span style="font-size:11px;color:var(--dim)">'+unit+'</span></div>'+
+      '<div class="sub">数据期 '+b.period+' · '+lbl+' · '+(b.src||'').slice(0,18)+'</div></div>';
+  });
+  g.innerHTML = h || '<div class="rel-card">四大发布数据读取中…</div>';
+}).catch(function(){});
+/* 今日日历事件 */
+fetch('../data/econ_calendar.json?v='+Date.now()).then(function(r){return r.json();}).then(function(C){
+  var el = document.getElementById('calToday'); if(!el) return;
+  var now = new Date();
+  var mm = now.getMonth()+1, dd = now.getDate();
+  var tag = mm+'/'+dd;
+  var day = (C.days||[]).filter(function(d){return d.date && d.date.indexOf(tag)===0;})[0];
+  var tom = new Date(now.getTime()+864e5);
+  var tag2 = (tom.getMonth()+1)+'/'+tom.getDate();
+  var day2 = (C.days||[]).filter(function(d){return d.date && d.date.indexOf(tag2)===0;})[0];
+  function evHtml(day){ return (day?day.events:[]).map(function(e){return '<span class="ev">'+(e[0]?e[0]+' ':'')+e[1]+'</span>';}).join('') || '<span style="color:var(--dim)">无重点事件</span>'; }
+  el.innerHTML = '<b>今日（'+tag+'）日历</b>：'+evHtml(day)+(day2?'<br><b>明日（'+tag2+'）预告</b>：'+evHtml(day2):'');
+}).catch(function(){ var el=document.getElementById('calToday'); if(el) el.textContent='日历数据读取失败。'; });
+
+/* ================= 地缘：Polymarket ================= */
+fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.json();}).then(function(PM){
+  var mkts = PM.markets||[];
+  function find(kw){ return mkts.filter(function(m){return m.question.indexOf(kw)>=0;})[0]; }
+  function hist(m, scale){ return ((m&&m.history)||[]).map(function(p){return [p[0], +(p[1]*100).toFixed(1)];}); }
+  var ts = document.getElementById('updTs');
+  if(ts && PM.fetched_at) ts.textContent = 'Polymarket 更新于 ' + PM.fetched_at.slice(0,10);
+  /* G1 霍尔木兹 */
+  var h1 = find('Strait of Hormuz traffic returns to normal by September 30');
+  var h2 = find('Strait of Hormuz traffic returns to normal by October 31');
+  var h3 = find('Strait of Hormuz traffic returns to normal by December 31');
+  line('cG1', [
+    {name:'9/30前恢复正常', data:hist(h1), color:C_BLUE},
+    {name:'10/31前', data:hist(h2), color:C_RED},
+    {name:'12/31前', data:hist(h3), color:C_WHT}
+  ]);
+  /* G2 美伊 */
+  var cf = find('US x Iran Effective Ceasefire');
+  var inv = find('invade Iran before 2027');
+  line('cG2', [
+    {name:'美伊有效停火', data:hist(cf), color:C_BLUE},
+    {name:'美入侵伊朗(2027前)', data:hist(inv), color:C_RED}
+  ]);
+  /* G3 美国政治 */
+  var sen = find('control the Senate'), hou = find('control the House'), appr = find('approval rating be less than 37');
+  line('cG3', [
+    {name:'民主党控参议院', data:hist(sen), color:C_BLUE},
+    {name:'民主党控众议院', data:hist(hou), color:C_BLUEL},
+    {name:'特朗普支持率<37%', data:hist(appr), color:C_RED}
+  ]);
+  /* M2 货币政策 polymarket */
+  var hike26 = find('Fed rate hike in 2026'), nodis = find('no one dissent the September');
+  line('cM2', [
+    {name:'2026年加息概率', data:hist(hike26), color:C_RED},
+    {name:'9月会议无人反对', data:hist(nodis), color:C_BLUE}
+  ]);
+  /* M3 衰退 */
+  var r26 = find('recession by end of 2026'), r27 = find('recession by end of 2027');
+  line('cM3', [
+    {name:'2026年底前衰退', data:hist(r26), color:C_RED},
+    {name:'2027年底前衰退', data:hist(r27), color:C_BLUE}
+  ]);
+}).catch(function(){});
+
+/* ================= FedWatch ================= */
+fetch('../data/fedwatch.json?v='+Date.now()).then(function(r){return r.json();}).then(function(FW){
+  var el = document.getElementById('cM1'); if(!el||!window.echarts) return;
+  var ms = (FW.meetings||[]).slice(0,6);
+  var as = document.getElementById('fwAsof');
+  if(as && FW.asof) as.textContent = FW.asof;
+  var ch = echarts.init(el);
+  ch.setOption({
+    backgroundColor:'transparent', animation:false, textStyle:{fontFamily:KAI},
+    legend:{top:0,textStyle:{color:'#aab4c6',fontSize:10,fontFamily:KAI}},
+    grid:{left:40,right:10,top:26,bottom:34},
+    tooltip:{trigger:'axis',backgroundColor:'#141b2e',borderColor:'#2a3a58',textStyle:{color:'#d7dde8',fontSize:11,fontFamily:KAI}},
+    xAxis:{type:'category',data:ms.map(function(m){return m.meeting;}),axisLabel:{color:'#8a94a6',fontSize:9.5,rotate:20,fontFamily:KAI},axisLine:{lineStyle:{color:'#2a3346'}}},
+    yAxis:{type:'value',max:100,axisLabel:{color:'#8a94a6',fontSize:9.5,formatter:'{value}%'},splitLine:{lineStyle:{color:'#1c2438'}}},
+    series:[
+      {name:'加息',type:'bar',stack:'p',itemStyle:{color:C_RED},data:ms.map(function(m){return m.hike;})},
+      {name:'不变',type:'bar',stack:'p',itemStyle:{color:C_GRAY},data:ms.map(function(m){return m.no_change;})},
+      {name:'降息',type:'bar',stack:'p',itemStyle:{color:C_BLUE},data:ms.map(function(m){return m.ease;})}
+    ]
+  });
+  window.addEventListener('resize',function(){ch.resize();});
+}).catch(function(){});
+
+/* ================= 美债 ================= */
+line('cB1',[
+  {name:'2Y',data:since(ser('DGS2'),1),color:C_BLUE},
+  {name:'10Y',data:since(ser('DGS10'),1),color:C_RED},
+  {name:'30Y',data:since(ser('DGS30'),1),color:C_WHT}
+]);
+line('cB2',[
+  {name:'10Y-2Y',data:since(ser('T10Y2Y'),2),color:C_BLUE},
+  {name:'10Y-3M',data:since(ser('T10Y3M'),2),color:C_RED}
+]);
+line('cB3',[
+  {name:'10Y实际利率',data:since(ser('DFII10'),1),color:C_RED},
+  {name:'10Y盈亏平衡',data:since(ser('T10YIE'),1),color:C_BLUE},
+  {name:'5Y5Y远期通胀',data:since(ser('T5YIFR'),1),color:C_GRAY}
+]);
+line('cB4',[
+  {name:'高收益OAS',data:since(ser('BAMLH0A0HYM2'),1),color:C_RED},
+  {name:'BBB级OAS',data:since(ser('BAMLC0A4CBBB'),1),color:C_BLUE}
+]);
+line('cB5',[{name:'MOVE',data:since(ser('Y_MOVE').length?ser('Y_MOVE'):ser('EDB_GLB_MOVE'),1),color:C_WHT}]);
+line('cB6',[{name:'一级交易商美债持仓',data:since(ser('PD_UST_POS'),3),color:C_BLUE}]);
+
+/* ================= 外汇 ================= */
+line('cF1',[
+  {name:'DXY',data:since(ser('Y_DXY'),1),color:C_RED},
+  {name:'广义美元指数',data:since(ser('DTWEXBGS'),1),color:C_BLUE}
+],{dual:true});
+line('cF2',[
+  {name:'欧元/美元',data:since(ser('Y_EURUSD'),1),color:C_BLUE},
+  {name:'美元/日元',data:since(ser('Y_USDJPY'),1),color:C_RED,right:true}
+],{dual:true});
+line('cF3',[
+  {name:'美元/人民币(在岸)',data:since(ser('DEXCHUS'),1),color:C_RED},
+  {name:'人民币名义有效汇率',data:since(ser('EDB_CN_NEER'),1),color:C_BLUE,right:true}
+],{dual:true});
+
+/* ================= 流动性 ================= */
+line('cL1',[
+  {name:'目标上限',data:since(ser('DFEDTARU'),2),color:C_RED,w:2},
+  {name:'目标下限',data:since(ser('DFEDTARL'),2),color:C_RED},
+  {name:'EFFR',data:since(ser('EFFR'),2),color:C_WHT},
+  {name:'SOFR',data:since(ser('SOFR'),2),color:C_BLUE},
+  {name:'ON RRP',data:since(ser('RRPONTSYAWARD'),2),color:C_GRAY}
+]);
+line('cL2',[
+  {name:'总资产',data:since(ser('WALCL'),3),color:C_RED},
+  {name:'准备金',data:since(ser('WRESBAL'),3),color:C_BLUE},
+  {name:'TGA',data:since(ser('WDTGAL'),3),color:C_WHT,right:true}
+],{dual:true});
+line('cL3',[
+  {name:'净流动性(万亿$)',data:since(ser('NETLIQ'),3),color:C_BLUE},
+  {name:'芝加哥金融条件NFCI',data:since(ser('NFCI'),3),color:C_RED,right:true}
+],{dual:true});
+
+/* ================= 大宗与权益 ================= */
+line('cC1',[
+  {name:'COMEX黄金',data:since(ser('Y_GOLD'),1),color:C_RED},
+  {name:'COMEX白银',data:since(ser('Y_SLV'),1),color:C_BLUE,right:true}
+],{dual:true});
+line('cC2',[
+  {name:'WTI',data:since(ser('DCOILWTICO'),1),color:C_RED},
+  {name:'布伦特',data:since(ser('DCOILBRENTEU'),1),color:C_BLUE}
+]);
+line('cC3',[
+  {name:'标普500',data:since(ser('Y_GSPC'),1),color:C_RED},
+  {name:'VIX',data:since(ser('VIXCLS'),1),color:C_BLUE,right:true}
+],{dual:true});
+line('cC4',[
+  {name:'沪深300',data:since(serS('Y_000300SS',1000),1),color:C_RED},
+  {name:'恒生指数',data:since(ser('Y_HSI'),1),color:C_BLUE,right:true}
+],{dual:true});
+
+/* ================= CFTC 仓位 ================= */
+line('cP1',[
+  {name:'10Y美债净持仓',data:since(ser('CFTC_TY_NET'),2),color:C_RED},
+  {name:'美元指数净持仓',data:since(ser('CFTC_DX_NET'),2),color:C_BLUE}
+]);
+line('cP2',[
+  {name:'黄金净持仓',data:since(ser('CFTC_GC_NET'),2),color:C_RED},
+  {name:'WTI原油净持仓',data:since(ser('CFTC_CL_NET'),2),color:C_BLUE}
+]);
+line('cP3',[
+  {name:'铂金净持仓',data:since(ser('CFTC_PL_NET'),2),color:C_WHT},
+  {name:'钯金净持仓',data:since(ser('CFTC_PA_NET'),2),color:C_GRAY}
+]);
+
+/* ================= 日内总结（自动生成） ================= */
+(function(){
+  var ups=[], dns=[];
+  KV_ROWS.forEach(function(r){
+    var a=r[5]?serS(r[1],r[5]):ser(r[1]); if(a.length<2) return;
+    var v=a[a.length-1][1], p=a[a.length-2][1];
+    var bp=(v-p)*100, pct=p?(v-p)/p*100:0;
+    var o={n:r[0], v:v, bp:bp, pct:pct, mode:r[4], d:a[a.length-1][0]};
+    if(r[4]==='bp'||r[4]==='bp1'){ if(Math.abs(bp)>=3) (bp>0?ups:dns).push(o); }
+    else { if(Math.abs(pct)>=0.6) (pct>0?ups:dns).push(o); }
+  });
+  ups.sort(function(a,b){return Math.abs(b.pct)-Math.abs(a.pct);});
+  dns.sort(function(a,b){return Math.abs(b.pct)-Math.abs(a.pct);});
+  function lst(arr){ return arr.slice(0,4).map(function(o){
+    var chg=(o.mode==='bp'||o.mode==='bp1')?((o.bp>=0?'+':'')+o.bp.toFixed(0)+'bp'):((o.pct>=0?'+':'')+o.pct.toFixed(2)+'%');
+    return o.n+' '+o.v.toFixed(2)+'（'+chg+'）';
+  }).join('、')||'无显著变动'; }
+  var d10=ser('DGS10'), d10v=d10.length?d10[d10.length-1][1]:null;
+  var h = '· <b>利率</b>：美债10Y 报 '+(d10v?d10v.toFixed(2):'—')+'%'+
+    (d10v!=null ? (d10v>=4.90?'，<b>站上4.90%失序警报线</b>，债市压力显著':(d10v>=4.50?'，处4.50%上方偏高区间':'，处相对温和区间')) : '')+'；'+
+    '2Y 报 '+(ser('DGS2').slice(-1)[0]||[0,0])[1].toFixed(2)+'%。<br>'+
+    '· <span class="b2">上行驱动</span>：'+lst(ups)+'。<br>'+
+    '· <span class="b2">下行/走弱</span>：'+lst(dns)+'。<br>'+
+    '· <b>关注</b>：地缘定价（霍尔木兹/美伊）与本周 FOMC 路径的交叉验证，细节见上方 Polymarket 与 FedWatch 区块。';
+  var el=document.getElementById('daySum'); if(el) el.innerHTML=h;
+})();
+</script>
+</body>
+</html>
