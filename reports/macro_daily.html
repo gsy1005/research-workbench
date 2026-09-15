@@ -386,21 +386,36 @@ fetch('../data/fedwatch.json?v='+Date.now()).then(function(r){return r.json();})
     ]
   });
   window.addEventListener('resize',function(){ch.resize();});
-  /* 表格版：隐含利率与相对当前EFFR的变动 */
+  /* 完整概率矩阵表（与官网条件概率表同格式：行=会议，列=目标利率区间） */
   var ft = document.getElementById('fwTable');
   if(ft){
     var ea = ser('EFFR'), effr = ea.length?ea[ea.length-1][1]:null;
-    var fh = '<tr><th>会议</th><th>加息</th><th>不变</th><th>降息</th><th>期货隐含利率</th><th>较当前EFFR('+ (effr!=null?effr.toFixed(2):'—') +'%)</th></tr>';
+    var cur = FW.current_bucket || null;
+    /* 全部会议出现过的区间并集，按数值排序 */
+    var bkSet = {};
+    ms.forEach(function(m){ (m.buckets||[]).forEach(function(b){ bkSet[b.r]=1; }); });
+    var bks = Object.keys(bkSet).sort(function(a,b){ return parseInt(a)-parseInt(b); });
+    var fh = '<tr><th>会议</th>' + bks.map(function(b){
+      return '<th'+(b===cur?' style="color:var(--red);border-bottom:2px solid var(--red);"':'')+'>'+b+(b===cur?' ▲':'')+'</th>';
+    }).join('') + '<th>隐含利率</th><th>较EFFR</th></tr>';
     ms.forEach(function(m){
+      var bm = {}; (m.buckets||[]).forEach(function(b){ bm[b.r]=b.p; });
+      var mx = Math.max.apply(null, bks.map(function(b){ return bm[b]||0; }).concat([1]));
       var imp = m.mid!=null ? (100-m.mid) : null;
       var bp = (imp!=null&&effr!=null) ? Math.round((imp-effr)*100) : null;
-      var dom = m.hike>=m.no_change&&m.hike>=m.ease?'加息':(m.no_change>=m.ease?'不变':'降息');
-      fh += '<tr><td>'+m.meeting+'</td><td class="'+(dom==='加息'?'hl':'')+'">'+m.hike.toFixed(1)+'%</td>'+
-        '<td class="'+(dom==='不变'?'hl':'')+'">'+m.no_change.toFixed(1)+'%</td>'+
-        '<td class="'+(dom==='降息'?'hl':'')+'">'+m.ease.toFixed(1)+'%</td>'+
-        '<td>'+(imp!=null?imp.toFixed(2)+'%':'—')+'</td>'+
-        '<td class="'+(bp!=null?(bp>0?'up':(bp<0?'dn':'')):'')+'">'+(bp!=null?(bp>0?'+':'')+bp+'bp':'—')+'</td></tr>';
+      fh += '<tr><td style="text-align:left;font-weight:700;">'+m.meeting+'</td>' + bks.map(function(b){
+        var p = bm[b]||0;
+        if(p<=0) return '<td style="color:#b8c2d0;">0.0</td>';
+        var a = Math.min(0.85, 0.08 + 0.85*p/mx*(p/mx>0.5?1:0.6));
+        var hot = p===mx;
+        return '<td style="background:rgba(47,111,208,'+a.toFixed(2)+');'+(hot?'font-weight:700;':'')+(a>0.45?'color:#fff;':'')+'">'+p.toFixed(1)+'</td>';
+      }).join('') +
+      '<td>'+(imp!=null?imp.toFixed(2)+'%':'—')+'</td>'+
+      '<td class="'+(bp!=null?(bp>0?'up':(bp<0?'dn':'')):'')+'">'+(bp!=null?(bp>0?'+':'')+bp+'bp':'—')+'</td></tr>';
     });
+    fh += '<tr><td colspan="'+(bks.length+3)+'" style="text-align:left;font-size:11px;color:var(--dim);">'+
+      '单位% · 蓝底深度=概率大小 · ▲=当前目标区间'+(cur?cur.replace(/(\d{3})-(\d{3})/,function(a,b,c){return '（'+(+b/100).toFixed(2)+'%-'+(+c/100).toFixed(2)+'%）';}):'')+
+      ' · 加息/不变/降息汇总见上方堆积柱 · 数据 '+(FW.asof||'')+'</td></tr>';
     ft.innerHTML = fh;
   }
 }).catch(function(){});

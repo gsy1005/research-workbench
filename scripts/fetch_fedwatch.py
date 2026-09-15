@@ -2,17 +2,25 @@
 # -*- coding: utf-8 -*-
 """
 fetch_fedwatch.py — 抓取 CME FedWatch（cmegroup.cn 官方中文版）各会议
-EASE / NO CHANGE / HIKE 概率与中间价，落盘 data/fedwatch.json。
+EASE / NO CHANGE / HIKE 概率、完整利率区间概率矩阵（TARGET RATE 表）、
+中间价，落盘 data/fedwatch.json。
 
-数据在 quikstrike iframe 内且有 referrer 校验，静态 curl 拿不到，
-故用 playwright + 系统 chromium 无头渲染，逐个点击会议页签提取。
+页面结构（quikstrike iframe 内，有 referrer 校验，须 playwright 渲染）：
+  · 摘要表：表头恰为 EASE / NO CHANGE / HIKE，下一行即三个概率（权威口径）
+  · 信息表：含 MID PRICE（30天联邦基金期货 ZQ 价格）
+  · 矩阵表：首列 TARGET RATE (BPS)，逐行列出各利率区间概率
+逐会议页签点击提取。ease/no_change/hike 以官方摘要表为准，
+不做列序猜测（旧版按位置猜三列，曾把列对错，已废弃）。
 """
 import json, re, sys, datetime, shutil
 from pathlib import Path
 
 URL = "https://www.cmegroup.cn/fed-watch/"
 OUT = Path(__file__).resolve().parent.parent / "data" / "fedwatch.json"
-TAB_RE = re.compile(r"^\d{1,2}\s*[A-Za-z]{3}\s*\d{2}$")
+CSJS = Path(__file__).resolve().parent.parent / "data" / "chart_series.js"
+PCT_RE = re.compile(r"^\d+(?:\.\d+)?\s*%$")
+BUCKET_RE = re.compile(r"^(\d{3})-(\d{3})")
+
 
 def find_chromium():
     for p in ("/usr/bin/chromium", "/usr/bin/chromium-browser",
@@ -21,29 +29,57 @@ def find_chromium():
             return p
     return shutil.which("chromium") or shutil.which("chromium-browser")
 
-def parse_table(fr):
-    """解析当前页签下的概率表 -> (ease, no_change, hike, mid)"""
-    rows = fr.evaluate(
-        """() => Array.from(document.querySelectorAll('tr'))
-             .map(tr => Array.from(tr.querySelectorAll('th,td'))
-             .map(c => c.innerText.trim()).filter(x => x !== ''))""")
-    probs, mid = None, None
-    for r in rows:
-        joined = " ".join(r)
-        nums = re.findall(r"(\d+(?:\.\d+)?)\s*%", joined)
-        if len(nums) >= 3 and any(k in joined.upper() for k in ("EASE", "CHANGE", "HIKE", "PROB")) is False:
-            # 纯数据行：三个百分比
-            vals = [float(x) for x in nums[:3]]
-            if abs(sum(vals) - 100) < 1.5:
-                probs = vals
-        m = re.search(r"(\d{2}\.\d{3,4})", joined)
-        if m and mid is None:
-            mid = float(m.group(1))
-    return probs, mid
+
+def current_bucket():
+    """由 chart_series.js 的 DFEDTARU/DFEDTARL 最新值推当前目标区间，如 '350-375'"""
+    try:
+        txt = CSJS.read_text(encoding="utf-8")
+        m = re.search(r'window\.CHART_SERIES\s*=\s*(\{.*\});?\s*$', txt, re.S)
+        cs = json.loads(m.group(1))
+        lo = [p for p in cs.get("DFEDTARL", []) if p[1] is not None][-1][1]
+        hi = [p for p in cs.get("DFEDTARU", []) if p[1] is not None][-1][1]
+        return f"{int(round(lo*100))}-{int(round(hi*100))}"
+    except Exception:
+        return None
+
+
+def parse_tab(fr):
+    """解析当前页签：返回 (ease,no_change,hike), mid, buckets[[rng,p],...]"""
+    tbls = fr.evaluate(
+        """() => Array.from(document.querySelectorAll('table')).map(t=>
+             Array.from(t.querySelectorAll('tr')).map(tr=>
+               Array.from(tr.querySelectorAll('th,td')).map(c=>c.innerText.trim())))""")
+    enh, mid, buckets = None, None, []
+    for rows in tbls:
+        flat = [c for r in rows for c in r]
+        # ① 官方摘要表：EASE / NO CHANGE / HIKE
+        if "EASE" in flat and "HIKE" in flat and enh is None:
+            i = flat.index("EASE")
+            vals = [float(v.replace("%", "").strip())
+                    for v in flat[i + 3:] if PCT_RE.match(v)]
+            if len(vals) >= 3 and abs(sum(vals[:3]) - 100) < 2:
+                enh = vals[:3]
+        # ② 中间价
+        if "MID PRICE" in flat and mid is None:
+            for v in flat[flat.index("MID PRICE") + 1:]:
+                if re.match(r"^\d{2}\.\d{3,4}$", v):
+                    mid = float(v); break
+        # ③ 利率区间概率矩阵（允许区间后带 * 等标记）
+        if flat and flat[0].startswith("TARGET RATE") and not buckets:
+            for r in rows:
+                if len(r) >= 2 and BUCKET_RE.match(r[0]):
+                    rng = BUCKET_RE.match(r[0]).group(0)
+                    try:
+                        p = float(r[1].replace("%", "").strip())
+                    except ValueError:
+                        continue
+                    buckets.append([rng, p])
+    return enh, mid, buckets
+
 
 def main():
     from playwright.sync_api import sync_playwright
-    exe = find_chromium()  # 找不到则用 playwright 自带 chromium（GitHub runner 情形）
+    exe = find_chromium()
     launch_kw = {"headless": True,
                  "args": ["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]}
     if exe:
@@ -76,11 +112,14 @@ def main():
                     """(t) => { const a = Array.from(document.querySelectorAll('li a'))
                           .find(x => (x.innerText||'').trim() === t); if (a) a.click(); }""", tab)
                 page.wait_for_timeout(2500)
-                probs, mid = parse_table(fr)
-                if probs:
-                    meetings.append({"meeting": tab, "ease": probs[0],
-                                     "no_change": probs[1], "hike": probs[2],
-                                     "mid": mid})
+                enh, mid, buckets = parse_tab(fr)
+                if enh:
+                    meetings.append({
+                        "meeting": tab,
+                        "ease": enh[0], "no_change": enh[1], "hike": enh[2],
+                        "mid": mid,
+                        "buckets": [{"r": r, "p": p} for r, p in buckets if p > 0.049],
+                    })
             except Exception as e:
                 print(f"[fedwatch] tab {tab} failed: {e}", file=sys.stderr)
         browser.close()
@@ -93,13 +132,17 @@ def main():
         "asof": now.strftime("%Y-%m-%d %H:%M BJT"),
         "source": "CME FedWatch（cmegroup.cn 官方）",
         "contract": "30天联邦基金期货（ZQ）",
+        "current_bucket": current_bucket(),
         "meetings": meetings,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[fedwatch] ok: {len(meetings)} meetings -> {OUT}")
     for mt in meetings:
-        print(" ", mt)
+        print(" ", mt["meeting"], "ease/nc/hike =",
+              mt["ease"], mt["no_change"], mt["hike"],
+              "| mid =", mt["mid"], "| buckets =", len(mt["buckets"]))
+
 
 if __name__ == "__main__":
     main()
