@@ -439,6 +439,44 @@ def zq_settlements():
 ZQ_MON = {'F': 1, 'G': 2, 'H': 3, 'J': 4, 'K': 5, 'M': 6, 'N': 7, 'Q': 8, 'U': 9, 'V': 10, 'X': 11, 'Z': 12}
 ZQ_MON_REV = {v: k for k, v in ZQ_MON.items()}
 def fedwatch():
+    # 优先使用官方CME FedWatch条件概率表(cmegroup.cn, 由fetch_fedwatch.py维护, 与官网完全一致)
+    try:
+        fwj = json.load(open(os.path.join(os.path.dirname(OUT), 'fedwatch.json'), encoding='utf-8'))
+        cb = fwj.get('current_bucket', '350-375')
+        tarl = int(cb.split('-')[0]) / 100.0; taru = int(cb.split('-')[1]) / 100.0
+        effr = round((tarl + taru) / 2 - 0.125, 2)
+        try:
+            (_, effr), _ = fred_last_safe('EFFR')
+        except Exception:
+            pass
+        meetings = []
+        for m in fwj.get('meetings', []):
+            try:
+                dt = datetime.datetime.strptime(m['meeting'], '%d %b%y').date()
+            except Exception:
+                continue
+            mid_rate = round((tarl + taru) / 2, 3)
+            probs = []
+            if m.get('ease', 0) > 0.05:
+                probs.append({'rate': round(mid_rate - 0.25, 3), 'pct': m['ease']})
+            if m.get('no_change', 0) > 0.05:
+                probs.append({'rate': mid_rate, 'pct': m['no_change']})
+            if m.get('hike', 0) > 0.05:
+                probs.append({'rate': round(mid_rate + 0.25, 3), 'pct': m['hike']})
+            if not probs:
+                continue
+            meetings.append({'date': dt.isoformat(), 'implied': round(100 - m['mid'], 3),
+                             'post': round(100 - m['mid'], 3), 'probs': probs})
+            if len(meetings) >= 6:
+                break
+        if meetings:
+            log('  FedWatch: 使用官方cmegroup.cn条件概率表', fwj.get('asof', ''))
+            return {'settle_date': fwj.get('asof', ''), 'effr': effr,
+                    'target': '%.2f-%.2f' % (tarl, taru),
+                    'src': 'L1·CME FedWatch官网条件概率表(cmegroup.cn, %s)' % fwj.get('asof', ''),
+                    'cal_src': 'L1·联储FOMC日历', 'meetings': meetings}
+    except Exception as e:
+        log('  官方fedwatch.json不可用, 回退ZQ自建:', repr(e)[:100])
     dates_by_year, cal_src = fomc_dates()
     meetings = sorted(d for ds in dates_by_year.values() for d in ds)
     today = datetime.date.today()
