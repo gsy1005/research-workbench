@@ -136,6 +136,11 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>信用利差：高收益 OAS · BBB OAS</h4><div class="ct" id="cB4"></div></div>
   <div class="cbox"><h4>波动率：MOVE 债市 · VIX 股市</h4><div class="ct" id="cB5"></div></div>
   <div class="cbox"><h4>一级交易商美债持仓</h4><div class="ct" id="cB6"></div></div>
+  <div class="cbox" style="grid-column:1/-1;">
+    <h4>美债10Y收益率组成：通胀预期 + 预期实际利率 + 期限溢价（三块堆积≈名义10Y）<span>期限溢价=纽约联储ACM模型·月度</span></h4>
+    <div id="cB7why" style="font-size:12.5px;color:#16233c;padding:5px 6px 2px;line-height:1.7;font-weight:700;"></div>
+    <div class="ct" id="cB7" style="height:300px"></div>
+  </div>
 </div>
 
 <!-- ============ 外汇 ============ -->
@@ -453,6 +458,58 @@ line('cB5',[
   {name:'VIX(股)',data:since(ser('VIXCLS'),1),color:C_BLUE,right:true}
 ],{dual:true});
 line('cB6',[{name:'一级交易商美债持仓',data:since(ser('PD_UST_POS'),3),color:C_BLUE}],{left:64});
+
+/* ===== 10Y收益率组成堆积图（通胀预期+预期实际利率+期限溢价≈名义） ===== */
+(function(){
+  var el=document.getElementById('cB7'); if(!el||!window.echarts)return;
+  function ff(a){
+    return function(d){
+      var lo=0,hi=a.length-1,ans=null;
+      while(lo<=hi){var mid=(lo+hi)>>1; if(a[mid][0]<=d){ans=a[mid][1];lo=mid+1;}else hi=mid-1;}
+      return ans;
+    };
+  }
+  var nom=since(ser('DGS10'),2);
+  var fIE=ff(ser('T10YIE')), fRE=ff(ser('DFII10')), fTP=ff(ser('ACMTP10'));
+  var dIE=[],dRX=[],dTP=[],dNM=[];
+  nom.forEach(function(p){
+    var ie=fIE(p[0]), re=fRE(p[0]), tp=fTP(p[0]);
+    if(ie==null||re==null||tp==null) return;
+    dIE.push([p[0],+ie.toFixed(3)]);
+    dRX.push([p[0],+(re-tp).toFixed(3)]);
+    dTP.push([p[0],+tp.toFixed(3)]);
+    dNM.push(p);
+  });
+  if(!dNM.length) return;
+  function valAt(a,d){var r=null;for(var i=a.length-1;i>=0;i--){if(a[i][0]<=d){r=a[i][1];break;}}return r;}
+  var d1=dNM[dNM.length-1][0];
+  var dt=new Date(d1); dt.setDate(dt.getDate()-90);
+  var d0=dt.toISOString().slice(0,10);
+  var dn=Math.round((valAt(dNM,d1)-valAt(dNM,d0))*100);
+  var di=Math.round((valAt(dIE,d1)-valAt(dIE,d0))*100);
+  var dr=Math.round((valAt(dRX,d1)-valAt(dRX,d0))*100);
+  var dp=Math.round((valAt(dTP,d1)-valAt(dTP,d0))*100);
+  function fbp(v){return (v>=0?'+':'')+v+'bp';}
+  var parts=[['通胀预期',di],['预期实际利率(政策预期)',dr],['期限溢价',dp]].sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1]);});
+  var why=document.getElementById('cB7why');
+  if(why) why.textContent='▍近3个月名义 10Y '+fbp(dn)+'（'+d0+' → '+d1+'）= 通胀预期'+fbp(di)+' + 预期实际利率'+fbp(dr)+' + 期限溢价'+fbp(dp)+'　→ 主驱动：'+parts[0][0]+(parts[0][1]>=0?'上行':'下行');
+  var ch=echarts.init(el);
+  ch.setOption({
+    backgroundColor:'transparent',animation:false,textStyle:{fontFamily:KAI},
+    legend:{top:0,textStyle:{color:'#5a6b80',fontSize:10.5,fontFamily:KAI},itemWidth:14,itemHeight:8},
+    grid:{left:46,right:14,top:28,bottom:22},
+    tooltip:{trigger:'axis',backgroundColor:'#fff',borderColor:'#c9d4e4',textStyle:{color:'#22304a',fontSize:11,fontFamily:KAI},valueFormatter:function(v){return v==null?'—':(+v).toFixed(2)+'%';}},
+    xAxis:{type:'time',axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
+    yAxis:{type:'value',scale:true,min:0,axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI,formatter:'{value}%'},splitLine:{lineStyle:{color:'#e8eef6'}}},
+    series:[
+      {name:'通胀预期(盈亏平衡)',type:'line',stack:'x',showSymbol:false,data:dIE,lineStyle:{width:0},itemStyle:{color:'#4f86c6'},areaStyle:{color:'rgba(79,134,198,.55)'}},
+      {name:'预期实际利率(加息/降息预期)',type:'line',stack:'x',showSymbol:false,data:dRX,lineStyle:{width:0},itemStyle:{color:'#1b3a5f'},areaStyle:{color:'rgba(27,58,95,.5)'}},
+      {name:'期限溢价(财政/供给)',type:'line',stack:'x',showSymbol:false,data:dTP,lineStyle:{width:0},itemStyle:{color:'#d4a944'},areaStyle:{color:'rgba(212,169,68,.6)'}},
+      {name:'名义 10Y(实际值)',type:'line',showSymbol:false,data:dNM,lineStyle:{width:2.2,color:'#c8342a'},itemStyle:{color:'#c8342a'},z:5}
+    ]
+  });
+  window.addEventListener('resize',function(){ch.resize();});
+})();
 
 /* ================= 外汇 ================= */
 line('cF1',[
