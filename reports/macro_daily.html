@@ -306,6 +306,7 @@ fetch('../data/release_panels.json?v='+Date.now()).then(function(r){return r.jso
   var B = P.blocks||{}, g = document.getElementById('relGrid'); if(!g) return;
   var defs = [
     ['cpi','CPI · 消费者价格',function(b){return b.headline_mom;}],
+    ['cpi','核心CPI（除食品能源）',function(b){return b.core_mom;}],
     ['nfp','非农就业',function(b){return b.total_chg;}],
     ['ppi','PPI · 生产者价格',function(b){return (b.items||{})['最终需求'] && b.items['最终需求'].mom;}],
     ['pce_price','PCE价格',function(b){return b.total;}]
