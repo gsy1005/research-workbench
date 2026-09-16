@@ -499,16 +499,22 @@ line('cB6',[{name:'一级交易商美债持仓',data:since(ser('PD_UST_POS'),3),
   if(!dNM.length) return;
   function valAt(a,d){var r=null;for(var i=a.length-1;i>=0;i--){if(a[i][0]<=d){r=a[i][1];break;}}return r;}
   var d1=dNM[dNM.length-1][0];
-  var dt=new Date(d1); dt.setDate(dt.getDate()-90);
-  var d0=dt.toISOString().slice(0,10);
-  var dn=Math.round((valAt(dNM,d1)-valAt(dNM,d0))*100);
-  var di=Math.round((valAt(dIE,d1)-valAt(dIE,d0))*100);
-  var dr=Math.round((valAt(dRX,d1)-valAt(dRX,d0))*100);
-  var dp=Math.round((valAt(dTP,d1)-valAt(dTP,d0))*100);
   function fbp(v){return (v>=0?'+':'')+v+'bp';}
-  var parts=[['通胀预期',di],['预期实际利率(政策预期)',dr],['期限溢价',dp]].sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1]);});
+  function decomp(days){
+    var dt=new Date(d1); dt.setDate(dt.getDate()-days);
+    var d0=dt.toISOString().slice(0,10);
+    var dn=Math.round((valAt(dNM,d1)-valAt(dNM,d0))*100);
+    var di=Math.round((valAt(dIE,d1)-valAt(dIE,d0))*100);
+    var dr=Math.round((valAt(dRX,d1)-valAt(dRX,d0))*100);
+    var dp=Math.round((valAt(dTP,d1)-valAt(dTP,d0))*100);
+    var parts=[['通胀预期',di],['预期实际利率(政策预期)',dr],['期限溢价',dp]].sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1]);});
+    return {d0:d0,dn:dn,di:di,dr:dr,dp:dp,main:parts[0]};
+  }
+  function fmt(t,tag){
+    return '▍'+tag+'：名义 10Y '+fbp(t.dn)+'（'+t.d0+' → '+d1+'）= 通胀预期'+fbp(t.di)+' + 预期实际利率'+fbp(t.dr)+' + 期限溢价'+fbp(t.dp)+'　→ 主驱动：'+t.main[0]+(t.main[1]>=0?'上行':'下行');
+  }
   var why=document.getElementById('cB7why');
-  if(why) why.textContent='▍近3个月名义 10Y '+fbp(dn)+'（'+d0+' → '+d1+'）= 通胀预期'+fbp(di)+' + 预期实际利率'+fbp(dr)+' + 期限溢价'+fbp(dp)+'　→ 主驱动：'+parts[0][0]+(parts[0][1]>=0?'上行':'下行');
+  if(why) why.innerHTML=fmt(decomp(7),'近1周')+'<br>'+fmt(decomp(90),'近3个月');
   var ch=echarts.init(el);
   ch.setOption({
     backgroundColor:'transparent',animation:false,textStyle:{fontFamily:KAI},
