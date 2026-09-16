@@ -450,19 +450,31 @@ def fedwatch():
         except Exception:
             pass
         meetings = []
+        prevE = round((tarl + taru) / 2, 3)
         for m in fwj.get('meetings', []):
             try:
                 dt = datetime.datetime.strptime(m['meeting'], '%d %b%y').date()
             except Exception:
                 continue
             mid_rate = round((tarl + taru) / 2, 3)
+            # 单月口径：E[会后利率]与上一会议期望的差值/25bp → 当月加息概率
+            E = 0.0
+            for b in m.get('buckets', []):
+                bl, bh = b['r'].split('-')
+                E += ((int(bl) + int(bh)) / 200.0) * (b['p'] / 100.0)
+            d = (E - prevE) if E else (m.get('hike', 0) - m.get('ease', 0)) / 100.0 * 0.25
+            if E:
+                prevE = E
+            hike_p = max(0.0, min(100.0, d / 0.25 * 100))
+            ease_p = max(0.0, min(100.0, -d / 0.25 * 100))
             probs = []
-            if m.get('ease', 0) > 0.05:
-                probs.append({'rate': round(mid_rate - 0.25, 3), 'pct': m['ease']})
-            if m.get('no_change', 0) > 0.05:
-                probs.append({'rate': mid_rate, 'pct': m['no_change']})
-            if m.get('hike', 0) > 0.05:
-                probs.append({'rate': round(mid_rate + 0.25, 3), 'pct': m['hike']})
+            if ease_p > 0.05:
+                probs.append({'rate': round(mid_rate - 0.25, 3), 'pct': round(ease_p, 1)})
+            hold_p = 100.0 - hike_p - ease_p
+            if hold_p > 0.05:
+                probs.append({'rate': mid_rate, 'pct': round(hold_p, 1)})
+            if hike_p > 0.05:
+                probs.append({'rate': round(mid_rate + 0.25, 3), 'pct': round(hike_p, 1)})
             if not probs:
                 continue
             meetings.append({'date': dt.isoformat(), 'implied': round(100 - m['mid'], 3),

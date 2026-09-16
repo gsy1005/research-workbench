@@ -121,7 +121,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <!-- ============ 货币政策 ============ -->
 <div class="sec"><h2>货币政策</h2><span>加息/不变/降息概率 · 衰退定价</span></div>
 <div class="grid3">
-  <div class="cbox"><h4>各次会议后利率 vs 当前区间：更高/持平/更低（累计口径）<span id="fwAsof"></span></h4><div class="ct" id="cM1"></div></div>
+  <div class="cbox"><h4>各次会议当月加息/维持/降息概率（单月口径·官方区间分布推算）<span id="fwAsof"></span></h4><div class="ct" id="cM1"></div></div>
   <div class="cbox"><h4>2026年加息概率 · 9月会议一致性</h4><div class="ct" id="cM2"></div></div>
   <div class="cbox"><h4>衰退概率定价<span>2027合约为8月新上线</span></h4><div class="ct" id="cM3"></div></div>
 </div>
@@ -381,9 +381,24 @@ fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.json();
 }).catch(function(){});
 
 /* ================= FedWatch ================= */
+/* 单月口径：由官方目标区间分布推算"当月"加息/维持/降息概率
+   方法：E[会后利率]=Σ区间中值×概率；当月变动ΔE/25bp → 当月加息概率（ZQ期限结构标准读法） */
+function fwPerMeeting(FW){
+  var cb=(FW.current_bucket||'350-375').split('-');
+  var prev=(parseInt(cb[0])+parseInt(cb[1]))/200;
+  return (FW.meetings||[]).map(function(m){
+    if(!m.buckets||!m.buckets.length) return {meeting:m.meeting,ease:m.ease,no_change:m.no_change,hike:m.hike,mid:m.mid};
+    var E=0;
+    m.buckets.forEach(function(b){var r=b.r.split('-');E+=((parseInt(r[0])+parseInt(r[1]))/200)*(b.p/100);});
+    var d=E-prev, h=Math.max(0,Math.min(100,d/0.25*100)), e=Math.max(0,Math.min(100,-d/0.25*100));
+    prev=E;
+    return {meeting:m.meeting,ease:+e.toFixed(1),no_change:+(100-h-e).toFixed(1),hike:+h.toFixed(1),mid:m.mid};
+  });
+}
 fetch('../data/fedwatch.json?v='+Date.now()).then(function(r){return r.json();}).then(function(FW){
   var el = document.getElementById('cM1'); if(!el||!window.echarts) return;
   var ms = (FW.meetings||[]).slice(0,6);
+  var pm = fwPerMeeting(FW).slice(0,6);
   var as = document.getElementById('fwAsof');
   if(as && FW.asof) as.textContent = FW.asof;
   var ch = echarts.init(el);
@@ -392,12 +407,12 @@ fetch('../data/fedwatch.json?v='+Date.now()).then(function(r){return r.json();})
     legend:{top:0,textStyle:{color:'#5a6b80',fontSize:10,fontFamily:KAI}},
     grid:{left:40,right:10,top:26,bottom:34},
     tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#c9d4e4',textStyle:{color:'#22304a',fontSize:11,fontFamily:KAI}},
-    xAxis:{type:'category',data:ms.map(function(m){return m.meeting;}),axisLabel:{color:'#6b7a90',fontSize:9.5,rotate:20,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
+    xAxis:{type:'category',data:pm.map(function(m){return m.meeting;}),axisLabel:{color:'#6b7a90',fontSize:9.5,rotate:20,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
     yAxis:{type:'value',max:100,axisLabel:{color:'#6b7a90',fontSize:9.5,formatter:'{value}%'},splitLine:{lineStyle:{color:'#e8eef6'}}},
     series:[
-      {name:'加息',type:'bar',stack:'p',itemStyle:{color:C_RED},data:ms.map(function(m){return m.hike;})},
-      {name:'不变',type:'bar',stack:'p',itemStyle:{color:C_GRAY},data:ms.map(function(m){return m.no_change;})},
-      {name:'降息',type:'bar',stack:'p',itemStyle:{color:C_BLUE},data:ms.map(function(m){return m.ease;})}
+      {name:'加息',type:'bar',stack:'p',itemStyle:{color:C_RED},data:pm.map(function(m){return m.hike;})},
+      {name:'不变',type:'bar',stack:'p',itemStyle:{color:C_GRAY},data:pm.map(function(m){return m.no_change;})},
+      {name:'降息',type:'bar',stack:'p',itemStyle:{color:C_BLUE},data:pm.map(function(m){return m.ease;})}
     ]
   });
   window.addEventListener('resize',function(){ch.resize();});

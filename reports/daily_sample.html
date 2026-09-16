@@ -1301,7 +1301,7 @@ buildSnapD();
 
 // ===== 数据预测页签（dp11）：FedWatch官方全会议表 + 投行预测矩阵 =====
 function renderFwFull(F){
-  const rows = F.meetings.map((m,i)=>{
+  const rows = fwPerMeeting(F).map((m,i)=>{
     const hi = m.hike>=50 ? 'up' : (m.ease>=50 ? 'dn' : '');
     return `<tr style="${i===0?'background:rgba(212,169,68,.08);':''}"><td>${m.meeting}${i===0?' ◀最近':''}</td>`+
       `<td style="text-align:right;">${m.ease}%</td><td style="text-align:right;">${m.no_change}%</td>`+
@@ -1352,12 +1352,26 @@ function renderBanks(F){
 }
 /* 五、政策定价面板·FedWatch小表：直读官方管线 fedwatch.json（fedwatch.yml 工作日每2小时更新），
    不再读手工快照 live_snapshot.js（该文件无管线维护、9/2起冻结）；加载失败才回落快照 */
+/* 单月口径：由官方目标区间分布推算当月加息/维持/降息概率（E[会后利率]差值/25bp） */
+function fwPerMeeting(FW){
+  var cb=(FW.current_bucket||'350-375').split('-');
+  var prev=(parseInt(cb[0])+parseInt(cb[1]))/200;
+  return (FW.meetings||[]).map(function(m){
+    if(!m.buckets||!m.buckets.length) return {meeting:m.meeting,ease:m.ease,no_change:m.no_change,hike:m.hike,mid:m.mid};
+    var E=0;
+    m.buckets.forEach(function(b){var r=b.r.split('-');E+=((parseInt(r[0])+parseInt(r[1]))/200)*(b.p/100);});
+    var d=E-prev, h=Math.max(0,Math.min(100,d/0.25*100)), e=Math.max(0,Math.min(100,-d/0.25*100));
+    prev=E;
+    return {meeting:m.meeting,ease:+e.toFixed(1),no_change:+(100-h-e).toFixed(1),hike:+h.toFixed(1),mid:m.mid};
+  });
+}
 async function loadFwMini(){
   try{
     const r = await fetch('../data/fedwatch.json?v='+Date.now());
     if(!r.ok) throw 0;
     const F = await r.json();
-    const rows = F.meetings.map((m,i)=>{
+    const PM = fwPerMeeting(F);
+    const rows = PM.map((m,i)=>{
       const hi = m.hike>=50?'up':(m.ease>=50?'dn':'');
       return `<tr style="${i===0?'background:rgba(212,169,68,.08);':''}"><td>${m.meeting}${i===0?' ◀最近':''}</td>`+
         `<td style="text-align:right;">${m.ease}%</td><td style="text-align:right;">${m.no_change}%</td>`+
@@ -1368,7 +1382,7 @@ async function loadFwMini(){
     document.getElementById('fwBox').innerHTML =
       `<table><tr><th>FOMC会议</th><th style="text-align:right;">降息</th><th style="text-align:right;">维持</th><th style="text-align:right;">加息</th></tr>${rows}</table>`+
       concl+
-      `<div style="font-size:11px;color:var(--dim);margin-top:6px;">L2·${esc(F.source)} · ${esc(F.contract||'')} · 截至 ${F.asof} · 工作日07-23点每2小时管线自动更新</div>`;
+      `<div style="font-size:11px;color:var(--dim);margin-top:6px;">L2·${esc(F.source)} · ${esc(F.contract||'')} · 截至 ${F.asof} · 单月口径(由官方区间分布推算) · 工作日07-23点每2小时管线自动更新</div>`;
   }catch(e){ /* 保留 renderLive 写入的 LIVE_SNAPSHOT 快照作兜底 */ }
 }
 async function loadForecast(){
