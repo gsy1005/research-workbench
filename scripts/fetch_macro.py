@@ -524,6 +524,22 @@ def main():
                     log('DFII10按恒等式补齐', len(re_add), '天, 最新→', re_add[-1])
     except Exception as e:
         log('  x 滞后补齐失败(不影响主流程)', repr(e)[:120])
+    # --- FOMC决议日利率走廊补丁: 决议公布当日FRED的DFEDTARU/DFEDTARL仍滞后一天,
+    #     而新区间已由联储官方公布(=fedwatch.json的current_bucket), 直接补齐 ---
+    try:
+        fw = json.load(open(os.path.join(DATA, 'fedwatch.json'), encoding='utf-8'))
+        cb = (fw.get('current_bucket') or '').split('-')
+        asof_d = (fw.get('asof') or '')[:10]
+        if len(cb) == 2 and asof_d:
+            lo_v, hi_v = int(cb[0]) / 100.0, int(cb[1]) / 100.0
+            for sid, vv in (('DFEDTARL', lo_v), ('DFEDTARU', hi_v)):
+                ser_l = hist.get(sid, [])
+                if ser_l and ser_l[-1][0] < asof_d and abs(ser_l[-1][1] - vv) > 0.001:
+                    ser_l = ser_l + [[asof_d, vv]]
+                    hist[sid] = ser_l
+                    log(sid, '决议日补齐→', asof_d, vv)
+    except Exception as e:
+        log('  x 走廊补齐失败(不影响主流程)', repr(e)[:120])
     # 写 chart_series.js (只更新本次抓到的键, MM上传的键原样保留)
     with open(cs_path, 'w', encoding='utf-8') as f:
         f.write('window.CHART_SERIES = ' + json.dumps(hist, separators=(',', ':')) + ';')

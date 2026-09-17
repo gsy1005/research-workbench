@@ -27,6 +27,9 @@ body{background:var(--bg);color:var(--txt);font-family:KaiTi,STKaiti,"楷体","�
 .banner .meta b{color:#fff;}
 /* ===== 分区小标题（红色条） ===== */
 .sec{display:flex;align-items:center;gap:10px;margin:18px 0 10px;}
+.secSum{background:#f4f8fd;border-left:3px solid var(--navy);border-radius:0 6px 6px 0;padding:9px 14px;margin:-4px 0 12px;font-size:12.5px;line-height:1.9;color:#22304a;font-family:'Kaiti SC','KaiTi','STKaiti',serif;}
+.secSum b{color:var(--navy);}
+.secSum .tag{font-size:10.5px;color:var(--dim);}
 .sec::before{content:'';width:6px;height:18px;background:var(--red);border-radius:2px;}
 .sec h2{font-size:17px;letter-spacing:3px;color:var(--wht);font-weight:700;}
 .sec span{font-size:11.5px;color:var(--dim);letter-spacing:1px;}
@@ -112,6 +115,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 
 <!-- ============ 地缘风险 ============ -->
 <div class="sec"><h2>地缘风险</h2><span>事件合约概率（%）· 每日更新</span></div>
+<div class="secSum" id="sumG">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
   <div class="cbox"><h4>霍尔木兹海峡通行正常化概率</h4><div class="ct" id="cG1"></div></div>
   <div class="cbox"><h4>美伊军事升级风险：美入侵伊朗概率（2027前）</h4><div class="ct" id="cG2"></div></div>
@@ -120,15 +124,18 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 
 <!-- ============ 货币政策 ============ -->
 <div class="sec"><h2>货币政策</h2><span>加息/不变/降息概率 · 衰退定价</span></div>
+<div class="secSum" id="sumM">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
   <div class="cbox"><h4>各次会议当月加息/维持/降息概率（单月口径·官方区间分布推算）<span id="fwAsof"></span></h4><div class="ct" id="cM1"></div></div>
   <div class="cbox"><h4>2026年加息概率 · 9月会议一致性</h4><div class="ct" id="cM2"></div></div>
   <div class="cbox"><h4>衰退概率定价<span>2027合约为8月新上线</span></h4><div class="ct" id="cM3"></div></div>
+  <div class="cbox"><h4>TACO指数（特朗普政策压力）<span>越高=政策反复（TACO式回撤）概率越高</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
 </div>
 <div style="overflow-x:auto;"><table class="fw" id="fwTable"></table></div>
 
 <!-- ============ 美债 ============ -->
 <div class="sec"><h2>美债</h2><span>收益率 · 利差 · 实际利率 · 信用 · 波动率</span></div>
+<div class="secSum" id="sumB">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
   <div class="cbox"><h4>美债收益率：2Y / 10Y / 30Y</h4><div class="ct" id="cB1"></div></div>
   <div class="cbox"><h4>期限利差：10Y-2Y · 10Y-3M</h4><div class="ct" id="cB2"></div></div>
@@ -145,6 +152,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 
 <!-- ============ 外汇 ============ -->
 <div class="sec"><h2>外汇</h2><span>美元 · 主要货币对 · 人民币</span></div>
+<div class="secSum" id="sumF">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
   <div class="cbox"><h4>美元指数：DXY（日度） · 广义美元（美联储周度发布·滞后约1周）</h4><div class="ct" id="cF1"></div></div>
   <div class="cbox"><h4>欧元 · 日元</h4><div class="ct" id="cF2"></div></div>
@@ -153,6 +161,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 
 <!-- ============ 流动性 ============ -->
 <div class="sec"><h2>流动性</h2><span>利率走廊 · 货币市场 · 联储资产负债表 · 净流动性（每图单一单位，坐标轴统一）</span></div>
+<div class="secSum" id="sumL">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
   <div class="cbox"><h4>利率走廊（%）：上限/下限 · EFFR · SOFR · ON RRP</h4><div class="ct" id="cL1"></div></div>
   <div class="cbox"><h4>货币市场利差（bp）：SOFR-IORB · SOFR-EFFR · 商票-SOFR</h4><div class="ct" id="cL4"></div></div>
@@ -166,6 +175,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 
 <!-- ============ 大宗与权益 ============ -->
 <div class="sec"><h2>大宗与权益</h2><span>贵金属 · 原油 · 美股 · 中国股市</span></div>
+<div class="secSum" id="sumC">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
   <div class="cbox"><h4>黄金 · 白银</h4><div class="ct" id="cC1"></div></div>
   <div class="cbox"><h4>原油：WTI · 布伦特</h4><div class="ct" id="cC2"></div></div>
@@ -175,6 +185,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 
 <!-- ============ 仓位 ============ -->
 <div class="sec"><h2>仓位</h2><span>非商业净持仓（张）· 周度</span></div>
+<div class="secSum" id="sumP">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
   <div class="cbox"><h4>10Y美债 · 美元指数 净持仓</h4><div class="ct" id="cP1"></div></div>
   <div class="cbox"><h4>黄金 · 原油 净持仓</h4><div class="ct" id="cP2"></div></div>
@@ -769,6 +780,138 @@ function exportCustomCSV(){
     '· <span class="b2">下行/走弱</span>：'+lst(dns)+'。<br>'+
     '· <b>关注</b>：地缘定价（霍尔木兹/美伊）与本周 FOMC 路径的交叉验证，细节见上方地缘风险与货币政策区块。';
   var el=document.getElementById('daySum'); if(el) el.innerHTML=h;
+})();
+</script>
+
+<script>
+/* ================= 板块总结与分析（⚙️规则模板·按最新数据每日自动生成） ================= */
+(function(){
+  function _a(k){ return (window.CHART_SERIES||{})[k]||[]; }
+  function _v(k){ var a=_a(k); return (a.length&&a[a.length-1][1]!=null)?a[a.length-1][1]:null; }
+  function _win(k,days){ var a=_a(k); if(a.length<2) return null;
+    var end=a[a.length-1]; var t0=new Date(end[0]); t0.setDate(t0.getDate()-days);
+    var cs=t0.toISOString().slice(0,10), st=a[0];
+    for(var i=a.length-1;i>=0;i--){ if(a[i][0]<=cs){ st=a[i]; break; } }
+    return [st,end]; }
+  function _bp(k,days){ var w=_win(k,days); return w?Math.round((w[1][1]-w[0][1])*100):null; }
+  function _pc(k,days){ var w=_win(k,days); return (w&&w[0][1])?+((w[1][1]-w[0][1])/w[0][1]*100).toFixed(2):null; }
+  function _df(k,days){ var w=_win(k,days); return w?+(w[1][1]-w[0][1]).toFixed(2):null; }
+  function _wk(k){ var a=_a(k); return a.length>1?Math.round(a[a.length-1][1]-a[a.length-2][1]):null; }
+  function f2(x){ return x==null?'—':(+x).toFixed(2); }
+  function f1(x){ return x==null?'—':(+x).toFixed(1); }
+  function fp(x,d){ return x==null?'—':(x>0?'+':'')+(+x).toFixed(d==null?2:d); }
+  function fbp(x){ return x==null?'—':(x>0?'+':'')+x+'bp'; }
+  function set(id,h){ var el=document.getElementById(id); if(el) el.innerHTML=h; }
+
+  /* ---- 美债 ---- */
+  (function(){
+    var d10=_v('DGS10'), re=_v('DFII10'), ie=_v('T10YIE'), tp=_v('ACMTP10');
+    var spr=_v('T10Y2Y'), hy=_v('BAMLH0A0HYM2'), mv=_v('Y_MOVE')||_v('EDB_GLB_MOVE');
+    var dIe=_bp('T10YIE',30), dRe=_bp('DFII10',30), dTp=_bp('ACMTP10',30), driver='—', dChg=null;
+    if(dIe!=null&&dRe!=null){ var arr=[['通胀预期（盈亏平衡）',dIe],['预期实际利率（政策预期）',dRe]]; if(dTp!=null) arr.push(['期限溢价（财政/供给·月度）',dTp]);
+      arr.sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1]);}); driver=arr[0][0]; dChg=arr[0][1]; }
+    set('sumB','<b>总结</b>：10Y名义 <b>'+f2(d10)+'%</b>（近1周 '+fbp(_bp('DGS10',7))+' / 近1月 '+fbp(_bp('DGS10',30))+'）＝通胀预期 '+f2(ie)+'%＋预期实际利率 '+f2(re!=null&&tp!=null?re-tp:null)+'%＋期限溢价 '+f2(tp)+'%；10Y-2Y利差 '+(spr!=null?Math.round(spr*100)+'bp':'—')+'；高收益OAS '+f2(hy)+'%；MOVE '+f1(mv)+'。<br>'+
+      '<b>分析</b>：近1月变动主驱动＝<b>'+driver+'</b>（'+fbp(dChg)+'）。'+
+      (hy!=null?(hy>=1.2?'信用利差<b>破1.20%警报线</b>，风险端承压；':'信用利差平稳，无压力信号；'):'')+
+      (re!=null?(re>=2.45?'实际利率<b>站上2.45%贵金属压制线</b>。':'实际利率处2.45%压制线下方。'):''));
+  })();
+
+  /* ---- 外汇 ---- */
+  (function(){
+    var dx=_v('Y_DXY'), bd=_v('DTWEXBGS'), jy=_v('Y_USDJPY'), eu=_v('Y_EURUSD'), cy=_v('DEXCHUS');
+    set('sumF','<b>总结</b>：DXY <b>'+f2(dx)+'</b>（近1周 '+fp(_pc('Y_DXY',7))+'% / 近1月 '+fp(_pc('Y_DXY',30))+'%）；广义美元 '+f2(bd)+'（美联储周度发布·滞后约1周）；USDJPY '+f2(jy)+'；EURUSD '+f2(eu)+'；在岸人民币 '+f2(cy)+'。<br>'+
+      '<b>分析</b>：'+(dx!=null?(dx>=102?'DXY<b>站上102——紧缩型走强确认</b>，与非美资产压力同源；':dx>=100?'DXY处100上方偏强区间，加息预期仍有支撑；':'DXY回落至100下方，紧缩定价松动；'):'')+
+      (jy!=null&&jy>=155?'USDJPY<b>入155+干预雷区</b>，警惕日方干预扰动；':'')+
+      (cy!=null?(_pc('DEXCHUS',7)>0?'人民币近1周走贬。':'人民币近1周走稳/偏升。'):''));
+  })();
+
+  /* ---- 流动性 ---- */
+  (function(){
+    var si=_v('SPR_SOFR_IORB'), so=_v('SOFR'), lo=_v('DFEDTARL'), hi=_v('DFEDTARU');
+    var nl=_v('NETLIQ'), nf=_v('NFCI'), srf=_v('LIQ_SRF'), rs=_v('WRESBAL'), rrp=_v('RRPONTSYD');
+    set('sumL','<b>总结</b>：利率走廊 '+f2(lo)+'%-'+f2(hi)+'%，SOFR '+f2(so)+'%；SOFR-IORB <b>'+f1(si)+'bp</b>；净流动性 <b>'+f2(nl)+'万亿$</b>（近1月 '+fp(_df('NETLIQ',30))+'）；准备金 '+f2(rs!=null?rs/1e6:null)+'万亿$；ON RRP '+f2(rrp!=null?rrp/1000:null)+'万亿$；NFCI '+f2(nf)+'；SRF '+f1(srf)+'亿$。<br>'+
+      '<b>分析</b>：'+(si!=null?(si>10?'SOFR-IORB<b>超10bp——货币市场压力显性化</b>，准备金充裕度需盯紧；':'货币市场利差正常，走廊内运行平稳；'):'')+
+      (nf!=null?(nf>0?'NFCI为正——金融条件<b>净收紧</b>；':'NFCI为负——金融条件偏宽松；'):'')+
+      (srf!=null&&srf>0?'常备回购有动用（'+f1(srf)+'亿$），末段流动性需求显现。':'常备回购零动用，末段压力未现。'));
+  })();
+
+  /* ---- 大宗与权益 ---- */
+  (function(){
+    var au=_v('Y_GOLD'), ag=_v('Y_SLV'), gr=_v('GOLD_SILVER_RATIO'), wt=_v('DCOILWTICO'), bz=_v('DCOILBRENTEU');
+    var sp=_v('Y_GSPC'), ix=_v('Y_IXIC'), hs=_v('Y_000300SS'), hi2=_v('Y_HSI');
+    set('sumC','<b>总结</b>：黄金 <b>'+f2(au)+'$</b>（近1周 '+fp(_pc('Y_GOLD',7))+'%）；白银 '+f2(ag)+'$（'+fp(_pc('Y_SLV',7))+'%）；金银比 '+f1(gr)+'；WTI '+f2(wt)+'$ / 布伦特 '+f2(bz)+'$；标普 '+f2(sp)+'（'+fp(_pc('Y_GSPC',7))+'%）；沪深300 '+f2(hs!=null?hs*1000:null)+'（'+fp(_pc('Y_000300SS',7))+'%）；恒生 '+f2(hi2)+'。<br>'+
+      '<b>分析</b>：金银比近1周'+((_pc('GOLD_SILVER_RATIO',7)||0)>0?'走扩——避险定价占优、白银弹性受压；':'收窄——白银相对弹性占优；')+
+      (wt!=null?(wt>=96?'WTI<b>破96区间上沿——滞胀压力加剧</b>；':wt>=90?'油价90上方偏高，通胀二阶传导风险需盯；':'油价处90下方，能源腿压力可控；'):'')+
+      '权益端标普'+((_pc('Y_GSPC',7)||0)>=0?'近1周收涨':'近1周收跌')+'，A股'+((_pc('Y_000300SS',7)||0)>=0?'收涨':'收跌')+'。');
+  })();
+
+  /* ---- 仓位（CFTC周度） ---- */
+  (function(){
+    var ty=_v('CFTC_TY_NET'), dx=_v('CFTC_DX_NET'), gc=_v('CFTC_GC_NET'), cl=_v('CFTC_CL_NET');
+    var dgc=_wk('CFTC_GC_NET'), dty=_wk('CFTC_TY_NET');
+    set('sumP','<b>总结</b>（周度·截至最新周报）：10Y美债净持仓 <b>'+(ty!=null?ty.toLocaleString():'—')+'</b> 张（周 '+fp(dty,0)+'）；美元指数 '+(dx!=null?dx.toLocaleString():'—')+'；黄金 '+(gc!=null?gc.toLocaleString():'—')+'（周 '+fp(dgc,0)+'）；WTI原油 '+(cl!=null?cl.toLocaleString():'—')+'。<br>'+
+      '<b>分析</b>：'+(ty!=null?(ty<0?'美债投机者<b>净空</b>'+(dty!=null?(dty<0?'且加码——看空利率债（押收益率上行）占优；':'但回补中；'):''):'美债投机者净多'+(dty!=null?(dty>0?'且加码；':'但减仓中；'):'')):'')+
+      (gc!=null?(dgc!=null?(dgc>0?'黄金净多增加——避险/贬值交易仍有资金流入。':'黄金净多回落——部分资金兑现离场。'):''):''));
+  })();
+
+  /* ---- 需联网数据：FedWatch + TACO + Polymarket ---- */
+  function J(u){ return fetch(u+(u.indexOf('?')>0?'&':'?')+'v='+Date.now()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}); }
+  Promise.all([J('../data/fedwatch.json'), J('../data/trump_zone.json'), J('../data/polymarket.json')]).then(function(R){
+    var FW=R[0], TZ=R[1], PM=R[2];
+
+    /* TACO 指数卡 */
+    var tacoLine='';
+    if(TZ&&TZ.pressure){
+      var P=TZ.pressure, hist=P.history||[];
+      var v=P.value, d20=hist.length>21?+(v-hist[hist.length-21][1]).toFixed(1):null;
+      var band=v>=8?'高压区·需防TACO式政策反复':(v>=2?'中压区':'低压区');
+      var cmap={approval:'净支持',dgs10:'10Y',move:'MOVE',sp500:'标普',vix:'VIX',bkevenpy02:'盈亏平衡'};
+      var chips=''; if(P.latest_contrib){ Object.keys(cmap).forEach(function(k){ var x=P.latest_contrib[k]; if(x==null)return;
+        chips+='<span style="display:inline-block;border:1px solid #c9d4e4;border-radius:9px;padding:1px 7px;margin:1px 3px 1px 0;font-size:10.5px;color:#44536b;">'+cmap[k]+' <b style="color:'+(x>0?'#c8342a':'#2f6fbd')+'">'+fp(x,1)+'</b></span>'; }); }
+      set('cM4t','当前 <b style="color:#c8342a;font-size:17px;">'+f1(v)+'</b>（截至 '+P.asof+' · 20日 '+fp(d20,1)+'）· <b>'+band+'</b><br><span style="font-size:10.5px;color:#66788f;">分项贡献：</span>'+chips);
+      tacoLine='TACO指数 '+f1(v)+'（20日'+fp(d20,1)+'）——'+band+'。';
+      var el4=document.getElementById('cM4');
+      if(el4&&window.echarts&&hist.length){
+        var ch4=echarts.init(el4);
+        ch4.setOption({backgroundColor:'transparent',animation:false,
+          grid:{left:34,right:10,top:14,bottom:20},
+          xAxis:{type:'time',axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
+          yAxis:{type:'value',axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},splitLine:{lineStyle:{color:'#e8eef6'}}},
+          series:[{name:'TACO指数',type:'line',showSymbol:false,data:hist.slice(-250).map(function(p){return [p[0],p[1]];}),
+            lineStyle:{width:1.8,color:'#d4a944'},itemStyle:{color:'#d4a944'},
+            areaStyle:{color:'rgba(212,169,68,.14)'},
+            markLine:{symbol:'none',label:{show:false},lineStyle:{color:'#9fb0c3',type:'dashed'},data:[{yAxis:0},{yAxis:8,lineStyle:{color:'#c8342a',type:'dashed'},label:{show:true,formatter:'高压线',fontSize:9,color:'#c8342a',position:'insideStartTop'}}]}}]});
+        window.addEventListener('resize',function(){ch4.resize();});
+      }
+    }
+
+    /* 货币政策总结 */
+    if(FW&&FW.meetings&&FW.meetings.length){
+      var ms=fwPerMeeting(FW), m0=ms[0], m1=ms[1]||null;
+      var cb=(FW.current_bucket||'').split('-');
+      var tar=cb.length==2?(+cb[0]/100).toFixed(2)+'-'+(+cb[1]/100).toFixed(2)+'%':'—';
+      set('sumM','<b>总结</b>：当前目标区间 <b>'+tar+'</b>；市场定价（CME官方区间分布·单月口径·'+ (FW.asof||'') +'）：'+m0.meeting+'会议 加息<b>'+m0.hike+'%</b> / 维持'+m0.no_change+'% / 降息'+m0.ease+'%'+(m1?'；'+m1.meeting+'会议 加息<b>'+m1.hike+'%</b>':'')+'。2Y国债 '+f2(_v('DGS2'))+'%（近1周 '+fbp(_bp('DGS2',7))+'）。'+tacoLine+'<br>'+
+        '<b>分析</b>：'+(m0.hike>=50?'最近一次会议<b>加息是市场基准情形</b>，紧缩定价占上风；':'最近一次会议维持不变是基准情形，但加息概率'+m0.hike+'%不可忽视；')+
+        (m1?(m1.hike>=50?'下下次会议加息亦过半——年内路径<b>连续偏鹰</b>；':'下下次会议加息未过半，路径存在分歧；'):'')+
+        (m0.ease>=20?'降息概率'+m0.ease+'%——尾部对冲需求仍在。':''));
+    }
+
+    /* 地缘总结 */
+    if(PM&&PM.markets){
+      function find(kw){ return PM.markets.filter(function(m){return (m.question||'').indexOf(kw)>=0;})[0]; }
+      function last(m){ var h=(m&&m.history)||[]; return h.length?+(h[h.length-1][1]*100).toFixed(1):null; }
+      var ho=last(find('Strait of Hormuz traffic returns to normal by October 31'));
+      var iv=last(find('invade Iran before 2027'));
+      var sd=last(find('Government shutdown'))||last(find('government shutdown'));
+      var parts=[];
+      if(ho!=null) parts.push('霍尔木兹海峡10/31前恢复正常 <b>'+f1(ho)+'%</b>');
+      if(iv!=null) parts.push('美入侵伊朗（2027前） '+f1(iv)+'%');
+      if(sd!=null) parts.push('政府停摆 '+f1(sd)+'%');
+      set('sumG','<b>总结</b>：'+parts.join('；')+'。<br>'+
+        '<b>分析</b>：'+(ho!=null?(ho>=50?'复航预期占优，油运风险溢价趋降；':'复航预期不足半——油运风险溢价难消，能源供给扰动延续；'):'')+
+        (iv!=null?(iv>=30?'军事升级尾部风险不低，与油价/金价联动需盯。':'军事升级概率低，地缘定价以航运与供给扰动为主。'):''));
+    }
+  });
 })();
 </script>
 </body>
