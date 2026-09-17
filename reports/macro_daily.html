@@ -135,6 +135,8 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>2026年加息概率 · 9月会议一致性</h4><div class="ct" id="cM2"></div></div>
   <div class="cbox"><h4>衰退概率定价<span>2027合约为8月新上线</span></h4><div class="ct" id="cM3"></div></div>
   <div class="cbox"><h4>TACO指数（特朗普政策压力）<span>越高=政策反复（TACO式回撤）概率越高</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
+  <div class="cbox"><h4>政策预期温度计：2Y美债 vs 目标区间上限（%）<span>2Y高于上限=市场押注继续加息</span></h4><div class="ct" id="cM5"></div></div>
+  <div class="cbox"><h4>通胀预期锚：5Y盈亏平衡 · 5y5y远期（%）<span>锚是否松动决定加息容忍度</span></h4><div class="ct" id="cM6"></div></div>
 </div>
 <div style="overflow-x:auto;"><table class="fw" id="fwTable"></table></div>
 
@@ -176,6 +178,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>净流动性（万亿$）</h4><div class="ct" id="cL3"></div></div>
   <div class="cbox"><h4>芝加哥联储金融条件指数 NFCI（>0=收紧）</h4><div class="ct" id="cL8"></div></div>
   <div class="cbox"><h4>中国流动性：M1 · M2 同比（%·月度）</h4><div class="ct" id="cL6"></div></div>
+  <div class="cbox"><h4>缓冲垫：ON RRP余额 · 贴现窗口借款（十亿$）<span>RRP耗尽+贴现抬头=流动性趋紧前兆</span></h4><div class="ct" id="cL9"></div></div>
 </div>
 
 <!-- ============ 大宗与权益 ============ -->
@@ -186,6 +189,8 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>原油：WTI · 布伦特</h4><div class="ct" id="cC2"></div></div>
   <div class="cbox"><h4>标普500 · 纳斯达克</h4><div class="ct" id="cC3"></div></div>
   <div class="cbox"><h4>沪深300 · 恒生指数</h4><div class="ct" id="cC4"></div></div>
+  <div class="cbox"><h4>商品波动率：黄金GVZ · 原油OVX（日度）<span>黄金的VIX · 飙升=避险/不确定性定价</span></h4><div class="ct" id="cC5"></div></div>
+  <div class="cbox"><h4>工业金属与金银比：COMEX铜 · 金银比<span>铜=K型上行端需求温度计</span></h4><div class="ct" id="cC6"></div></div>
 </div>
 
 <!-- ============ 仓位 ============ -->
@@ -622,6 +627,28 @@ line('cC3',[
 line('cC4',[
   {name:'沪深300',data:since(serS('Y_000300SS',1000),1),color:C_RED},
   {name:'恒生指数',data:since(ser('Y_HSI'),1),color:C_BLUE,right:true}
+],{dual:true});
+
+line('cM5',[
+  {name:'2Y美债',data:since(ser('DGS2'),1),color:C_BLUE,w:2},
+  {name:'目标上限',data:since(ser('DFEDTARU'),2),color:C_RED},
+  {name:'目标下限',data:since(ser('DFEDTARL'),2),color:C_GRAY}
+],{ymin:2,ymax:6});
+line('cM6',[
+  {name:'5Y盈亏平衡',data:since(ser('T5YIE'),1),color:C_RED},
+  {name:'5y5y远期通胀',data:since(ser('T5YIFR'),1),color:C_BLUE}
+],{ymin:1,ymax:4});
+line('cL9',[
+  {name:'ON RRP余额',data:since(ser('RRPONTSYD'),2),color:C_BLUE},
+  {name:'贴现窗口借款',data:since(serS('WLCFLPCL',1e-3),2),color:C_RED}
+],{ymin:0});
+line('cC5',[
+  {name:'黄金GVZ',data:since(ser('Y_GVZ'),1),color:C_RED},
+  {name:'原油OVX',data:since(ser('Y_OVX'),1),color:C_BLUE,right:true}
+],{dual:true});
+line('cC6',[
+  {name:'COMEX铜',data:since(ser('Y_COPPER'),1),color:C_RED},
+  {name:'金银比',data:since(ser('GOLD_SILVER_RATIO'),1),color:C_BLUE,right:true}
 ],{dual:true});
 
 /* ================= CFTC 仓位 ================= */
