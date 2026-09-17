@@ -1352,11 +1352,19 @@ function renderBanks(F){
 }
 /* 五、政策定价面板·FedWatch小表：直读官方管线 fedwatch.json（fedwatch.yml 工作日每2小时更新），
    不再读手工快照 live_snapshot.js（该文件无管线维护、9/2起冻结）；加载失败才回落快照 */
-/* 单月口径：由官方目标区间分布推算当月加息/维持/降息概率（E[会后利率]差值/25bp） */
+/* 单月口径：由官方目标区间分布推算"当月"加息/维持/降息概率
+   方法：E[会后利率]=Σ区间中值×概率；当月变动ΔE/25bp → 当月加息概率
+   锚点=首场会议hold概率所在桶（决议日即时准确，不依赖FRED目标区间） */
 function fwPerMeeting(FW){
-  var cb=(FW.current_bucket||'350-375').split('-');
-  var prev=(parseInt(cb[0])+parseInt(cb[1]))/200;
-  return (FW.meetings||[]).map(function(m){
+  var prev=null, ms=FW.meetings||[];
+  if(ms.length&&ms[0].buckets&&ms[0].buckets.length){
+    var m0=ms[0], hit=null;
+    for(var i=0;i<m0.buckets.length;i++){if(Math.abs(m0.buckets[i].p-(m0.no_change||0))<0.06){hit=m0.buckets[i];break;}}
+    var b=hit||((m0.hike||0)>=(m0.ease||0)?m0.buckets[0]:m0.buckets[m0.buckets.length-1]);
+    var r0=b.r.split('-'); prev=(parseInt(r0[0])+parseInt(r0[1]))/200;
+  }
+  if(prev==null){var cb=(FW.current_bucket||'350-375').split('-');prev=(parseInt(cb[0])+parseInt(cb[1]))/200;}
+  return ms.map(function(m){
     if(!m.buckets||!m.buckets.length) return {meeting:m.meeting,ease:m.ease,no_change:m.no_change,hike:m.hike,mid:m.mid};
     var E=0;
     m.buckets.forEach(function(b){var r=b.r.split('-');E+=((parseInt(r[0])+parseInt(r[1]))/200)*(b.p/100);});

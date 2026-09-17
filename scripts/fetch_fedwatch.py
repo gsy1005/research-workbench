@@ -30,6 +30,24 @@ def find_chromium():
     return shutil.which("chromium") or shutil.which("chromium-browser")
 
 
+def bucket_from_matrix(meetings):
+    """从首场会议桶矩阵推当前目标区间：hold概率所落在的桶=当前区间（决议日即时准确）"""
+    try:
+        m0 = meetings[0]
+        bks = m0.get("buckets") or []
+        if not bks:
+            return None
+        nc = m0.get("no_change")
+        if nc is not None:
+            for b in bks:
+                if abs(b["p"] - nc) < 0.06:
+                    return b["r"]
+        # 退化规则：加息主导取最低桶，降息主导取最高桶
+        return bks[0]["r"] if (m0.get("hike", 0) >= m0.get("ease", 0)) else bks[-1]["r"]
+    except Exception:
+        return None
+
+
 def current_bucket():
     """由 chart_series.js 的 DFEDTARU/DFEDTARL 最新值推当前目标区间，如 '350-375'"""
     try:
@@ -132,7 +150,7 @@ def main():
         "asof": now.strftime("%Y-%m-%d %H:%M BJT"),
         "source": "CME FedWatch（cmegroup.cn 官方）",
         "contract": "30天联邦基金期货（ZQ）",
-        "current_bucket": current_bucket(),
+        "current_bucket": bucket_from_matrix(meetings) or current_bucket(),
         "meetings": meetings,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
