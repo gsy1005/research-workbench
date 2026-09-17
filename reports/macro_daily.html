@@ -146,7 +146,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <!-- ============ 外汇 ============ -->
 <div class="sec"><h2>外汇</h2><span>美元 · 主要货币对 · 人民币</span></div>
 <div class="grid3">
-  <div class="cbox"><h4>美元指数：DXY · 广义美元</h4><div class="ct" id="cF1"></div></div>
+  <div class="cbox"><h4>美元指数：DXY（日度） · 广义美元（美联储周度发布·滞后约1周）</h4><div class="ct" id="cF1"></div></div>
   <div class="cbox"><h4>欧元 · 日元</h4><div class="ct" id="cF2"></div></div>
   <div class="cbox"><h4>人民币：在岸汇率 · 名义有效汇率</h4><div class="ct" id="cF3"></div></div>
 </div>
@@ -652,7 +652,7 @@ function exportCSV(){
 /* ================= 自定义图表 ================= */
 var CATALOG=[
   ['美债·波动率',[['美债10Y','DGS10','pct'],['美债2Y','DGS2','pct'],['美债30Y','DGS30','pct'],['10Y-2Y利差','T10Y2Y','pct'],['10Y-3M利差','T10Y3M','pct'],['10Y实际利率','DFII10','pct'],['10Y盈亏平衡','T10YIE','pct'],['5Y5Y远期通胀','T5YIFR','pct'],['高收益OAS','BAMLH0A0HYM2','pct'],['BBB级OAS','BAMLC0A4CBBB','pct'],['MOVE债波','Y_MOVE','idx'],['VIX股波','VIXCLS','idx']]],
-  ['外汇',[['美元指数DXY','Y_DXY','idx'],['广义美元','DTWEXBGS','idx'],['欧元/美元','Y_EURUSD','fx'],['美元/日元','Y_USDJPY','fx'],['美元/人民币','DEXCHUS','fx']]],
+  ['外汇',[['美元指数DXY','Y_DXY','idx'],['广义美元(周度滞后)','DTWEXBGS','idx'],['欧元/美元','Y_EURUSD','fx'],['美元/日元','Y_USDJPY','fx'],['美元/人民币','DEXCHUS','fx']]],
   ['大宗·权益',[['COMEX黄金','Y_GOLD','usd'],['COMEX白银','Y_SLV','usd'],['WTI原油','DCOILWTICO','usd'],['布伦特','DCOILBRENTEU','usd'],['标普500','Y_GSPC','idx'],['纳斯达克','Y_IXIC','idx'],['沪深300','Y_000300SS','idxk'],['恒生指数','Y_HSI','idx']]],
   ['流动性',[['EFFR','EFFR','pct'],['SOFR','SOFR','pct'],['IORB','IORB','pct'],['ON RRP利率','RRPONTSYAWARD','pct'],['SOFR-IORB(bp)','SPR_SOFR_IORB','bp2'],['商票-SOFR(bp)','SPR_CP_SOFR','bp2'],['SOFR99分位','SOFR99','pct'],['联储总资产','WALCL','lvl'],['银行准备金','WRESBAL','lvl'],['TGA','WDTGAL','lvl'],['净流动性(万亿$)','NETLIQ','lvl2'],['NFCI','NFCI','idx'],['中国M1同比','LIQ_CNM1_YOY','pct'],['中国M2同比','LIQ_CNM2_YOY','pct']]],
   ['CFTC仓位',[['10Y美债净多','CFTC_TY_NET','cftc'],['美元指数净多','CFTC_DX_NET','cftc'],['黄金净多','CFTC_GC_NET','cftc'],['WTI原油净多','CFTC_CL_NET','cftc'],['铜净多','CFTC_HG_NET','cftc'],['白银净多','CFTC_SI_NET','cftc'],['日元净多','CFTC_JY_NET','cftc'],['标普净多','CFTC_ES_NET','cftc'],['铂金净多','CFTC_PL_NET','cftc'],['钯金净多','CFTC_PA_NET','cftc']]]

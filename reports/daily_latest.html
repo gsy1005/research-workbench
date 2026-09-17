@@ -1623,7 +1623,7 @@ function buildOvCards(){
    {id:'T10Y2Y',n:'10Y-2Y利差',u:'%',k:'bp',src:'L1 L1官方',c:function(v,d){return (v<0?'倒挂':'利差'+Math.round(v*100)+'bp')+(d>5?'，20日走陡':d<-5?'，20日走平':'，20日持平');}},
    {id:'DFII10',n:'10Y实际利率',u:'%',k:'bp',src:'L1 L1官方',c:function(v){var d=Math.round((2.45-v)*100);return '距2.45%观察线'+(d>=0?'还差'+d+'bp':'已破线'+(-d)+'bp');}},
    {id:'T10YIE',n:'盈亏平衡通胀10Y',u:'%',k:'bp',src:'L1 L1官方',c:function(v,d){return (v>=2.5?'通胀预期偏热':'通胀预期锚定')+(Math.abs(d)>8?'，20日波动加大':'，20日平稳');}},
-   {id:'DTWEXBGS',n:'广义美元指数',u:'点',k:'pct',src:'L1 L1官方',c:function(v,d){return d>0.5?'美元20日走强':d<-0.5?'美元20日走弱':'美元20日横盘';}},
+   {id:'DTWEXBGS',n:'广义美元指数(周度滞后)',u:'点',k:'pct',src:'L1 L1官方',c:function(v,d){return d>0.5?'美元20日走强':d<-0.5?'美元20日走弱':'美元20日横盘';}},
    {id:'VIXCLS',n:'VIX波动率',u:'点',k:'abs',src:'L1 L1官方',c:function(v){return v<13?'极度平静，警惕反转':v<18?'低波动区':'波动放大，risk-off警戒';}},
    {id:'Y_GSPC',n:'标普500',u:'点',k:'pct',src:'L2 行情',c:function(v,d){return d>2?'20日强势':d<-2?'20日回调':'高位震荡';}},
    {id:'Y_GOLD',n:'COMEX黄金',u:'美元/盎司',k:'pct',src:'L2 行情',c:function(v,d){return d>2?'20日走强':d<-2?'利率压制回撤':'高位拉锯';}},

@@ -192,11 +192,11 @@ def add(sid, name, unit, sec, src, how):
     S.append(dict(id=sid, name=name, unit=unit, sec=sec, src=src, how=how))
 
 # 利率 rate
-add('DGS10', '美债10Y收益率', '%', 'rate', 'L1·FRED', ('fred', 'DGS10'))
+add('DGS10', '美债10Y收益率', '%', 'rate', 'L1·FRED(+Yahoo收盘补齐)', ('fred', 'DGS10'))
 add('DGS2', '美债2Y收益率', '%', 'rate', 'L1·FRED', ('fred', 'DGS2'))
 add('DGS30', '美债30Y收益率', '%', 'rate', 'L1·FRED', ('fred', 'DGS30'))
 add('T10Y2Y', '10Y-2Y利差', '%', 'rate', 'L1·FRED', ('fred', 'T10Y2Y'))
-add('DFII10', '10Y实际利率TIPS', '%', 'rate', 'L1·FRED', ('fred', 'DFII10'))
+add('DFII10', '10Y实际利率TIPS', '%', 'rate', 'L1·FRED(+恒等式补齐)', ('fred', 'DFII10'))
 add('DFF', '联邦基金有效利率', '%', 'rate', 'L1·FRED', ('fred', 'DFF'))
 add('DFEDTARU', '联邦基金目标利率上限', '%', 'rate', 'L1·FRED', ('fred', 'DFEDTARU'))
 add('DFEDTARL', '联邦基金目标利率下限', '%', 'rate', 'L1·FRED', ('fred', 'DFEDTARL'))
@@ -502,6 +502,28 @@ def main():
         except Exception as e:
             fail.append(it['id'])
             log('  x', it['id'], repr(e)[:120])
+    # --- FRED发布日滞后补齐(决议日/晚间运行时,FRED名义与实际收益率尚未发布当天值) ---
+    # 用Yahoo ^TNX收盘补DGS10缺口; DFII10按恒等式 DFII10 = DGS10 - T10YIE 补齐
+    # (FRED上该恒等式精确到0.01成立; 次日FRED发布后整列替换, 自动回正)
+    try:
+        tnx = yahoo('^TNX', '3mo') or []
+        d10 = hist.get('DGS10', [])
+        if tnx and d10:
+            have = {p[0] for p in d10}
+            add_pts = [[d, round(v, 2)] for d, v in tnx if v and d > d10[-1][0] and d not in have]
+            if add_pts:
+                hist['DGS10'] = d10 + add_pts
+                log('DGS10用Yahoo收盘补齐', len(add_pts), '天, 最新→', add_pts[-1])
+                ie = dict(hist.get('T10YIE', []))
+                re_ser = hist.get('DFII10', [])
+                have_re = {p[0] for p in re_ser}
+                re_add = [[d, round(v - ie[d], 2)] for d, v in add_pts if d in ie and d not in have_re]
+                if re_add:
+                    re_ser = sorted(re_ser + re_add, key=lambda p: p[0])
+                    hist['DFII10'] = re_ser
+                    log('DFII10按恒等式补齐', len(re_add), '天, 最新→', re_add[-1])
+    except Exception as e:
+        log('  x 滞后补齐失败(不影响主流程)', repr(e)[:120])
     # 写 chart_series.js (只更新本次抓到的键, MM上传的键原样保留)
     with open(cs_path, 'w', encoding='utf-8') as f:
         f.write('window.CHART_SERIES = ' + json.dumps(hist, separators=(',', ':')) + ';')
