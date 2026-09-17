@@ -540,5 +540,10 @@ except Exception as e:
     keep_old('fedwatch', repr(e)[:150])
 
 panel['src_note'] = '全部L1官方源: BLS(非农/CPI) · BEA(PCE/GDP贡献) · CME结算价+联储日历(FedWatch⚙️自建) · 官网发布当日管线刷新'
+# 保留人工维护的扩展块(如 fomc 决议解读), 管线只重建自己负责的块
+for _bk, _bv in old.get('blocks', {}).items():
+    if _bk not in panel['blocks']:
+        panel['blocks'][_bk] = _bv
+        log('  保留人工块:', _bk)
 json.dump(panel, open(OUT, 'w'), ensure_ascii=False)
 log('写盘', OUT, '块:', {k: ('ok' if not v.get('empty') and not v.get('stale') else ('stale' if v.get('stale') else 'empty')) for k, v in panel['blocks'].items()})
