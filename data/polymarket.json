@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-09-18T12:33:24.315639Z",
+ "fetched_at": "2026-09-18T12:52:09.057306Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -14,7 +14,7 @@
      "price": 0.415
     }
    ],
-   "vol24": 23650,
+   "vol24": 23651,
    "end": "2026-11-03",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1632,7 +1632,7 @@
      "price": 0.105
     }
    ],
-   "vol24": 17007,
+   "vol24": 12413,
    "end": "2026-11-03",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -5710,7 +5710,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 142825,
+   "vol24": 142740,
    "end": "2026-06-01",
    "slug": "bab-el-mandeb-strait-effectively-closed-by",
    "history": [
@@ -5896,7 +5896,7 @@
      "price": 0.9935
     }
    ],
-   "vol24": 135631,
+   "vol24": 135621,
    "end": "2026-09-30",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-september-30-20260702154339440",
    "history": [
@@ -6222,7 +6222,7 @@
      "price": 0.825
     }
    ],
-   "vol24": 23715,
+   "vol24": 23479,
    "end": "2026-12-31",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -6756,7 +6756,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 17535,
+   "vol24": 17556,
    "end": "2026-08-16",
    "slug": "iran-oman-hormuz-management-agreement-byptptpt-20260804222725871",
    "history": [
@@ -8104,7 +8104,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 153126,
+   "vol24": 152107,
    "end": "2026-06-27",
    "slug": "next-round-of-us-iran-peace-talks-byptptpt-20260623022722982",
    "history": [
@@ -8138,7 +8138,7 @@
      "price": 0.106
     }
    ],
-   "vol24": 51161,
+   "vol24": 51665,
    "end": "2026-10-01",
    "slug": "where-will-the-next-next-round-of-us-iran-peace-talks-beptptpt-20260623023740663",
    "history": [
@@ -8496,7 +8496,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 79351,
+   "vol24": 79227,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -8874,7 +8874,7 @@
      "price": 0.165
     }
    ],
-   "vol24": 23155,
+   "vol24": 21693,
    "end": "2026-12-09",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
