@@ -270,9 +270,6 @@
 <!-- ============ 二、日度结论 ============ -->
 <h2>二、日度结论<span class="en">CONCLUSIONS · 数据→政策→资产</span></h2>
 <div id="ceDailyConclusion">加载中…</div>
-<!-- ============ 二之二、下游需求·定量（产业在线排产+华泰宏观库·月度） ============ -->
-<h2>二之二、下游需求·定量<span class="en">DOWNSTREAM DEMAND · 产业在线白电排产(月度) · 地产/汽车/基建/出口链 · 数据期见表</span></h2>
-<div id="dsBox">读取中…</div>
 <!-- ============ 二·补、日报观点（人工更新·冻结制） ============ -->
 <h2>二·补、日报观点<span class="en">DAILY VIEWS · 人工更新 · 事后数据不回填、修正以注记追加</span></h2>
 <div id="viewsBox">读取中…</div>
@@ -1142,8 +1139,13 @@ function refreshLive(){ refreshAll(); }
 /* 本页全自动更新，无人工维护入口 */
 /* 页面加载完成后：规则引擎生成全部结论文字 → 再应用站长本机人工修订（如有） */
 window.addEventListener('load',function(){
-  try{ if(window.CE&&CE.renderDaily)CE.renderDaily(); }catch(e){}
-  try{ if(window.RW_OWNER){ window.RW_OWNER.applyOverrides(); if(window.RW_OWNER.isOwner())window.RW_OWNER.arm(); } }catch(e){}
+  function _go(){
+    try{ if(window.CE&&CE.renderDaily)CE.renderDaily(); }catch(e){}
+    try{ if(window.RW_OWNER){ window.RW_OWNER.applyOverrides(); if(window.RW_OWNER.isOwner())window.RW_OWNER.arm(); } }catch(e){}
+  }
+  fetch('../data/downstream.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;})
+    .then(function(D){ window.DS_DATA=D; _go(); })
+    .catch(function(){ _go(); });
 });
 
 /* ================= 自动更新版专属 ================= */
@@ -1234,65 +1236,6 @@ function autoChg(){
 }
 autoChg();
 
-/* ================= 下游需求·定量（月度低频·产业在线排产+华泰宏观库） ================= */
-(function(){
-  var box=document.getElementById('dsBox'); if(!box)return;
-  function cls(v){return v>=0?'dn':'up';}
-  function pct(v){return (v>=0?'+':'')+v.toFixed(1)+'%';}
-  fetch('../data/downstream.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(J){
-    if(!J){box.innerHTML='<div class="card"><p style="color:var(--dim)">下游数据文件缺失</p></div>';return;}
-    var h='';
-    /* ---- 白电排产主卡 ---- */
-    var H=J.hvac, tot=H.total;
-    h+='<div class="card"><p style="font-size:13.5px;margin:0 0 6px;"><b style="color:var(--gold)">'+H.title+'</b>'
-      +'<span style="font-size:11px;color:var(--dim)"> '+H.src+' · '+H.updated+'发布 · 排产期 '+H.period+'</span></p>'
-      +'<p style="font-size:13px;margin:0 0 8px;">合计排产 <b>'+tot.v+'</b> 万台，同比 <b class="'+cls(tot.yoy)+'">'+pct(tot.yoy)+'</b>。'
-      +'分品类（内外销定量）：空调 <b>'+H.ac.v+'</b>万台（<b class="'+cls(H.ac.yoy)+'">'+pct(H.ac.yoy)+'</b>｜内销'+H.ac.in_v+'万 <b class="'+cls(H.ac.in_yoy)+'">'+pct(H.ac.in_yoy)+'</b> / 外销'+H.ac.out_v+'万 <b class="'+cls(H.ac.out_yoy)+'">'+pct(H.ac.out_yoy)+'</b>）；'
-      +'冰箱 <b>'+H.fr.v+'</b>万台（<b class="'+cls(H.fr.yoy)+'">'+pct(H.fr.yoy)+'</b>｜内'+H.fr.in_v+'万 <b class="'+cls(H.fr.in_yoy)+'">'+pct(H.fr.in_yoy)+'</b> / 外'+H.fr.out_v+'万 <b class="'+cls(H.fr.out_yoy)+'">'+pct(H.fr.out_yoy)+'</b>）；'
-      +'洗衣机 <b>'+H.wm.v+'</b>万台（<b class="'+cls(H.wm.yoy)+'">'+pct(H.wm.yoy)+'</b>｜内'+H.wm.in_v+'万 <b class="'+cls(H.wm.in_yoy)+'">'+pct(H.wm.in_yoy)+'</b> / 外'+H.wm.out_v+'万 <b class="'+cls(H.wm.out_yoy)+'">'+pct(H.wm.out_yoy)+'</b>）。</p>'
-      +'<div id="dsHvacChart" style="width:100%;height:240px;"></div>'
-      +'<div style="font-size:10.5px;color:var(--dim);margin-top:2px;">柱=排产量(万台·左轴) · 线=同比%(右轴) · '+H.hist_note+'</div></div>';
-    /* ---- 其他环节定量表 ---- */
-    h+='<div class="card"><table style="width:100%;font-size:12.5px;"><tr><th style="text-align:left">下游环节</th><th style="text-align:left">指标</th><th style="text-align:right">同比</th><th style="text-align:right">数据期</th></tr>';
-    J.legs.forEach(function(L){
-      L.items.forEach(function(it,i){
-        h+='<tr>'+(i===0?'<td rowspan="'+L.items.length+'" style="color:var(--gold);font-weight:700;vertical-align:top;">'+L.name+'</td>':'')
-          +'<td>'+it[0]+'</td><td style="text-align:right;" class="'+cls(it[1])+'">'+pct(it[1])+'</td>'
-          +'<td style="text-align:right;color:var(--dim);font-size:11px;">'+L.period+'</td></tr>';
-      });
-    });
-    h+='</table><div style="font-size:10.5px;color:var(--dim);margin-top:4px;">'+J.legs.map(function(L){return L.src}).filter(function(v,i,a){return a.indexOf(v)===i}).join(' · ')+' · 月度更新</div></div>';
-    /* ---- 综合判读(模板自动生成) ---- */
-    var ac=H.ac;
-    var weak=ac.yoy<-5, frOk=H.fr.out_yoy>0, wmOk=H.wm.out_yoy>0;
-    h+='<div class="card" style="border-left:3px solid var(--gold)"><p style="margin:0;font-size:12.5px;line-height:1.9;"><b style="color:var(--gold)">定量判读：</b>'
-      +'白电排产连续第4个月负增长（6月-11.8%→9月-4.0%，降幅收窄）；'
-      +(weak?'空调'+pct(ac.yoy)+'是最弱环节（内外销双降 '+pct(ac.in_yoy)+'/'+pct(ac.out_yoy)+'），':'空调排产企稳，')
-      +(frOk&&wmOk?'冰洗外销仍正增长（冰箱外销'+pct(H.fr.out_yoy)+'、洗衣机外销'+pct(H.wm.out_yoy)+'）托底。':'冰洗外销亦转弱，需警惕。')
-      +'地产三线（开工/竣工/销售 '+pct(J.legs[0].items[0][1])+'/'+pct(J.legs[0].items[1][1])+'/'+pct(J.legs[0].items[2][1])+'）深度负增=传统用铜需求承压；'
-      +'对冲项=汽车出口'+pct(J.legs[1].items[1][1])+'、铜材出口'+pct(J.legs[3].items[0][1])+'、铝材出口'+pct(J.legs[3].items[1][1])+'。'
-      +'<b>结构结论：需求弱在地产与国内家电，强在出口链——与"K型上行端"框架一致。</b></p></div>';
-    box.innerHTML=h;
-    /* ---- 排产趋势图 ---- */
-    try{
-      var ch=echarts.init(document.getElementById('dsHvacChart'),null,{renderer:'canvas'});
-      var Hs=H.hist;
-      ch.setOption({backgroundColor:'transparent',animation:false,
-        tooltip:{trigger:'axis'},
-        legend:{textStyle:{color:'#8a94a6',fontSize:10},top:0,itemWidth:12},
-        grid:{left:52,right:48,top:30,bottom:24},
-        xAxis:{type:'category',data:Hs.map(function(r){return r[0]}),axisLabel:{color:'#8a94a6',fontSize:10}},
-        yAxis:[{type:'value',name:'万台',nameTextStyle:{color:'#8a94a6',fontSize:10},axisLabel:{color:'#8a94a6',fontSize:10},splitLine:{lineStyle:{color:'rgba(128,128,128,.15)'}}},
-               {type:'value',name:'同比%',nameTextStyle:{color:'#8a94a6',fontSize:10},axisLabel:{color:'#8a94a6',fontSize:10},splitLine:{show:false}}],
-        series:[
-          {name:'合计排产',type:'bar',data:Hs.map(function(r){return r[1]}),itemStyle:{color:'#3a5a8c'},barWidth:'38%'},
-          {name:'空调同比',type:'line',yAxisIndex:1,data:Hs.map(function(r){return r[4]}),lineStyle:{color:'#e04a3a'},itemStyle:{color:'#e04a3a'},symbol:'circle',symbolSize:4},
-          {name:'冰箱同比',type:'line',yAxisIndex:1,data:Hs.map(function(r){return r[6]}),lineStyle:{color:'#d4a944'},itemStyle:{color:'#d4a944'},symbol:'circle',symbolSize:4},
-          {name:'洗衣机同比',type:'line',yAxisIndex:1,data:Hs.map(function(r){return r[8]}),lineStyle:{color:'#4caf7d'},itemStyle:{color:'#4caf7d'},symbol:'circle',symbolSize:4}
-        ]});
-    }catch(e){}
-  }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">下游数据读取失败</p></div>';});
-})();
 
 /* --- 数据总表：动态截面 --- */
 var SNAP_GROUPS=[
