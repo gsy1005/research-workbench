@@ -1,5 +1,5 @@
 {
- "asof": "2026-09-21 11:22 BJT",
+ "asof": "2026-09-21 13:21 BJT",
  "src": "L2·Yahoo Finance 服务端快照(每2小时)",
  "quotes": {
   "VIXCLS": {
@@ -28,50 +28,50 @@
   },
   "Y_GOLD": {
    "sym": "GC=F",
-   "price": 4399.7,
-   "chg": 66.9,
-   "chg_pct": 1.544,
-   "time": "2026-09-21 03:12 UTC",
+   "price": 4392.2,
+   "chg": 4.7,
+   "chg_pct": 0.107,
+   "time": "2026-09-21 05:11 UTC",
    "currency": "USD"
   },
   "Y_SLV": {
    "sym": "SI=F",
-   "price": 66.845,
-   "chg": 3.609,
-   "chg_pct": 5.707,
-   "time": "2026-09-21 03:12 UTC",
+   "price": 66.605,
+   "chg": 2.317,
+   "chg_pct": 3.604,
+   "time": "2026-09-21 05:11 UTC",
    "currency": "USD"
   },
   "DCOILWTICO": {
    "sym": "CL=F",
-   "price": 93.94,
-   "chg": -11.89,
-   "chg_pct": -11.235,
-   "time": "2026-09-21 03:12 UTC",
+   "price": 94.29,
+   "chg": -8.14,
+   "chg_pct": -7.947,
+   "time": "2026-09-21 05:11 UTC",
    "currency": "USD"
   },
   "DCOILBRENTEU": {
    "sym": "BZ=F",
-   "price": 97.52,
-   "chg": -11.23,
-   "chg_pct": -10.326,
-   "time": "2026-09-21 03:08 UTC",
+   "price": 97.76,
+   "chg": -8.07,
+   "chg_pct": -7.625,
+   "time": "2026-09-21 05:11 UTC",
    "currency": "USD"
   },
   "Y_COPPER": {
    "sym": "HG=F",
-   "price": 6.731,
-   "chg": 0.3625,
-   "chg_pct": 5.692,
-   "time": "2026-09-21 03:12 UTC",
+   "price": 6.7285,
+   "chg": 0.297,
+   "chg_pct": 4.618,
+   "time": "2026-09-21 05:11 UTC",
    "currency": "USD"
   },
   "Y_USDJPY": {
    "sym": "JPY=X",
-   "price": 156.929,
-   "chg": 2.544,
-   "chg_pct": 1.648,
-   "time": "2026-09-21 03:22 UTC",
+   "price": 156.985,
+   "chg": 2.6,
+   "chg_pct": 1.684,
+   "time": "2026-09-21 05:22 UTC",
    "currency": "JPY"
   },
   "Y_EURUSD": {
@@ -79,15 +79,15 @@
    "price": 1.148,
    "chg": -0.0069,
    "chg_pct": -0.597,
-   "time": "2026-09-21 03:22 UTC",
+   "time": "2026-09-21 05:21 UTC",
    "currency": "USD"
   },
   "Y_DXY": {
    "sym": "DX-Y.NYB",
-   "price": 100.306,
-   "chg": 0.656,
-   "chg_pct": 0.658,
-   "time": "2026-09-21 03:12 UTC",
+   "price": 100.31,
+   "chg": 0.0,
+   "chg_pct": 0.0,
+   "time": "2026-09-21 05:12 UTC",
    "currency": "USD"
   },
   "Y_TNX": {
@@ -108,10 +108,10 @@
   },
   "Y_BTC": {
    "sym": "BTC-USD",
-   "price": 81410.33,
-   "chg": 5006.56,
-   "chg_pct": 6.553,
-   "time": "2026-09-21 03:22 UTC",
+   "price": 81393.6,
+   "chg": 4989.83,
+   "chg_pct": 6.531,
+   "time": "2026-09-21 05:22 UTC",
    "currency": "USD"
   }
  }
