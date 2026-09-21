@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-21 01:32",
+ "updated": "2026-09-21 12:50",
  "asof": "2026-09-21",
  "regime": {
   "stage": 2,
@@ -99,8 +99,8 @@
    {
     "id": "SPR_SOFR_IORB",
     "name": "SOFR-IORB",
-    "z": -0.38,
-    "chg20": -2.0,
+    "z": -0.55,
+    "chg20": -3.0,
     "triggered": false
    },
    {
@@ -127,8 +127,8 @@
    "name": "SOFR-IORB利差",
    "val": -5.0,
    "unit": "bp",
-   "date": "2026-09-17",
-   "chg": -2.0,
+   "date": "2026-09-18",
+   "chg": 0.0,
    "pct": 75.4,
    "key": "SPR_SOFR_IORB"
   },
@@ -137,7 +137,7 @@
    "name": "SOFR尾部(99分位-中位)",
    "val": 8.0,
    "unit": "bp",
-   "date": "2026-09-17",
+   "date": "2026-09-18",
    "chg": 0.0,
    "pct": 7.3,
    "key": "SPR_SOFR99"
@@ -147,9 +147,9 @@
    "name": "SOFR-ONRRP利差",
    "val": 10.0,
    "unit": "bp",
-   "date": "2026-09-17",
-   "chg": -2.0,
-   "pct": 69.9,
+   "date": "2026-09-18",
+   "chg": 0.0,
+   "pct": 69.8,
    "key": "SPR_SOFR_ONRRP"
   },
   {
@@ -207,9 +207,9 @@
    "name": "SRF常备回购用量",
    "val": 0.0,
    "unit": "十亿$",
-   "date": "2026-09-18",
+   "date": "2026-09-21",
    "chg": -0.0,
-   "pct": 34.9,
+   "pct": 0.0,
    "key": "LIQ_SRF"
   },
   {
