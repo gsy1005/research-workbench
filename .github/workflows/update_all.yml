@@ -36,6 +36,7 @@ jobs:
           python3 scripts/fetch_cn_macro.py || true
           python3 scripts/fetch_calendar.py || true
           python3 scripts/fetch_trump.py || true
+          python3 scripts/fetch_downstream.py || true
           python3 scripts/gen_charts.py || true
 
       - name: FedWatch(CME官方加息概率)
