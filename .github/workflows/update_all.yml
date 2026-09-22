@@ -24,6 +24,9 @@ jobs:
           CS_TOKEN: ${{ secrets.CS_TOKEN }}
         run: python3 scripts/fetch_news.py || true
 
+      - name: 增量快讯源(东财/新浪/LME)
+        run: python3 scripts/fetch_extra_news.py || true
+
       - name: 主数据管线(宏观/流动性/CFTC/日历/特朗普/图集)
         env:
           JIN10_TOKEN: ${{ secrets.JIN10_TOKEN }}

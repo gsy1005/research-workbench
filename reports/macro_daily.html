@@ -1047,7 +1047,7 @@ function exportCustomCSV(){
     fetch('../data/news_latest.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
       if(!d){list.innerHTML='<span style="color:#8a97ab">地缘消息读取失败（管线数据未就绪）</span>';return;}
       var all=[];
-      ['jin10','ah','cs'].forEach(function(src){(d[src]||[]).forEach(function(it){it._src=src;all.push(it);});});
+      ['jin10','ah','cs','eastmoney','sina'].forEach(function(src){(d[src]||[]).forEach(function(it){it._src=src;all.push(it);});});
       var seen={},hits=[];
       all.sort(function(a,b){return (a._src==='jin10'?0:1)-(b._src==='jin10'?0:1);});
       all.forEach(function(it){

@@ -66,6 +66,15 @@ def fetch_cs():
     return items
 
 out={'asof':now,'sources':[],'jin10':[],'ah':[],'cs':[]}
+# 保留本脚本不负责的增量源键（东财/新浪/LME 等由 fetch_extra_news.py 维护）
+if os.path.exists(OUT):
+    try:
+        _prev=json.load(open(OUT,encoding='utf-8'))
+        for _k,_v in _prev.items():
+            if _k not in out:
+                out[_k]=_v
+    except Exception:
+        pass
 try:
     out['jin10']=fetch_jin10()
     out['sources'].append({'name':'金十·PLUS实时','ok':True,'n':len(out['jin10'])})
@@ -82,6 +91,7 @@ try:
 except Exception as e:
     out['sources'].append({'name':'CS财经','ok':False,'err':str(e)[:120]})
 os.makedirs(os.path.dirname(OUT),exist_ok=True)
-json.dump(out,open(OUT,'w'),ensure_ascii=False)
-open(OUT.replace('news_latest.json','news_fallback.js'),'w').write('window.NEWS_SNAP='+json.dumps(out,ensure_ascii=False)+';')
+with open(OUT,'w',encoding='utf-8') as f:
+    json.dump(out,f,ensure_ascii=False)
+open(OUT.replace('news_latest.json','news_fallback.js'),'w',encoding='utf-8').write('window.NEWS_SNAP='+json.dumps(out,ensure_ascii=False)+';')
 print(json.dumps({'asof':now,'sources':out['sources'],'counts':{k:len(out[k]) for k in ('jin10','ah','cs')}},ensure_ascii=False))
