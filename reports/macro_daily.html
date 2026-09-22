@@ -41,6 +41,14 @@ body{background:var(--bg);color:var(--txt);font-family:KaiTi,STKaiti,"楷体","�
 .gn-star{flex:0 0 14px;color:#d63a2b;}
 .gn-txt{flex:1;min-width:0;}
 .gn-note{font-size:10.5px;color:#8a97ab;margin-top:6px;}
+/* ===== 可编辑块（人工观点/地缘精选） ===== */
+.ce-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;}
+.ce-btn{margin-left:6px;font-size:11px;color:#7a8aa0;cursor:pointer;border:1px solid #c9d8ee;border-radius:4px;padding:0 8px;background:#fff;font-family:inherit;line-height:1.7;}
+.ce-btn:hover{color:#3a5f8a;border-color:#3a5f8a;}
+.topView .ce-btn{border-color:#e3c88f;color:#a08040;}
+.topView .ce-btn:hover{color:#8a6a2f;border-color:#b98a2f;}
+.ce-editing{outline:2px dashed #b98a2f;outline-offset:3px;background:#fffef5;cursor:text;min-height:2em;border-radius:3px;}
+.gn-row.gn-sum{background:#eaf1fa;border-radius:4px;padding:5px 6px;margin-top:4px;}
 .secSum{background:#f4f8fd;border-left:3px solid var(--navy);border-radius:0 6px 6px 0;padding:9px 14px;margin:-4px 0 12px;font-size:12.5px;line-height:1.9;color:#22304a;font-family:'Kaiti SC','KaiTi','STKaiti',serif;}
 .secSum b{color:var(--navy);}
 .secSum .tag{font-size:10.5px;color:var(--dim);}
@@ -118,11 +126,22 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <span class="hint">导出为本页最新数据 · 自定义图表区可自选指标/区间/图型</span>
 </div>
 
-<!-- ============ 顶部观点（人工提炼·冻结制·站长可编辑） ============ -->
-<div class="topView" id="ceTopView"><span class="tvh">📌 FOMC解读（9/17加息25bp · 人工观点）</span>总基调偏鹰但非连续紧缩——本次加息是对去年三次预防式降息的回拉，惯性规则指向至多再加约2次，后续交易重心回到经济数据与油价；历史上加息兑现后美债平均18天转涨、股金扰动后均反弹，叠加9月底前难有更鹰的数据，短期按利空出尽处理，后续重点观察油价——它是通胀最后一公里和加息预期二阶传导的核心变量。<br><b>配置排序：有色（K型上行端·节前补库）＞有色多空配置 ＞ 股市（风偏修复）＞ 贵金属（逻辑靠后，金 4250 附近抄底）。</b></div>
+<!-- ============ 顶部观点（人工提炼·点击编辑·本地保存） ============ -->
+<div class="topView" id="ceTopView">
+  <div class="ce-bar"><span class="tvh">📌 FOMC解读（9/17加息25bp · 人工观点）</span><span class="ce-btns" data-body="ceTvBody" data-key="ceTopViewHtml"></span></div>
+  <div id="ceTvBody">总基调偏鹰但非连续紧缩——本次加息是对去年三次预防式降息的回拉，惯性规则指向至多再加约2次，后续交易重心回到经济数据与油价；历史上加息兑现后美债平均18天转涨、股金扰动后均反弹，叠加9月底前难有更鹰的数据，短期按利空出尽处理，后续重点观察油价——它是通胀最后一公里和加息预期二阶传导的核心变量。<br><b>配置排序：有色（K型上行端·节前补库）＞有色多空配置 ＞ 股市（风偏修复）＞ 贵金属（逻辑靠后，金 4250 附近抄底）。</b></div>
+</div>
 
-<!-- ============ 地缘消息更新（金十热度精选·自动） ============ -->
-<div class="geoNews" id="ceGeoNews"><span class="tvh">🌍 地缘消息更新 · 美伊与中东</span><button class="gn-refresh" onclick="loadGeoNews()">↻ 刷新</button><span id="gnAsof" style="font-size:11px;color:#8a97ab;"></span><div id="gnList">读取中…</div></div>
+<!-- ============ 地缘消息 · 人工精选（当日对油价影响最大·可编辑） ============ -->
+<div class="geoNews" id="ceGeoNews">
+  <div class="ce-bar"><span class="tvh">🌍 地缘消息 · 美伊与中东（人工精选·对油价影响最大）</span><button class="ce-btn ce-auto" onclick="loadGeoNews()">⚡ 自动筛选</button><span class="ce-btns" data-body="gnList" data-key="ceGeoHtml"></span><span id="gnAsof" style="font-size:11px;color:#8a97ab;"> · 精选 2026-09-22 晚间（金十）</span></div>
+  <div id="gnList"><div class="gn-row"><span class="gn-time">19:42</span><span class="gn-star">★</span><span class="gn-txt">美国国务卿鲁比奥定调：石油价格上涨的主要原因是<b>也门</b>和<b>乌克兰</b>——供应端扰动是本轮油价的核心驱动。</span></div>
+<div class="gn-row"><span class="gn-time">19:42</span><span class="gn-star">★</span><span class="gn-txt">伊朗表态：若美国缓解军事压力，伊朗愿以行动回应——<b>海峡局势缓和预期升温</b>，欧洲天然气价格应声跌逾6%，触及9月低点。</span></div>
+<div class="gn-row"><span class="gn-time">19:44</span><span class="gn-star"></span><span class="gn-txt">鲁比奥：理想结果是俄罗斯和乌克兰<b>不针对能源设施</b>；能源基础设施停火将是个好主意——供给中断风险降温。</span></div>
+<div class="gn-row"><span class="gn-time">19:41</span><span class="gn-star"></span><span class="gn-txt">鲁比奥：必要时美国<b>将支持沙特阿拉伯</b>，并打算履行对沙特的承诺——美方安全承诺托底沙特产出。</span></div>
+<div class="gn-row"><span class="gn-time">19:40</span><span class="gn-star"></span><span class="gn-txt">鲁比奥：伊朗经济正受制裁严重打击，但"永远不会关闭对伊朗的外交大门"——<b>制裁+谈判双线并行</b>。</span></div>
+<div class="gn-row gn-sum"><span class="gn-time"></span><span class="gn-star"></span><span class="gn-txt"><b>对油价影响</b>：今日基调为<b>地缘溢价回吐（偏空油价）</b>——伊朗缓和表态直接压制海峡风险溢价；但俄乌能源设施袭击与也门袭船风险未解，属"缓和但不解除警报"，油价下方空间有限。</span></div></div>
+</div>
 
 <!-- ============ 关键价格一览 ============ -->
 <div class="sec"><h2>关键价格一览</h2><span>近6个交易日 · 红=上行 蓝=下行</span></div>
@@ -962,9 +981,50 @@ function exportCustomCSV(){
 })();
 </script>
 <script>
-/* ============ 地缘消息更新：金十/先讯/CS三源，筛美伊与中东相关，按热度取前6 ============ */
+/* ============ 人工观点 & 地缘精选：自包含点击编辑（localStorage 保存） + 按需自动筛选 ============ */
 (function(){
-  var KW=/(伊朗|霍尔木兹|胡塞|沙特|以色列|中东|红海|也门|黎巴嫩|真主党|加沙|鲁比奥[^\n]{0,30}(伊朗|沙特|中东)|曼德|波斯湾|停火)/;
+  var KW=/(伊朗|霍尔木兹|胡塞|沙特|以色列|中东|红海|也门|黎巴嫩|真主党|加沙|鲁比奥[^\n]{0,30}(伊朗|沙特|中东)|曼德|波斯湾|停火|原油|油价|能源)/;
+
+  /* ---- 通用块编辑器 ---- */
+  window.ceSave=function(bodyId,storeKey){
+    var body=document.getElementById(bodyId); if(!body)return;
+    try{localStorage.setItem(storeKey,body.innerHTML);}catch(e){}
+    body.setAttribute('contenteditable','false');
+    body.classList.remove('ce-editing');
+    cePaintBtns(bodyId,false);
+  };
+  window.ceStart=function(bodyId,storeKey){
+    var body=document.getElementById(bodyId); if(!body)return;
+    body.dataset.orig=body.innerHTML;
+    body.setAttribute('contenteditable','true');
+    body.classList.add('ce-editing');
+    cePaintBtns(bodyId,true);
+    body.focus();
+    try{var r=document.createRange();r.selectNodeContents(body);r.collapse(false);var s=getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  };
+  window.ceCancel=function(bodyId,storeKey){
+    var body=document.getElementById(bodyId); if(!body)return;
+    if(body.dataset.orig!=null)body.innerHTML=body.dataset.orig;
+    body.setAttribute('contenteditable','false');
+    body.classList.remove('ce-editing');
+    cePaintBtns(bodyId,false);
+  };
+  window.ceReset=function(bodyId,storeKey){
+    if(!confirm('还原为页面默认内容？（你在本机保存的修改将清除）'))return;
+    try{localStorage.removeItem(storeKey);}catch(e){}
+    location.reload();
+  };
+  function cePaintBtns(bodyId,editing){
+    document.querySelectorAll('.ce-btns[data-body="'+bodyId+'"]').forEach(function(box){
+      var key=box.dataset.key;
+      box.innerHTML=editing
+        ?'<button class="ce-btn" onclick="ceSave(\''+bodyId+'\',\''+key+'\')">💾 保存</button><button class="ce-btn" onclick="ceCancel(\''+bodyId+'\',\''+key+'\')">✖ 取消</button><button class="ce-btn" onclick="ceReset(\''+bodyId+'\',\''+key+'\')">↺ 还原默认</button>'
+        :'<button class="ce-btn" onclick="ceStart(\''+bodyId+'\',\''+key+'\')">✏️ 编辑</button>';
+    });
+    document.querySelectorAll('.ce-auto').forEach(function(b){b.style.display=editing?'none':'';});
+  }
+
+  /* ---- 自动筛选（按需）：三源取美伊/中东/能源相关，热度前6 ---- */
   window.loadGeoNews=function(){
     var list=document.getElementById('gnList'); if(!list)return;
     list.innerHTML='读取中…';
@@ -972,7 +1032,6 @@ function exportCustomCSV(){
       if(!d){list.innerHTML='<span style="color:#8a97ab">地缘消息读取失败（管线数据未就绪）</span>';return;}
       var all=[];
       ['jin10','ah','cs'].forEach(function(src){(d[src]||[]).forEach(function(it){it._src=src;all.push(it);});});
-      /* 命中关键词 + 归一化模糊去重（不同源转述同一事只留一条）；金十源优先（时效最好） */
       var seen={},hits=[];
       all.sort(function(a,b){return (a._src==='jin10'?0:1)-(b._src==='jin10'?0:1);});
       all.forEach(function(it){
@@ -980,11 +1039,10 @@ function exportCustomCSV(){
         var key=c.replace(/[\s\p{P}【】]/gu,'').slice(0,30);
         if(seen[key])return; seen[key]=1; hits.push(it);
       });
-      /* 热度=important优先，其次时间新 */
       hits.sort(function(a,b){return ((b.important||0)-(a.important||0))||String(b.time||'').localeCompare(String(a.time||''));});
       var top=hits.slice(0,6);
-      document.getElementById('gnAsof').textContent=' · 数据日 '+(d.asof||'—');
-      if(!top.length){list.innerHTML='<div style="color:#8a97ab">近一波快讯中暂无美伊/中东相关条目</div>';return;}
+      document.getElementById('gnAsof').textContent=' · 自动筛选 '+(d.asof||'—')+'（未保存，可再点编辑调整后保存）';
+      if(!top.length){list.innerHTML='<div style="color:#8a97ab">近一波快讯中暂无相关条目</div>';return;}
       list.innerHTML=top.map(function(it){
         var t=(it.time||'').slice(11,16);
         var c=(it.content||'').replace(/^【[^】]*】/,'');
@@ -993,10 +1051,19 @@ function exportCustomCSV(){
       }).join('');
     }).catch(function(){list.innerHTML='<span style="color:#8a97ab">地缘消息读取失败</span>';});
   };
-  /* 站长编辑挂载：本页人工观点块(ceTopView)与地缘块(ceGeoNews)均可编辑 */
+
+  /* ---- 载入：本机保存的内容优先于页面默认，然后渲染编辑按钮 ---- */
   window.addEventListener('load',function(){
-    loadGeoNews();
-    try{ if(window.RW_OWNER){ RW_OWNER.applyOverrides(); if(RW_OWNER.isOwner()) RW_OWNER.arm(); } }catch(e){}
+    document.querySelectorAll('.ce-btns').forEach(function(box){
+      var bodyId=box.dataset.body, key=box.dataset.key;
+      var saved=null;
+      try{saved=localStorage.getItem(key);}catch(e){}
+      if(saved){
+        var body=document.getElementById(bodyId);
+        if(body)body.innerHTML=saved;
+      }
+      cePaintBtns(bodyId,false);
+    });
   });
 })();
 </script>
