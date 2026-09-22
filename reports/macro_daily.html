@@ -148,6 +148,15 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="sec"><h2>关键价格一览</h2><span>近6个交易日 · 红=上行 蓝=下行</span></div>
 <div style="overflow-x:auto;"><table class="kv" id="kvTable"><tr><th>指标</th><th style="text-align:right">最新</th><th style="text-align:right">日变动</th><th style="text-align:right">T-1</th><th style="text-align:right">T-2</th><th style="text-align:right">T-3</th><th style="text-align:right">T-4</th><th style="text-align:right">T-5</th></tr></table></div>
 
+<!-- ============ 库存监控：LME（日频）· SHFE（周频）共同评估 ============ -->
+<div class="sec"><h2>库存监控 · 锡铜</h2><span>LME 日频（westmetall） · SHFE 周频（上期所·iFinD EDB 自动更新） · 内外共同评估<span class="ce-btns" data-body="sumInv" data-key="ceInvHtml"></span></span></div>
+<div class="secSum" id="sumInv">⚙️ 库存共同评估生成中…</div>
+<div class="grid3">
+  <div class="cbox"><h4>🥫 锡库存：LME vs SHFE（吨）</h4><div id="invSn" style="font-size:12.5px;line-height:2;color:#22304a;">读取中…</div></div>
+  <div class="cbox"><h4>🔶 铜库存：LME vs SHFE（吨）</h4><div id="invCu" style="font-size:12.5px;line-height:2;color:#22304a;">读取中…</div></div>
+  <div class="cbox"><h4>📈 SHFE 期货库存近 10 周（吨）</h4><div class="ct" id="invTrend" style="height:230px"></div></div>
+</div>
+
 <!-- ============ 今日新出数据 ============ -->
 <div class="sec"><h2>今日新出数据</h2><span>四大发布自动更新 · 🔥=近7日内发布 · 当日日历事件</span></div>
 <div class="rel-grid" id="relGrid"></div>
@@ -978,6 +987,101 @@ function exportCustomCSV(){
         '<b>分析</b>：'+(ho!=null?(ho>=50?'复航预期占优，油运风险溢价趋降；':'复航预期不足半——油运风险溢价难消，能源供给扰动延续；'):'')+
         (iv!=null?(iv>=30?'军事升级尾部风险不低，与油价/金价联动需盯。':'军事升级概率低，地缘定价以航运与供给扰动为主。'):''));
     }
+  });
+})();
+</script>
+<script>
+/* ============ 库存监控：LME(westmetall日频) + SHFE(上期所·iFinD EDB周频) ============ */
+(function(){
+  function fmt(v){return (v==null||isNaN(v))?'—':Number(v).toLocaleString('en-US');}
+  function sgn(v,suffix){
+    if(v==null||isNaN(v))return '—';
+    var a=Math.abs(v).toLocaleString('en-US');
+    return (v>0?'+':v<0?'-':'±')+a+(suffix||'');
+  }
+  function wowPct(series){
+    if(!series||series.length<2)return null;
+    var a=series[series.length-1][1], b=series[series.length-2][1];
+    if(a==null||b==null||!b)return null;
+    return (a-b)/b*100;
+  }
+  function md(d){return d?d.slice(5).replace('-','/'):'—';}
+  /* 共同评估：LME日变动 × SHFE周变动 四象限 */
+  function judge(dL,dS){
+    var L=dL==null?0:(dL>0?1:(dL<0?-1:0)), S=dS==null?0:(dS>0?1:(dS<0?-1:0));
+    if(L<0&&S<0)return['内外双去库','两端共同收紧，实物支撑最强，偏多'];
+    if(L<0&&S===0)return['外紧内平','海外去库、内盘平稳，外因主导'];
+    if(L<0&&S>0)return['内松外紧','国内累库 vs 海外去库——内盘压力大于外盘支撑，看进口窗口/比价'];
+    if(L>0&&S<0)return['内紧外松','国内去库 vs 海外累库——国内现货支撑更强，关注正套与内外比价'];
+    if(L>0&&S>0)return['内外双累库','两端共同转松，实物压制最明显，偏空'];
+    if(L>0)return['外松内平','海外累库、内盘平稳'];
+    if(S>0)return['内松外平','国内累库、外盘平稳'];
+    if(L<0)return['外紧内平','海外去库、内盘平稳'];
+    if(S<0)return['内紧外平','国内去库、外盘平稳'];
+    return['内外均平稳','库存暂无明确方向，跟随其他门禁'];
+  }
+  function arrowCls(v){return v==null?'':(v>0?' class="up"':(v<0?' class="dn"':''));}
+  function metalCard(el,dLme,dShfe,name){
+    if(!el)return;
+    if(!dLme&&!dShfe){el.innerHTML='<span style="color:#8a97ab">库存数据读取失败（管线未就绪）</span>';return;}
+    var rows='',assess='';
+    if(dLme){
+      rows+='<div><b style="color:#3a5f8a">LME</b> 库存 <b>'+fmt(dLme.stock)+'</b> 吨 <span'+arrowCls(dLme.dDay)+'>日'+sgn(dLme.dDay)+'</span> <span style="color:#8a97ab;font-size:11px">'+md(dLme.date)+'</span></div>';
+    }
+    if(dShfe){
+      rows+='<div><b style="color:#3a5f8a">SHFE</b> 期货库存 <b>'+fmt(dShfe.stock)+'</b> 吨 <span'+arrowCls(dShfe.wow)+'>周'+sgn(dShfe.wow,'%')+'</span> <span style="color:#8a97ab;font-size:11px">'+md(dShfe.date)+' 周报</span></div>';
+    }
+    var j=judge(dLme?dLme.dDay:null,dShfe?dShfe.wow:null);
+    assess='<div style="margin-top:5px;padding-top:5px;border-top:1px dashed #c9d8ee;">共同评估：<b>'+j[0]+'</b>——'+j[1]+'</div>';
+    el.innerHTML=rows+assess;
+  }
+  window.addEventListener('load',function(){
+    fetch('../data/news_latest.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(!d)return;
+      var lme=d.lme||[];
+      function lmeOf(field){
+        if(!lme.length||lme[0][field]==null)return null;
+        var prev=(lme.length>1&&lme[1][field]!=null)?lme[1][field]:null;
+        return {date:lme[0].date,stock:lme[0][field],dDay:prev==null?null:lme[0][field]-prev};
+      }
+      var sh=(d.shfe&&d.shfe.metals)||{};
+      function shOf(m){
+        var s=sh[m];if(!s||!s.series||!s.series.length)return null;
+        return {date:s.series[s.series.length-1][0],stock:s.series[s.series.length-1][1],wow:wowPct(s.series)};
+      }
+      metalCard(document.getElementById('invSn'),lmeOf('sn_stock'),shOf('sn'),'锡');
+      metalCard(document.getElementById('invCu'),lmeOf('cu_stock'),shOf('cu'),'铜');
+      /* 共同评估总述（用户本机保存的手动评估优先） */
+      var sumEl=document.getElementById('sumInv');
+      var saved=null;try{saved=localStorage.getItem('ceInvHtml');}catch(e){}
+      if(sumEl&&!saved){
+        var js=judge(lmeOf('sn_stock')?lmeOf('sn_stock').dDay:null,shOf('sn')?shOf('sn').wow:null);
+        var jc=judge(lmeOf('cu_stock')?lmeOf('cu_stock').dDay:null,shOf('cu')?shOf('cu').wow:null);
+        var asofL=lme.length?lme[0].date:'—', asofS=(d.shfe&&d.shfe.updated)||'—';
+        sumEl.innerHTML='🥫 <b>锡</b>：'+js[0]+'（'+js[1]+'）<br>🔶 <b>铜</b>：'+jc[0]+'（'+jc[1]+'）<br><span class="tag">LME 数据 '+asofL+' · SHFE 数据 '+asofS+' · 数据源：westmetall / 上期所(iFinD EDB)</span>';
+      }
+      /* SHFE 近10周走势双轴图 */
+      var el=document.getElementById('invTrend');
+      if(el&&window.echarts&&sh.sn&&sh.cu){
+        var cats=sh.sn.series.map(function(r){return md(r[0]);});
+        var ch=echarts.init(el);
+        ch.setOption({
+          grid:{left:56,right:56,top:30,bottom:24},
+          tooltip:{trigger:'axis'},
+          legend:{data:['锡','铜'],top:0,textStyle:{fontSize:11}},
+          xAxis:{type:'category',data:cats,axisLabel:{fontSize:10}},
+          yAxis:[{type:'value',name:'锡',scale:true},{type:'value',name:'铜',scale:true,splitLine:{show:false}}],
+          series:[
+            {name:'锡',type:'line',smooth:true,symbolSize:5,data:sh.sn.series.map(function(r){return r[1];}),itemStyle:{color:'#3a5f8a'},areaStyle:{opacity:.08}},
+            {name:'铜',type:'line',yAxisIndex:1,smooth:true,symbolSize:5,data:(sh.cu.series||[]).map(function(r){return r[1];}),itemStyle:{color:'#b8860b'}}
+          ]
+        });
+        window.addEventListener('resize',function(){ch.resize();});
+      }
+    }).catch(function(){
+      var s=document.getElementById('invSn');if(s)s.innerHTML='<span style="color:#8a97ab">库存数据读取失败</span>';
+      var c=document.getElementById('invCu');if(c)c.innerHTML='<span style="color:#8a97ab">库存数据读取失败</span>';
+    });
   });
 })();
 </script>

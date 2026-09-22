@@ -60,6 +60,11 @@ jobs:
           IFIND_REFRESH_TOKEN: ${{ secrets.IFIND_REFRESH_TOKEN }}
         run: python3 scripts/fetch_ifind_mcp.py || true
 
+      - name: 上期所锡铜库存(iFinD EDB)
+        env:
+          IFIND_MCP_KEY: ${{ secrets.IFIND_MCP_KEY }}
+        run: python3 scripts/fetch_shfe_stock.py || true
+
       - name: 提交并发布到网站
         run: |
           git config user.name "data-bot"
