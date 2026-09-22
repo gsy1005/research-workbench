@@ -48,6 +48,7 @@ body{background:var(--bg);color:var(--txt);font-family:KaiTi,STKaiti,"楷体","�
 .topView .ce-btn{border-color:#e3c88f;color:#a08040;}
 .topView .ce-btn:hover{color:#8a6a2f;border-color:#b98a2f;}
 .ce-editing{outline:2px dashed #b98a2f;outline-offset:3px;background:#fffef5;cursor:text;min-height:2em;border-radius:3px;}
+.ce-editing.tvh,.tvh.ce-editing{display:inline-block;min-width:180px;padding:0 4px;}
 .gn-row.gn-sum{background:#eaf1fa;border-radius:4px;padding:5px 6px;margin-top:4px;}
 .secSum{background:#f4f8fd;border-left:3px solid var(--navy);border-radius:0 6px 6px 0;padding:9px 14px;margin:-4px 0 12px;font-size:12.5px;line-height:1.9;color:#22304a;font-family:'Kaiti SC','KaiTi','STKaiti',serif;}
 .secSum b{color:var(--navy);}
@@ -128,13 +129,13 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 
 <!-- ============ 顶部观点（人工提炼·点击编辑·本地保存） ============ -->
 <div class="topView" id="ceTopView">
-  <div class="ce-bar"><span class="tvh">📌 FOMC解读（9/17加息25bp · 人工观点）</span><span class="ce-btns" data-body="ceTvBody" data-key="ceTopViewHtml"></span></div>
+  <div class="ce-bar"><span class="tvh" id="ceTvTitle">📌 FOMC解读（9/17加息25bp · 人工观点）</span><span class="ce-btns" data-body="ceTvBody" data-title="ceTvTitle" data-key="ceTopViewHtml"></span></div>
   <div id="ceTvBody">总基调偏鹰但非连续紧缩——本次加息是对去年三次预防式降息的回拉，惯性规则指向至多再加约2次，后续交易重心回到经济数据与油价；历史上加息兑现后美债平均18天转涨、股金扰动后均反弹，叠加9月底前难有更鹰的数据，短期按利空出尽处理，后续重点观察油价——它是通胀最后一公里和加息预期二阶传导的核心变量。<br><b>配置排序：有色（K型上行端·节前补库）＞有色多空配置 ＞ 股市（风偏修复）＞ 贵金属（逻辑靠后，金 4250 附近抄底）。</b></div>
 </div>
 
 <!-- ============ 地缘消息 · 人工精选（当日对油价影响最大·可编辑） ============ -->
 <div class="geoNews" id="ceGeoNews">
-  <div class="ce-bar"><span class="tvh">🌍 地缘消息 · 美伊与中东（人工精选·对油价影响最大）</span><button class="ce-btn ce-auto" onclick="loadGeoNews()">⚡ 自动筛选</button><span class="ce-btns" data-body="gnList" data-key="ceGeoHtml"></span><span id="gnAsof" style="font-size:11px;color:#8a97ab;"> · 精选 2026-09-22 晚间（金十）</span></div>
+  <div class="ce-bar"><span class="tvh" id="ceGnTitle">🌍 地缘消息 · 美伊与中东（人工精选·对油价影响最大）</span><button class="ce-btn ce-auto" onclick="loadGeoNews()">⚡ 自动筛选</button><span class="ce-btns" data-body="gnList" data-title="ceGnTitle" data-key="ceGeoHtml"></span><span id="gnAsof" style="font-size:11px;color:#8a97ab;"> · 精选 2026-09-22 晚间（金十）</span></div>
   <div id="gnList"><div class="gn-row"><span class="gn-time">19:42</span><span class="gn-star">★</span><span class="gn-txt">美国国务卿鲁比奥定调：石油价格上涨的主要原因是<b>也门</b>和<b>乌克兰</b>——供应端扰动是本轮油价的核心驱动。</span></div>
 <div class="gn-row"><span class="gn-time">19:42</span><span class="gn-star">★</span><span class="gn-txt">伊朗表态：若美国缓解军事压力，伊朗愿以行动回应——<b>海峡局势缓和预期升温</b>，欧洲天然气价格应声跌逾6%，触及9月低点。</span></div>
 <div class="gn-row"><span class="gn-time">19:44</span><span class="gn-star"></span><span class="gn-txt">鲁比奥：理想结果是俄罗斯和乌克兰<b>不针对能源设施</b>；能源基础设施停火将是个好主意——供给中断风险降温。</span></div>
@@ -985,28 +986,44 @@ function exportCustomCSV(){
 (function(){
   var KW=/(伊朗|霍尔木兹|胡塞|沙特|以色列|中东|红海|也门|黎巴嫩|真主党|加沙|鲁比奥[^\n]{0,30}(伊朗|沙特|中东)|曼德|波斯湾|停火|原油|油价|能源)/;
 
-  /* ---- 通用块编辑器 ---- */
+  /* ---- 通用块编辑器（正文+标题联动，localStorage 持久化） ---- */
+  function ceBoxOf(bodyId){return document.querySelector('.ce-btns[data-body="'+bodyId+'"]');}
+  function ceEls(bodyId){
+    var box=ceBoxOf(bodyId), els=[];
+    var body=document.getElementById(bodyId); if(body)els.push(body);
+    if(box&&box.dataset.title){var t=document.getElementById(box.dataset.title);if(t)els.push(t);}
+    return els;
+  }
+  function ceSetEdit(els,on){
+    els.forEach(function(el){
+      el.setAttribute('contenteditable',on?'true':'false');
+      el.classList.toggle('ce-editing',!!on);
+    });
+  }
   window.ceSave=function(bodyId,storeKey){
-    var body=document.getElementById(bodyId); if(!body)return;
-    try{localStorage.setItem(storeKey,body.innerHTML);}catch(e){}
-    body.setAttribute('contenteditable','false');
-    body.classList.remove('ce-editing');
+    var box=ceBoxOf(bodyId), els=ceEls(bodyId); if(!els.length)return;
+    var val;
+    if(box&&box.dataset.title){
+      val=JSON.stringify({b:els[0].innerHTML,t:(els[1]?els[1].innerHTML:'')});
+    }else{
+      val=els[0].innerHTML;
+    }
+    try{localStorage.setItem(storeKey,val);}catch(e){}
+    ceSetEdit(els,false);
     cePaintBtns(bodyId,false);
   };
   window.ceStart=function(bodyId,storeKey){
-    var body=document.getElementById(bodyId); if(!body)return;
-    body.dataset.orig=body.innerHTML;
-    body.setAttribute('contenteditable','true');
-    body.classList.add('ce-editing');
+    var els=ceEls(bodyId); if(!els.length)return;
+    els.forEach(function(el){el.dataset.orig=el.innerHTML;});
+    ceSetEdit(els,true);
     cePaintBtns(bodyId,true);
-    body.focus();
-    try{var r=document.createRange();r.selectNodeContents(body);r.collapse(false);var s=getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+    els[0].focus();
+    try{var r=document.createRange();r.selectNodeContents(els[0]);r.collapse(false);var s=getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
   };
   window.ceCancel=function(bodyId,storeKey){
-    var body=document.getElementById(bodyId); if(!body)return;
-    if(body.dataset.orig!=null)body.innerHTML=body.dataset.orig;
-    body.setAttribute('contenteditable','false');
-    body.classList.remove('ce-editing');
+    var els=ceEls(bodyId); if(!els.length)return;
+    els.forEach(function(el){if(el.dataset.orig!=null)el.innerHTML=el.dataset.orig;});
+    ceSetEdit(els,false);
     cePaintBtns(bodyId,false);
   };
   window.ceReset=function(bodyId,storeKey){
@@ -1015,12 +1032,11 @@ function exportCustomCSV(){
     location.reload();
   };
   function cePaintBtns(bodyId,editing){
-    document.querySelectorAll('.ce-btns[data-body="'+bodyId+'"]').forEach(function(box){
-      var key=box.dataset.key;
-      box.innerHTML=editing
-        ?'<button class="ce-btn" onclick="ceSave(\''+bodyId+'\',\''+key+'\')">💾 保存</button><button class="ce-btn" onclick="ceCancel(\''+bodyId+'\',\''+key+'\')">✖ 取消</button><button class="ce-btn" onclick="ceReset(\''+bodyId+'\',\''+key+'\')">↺ 还原默认</button>'
-        :'<button class="ce-btn" onclick="ceStart(\''+bodyId+'\',\''+key+'\')">✏️ 编辑</button>';
-    });
+    var box=ceBoxOf(bodyId); if(!box)return;
+    var key=box.dataset.key;
+    box.innerHTML=editing
+      ?'<button class="ce-btn" onclick="ceSave(\''+bodyId+'\',\''+key+'\')">💾 保存</button><button class="ce-btn" onclick="ceCancel(\''+bodyId+'\',\''+key+'\')">✖ 取消</button><button class="ce-btn" onclick="ceReset(\''+bodyId+'\',\''+key+'\')">↺ 还原默认</button>'
+      :'<button class="ce-btn" onclick="ceStart(\''+bodyId+'\',\''+key+'\')">✏️ 编辑</button>';
     document.querySelectorAll('.ce-auto').forEach(function(b){b.style.display=editing?'none':'';});
   }
 
@@ -1052,7 +1068,7 @@ function exportCustomCSV(){
     }).catch(function(){list.innerHTML='<span style="color:#8a97ab">地缘消息读取失败</span>';});
   };
 
-  /* ---- 载入：本机保存的内容优先于页面默认，然后渲染编辑按钮 ---- */
+  /* ---- 载入：本机保存的内容优先于页面默认（兼容纯正文旧格式与标题+正文新格式），然后渲染编辑按钮 ---- */
   window.addEventListener('load',function(){
     document.querySelectorAll('.ce-btns').forEach(function(box){
       var bodyId=box.dataset.body, key=box.dataset.key;
@@ -1060,7 +1076,14 @@ function exportCustomCSV(){
       try{saved=localStorage.getItem(key);}catch(e){}
       if(saved){
         var body=document.getElementById(bodyId);
-        if(body)body.innerHTML=saved;
+        var obj=null;
+        try{obj=JSON.parse(saved);}catch(e){}
+        if(obj&&typeof obj==='object'&&'b' in obj){
+          if(body)body.innerHTML=obj.b;
+          if(box.dataset.title){var t=document.getElementById(box.dataset.title);if(t&&'t' in obj)t.innerHTML=obj.t;}
+        }else if(body){
+          body.innerHTML=saved;
+        }
       }
       cePaintBtns(bodyId,false);
     });
