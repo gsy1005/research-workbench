@@ -38,5 +38,5 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           git add charts/ data/polymarket.json data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json data/calendar_consensus.json data/econ_calendar.json data/j10_store.json data/trump_zone.json data/truth_posts.json data/news_latest.json data/news_fallback.js
           git diff --cached --quiet || git commit -m "每日数据 $(date +%F)"
-          git pull --rebase origin main || true
+          git pull --rebase origin main || { git rebase --abort; git pull --no-rebase -X ours origin main; }
           git push
