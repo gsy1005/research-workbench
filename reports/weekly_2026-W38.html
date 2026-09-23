@@ -134,6 +134,14 @@ document.addEventListener('DOMContentLoaded', function(){ bindTabs(); bindEnsure
 <div class="panel on" id="p-ov">
 <div id="ceWeeklyOv">加载中…</div>
 <div id="ceWeeklyTable">加载中…</div>
+
+<h2>锡库存评估 · LME×SHFE<span class="en">TIN INVENTORY · 每日自动更新(iFinD EDB)</span></h2>
+<div class="card" id="snInvSum" style="font-size:13px;line-height:1.9;">锡库存评估加载中…</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:14px;">
+  <div class="card" style="margin-bottom:0;"><b style="color:var(--gold)">🥫 LME 锡库存（日频 · westmetall）</b><div id="snInvLme" style="font-size:13px;line-height:2;margin-top:6px;">—</div></div>
+  <div class="card" style="margin-bottom:0;"><b style="color:var(--gold)">🏛️ SHFE 锡期货库存（周频 · 上期所/iFinD EDB）</b><div id="snInvShfe" style="font-size:13px;line-height:2;margin-top:6px;">—</div></div>
+  <div class="card" style="margin-bottom:0;"><b style="color:var(--gold)">📈 SHFE 近 10 周走势（吨）</b><div id="snInvChart" style="height:200px;margin-top:6px;"></div></div>
+</div>
 <h2>政策定价与地缘跟踪<span class="en">POLICY PRICING & GEO</span></h2>
 <div class="grid2">
   <div class="mini"><h4>CME FedWatch 加息预期（联邦基金期货定价）</h4><div id="fwBox"></div></div>
@@ -587,5 +595,73 @@ fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.ok?r.js
 <div style="margin:26px auto 0;max-width:1180px;padding:0 16px;text-align:right;">
   <a href="../panels/owner.html" style="color:#5a6a82;text-decoration:none;font-size:11px;" title="站长入口（需站长密码）">· 站长</a>
 </div>
+<script>
+/* ============ 锡库存评估：LME(westmetall日频) + SHFE(上期所·iFinD EDB周频) 实时数据 ============ */
+(function(){
+  function fmt(v){return (v==null||isNaN(v))?'—':Number(v).toLocaleString('en-US');}
+  function sgn(v,suffix){
+    if(v==null||isNaN(v))return '—';
+    var a=Math.abs(v).toLocaleString('en-US');
+    return (v>0?'+':v<0?'-':'±')+a+(suffix||'');
+  }
+  function md(d){return d?d.slice(5).replace('-','/'):'—';}
+  function judge(dL,dS){
+    var L=dL==null?0:(dL>0?1:(dL<0?-1:0)), S=dS==null?0:(dS>0?1:(dS<0?-1:0));
+    if(L<0&&S<0)return['内外双去库','两端共同收紧，实物支撑最强，偏多'];
+    if(L<0&&S===0)return['外紧内平','海外去库、内盘平稳，外因主导'];
+    if(L<0&&S>0)return['内松外紧','国内累库 vs 海外去库——内盘压力大于外盘支撑，看进口窗口/内外比价'];
+    if(L>0&&S<0)return['内紧外松','国内去库 vs 海外累库——国内现货支撑更强，关注正套与内外比价'];
+    if(L>0&&S>0)return['内外双累库','两端共同转松，实物压制最明显，偏空'];
+    if(L>0)return['外松内平','海外累库、内盘平稳'];
+    if(S>0)return['内松外平','国内累库、外盘平稳'];
+    if(L<0)return['外紧内平','海外去库、内盘平稳'];
+    if(S<0)return['内紧外平','国内去库、外盘平稳'];
+    return['内外均平稳','库存暂无明确方向，跟随其他门禁'];
+  }
+  fetch('../data/news_latest.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
+    if(!d)return;
+    var lme=d.lme||[];
+    var lmeSn=(lme.length&&lme[0].sn_stock!=null)?{date:lme[0].date,stock:lme[0].sn_stock,
+      dDay:(lme.length>1&&lme[1].sn_stock!=null)?lme[0].sn_stock-lme[1].sn_stock:null}:null;
+    var sh=((d.shfe||{}).metals||{}).sn;
+    var shSn=null;
+    if(sh&&sh.series&&sh.series.length){
+      var ser=sh.series, a=ser[ser.length-1][1], b=ser.length>1?ser[ser.length-2][1]:null;
+      shSn={date:ser[ser.length-1][0],stock:a,wow:(a!=null&&b)?(a-b)/b*100:null};
+    }
+    var el;
+    el=document.getElementById('snInvLme');
+    if(el)el.innerHTML=lmeSn
+      ?('<div>库存 <b style="font-size:17px;">'+fmt(lmeSn.stock)+'</b> 吨</div><div>日变动 <span class="'+(lmeSn.dDay>0?'up':lmeSn.dDay<0?'dn':'')+'">'+sgn(lmeSn.dDay)+' 吨</span></div><div style="color:var(--dim);font-size:12px;">数据日 '+md(lmeSn.date)+'</div>')
+      :'<span style="color:var(--dim)">LME 数据未就绪</span>';
+    el=document.getElementById('snInvShfe');
+    if(el)el.innerHTML=shSn
+      ?('<div>期货库存 <b style="font-size:17px;">'+fmt(shSn.stock)+'</b> 吨</div><div>周变动 <span class="'+(shSn.wow>0?'up':shSn.wow<0?'dn':'')+'">'+sgn(shSn.wow,'%')+'</span></div><div style="color:var(--dim);font-size:12px;">'+md(shSn.date)+' 周报 · 上期所(iFinD EDB)</div>')
+      :'<span style="color:var(--dim)">SHFE 数据未就绪</span>';
+    el=document.getElementById('snInvSum');
+    if(el){
+      var j=judge(lmeSn?lmeSn.dDay:null,shSn?shSn.wow:null);
+      el.innerHTML='🥫 <b style="color:var(--gold)">锡库存共同评估：'+j[0]+'</b>——'+j[1]+'。<br>'+
+        '<span style="color:var(--dim);font-size:12px;">LME '+fmt(lmeSn?lmeSn.stock:null)+' 吨（'+md(lmeSn?lmeSn.date:null)+'，日 '+sgn(lmeSn?lmeSn.dDay:null)+'） · SHFE '+fmt(shSn?shSn.stock:null)+' 吨（'+md(shSn?shSn.date:null)+'，周 '+sgn(shSn?shSn.wow:null,'%')+'） · 数据源 westmetall / 上期所(iFinD EDB) · 每日 07:40/20:40 自动更新</span>';
+    }
+    var cEl=document.getElementById('snInvChart');
+    if(cEl&&window.echarts&&shSn){
+      var ch=echarts.init(cEl);
+      ch.setOption({
+        grid:{left:52,right:14,top:16,bottom:22},
+        tooltip:{trigger:'axis'},
+        xAxis:{type:'category',data:sh.series.map(function(r){return md(r[0]);}),axisLabel:{color:'#8a94a6',fontSize:9},axisLine:{lineStyle:{color:'#262d3d'}}},
+        yAxis:{type:'value',scale:true,axisLabel:{color:'#8a94a6',fontSize:9},splitLine:{lineStyle:{color:'#1d2330'}}},
+        series:[{name:'SHFE锡库存',type:'line',smooth:true,symbolSize:5,data:sh.series.map(function(r){return r[1];}),
+          itemStyle:{color:'#d4a944'},lineStyle:{color:'#d4a944',width:2},areaStyle:{color:'rgba(212,169,68,.12)'}}]
+      });
+      window.addEventListener('resize',function(){ch.resize();});
+    }
+  }).catch(function(){
+    var el=document.getElementById('snInvSum');
+    if(el)el.innerHTML='<span style="color:var(--dim)">库存数据读取失败（管线未就绪）</span>';
+  });
+})();
+</script>
 </body>
 </html>
