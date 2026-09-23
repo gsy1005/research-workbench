@@ -1,18 +1,18 @@
 {
-  "updated": "2026-09-23 20:17:10 北京",
+  "updated": "2026-09-23 20:29:51 北京",
   "source": "iFinD MCP",
   "ok": [
     {
       "id": "EM_CN_CPI_YOY",
       "tool": "get_edb_data",
-      "points": 26,
+      "points": 320,
       "before": [
         "2026-08-01",
         0.8
       ],
       "latest": [
-        "2025-12-31",
-        0.0
+        "2026-08-31",
+        0.8
       ]
     },
     {
@@ -280,8 +280,8 @@
       "tool": "get_edb_data",
       "points": 400,
       "before": [
-        "2026-09-05",
-        106.904717
+        "2026-09-22",
+        22.2561
       ],
       "latest": [
         "2026-09-22",
@@ -293,8 +293,8 @@
       "tool": "get_edb_data",
       "points": 400,
       "before": [
-        "2026-09-05",
-        26275.15
+        "2026-09-22",
+        26178.6988
       ],
       "latest": [
         "2026-09-22",
@@ -306,8 +306,8 @@
       "tool": "get_edb_data",
       "points": 400,
       "before": [
-        "2026-09-04",
-        123.1
+        "2026-09-23",
+        124.28
       ],
       "latest": [
         "2026-09-23",
@@ -319,8 +319,8 @@
       "tool": "get_edb_data",
       "points": 400,
       "before": [
-        "2026-09-02",
-        2320.2812538906
+        "2026-09-23",
+        2949.49
       ],
       "latest": [
         "2026-09-23",
@@ -332,12 +332,12 @@
       "tool": "get_edb_data",
       "points": 400,
       "before": [
-        "2026-09-04",
-        38.1255989074707
+        "2026-09-23",
+        43.8525
       ],
       "latest": [
         "2026-09-23",
-        43.8525
+        38.9454
       ]
     },
     {
@@ -358,8 +358,8 @@
       "tool": "get_edb_data",
       "points": 400,
       "before": [
-        "2026-09-04",
-        0.4466999999999999
+        "2026-09-23",
+        1.2347
       ],
       "latest": [
         "2026-09-23",
@@ -368,37 +368,9 @@
     }
   ],
   "failed": {
-    "EM_CN_CPI_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_PPI_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_PMI_MFG": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_PMI_NMFG": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_M2_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_M1_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_M0_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_GDP_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_IAV_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_LOAN_NEW": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_LOAN_YTD": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_EXP_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_IMP_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_TRADE_BAL": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_RETAIL_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_LOAN_ACC_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EDB_CN_TSF_STK": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_M2_STK": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "LIQ_CNM2": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "LIQ_CNM1": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "EM_CN_GDP_STK": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "HT_asset_国内股市资金_新成立公募基金份额_中国:新成立基金份额:偏股型": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "HT_asset_国内股市资金_融资余额_融资余额": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "HT_perf_资产表现-资产相对表现_AH溢价指数_恒生AH股溢价指数": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "HT_asset_全球资金_港股净流入_南向资金流入": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
     "HT_mktstruct_全球股市估值_全球股市ERP_中国": "可解析数据点不足: 0",
-    "HT_mktstruct_国内债市估值_股市PE(LYR)估值_PE(全A非金融石化)": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
     "HT_mktstruct_波动率_上证50波动率_50IV": "可解析数据点不足: 0",
-    "HT_mktstruct_波动率_沪深300波动率_300IV": "可解析数据点不足: 0",
-    "HT_asset_中美宏观象限_库存周期-中国-PPI_中国工业企业产成品存货:同比": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
-    "HT_mktstruct_国内债市估值_国债期限利差_10年-1年": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence"
+    "HT_mktstruct_波动率_沪深300波动率_300IV": "可解析数据点不足: 0"
   },
   "note": "iFinD 优先；失败时保留免费公开源旧数据；密钥不写入仓库",
   "available_tools": [
