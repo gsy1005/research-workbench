@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-09-23T12:21:55.694108Z",
+ "fetched_at": "2026-09-23T12:52:56.797904Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -14,7 +14,7 @@
      "price": 0.345
     }
    ],
-   "vol24": 36568,
+   "vol24": 37141,
    "end": "2027-01-05",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1632,7 +1632,7 @@
      "price": 0.065
     }
    ],
-   "vol24": 81715,
+   "vol24": 81723,
    "end": "2027-01-05",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -5710,7 +5710,7 @@
      "price": 0.765
     }
    ],
-   "vol24": 323673,
+   "vol24": 323465,
    "end": "2027-01-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -6264,7 +6264,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 112234,
+   "vol24": 112388,
    "end": "2026-06-01",
    "slug": "bab-el-mandeb-strait-effectively-closed-by",
    "history": [
@@ -6789,14 +6789,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.095
+     "price": 0.085
     },
     {
      "name": "No",
-     "price": 0.905
+     "price": 0.915
     }
    ],
-   "vol24": 39381,
+   "vol24": 38972,
    "end": "2026-11-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-october-31-20260810151043583",
    "history": [
@@ -6970,7 +6970,7 @@
     ],
     [
      "2026-09-23",
-     0.095
+     0.085
     ]
    ]
   },
@@ -6986,7 +6986,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 588502,
+   "vol24": 583635,
    "end": "2026-06-27",
    "slug": "next-round-of-us-iran-peace-talks-byptptpt-20260623022722982",
    "history": [
@@ -7020,7 +7020,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 141325,
+   "vol24": 141104,
    "end": "2026-10-01",
    "slug": "where-will-the-next-next-round-of-us-iran-peace-talks-beptptpt-20260623023740663",
    "history": [
@@ -7394,7 +7394,7 @@
      "price": 0.855
     }
    ],
-   "vol24": 317419,
+   "vol24": 317299,
    "end": "2027-01-01",
    "slug": "will-the-us-invade-iran-before-2027",
    "history": [
@@ -8688,7 +8688,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 267542,
+   "vol24": 266353,
    "end": "2026-09-20",
    "slug": "us-iran-ceasefire-continues-throughptptpt",
    "history": [
@@ -8722,7 +8722,7 @@
      "price": 0.875
     }
    ],
-   "vol24": 11766,
+   "vol24": 10790,
    "end": "2026-12-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-november-30-20260810151158765",
    "history": [
@@ -15779,11 +15779,11 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0155
+     "price": 0.015
     },
     {
      "name": "No",
-     "price": 0.9845
+     "price": 0.985
     }
    ],
    "vol24": 342,
@@ -16213,11 +16213,11 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.139
+     "price": 0.1305
     },
     {
      "name": "No",
-     "price": 0.861
+     "price": 0.8695
     }
    ],
    "vol24": 232,
@@ -16234,7 +16234,7 @@
     ],
     [
      "2026-09-23",
-     0.139
+     0.1305
     ]
    ]
   },
@@ -17084,7 +17084,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 877608,
+   "vol24": 861604,
    "end": "2026-05-01",
    "slug": "will-the-us-confirm-that-aliens-exist-before-2027",
    "history": [
