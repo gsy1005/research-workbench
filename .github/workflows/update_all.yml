@@ -1,5 +1,7 @@
 name: 一键更新全部数据
 on:
+  schedule:
+    - cron: '50 22 * * *'  # 每天 06:50 北京时间全量兜底(UTC 22:50)
   workflow_dispatch:   # 手动按钮：Actions页点 Run workflow 即全量刷新
 
 permissions:
