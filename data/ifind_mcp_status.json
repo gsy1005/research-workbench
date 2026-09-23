@@ -1,24 +1,24 @@
 {
-  "updated": "2026-09-17 19:36:11 北京",
+  "updated": "2026-09-23 20:17:10 北京",
   "source": "iFinD MCP",
   "ok": [
     {
       "id": "EM_CN_CPI_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 26,
       "before": [
         "2026-08-01",
         0.8
       ],
       "latest": [
-        "2026-08-31",
-        0.8
+        "2025-12-31",
+        0.0
       ]
     },
     {
       "id": "EM_CN_PPI_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 320,
       "before": [
         "2026-08-01",
         3.8
@@ -31,7 +31,7 @@
     {
       "id": "EM_CN_PMI_MFG",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 260,
       "before": [
         "2026-08-01",
         49.8
@@ -44,7 +44,7 @@
     {
       "id": "EM_CN_PMI_NMFG",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 236,
       "before": [
         "2026-08-01",
         49.0
@@ -57,7 +57,7 @@
     {
       "id": "EM_CN_M2_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 320,
       "before": [
         "2026-08-01",
         7.5
@@ -70,7 +70,7 @@
     {
       "id": "EM_CN_M1_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 320,
       "before": [
         "2026-08-01",
         4.1
@@ -83,7 +83,7 @@
     {
       "id": "EM_CN_M0_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 320,
       "before": [
         "2026-08-01",
         11.2
@@ -96,7 +96,7 @@
     {
       "id": "EM_CN_GDP_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 106,
       "before": [
         "2026-06-01",
         4.7
@@ -109,7 +109,7 @@
     {
       "id": "EM_CN_IAV_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 315,
       "before": [
         "2026-08-01",
         5.2
@@ -122,7 +122,7 @@
     {
       "id": "EM_CN_LOAN_NEW",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 308,
       "before": [
         "2026-08-01",
         552.0
@@ -135,7 +135,7 @@
     {
       "id": "EM_CN_LOAN_YTD",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 308,
       "before": [
         "2026-08-01",
         102261.0
@@ -148,7 +148,7 @@
     {
       "id": "EM_CN_EXP_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 152,
       "before": [
         "2026-08-01",
         25.0
@@ -161,7 +161,7 @@
     {
       "id": "EM_CN_IMP_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 152,
       "before": [
         "2026-08-01",
         28.2
@@ -174,7 +174,7 @@
     {
       "id": "EM_CN_TRADE_BAL",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 164,
       "before": [
         "2026-08-01",
         11908.5
@@ -187,7 +187,7 @@
     {
       "id": "EM_RETAIL_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 290,
       "before": [
         "2026-08-01",
         0.4
@@ -200,7 +200,7 @@
     {
       "id": "EM_LOAN_ACC_YOY",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 320,
       "before": [
         "2026-08-01",
         -20.924064
@@ -213,10 +213,10 @@
     {
       "id": "EDB_CN_TSF_STK",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 144,
       "before": [
-        "2026-05-31",
-        7.7
+        "2026-08-31",
+        7.2
       ],
       "latest": [
         "2026-08-31",
@@ -226,20 +226,20 @@
     {
       "id": "EM_CN_M2_STK",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 320,
       "before": [
         "2026-08-01",
         3568083.6
       ],
       "latest": [
         "2026-08-31",
-        3568084.0
+        3568083.6
       ]
     },
     {
       "id": "LIQ_CNM2",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 320,
       "before": [
         "2026-08-01",
         356.81
@@ -252,7 +252,7 @@
     {
       "id": "LIQ_CNM1",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 320,
       "before": [
         "2026-08-01",
         115.77
@@ -265,7 +265,7 @@
     {
       "id": "EM_CN_GDP_STK",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 106,
       "before": [
         "2026-06-01",
         695704.0
@@ -278,75 +278,75 @@
     {
       "id": "HT_asset_国内股市资金_新成立公募基金份额_中国:新成立基金份额:偏股型",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 400,
       "before": [
-        "2026-08-22",
-        121.44237
+        "2026-09-05",
+        106.904717
       ],
       "latest": [
-        "2026-09-16",
-        60.7252
+        "2026-09-22",
+        22.2561
       ]
     },
     {
       "id": "HT_asset_国内股市资金_融资余额_融资余额",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 400,
       "before": [
-        "2026-08-22",
-        26395
+        "2026-09-05",
+        26275.15
       ],
       "latest": [
-        "2026-09-16",
-        25991.9004
+        "2026-09-22",
+        26178.6988
       ]
     },
     {
       "id": "HT_perf_资产表现-资产相对表现_AH溢价指数_恒生AH股溢价指数",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 400,
       "before": [
-        "2026-08-21",
-        120.96
+        "2026-09-04",
+        123.1
       ],
       "latest": [
-        "2026-09-17",
-        124.31
+        "2026-09-23",
+        124.28
       ]
     },
     {
       "id": "HT_asset_全球资金_港股净流入_南向资金流入",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 400,
       "before": [
-        "2026-08-19",
-        1116.957367401104
+        "2026-09-02",
+        2320.2812538906
       ],
       "latest": [
-        "2026-09-17",
-        2875.86
+        "2026-09-23",
+        2949.49
       ]
     },
     {
       "id": "HT_mktstruct_国内债市估值_股市PE(LYR)估值_PE(全A非金融石化)",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 400,
       "before": [
-        "2026-08-21",
-        40.4860992431641
+        "2026-09-04",
+        38.1255989074707
       ],
       "latest": [
-        "2026-09-17",
-        42.8663
+        "2026-09-23",
+        43.8525
       ]
     },
     {
       "id": "HT_asset_中美宏观象限_库存周期-中国-PPI_中国工业企业产成品存货:同比",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 127,
       "before": [
-        "2026-06-30",
-        9.5
+        "2026-07-31",
+        10.8
       ],
       "latest": [
         "2026-07-31",
@@ -356,21 +356,49 @@
     {
       "id": "HT_mktstruct_国内债市估值_国债期限利差_10年-1年",
       "tool": "get_edb_data",
-      "points": 100,
+      "points": 400,
       "before": [
-        "2026-08-21",
-        0.4810999999999999
+        "2026-09-04",
+        0.4466999999999999
       ],
       "latest": [
-        "2026-09-17",
-        1.2303
+        "2026-09-23",
+        1.2347
       ]
     }
   ],
   "failed": {
+    "EM_CN_CPI_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_PPI_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_PMI_MFG": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_PMI_NMFG": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_M2_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_M1_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_M0_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_GDP_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_IAV_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_LOAN_NEW": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_LOAN_YTD": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_EXP_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_IMP_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_TRADE_BAL": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_RETAIL_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_LOAN_ACC_YOY": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EDB_CN_TSF_STK": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_M2_STK": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "LIQ_CNM2": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "LIQ_CNM1": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "EM_CN_GDP_STK": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "HT_asset_国内股市资金_新成立公募基金份额_中国:新成立基金份额:偏股型": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "HT_asset_国内股市资金_融资余额_融资余额": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "HT_perf_资产表现-资产相对表现_AH溢价指数_恒生AH股溢价指数": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "HT_asset_全球资金_港股净流入_南向资金流入": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
     "HT_mktstruct_全球股市估值_全球股市ERP_中国": "可解析数据点不足: 0",
+    "HT_mktstruct_国内债市估值_股市PE(LYR)估值_PE(全A非金融石化)": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
     "HT_mktstruct_波动率_上证50波动率_50IV": "可解析数据点不足: 0",
-    "HT_mktstruct_波动率_沪深300波动率_300IV": "可解析数据点不足: 0"
+    "HT_mktstruct_波动率_沪深300波动率_300IV": "可解析数据点不足: 0",
+    "HT_asset_中美宏观象限_库存周期-中国-PPI_中国工业企业产成品存货:同比": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence",
+    "HT_mktstruct_国内债市估值_国债期限利差_10年-1年": "'gbk' codec can't encode character '\\u2713' in position 2: illegal multibyte sequence"
   },
   "note": "iFinD 优先；失败时保留免费公开源旧数据；密钥不写入仓库",
   "available_tools": [
