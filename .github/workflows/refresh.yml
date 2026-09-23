@@ -22,11 +22,13 @@ jobs:
         run: python3 scripts/fetch_news.py
       - name: 抓取增量源(东财7x24/新浪7x24/LME锡铜)
         run: python3 scripts/fetch_extra_news.py || true
+      - name: 收集近日发布数据(供日报页展示)
+        run: python3 scripts/collect_releases.py || true
       - name: 提交更新
         run: |
           git config user.name "workbench-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/news_latest.json data/news_fallback.js
+          git add data/news_latest.json data/news_fallback.js data/releases_recent.json
           git diff --cached --quiet || git commit -m "消息快照更新"
           git pull --rebase origin main || git rebase --abort
           git push
