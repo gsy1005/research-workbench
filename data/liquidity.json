@@ -1,19 +1,19 @@
 {
- "updated": "2026-09-23 01:31",
- "asof": "2026-09-23",
+ "updated": "2026-09-22 11:54",
+ "asof": "2026-09-22",
  "regime": {
   "stage": 2,
-  "onrrp_bn": 0.453,
+  "onrrp_bn": 0.582,
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 40.6,
+  "value": 42.0,
   "n_comp": 9,
   "components": [
    {
     "id": "SPR_SOFR_IORB",
     "name": "SOFR-IORB利差",
-    "pct": 75.3
+    "pct": 75.4
    },
    {
     "id": "SPR_SOFR99",
@@ -28,22 +28,22 @@
    {
     "id": "BAMLH0A0HYM2",
     "name": "高收益OAS",
-    "pct": 3.9
+    "pct": 7.0
    },
    {
     "id": "VIXCLS",
     "name": "VIX(股市波动)",
-    "pct": 21.0
+    "pct": 20.3
    },
    {
     "id": "MOVE_X",
     "name": "MOVE(债市波动)",
-    "pct": 34.4
+    "pct": 37.0
    },
    {
     "id": "NETLIQ",
     "name": "净流动性63日Δ(逆)",
-    "pct": 43.6
+    "pct": 44.0
    },
    {
     "id": "DTWEXBGS",
@@ -53,7 +53,7 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率63日Δ",
-    "pct": 79.9
+    "pct": 86.7
    }
   ]
  },
@@ -69,29 +69,29 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率",
-    "z": 0.87,
-    "chg63": 0.34,
+    "z": 1.27,
+    "chg63": 0.47,
     "triggered": false
    },
    {
     "id": "BAMLH0A0HYM2",
     "name": "高收益OAS",
-    "z": 0.04,
-    "chg63": -0.1,
+    "z": 0.19,
+    "chg63": -0.03,
     "triggered": false
    },
    {
     "id": "VIXCLS",
     "name": "VIX",
-    "z": -0.62,
-    "chg63": -3.76,
+    "z": -0.77,
+    "chg63": -4.68,
     "triggered": false
    },
    {
     "id": "MOVE_X",
     "name": "MOVE",
-    "z": 0.75,
-    "chg63": 9.781,
+    "z": 0.83,
+    "chg63": 11.18,
     "triggered": false
    }
   ],
@@ -99,8 +99,8 @@
    {
     "id": "SPR_SOFR_IORB",
     "name": "SOFR-IORB",
-    "z": -0.89,
-    "chg20": -5.0,
+    "z": -0.55,
+    "chg20": -3.0,
     "triggered": false
    },
    {
@@ -127,9 +127,9 @@
    "name": "SOFR-IORB利差",
    "val": -5.0,
    "unit": "bp",
-   "date": "2026-09-21",
+   "date": "2026-09-18",
    "chg": 0.0,
-   "pct": 75.3,
+   "pct": 75.4,
    "key": "SPR_SOFR_IORB"
   },
   {
@@ -137,7 +137,7 @@
    "name": "SOFR尾部(99分位-中位)",
    "val": 8.0,
    "unit": "bp",
-   "date": "2026-09-21",
+   "date": "2026-09-18",
    "chg": 0.0,
    "pct": 7.3,
    "key": "SPR_SOFR99"
@@ -147,7 +147,7 @@
    "name": "SOFR-ONRRP利差",
    "val": 10.0,
    "unit": "bp",
-   "date": "2026-09-21",
+   "date": "2026-09-18",
    "chg": 0.0,
    "pct": 69.8,
    "key": "SPR_SOFR_ONRRP"
@@ -165,11 +165,11 @@
   {
    "id": "onrrp",
    "name": "ON RRP余额",
-   "val": 0.45,
+   "val": 0.58,
    "unit": "十亿$",
-   "date": "2026-09-22",
-   "chg": -0.13,
-   "pct": 14.3,
+   "date": "2026-09-21",
+   "chg": 0.01,
+   "pct": 15.5,
    "key": "RRPONTSYD"
   },
   {
@@ -197,7 +197,7 @@
    "name": "净流动性(总资产-TGA-RRP)",
    "val": 5.87,
    "unit": "万亿$",
-   "date": "2026-09-22",
+   "date": "2026-09-21",
    "chg": 0.0,
    "pct": 41.3,
    "key": "NETLIQ"
@@ -207,49 +207,49 @@
    "name": "SRF常备回购用量",
    "val": 0.0,
    "unit": "十亿$",
-   "date": "2026-09-22",
+   "date": "2026-09-21",
    "chg": 0.0,
-   "pct": 57.4,
+   "pct": 51.2,
    "key": "LIQ_SRF"
   },
   {
    "id": "hy",
    "name": "高收益债OAS",
-   "val": 2.66,
+   "val": 2.68,
    "unit": "%",
-   "date": "2026-09-21",
+   "date": "2026-09-18",
    "chg": -0.02,
-   "pct": 3.9,
+   "pct": 7.0,
    "key": "BAMLH0A0HYM2"
   },
   {
    "id": "move",
    "name": "MOVE美债波动率(债市)",
-   "val": 78.56,
+   "val": 81.2,
    "unit": "点",
-   "date": "2026-09-22",
-   "chg": -2.64,
-   "pct": 34.4,
+   "date": "2026-09-21",
+   "chg": 0.56,
+   "pct": 37.0,
    "key": "MOVE_X"
   },
   {
    "id": "vix",
    "name": "VIX(股市)",
-   "val": 14.87,
+   "val": 14.81,
    "unit": "点",
-   "date": "2026-09-21",
-   "chg": 0.06,
-   "pct": 21.0,
+   "date": "2026-09-18",
+   "chg": -0.63,
+   "pct": 20.3,
    "key": "VIXCLS"
   },
   {
    "id": "real10y",
    "name": "10Y实际利率",
-   "val": 2.62,
+   "val": 2.68,
    "unit": "%",
-   "date": "2026-09-21",
-   "chg": -0.06,
-   "pct": 99.8,
+   "date": "2026-09-18",
+   "chg": 0.07,
+   "pct": 99.9,
    "key": "DFII10"
   },
   {
