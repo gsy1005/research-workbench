@@ -1,13 +1,13 @@
 {
- "updated": "2026-09-25 12:53",
- "asof": "2026-09-25",
+ "updated": "2026-09-25 23:47",
+ "asof": "2026-09-28",
  "regime": {
   "stage": 2,
-  "onrrp_bn": 0.63,
+  "onrrp_bn": 0.576,
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 47.3,
+  "value": 48.7,
   "n_comp": 9,
   "components": [
    {
@@ -28,7 +28,7 @@
    {
     "id": "BAMLH0A0HYM2",
     "name": "高收益OAS",
-    "pct": 15.5
+    "pct": 24.0
    },
    {
     "id": "VIXCLS",
@@ -53,7 +53,7 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率63日Δ",
-    "pct": 88.8
+    "pct": 92.9
    }
   ]
  },
@@ -69,15 +69,15 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率",
-    "z": 1.45,
-    "chg63": 0.53,
+    "z": 1.85,
+    "chg63": 0.66,
     "triggered": false
    },
    {
     "id": "BAMLH0A0HYM2",
     "name": "高收益OAS",
-    "z": 0.04,
-    "chg63": -0.1,
+    "z": 0.25,
+    "chg63": 0.0,
     "triggered": false
    },
    {
@@ -90,8 +90,8 @@
    {
     "id": "MOVE_X",
     "name": "MOVE",
-    "z": 2.22,
-    "chg63": 35.52,
+    "z": 2.33,
+    "chg63": 37.48,
     "triggered": true
    }
   ],
@@ -165,11 +165,11 @@
   {
    "id": "onrrp",
    "name": "ON RRP余额",
-   "val": 0.63,
+   "val": 0.58,
    "unit": "十亿$",
-   "date": "2026-09-24",
-   "chg": 0.17,
-   "pct": 16.4,
+   "date": "2026-09-25",
+   "chg": -0.05,
+   "pct": 15.4,
    "key": "RRPONTSYD"
   },
   {
@@ -197,7 +197,7 @@
    "name": "净流动性(总资产-TGA-RRP)",
    "val": 5.77,
    "unit": "万亿$",
-   "date": "2026-09-24",
+   "date": "2026-09-25",
    "chg": 0.0,
    "pct": 31.3,
    "key": "NETLIQ"
@@ -215,11 +215,11 @@
   {
    "id": "hy",
    "name": "高收益债OAS",
-   "val": 2.73,
+   "val": 2.8,
    "unit": "%",
-   "date": "2026-09-23",
-   "chg": 0.05,
-   "pct": 15.5,
+   "date": "2026-09-24",
+   "chg": 0.07,
+   "pct": 24.0,
    "key": "BAMLH0A0HYM2"
   },
   {
@@ -245,10 +245,10 @@
   {
    "id": "real10y",
    "name": "10Y实际利率",
-   "val": 2.76,
+   "val": 2.85,
    "unit": "%",
-   "date": "2026-09-23",
-   "chg": 0.13,
+   "date": "2026-09-24",
+   "chg": 0.09,
    "pct": 99.9,
    "key": "DFII10"
   },
