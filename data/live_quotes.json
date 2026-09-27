@@ -1,5 +1,5 @@
 {
- "asof": "2026-09-27 17:43 BJT",
+ "asof": "2026-09-27 21:24 BJT",
  "src": "L2·Yahoo Finance 服务端快照(每2小时)",
  "quotes": {
   "VIXCLS": {
@@ -108,10 +108,10 @@
   },
   "Y_BTC": {
    "sym": "BTC-USD",
-   "price": 84762.29,
-   "chg": 379.28,
-   "chg_pct": 0.449,
-   "time": "2026-09-27 09:44 UTC",
+   "price": 84814.04,
+   "chg": 431.03,
+   "chg_pct": 0.511,
+   "time": "2026-09-27 13:24 UTC",
    "currency": "USD"
   }
  }
