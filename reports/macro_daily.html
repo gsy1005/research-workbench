@@ -153,14 +153,76 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="rel-grid" id="relGrid"></div>
 <div class="cal-today" id="calToday">今日日历读取中…</div>
 
-<!-- ============ 地缘风险 ============ -->
-<div class="sec"><h2>地缘风险</h2><span>事件合约概率（%）· 每日更新</span></div>
-<div class="secSum" id="sumG">⚙️ 总结与分析生成中…</div>
-<div class="grid3">
-  <div class="cbox"><h4>霍尔木兹海峡通行正常化概率</h4><div class="ct" id="cG1"></div></div>
-  <div class="cbox"><h4>美伊军事升级风险：美入侵伊朗概率（2027前）</h4><div class="ct" id="cG2"></div></div>
-  <div class="cbox"><h4>美国政治风险：中期选举 · 政府停摆</h4><div class="ct" id="cG3"></div></div>
-</div>
+<!-- ============ 数据异动（自动扫描关键序列异动） ============ -->
+<div class="sec"><h2>数据异动</h2><span>自动扫描关键序列 · |z|≥1.8 触发（z=相对自身近半年波动的偏离）· 每条标注数据日期</span></div>
+<div class="secSum" id="sumX">⚙️ 异动扫描中…</div>
+<div id="anomBox"></div>
+<script>
+/* ============ 数据异动：自动扫描关键序列（z=相对自身近半年日变动分布的偏离） ============ */
+(function(){
+  function mvKey(){var c=['Y_MOVE','EDB_GLB_MOVE','MOVE'];for(var i=0;i<c.length;i++){if(ser(c[i]).length>40)return c[i];}return null;}
+  var WATCH=[
+    ['DGS10','美债10Y名义','%',2],['DGS2','美债2Y','%',2],
+    ['DFII10','10Y实际利率','%',2],['T10YIE','10Y盈亏平衡','%',2],['T5YIFR','5y5y远期通胀','%',2],
+    ['T10Y2Y','10Y-2Y利差','%',2],['T10Y3M','10Y-3M利差','%',2],
+    ['VIXCLS','VIX','点',1],['BAMLH0A0HYM2EY','高收益OAS','%',2],['BAMLC0A4CBBB','BBB OAS','%',2],
+    ['DTWEXBGS','广义美元指数','点',2]
+  ];
+  function stdev(arr){if(arr.length<2)return 0;var m=0;arr.forEach(function(x){m+=x;});m/=arr.length;var s=0;arr.forEach(function(x){s+=(x-m)*(x-m);});return Math.sqrt(s/arr.length);}
+  /* 近130个观测的h期变动标准差（不含最新一期本身，避免自比较） */
+  function baseSd(a,h){
+    var d=[],n=a.length;
+    for(var i=n-130-h+1;i<n-h;i++){ if(i>=1&&a[i+h-1]&&a[i-1]&&a[i+h-1][1]!=null&&a[i-1][1]!=null) d.push(a[i+h-1][1]-a[i-1][1]); }
+    return d.length>=25?stdev(d):null;
+  }
+  function scan(key,label,unit,dec){
+    var a=ser(key); if(a.length<45) return null;
+    var v1=a[a.length-1][1],v0=a[a.length-2][1];
+    if(v1==null||v0==null) return null;
+    var d1=v1-v0,d5=null;
+    if(a.length>6&&a[a.length-6][1]!=null) d5=v1-a[a.length-6][1];
+    var sd1=baseSd(a,1);
+    var z1=(sd1&&sd1>0)?(d1/sd1):0;
+    var z5=null;
+    if(d5!=null){var sd5=baseSd(a,5); if(sd5&&sd5>0) z5=d5/sd5;}
+    var az=Math.max(Math.abs(z1),z5==null?0:Math.abs(z5));
+    if(az<1.8) return null;
+    return {label:label,unit:unit,dec:dec,v:v1,d1:d1,d5:d5,z1:z1,z5:z5,az:az,date:a[a.length-1][0],up:(Math.abs(z1)>=Math.abs(z5||0)?d1>0:d5>0)};
+  }
+  function fmt(v,dec,unit){if(v==null||isNaN(v))return '—';var s=(v>0?'+':'')+v.toFixed(dec);return unit==='%'?s+'%':s+' '+unit;}
+  function go(){
+    var out=[];
+    WATCH.forEach(function(w){var r=scan(w[0],w[1],w[2],w[3]);if(r)out.push(r);});
+    var mk=mvKey(); if(mk){var r=scan(mk,'MOVE债市波动率','点',1);if(r)out.push(r);}
+    out.sort(function(a,b){return b.az-a.az;});
+    out=out.slice(0,6);
+    var sm=document.getElementById('sumX'),box=document.getElementById('anomBox');
+    if(!out.length){
+      if(sm) sm.innerHTML='<b>扫描结果</b>：近半年波动口径下，关键序列<b>暂无显著异动</b>（|z|≥1.8 才列出）。';
+      if(box) box.innerHTML='';
+      return;
+    }
+    if(sm) sm.innerHTML='<b>扫描结果</b>：检出 <b>'+out.length+'</b> 项异动——'+out.map(function(o){
+      return '<b>'+o.label+'</b> '+(o.up?'<span style="color:#c0392b">飙升</span>':'<span style="color:#2471a3">骤降</span>')+'（z='+o.az.toFixed(1)+'）';
+    }).join('、')+'。';
+    var h='<table class="kv"><tr><th style="text-align:left">序列</th><th>最新</th><th>1日变动</th><th>5日变动</th><th>偏离 z</th><th>数据日</th><th>判定</th></tr>';
+    out.forEach(function(o){
+      var tag=o.up?'<b style="color:#c0392b">▲ 飙升</b>':'<b style="color:#2471a3">▼ 骤降</b>';
+      h+='<tr><td class="lb" style="font-weight:600">'+o.label+'</td>'+
+        '<td>'+o.v.toFixed(o.dec)+(o.unit==='%'?'%':'')+'</td>'+
+        '<td>'+fmt(o.d1,o.dec,o.unit)+'</td>'+
+        '<td>'+fmt(o.d5,o.dec,o.unit)+'</td>'+
+        '<td><b>'+(o.az).toFixed(1)+'</b></td>'+
+        '<td style="color:#8a97ab">'+o.date.slice(5)+'</td>'+
+        '<td>'+tag+'</td></tr>';
+    });
+    h+='</table>';
+    if(box) box.innerHTML=h;
+  }
+  if(document.readyState==='complete'||document.readyState==='interactive') setTimeout(go,300);
+  else document.addEventListener('DOMContentLoaded',function(){setTimeout(go,300);});
+})();
+</script>
 
 <!-- ============ 货币政策 ============ -->
 <div class="sec"><h2>货币政策</h2><span>加息/不变/降息概率 · 衰退定价</span></div>
@@ -428,27 +490,6 @@ fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.json();
   var mkts = PM.markets||[];
   function find(kw){ return mkts.filter(function(m){return m.question.indexOf(kw)>=0;})[0]; }
   function hist(m, scale){ return ((m&&m.history)||[]).map(function(p){return [p[0], +(p[1]*100).toFixed(1)];}); }
-  /* G1 霍尔木兹 */
-  var h1 = find('Strait of Hormuz traffic returns to normal by September 30');
-  var h2 = find('Strait of Hormuz traffic returns to normal by October 31');
-  var h3 = find('Strait of Hormuz traffic returns to normal by December 31');
-  line('cG1', [
-    {name:'9/30前恢复正常', data:hist(h1), color:C_BLUE},
-    {name:'10/31前', data:hist(h2), color:C_RED},
-    {name:'12/31前', data:hist(h3), color:C_WHT}
-  ]);
-  /* G2 美伊军事升级（入侵合约为长历史活跃合约） */
-  var inv = find('invade Iran before 2027');
-  line('cG2', [
-    {name:'美入侵伊朗(2027前)', data:hist(inv), color:C_RED}
-  ]);
-  /* G3 美国政治（政府停摆为活跃合约，替换已到期的民调合约） */
-  var sen = find('control the Senate'), hou = find('control the House'), sd = find('Government shutdown by October 1');
-  line('cG3', [
-    {name:'民主党控参议院', data:hist(sen), color:C_BLUE},
-    {name:'民主党控众议院', data:hist(hou), color:C_BLUEL},
-    {name:'政府停摆(10/1前)', data:hist(sd), color:C_RED}
-  ]);
   /* M2 货币政策 polymarket */
   var hike26 = find('Fed rate hike in 2026'), nodis = find('no one dissent the September');
   line('cM2', [
@@ -872,7 +913,7 @@ function exportCustomCSV(){
     '2Y 报 '+(ser('DGS2').slice(-1)[0]||[0,0])[1].toFixed(2)+'%。<br>'+
     '· <span class="b2">上行驱动</span>：'+lst(ups)+'。<br>'+
     '· <span class="b2">下行/走弱</span>：'+lst(dns)+'。<br>'+
-    '· <b>关注</b>：地缘定价（霍尔木兹/美伊）与本周 FOMC 路径的交叉验证，细节见上方地缘风险与货币政策区块。';
+    '· <b>关注</b>：数据异动区块的异常序列（实际利率/MOVE/利差等）与 FOMC 路径的交叉验证，细节见上方数据异动与货币政策区块。';
   var el=document.getElementById('daySum'); if(el) el.innerHTML=h;
 })();
 </script>
@@ -990,21 +1031,6 @@ function exportCustomCSV(){
         (m0.ease>=20?'降息概率'+m0.ease+'%——尾部对冲需求仍在。':''));
     }
 
-    /* 地缘总结 */
-    if(PM&&PM.markets){
-      function find(kw){ return PM.markets.filter(function(m){return (m.question||'').indexOf(kw)>=0;})[0]; }
-      function last(m){ var h=(m&&m.history)||[]; return h.length?+(h[h.length-1][1]*100).toFixed(1):null; }
-      var ho=last(find('Strait of Hormuz traffic returns to normal by October 31'));
-      var iv=last(find('invade Iran before 2027'));
-      var sd=last(find('Government shutdown'))||last(find('government shutdown'));
-      var parts=[];
-      if(ho!=null) parts.push('霍尔木兹海峡10/31前恢复正常 <b>'+f1(ho)+'%</b>');
-      if(iv!=null) parts.push('美入侵伊朗（2027前） '+f1(iv)+'%');
-      if(sd!=null) parts.push('政府停摆 '+f1(sd)+'%');
-      set('sumG','<b>总结</b>：'+parts.join('；')+'。<br>'+
-        '<b>分析</b>：'+(ho!=null?(ho>=50?'复航预期占优，油运风险溢价趋降；':'复航预期不足半——油运风险溢价难消，能源供给扰动延续；'):'')+
-        (iv!=null?(iv>=30?'军事升级尾部风险不低，与油价/金价联动需盯。':'军事升级概率低，地缘定价以航运与供给扰动为主。'):''));
-    }
   });
 })();
 </script>
