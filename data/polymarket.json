@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-09-28T09:40:04.444558Z",
+ "fetched_at": "2026-09-28T12:39:34.418871Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -14,7 +14,7 @@
      "price": 0.375
     }
    ],
-   "vol24": 21305,
+   "vol24": 21689,
    "end": "2027-01-05",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1632,7 +1632,7 @@
      "price": 0.075
     }
    ],
-   "vol24": 47825,
+   "vol24": 49171,
    "end": "2027-01-05",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -5703,14 +5703,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.003
+     "price": 0.0035
     },
     {
      "name": "No",
-     "price": 0.997
+     "price": 0.9965
     }
    ],
-   "vol24": 278863,
+   "vol24": 278445,
    "end": "2026-10-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-september-30-20260702154339440",
    "history": [
@@ -6060,7 +6060,7 @@
     ],
     [
      "2026-09-28",
-     0.003
+     0.0035
     ]
    ]
   },
@@ -6069,14 +6069,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.055
+     "price": 0.06
     },
     {
      "name": "No",
-     "price": 0.945
+     "price": 0.94
     }
    ],
-   "vol24": 125204,
+   "vol24": 149688,
    "end": "2026-11-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-october-31-20260810151043583",
    "history": [
@@ -6270,7 +6270,7 @@
     ],
     [
      "2026-09-28",
-     0.055
+     0.06
     ]
    ]
   },
@@ -6279,14 +6279,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.215
+     "price": 0.225
     },
     {
      "name": "No",
-     "price": 0.785
+     "price": 0.775
     }
    ],
-   "vol24": 47054,
+   "vol24": 58472,
    "end": "2027-01-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -6860,7 +6860,7 @@
      "price": 0.845
     }
    ],
-   "vol24": 35432,
+   "vol24": 36101,
    "end": "2026-12-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-november-30-20260810151158765",
    "history": [
@@ -7070,7 +7070,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 474544,
+   "vol24": 488759,
    "end": "2026-09-20",
    "slug": "us-iran-ceasefire-continues-throughptptpt",
    "history": [
@@ -7104,7 +7104,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 161472,
+   "vol24": 161714,
    "end": "2026-07-01",
    "slug": "us-iran-final-nuclear-deal-by-20260621201254412",
    "history": [
@@ -7162,7 +7162,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 80609,
+   "vol24": 89580,
    "end": "2026-09-24",
    "slug": "next-us-iran-senior-diplomatic-meeting-byptptpt",
    "history": [
@@ -7192,7 +7192,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 61430,
+   "vol24": 56045,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -7230,7 +7230,7 @@
      "price": 0.095
     }
    ],
-   "vol24": 4050,
+   "vol24": 134,
    "end": "2026-12-09",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
@@ -10686,7 +10686,7 @@
      "price": 0.915
     }
    ],
-   "vol24": 235,
+   "vol24": 165,
    "end": "2027-01-31",
    "slug": "us-recession-by-end-of-2026",
    "history": [
@@ -13782,7 +13782,7 @@
      "price": 0.9975
     }
    ],
-   "vol24": 53879,
+   "vol24": 64032,
    "end": "2026-10-29",
    "slug": "fed-decision-in-october-20260617190323537",
    "history": [
@@ -14204,7 +14204,7 @@
      "price": 0.9955
     }
    ],
-   "vol24": 22624,
+   "vol24": 34478,
    "end": "2026-12-09",
    "slug": "fed-decision-in-december-20260729232808632",
    "history": [
