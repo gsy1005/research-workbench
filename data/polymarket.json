@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-09-28T12:39:34.418871Z",
+ "fetched_at": "2026-09-28T12:55:03.581160Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -14,7 +14,7 @@
      "price": 0.375
     }
    ],
-   "vol24": 21689,
+   "vol24": 21691,
    "end": "2027-01-05",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1632,7 +1632,7 @@
      "price": 0.075
     }
    ],
-   "vol24": 49171,
+   "vol24": 49158,
    "end": "2027-01-05",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -5710,7 +5710,7 @@
      "price": 0.9965
     }
    ],
-   "vol24": 278445,
+   "vol24": 278570,
    "end": "2026-10-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-september-30-20260702154339440",
    "history": [
@@ -6069,14 +6069,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.06
+     "price": 0.065
     },
     {
      "name": "No",
-     "price": 0.94
+     "price": 0.935
     }
    ],
-   "vol24": 149688,
+   "vol24": 149686,
    "end": "2026-11-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-october-31-20260810151043583",
    "history": [
@@ -6270,7 +6270,7 @@
     ],
     [
      "2026-09-28",
-     0.06
+     0.065
     ]
    ]
   },
@@ -6279,14 +6279,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.225
+     "price": 0.235
     },
     {
      "name": "No",
-     "price": 0.775
+     "price": 0.765
     }
    ],
-   "vol24": 58472,
+   "vol24": 58504,
    "end": "2027-01-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -6844,7 +6844,7 @@
     ],
     [
      "2026-09-28",
-     0.225
+     0.235
     ]
    ]
   },
@@ -6860,7 +6860,7 @@
      "price": 0.845
     }
    ],
-   "vol24": 36101,
+   "vol24": 36095,
    "end": "2026-12-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-november-30-20260810151158765",
    "history": [
@@ -7070,7 +7070,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 488759,
+   "vol24": 492514,
    "end": "2026-09-20",
    "slug": "us-iran-ceasefire-continues-throughptptpt",
    "history": [
@@ -7104,7 +7104,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 161714,
+   "vol24": 161745,
    "end": "2026-07-01",
    "slug": "us-iran-final-nuclear-deal-by-20260621201254412",
    "history": [
@@ -7162,7 +7162,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 89580,
+   "vol24": 92124,
    "end": "2026-09-24",
    "slug": "next-us-iran-senior-diplomatic-meeting-byptptpt",
    "history": [
@@ -7192,7 +7192,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 56045,
+   "vol24": 57678,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
