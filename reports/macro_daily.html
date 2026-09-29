@@ -133,17 +133,6 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div id="ceTvBody">总基调偏鹰但非连续紧缩——本次加息是对去年三次预防式降息的回拉，惯性规则指向至多再加约2次，后续交易重心回到经济数据与油价；历史上加息兑现后美债平均18天转涨、股金扰动后均反弹，叠加9月底前难有更鹰的数据，短期按利空出尽处理，后续重点观察油价——它是通胀最后一公里和加息预期二阶传导的核心变量。<br><b>配置排序：有色（K型上行端·节前补库）＞有色多空配置 ＞ 股市（风偏修复）＞ 贵金属（逻辑靠后，金 4250 附近抄底）。</b></div>
 </div>
 
-<!-- ============ 地缘消息 · 人工精选（当日对油价影响最大·可编辑） ============ -->
-<div class="geoNews" id="ceGeoNews">
-  <div class="ce-bar"><span class="tvh" id="ceGnTitle">🌍 地缘消息 · 美伊与中东（人工精选·对油价影响最大）</span><button class="ce-btn ce-auto" onclick="loadGeoNews()">⚡ 自动筛选</button><span class="ce-btns" data-body="gnList" data-title="ceGnTitle" data-key="ceGeoHtml"></span><span id="gnAsof" style="font-size:11px;color:#8a97ab;"> · 精选 2026-09-22 晚间（金十）</span></div>
-  <div id="gnList"><div class="gn-row"><span class="gn-time">19:42</span><span class="gn-star">★</span><span class="gn-txt">美国国务卿鲁比奥定调：石油价格上涨的主要原因是<b>也门</b>和<b>乌克兰</b>——供应端扰动是本轮油价的核心驱动。</span></div>
-<div class="gn-row"><span class="gn-time">19:42</span><span class="gn-star">★</span><span class="gn-txt">伊朗表态：若美国缓解军事压力，伊朗愿以行动回应——<b>海峡局势缓和预期升温</b>，欧洲天然气价格应声跌逾6%，触及9月低点。</span></div>
-<div class="gn-row"><span class="gn-time">19:44</span><span class="gn-star"></span><span class="gn-txt">鲁比奥：理想结果是俄罗斯和乌克兰<b>不针对能源设施</b>；能源基础设施停火将是个好主意——供给中断风险降温。</span></div>
-<div class="gn-row"><span class="gn-time">19:41</span><span class="gn-star"></span><span class="gn-txt">鲁比奥：必要时美国<b>将支持沙特阿拉伯</b>，并打算履行对沙特的承诺——美方安全承诺托底沙特产出。</span></div>
-<div class="gn-row"><span class="gn-time">19:40</span><span class="gn-star"></span><span class="gn-txt">鲁比奥：伊朗经济正受制裁严重打击，但"永远不会关闭对伊朗的外交大门"——<b>制裁+谈判双线并行</b>。</span></div>
-<div class="gn-row gn-sum"><span class="gn-time"></span><span class="gn-star"></span><span class="gn-txt"><b>对油价影响</b>：今日基调为<b>地缘溢价回吐（偏空油价）</b>——伊朗缓和表态直接压制海峡风险溢价；但俄乌能源设施袭击与也门袭船风险未解，属"缓和但不解除警报"，油价下方空间有限。</span></div></div>
-</div>
-
 <!-- ============ 关键价格一览 ============ -->
 <div class="sec"><h2>关键价格一览</h2><span>近6个交易日 · 红=上行 蓝=下行</span></div>
 <div style="overflow-x:auto;"><table class="kv" id="kvTable"><tr><th>指标</th><th style="text-align:right">最新</th><th style="text-align:right">日变动</th><th style="text-align:right">T-1</th><th style="text-align:right">T-2</th><th style="text-align:right">T-3</th><th style="text-align:right">T-4</th><th style="text-align:right">T-5</th></tr></table></div>
@@ -229,7 +218,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="secSum" id="sumM">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
   <div class="cbox"><h4>各次会议当月加息/维持/降息概率（单月口径·官方区间分布推算）<span id="fwAsof"></span></h4><div class="ct" id="cM1"></div></div>
-  <div class="cbox"><h4>2026年加息概率 · 9月会议一致性</h4><div class="ct" id="cM2"></div></div>
+  <div class="cbox"><h4>地缘事件合约：霍尔木兹海峡复航概率（Polymarket·每日更新）</h4><div class="ct" id="cM2"></div></div>
   <div class="cbox"><h4>衰退概率定价<span>2027合约为8月新上线</span></h4><div class="ct" id="cM3"></div></div>
   <div class="cbox"><h4>TACO指数（特朗普政策压力）<span>越高=政策反复（TACO式回撤）概率越高</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
   <div class="cbox"><h4>政策预期温度计：2Y美债 vs 目标区间上限（%）<span>2Y高于上限=市场押注继续加息</span></h4><div class="ct" id="cM5"></div></div>
@@ -490,11 +479,14 @@ fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.json();
   var mkts = PM.markets||[];
   function find(kw){ return mkts.filter(function(m){return m.question.indexOf(kw)>=0;})[0]; }
   function hist(m, scale){ return ((m&&m.history)||[]).map(function(p){return [p[0], +(p[1]*100).toFixed(1)];}); }
-  /* M2 货币政策 polymarket */
-  var hike26 = find('Fed rate hike in 2026'), nodis = find('no one dissent the September');
+  /* M2 地缘事件合约：霍尔木兹复航概率（活跃合约，每日更新） */
+  var hz1 = find('Strait of Hormuz traffic returns to normal by October 31');
+  var hz2 = find('Strait of Hormuz traffic returns to normal by November 30');
+  var hz3 = find('Strait of Hormuz traffic returns to normal by December 31');
   line('cM2', [
-    {name:'2026年加息概率', data:hist(hike26), color:C_RED},
-    {name:'9月会议无人反对', data:hist(nodis), color:C_BLUE}
+    {name:'10/31前复航', data:hist(hz1), color:C_RED},
+    {name:'11/30前', data:hist(hz2), color:C_BLUE},
+    {name:'12/31前', data:hist(hz3), color:C_WHT}
   ]);
   /* M3 衰退 */
   var r26 = find('recession by end of 2026'), r27 = find('recession by end of 2027');
@@ -1035,9 +1027,8 @@ function exportCustomCSV(){
 })();
 </script>
 <script>
-/* ============ 人工观点 & 地缘精选：自包含点击编辑（localStorage 保存） + 按需自动筛选 ============ */
+/* ============ 人工观点：自包含点击编辑（localStorage 保存） ============ */
 (function(){
-  var KW=/(伊朗|霍尔木兹|胡塞|沙特|以色列|中东|红海|也门|黎巴嫩|真主党|加沙|鲁比奥[^\n]{0,30}(伊朗|沙特|中东)|曼德|波斯湾|停火|原油|油价|能源)/;
 
   /* ---- 通用块编辑器（正文+标题联动，localStorage 持久化） ---- */
   function ceBoxOf(bodyId){return document.querySelector('.ce-btns[data-body="'+bodyId+'"]');}
@@ -1092,34 +1083,6 @@ function exportCustomCSV(){
       :'<button class="ce-btn" onclick="ceStart(\''+bodyId+'\',\''+key+'\')">✏️ 编辑</button>';
     document.querySelectorAll('.ce-auto').forEach(function(b){b.style.display=editing?'none':'';});
   }
-
-  /* ---- 自动筛选（按需）：三源取美伊/中东/能源相关，热度前6 ---- */
-  window.loadGeoNews=function(){
-    var list=document.getElementById('gnList'); if(!list)return;
-    list.innerHTML='读取中…';
-    fetch('../data/news_latest.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
-      if(!d){list.innerHTML='<span style="color:#8a97ab">地缘消息读取失败（管线数据未就绪）</span>';return;}
-      var all=[];
-      ['jin10','ah','cs','eastmoney','sina'].forEach(function(src){(d[src]||[]).forEach(function(it){it._src=src;all.push(it);});});
-      var seen={},hits=[];
-      all.sort(function(a,b){return (a._src==='jin10'?0:1)-(b._src==='jin10'?0:1);});
-      all.forEach(function(it){
-        var c=(it.content||'').trim(); if(!c||!KW.test(c))return;
-        var key=c.replace(/[\s\p{P}【】]/gu,'').slice(0,30);
-        if(seen[key])return; seen[key]=1; hits.push(it);
-      });
-      hits.sort(function(a,b){return ((b.important||0)-(a.important||0))||String(b.time||'').localeCompare(String(a.time||''));});
-      var top=hits.slice(0,6);
-      document.getElementById('gnAsof').textContent=' · 自动筛选 '+(d.asof||'—')+'（未保存，可再点编辑调整后保存）';
-      if(!top.length){list.innerHTML='<div style="color:#8a97ab">近一波快讯中暂无相关条目</div>';return;}
-      list.innerHTML=top.map(function(it){
-        var t=(it.time||'').slice(11,16);
-        var c=(it.content||'').replace(/^【[^】]*】/,'');
-        if(c.length>110)c=c.slice(0,110)+'…';
-        return '<div class="gn-row"><span class="gn-time">'+t+'</span>'+(it.important?'<span class="gn-star">★</span>':'<span class="gn-star"></span>')+'<span class="gn-txt">'+c+'</span></div>';
-      }).join('');
-    }).catch(function(){list.innerHTML='<span style="color:#8a97ab">地缘消息读取失败</span>';});
-  };
 
   /* ---- 载入：本机保存的内容优先于页面默认（兼容纯正文旧格式与标题+正文新格式），然后渲染编辑按钮 ---- */
   window.addEventListener('load',function(){
