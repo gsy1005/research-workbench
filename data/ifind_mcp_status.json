@@ -1,11 +1,11 @@
 {
-  "updated": "2026-09-28 17:47:29 北京",
+  "updated": "2026-09-30 00:10:03 北京",
   "source": "iFinD MCP",
   "ok": [
     {
       "id": "EM_CN_CPI_YOY",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 60,
       "before": [
         "2026-08-01",
         0.8
@@ -18,20 +18,20 @@
     {
       "id": "EM_CN_PPI_YOY",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 64,
       "before": [
         "2026-08-01",
         3.8
       ],
       "latest": [
-        "2026-08-31",
-        3.8
+        "2026-12-31",
+        0.0
       ]
     },
     {
       "id": "EM_CN_PMI_MFG",
       "tool": "get_edb_data",
-      "points": 260,
+      "points": 60,
       "before": [
         "2026-08-01",
         49.8
@@ -44,7 +44,7 @@
     {
       "id": "EM_CN_PMI_NMFG",
       "tool": "get_edb_data",
-      "points": 236,
+      "points": 60,
       "before": [
         "2026-08-01",
         49.0
@@ -57,7 +57,7 @@
     {
       "id": "EM_CN_M2_YOY",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 60,
       "before": [
         "2026-08-01",
         7.5
@@ -70,7 +70,7 @@
     {
       "id": "EM_CN_M1_YOY",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 60,
       "before": [
         "2026-08-01",
         4.1
@@ -83,7 +83,7 @@
     {
       "id": "EM_CN_M0_YOY",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 60,
       "before": [
         "2026-08-01",
         11.2
@@ -96,7 +96,7 @@
     {
       "id": "EM_CN_GDP_YOY",
       "tool": "get_edb_data",
-      "points": 106,
+      "points": 60,
       "before": [
         "2026-06-01",
         4.7
@@ -109,7 +109,7 @@
     {
       "id": "EM_CN_IAV_YOY",
       "tool": "get_edb_data",
-      "points": 315,
+      "points": 60,
       "before": [
         "2026-08-01",
         5.2
@@ -122,7 +122,7 @@
     {
       "id": "EM_CN_LOAN_NEW",
       "tool": "get_edb_data",
-      "points": 308,
+      "points": 60,
       "before": [
         "2026-08-01",
         552.0
@@ -135,7 +135,7 @@
     {
       "id": "EM_CN_LOAN_YTD",
       "tool": "get_edb_data",
-      "points": 308,
+      "points": 60,
       "before": [
         "2026-08-01",
         102261.0
@@ -148,7 +148,7 @@
     {
       "id": "EM_CN_EXP_YOY",
       "tool": "get_edb_data",
-      "points": 152,
+      "points": 60,
       "before": [
         "2026-08-01",
         25.0
@@ -161,7 +161,7 @@
     {
       "id": "EM_CN_IMP_YOY",
       "tool": "get_edb_data",
-      "points": 128,
+      "points": 60,
       "before": [
         "2026-08-01",
         28.2
@@ -174,7 +174,7 @@
     {
       "id": "EM_CN_TRADE_BAL",
       "tool": "get_edb_data",
-      "points": 164,
+      "points": 60,
       "before": [
         "2026-08-01",
         11908.5
@@ -187,7 +187,7 @@
     {
       "id": "EM_RETAIL_YOY",
       "tool": "get_edb_data",
-      "points": 290,
+      "points": 60,
       "before": [
         "2026-08-01",
         0.4
@@ -200,7 +200,7 @@
     {
       "id": "EM_LOAN_ACC_YOY",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 60,
       "before": [
         "2026-08-01",
         -20.924064
@@ -213,7 +213,7 @@
     {
       "id": "EDB_CN_TSF_STK",
       "tool": "get_edb_data",
-      "points": 144,
+      "points": 60,
       "before": [
         "2026-08-31",
         7.2
@@ -226,20 +226,20 @@
     {
       "id": "EM_CN_M2_STK",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 60,
       "before": [
         "2026-08-01",
         3568083.6
       ],
       "latest": [
         "2026-08-31",
-        3568083.6
+        3568084.0
       ]
     },
     {
       "id": "LIQ_CNM2",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 60,
       "before": [
         "2026-08-01",
         356.81
@@ -252,7 +252,7 @@
     {
       "id": "LIQ_CNM1",
       "tool": "get_edb_data",
-      "points": 320,
+      "points": 60,
       "before": [
         "2026-08-01",
         115.77
@@ -265,7 +265,7 @@
     {
       "id": "EM_CN_GDP_STK",
       "tool": "get_edb_data",
-      "points": 106,
+      "points": 60,
       "before": [
         "2026-06-01",
         695704.0
@@ -278,75 +278,75 @@
     {
       "id": "HT_asset_国内股市资金_新成立公募基金份额_中国:新成立基金份额:偏股型",
       "tool": "get_edb_data",
-      "points": 400,
+      "points": 60,
       "before": [
         "2026-09-24",
-        8.2761
+        10.3077
       ],
       "latest": [
-        "2026-09-24",
-        10.3077
+        "2026-09-28",
+        13.6264
       ]
     },
     {
       "id": "HT_asset_国内股市资金_融资余额_融资余额",
       "tool": "get_edb_data",
-      "points": 400,
+      "points": 60,
       "before": [
-        "2026-09-23",
-        26168.1101
-      ],
-      "latest": [
         "2026-09-24",
         25995.1059
+      ],
+      "latest": [
+        "2026-09-28",
+        25735.1901
       ]
     },
     {
       "id": "HT_perf_资产表现-资产相对表现_AH溢价指数_恒生AH股溢价指数",
       "tool": "get_edb_data",
-      "points": 400,
+      "points": 60,
       "before": [
-        "2026-09-25",
-        125.2
-      ],
-      "latest": [
         "2026-09-28",
         124.4
+      ],
+      "latest": [
+        "2026-09-29",
+        124.29
       ]
     },
     {
       "id": "HT_asset_全球资金_港股净流入_南向资金流入",
       "tool": "get_edb_data",
-      "points": 400,
+      "points": 60,
       "before": [
-        "2026-09-24",
-        2899.77
-      ],
-      "latest": [
         "2026-09-28",
         -5608.47
+      ],
+      "latest": [
+        "2026-09-29",
+        14.63
       ]
     },
     {
       "id": "HT_mktstruct_国内债市估值_股市PE(LYR)估值_PE(全A非金融石化)",
       "tool": "get_edb_data",
-      "points": 400,
+      "points": 60,
       "before": [
-        "2026-09-27",
-        38.2492
-      ],
-      "latest": [
         "2026-09-28",
         42.0409
+      ],
+      "latest": [
+        "2026-09-29",
+        42.2103
       ]
     },
     {
       "id": "HT_asset_中美宏观象限_库存周期-中国-PPI_中国工业企业产成品存货:同比",
       "tool": "get_edb_data",
-      "points": 128,
+      "points": 60,
       "before": [
-        "2026-07-31",
-        10.8
+        "2026-08-31",
+        11.0
       ],
       "latest": [
         "2026-08-31",
@@ -356,14 +356,14 @@
     {
       "id": "HT_mktstruct_国内债市估值_国债期限利差_10年-1年",
       "tool": "get_edb_data",
-      "points": 400,
+      "points": 60,
       "before": [
-        "2026-09-24",
-        1.2327
-      ],
-      "latest": [
         "2026-09-28",
         1.2257
+      ],
+      "latest": [
+        "2026-09-29",
+        1.2197
       ]
     }
   ],
