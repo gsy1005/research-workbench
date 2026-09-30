@@ -1,13 +1,13 @@
 {
- "updated": "2026-09-29 18:15",
- "asof": "2026-09-29",
+ "updated": "2026-09-30 02:21",
+ "asof": "2026-09-30",
  "regime": {
   "stage": 2,
   "onrrp_bn": 11.446,
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 53.6,
+  "value": 55.8,
   "n_comp": 9,
   "components": [
    {
@@ -33,12 +33,12 @@
    {
     "id": "VIXCLS",
     "name": "VIX(股市波动)",
-    "pct": 15.9
+    "pct": 32.0
    },
    {
     "id": "MOVE_X",
     "name": "MOVE(债市波动)",
-    "pct": 63.8
+    "pct": 65.5
    },
    {
     "id": "NETLIQ",
@@ -53,7 +53,7 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率63日Δ",
-    "pct": 92.2
+    "pct": 94.5
    }
   ]
  },
@@ -69,9 +69,9 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率",
-    "z": 1.81,
-    "chg63": 0.65,
-    "triggered": false
+    "z": 2.08,
+    "chg63": 0.74,
+    "triggered": true
    },
    {
     "id": "BAMLH0A0HYM2",
@@ -83,15 +83,15 @@
    {
     "id": "VIXCLS",
     "name": "VIX",
-    "z": -0.77,
-    "chg63": -4.68,
+    "z": -0.08,
+    "chg63": -0.52,
     "triggered": false
    },
    {
     "id": "MOVE_X",
     "name": "MOVE",
-    "z": 2.12,
-    "chg63": 34.308,
+    "z": 2.19,
+    "chg63": 35.53,
     "triggered": true
    }
   ],
@@ -225,30 +225,30 @@
   {
    "id": "move",
    "name": "MOVE美债波动率(债市)",
-   "val": 106.27,
+   "val": 107.49,
    "unit": "点",
    "date": "2026-09-29",
-   "chg": 4.45,
-   "pct": 63.8,
+   "chg": 5.67,
+   "pct": 65.5,
    "key": "MOVE_X"
   },
   {
    "id": "vix",
    "name": "VIX(股市)",
-   "val": 14.21,
+   "val": 16.07,
    "unit": "点",
-   "date": "2026-09-22",
-   "chg": -0.66,
-   "pct": 15.9,
+   "date": "2026-09-28",
+   "chg": 1.2,
+   "pct": 32.0,
    "key": "VIXCLS"
   },
   {
    "id": "real10y",
    "name": "10Y实际利率",
-   "val": 2.83,
+   "val": 2.9,
    "unit": "%",
-   "date": "2026-09-25",
-   "chg": -0.02,
+   "date": "2026-09-28",
+   "chg": 0.07,
    "pct": 99.9,
    "key": "DFII10"
   },
