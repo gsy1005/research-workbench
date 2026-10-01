@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-01 07:21",
+ "updated": "2026-10-01 16:36",
  "asof": "2026-10-01",
  "regime": {
   "stage": 2,
@@ -7,13 +7,13 @@
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 59.3,
+  "value": 60.7,
   "n_comp": 9,
   "components": [
    {
     "id": "SPR_SOFR_IORB",
     "name": "SOFR-IORB利差",
-    "pct": 81.6
+    "pct": 87.0
    },
    {
     "id": "SPR_SOFR99",
@@ -28,12 +28,12 @@
    {
     "id": "BAMLH0A0HYM2",
     "name": "高收益OAS",
-    "pct": 53.0
+    "pct": 57.1
    },
    {
     "id": "VIXCLS",
     "name": "VIX(股市波动)",
-    "pct": 31.6
+    "pct": 34.9
    },
    {
     "id": "MOVE_X",
@@ -76,15 +76,15 @@
    {
     "id": "BAMLH0A0HYM2",
     "name": "高收益OAS",
-    "z": 0.96,
-    "chg63": 0.33,
+    "z": 1.07,
+    "chg63": 0.38,
     "triggered": false
    },
    {
     "id": "VIXCLS",
     "name": "VIX",
-    "z": -0.01,
-    "chg63": -0.11,
+    "z": 0.09,
+    "chg63": 0.53,
     "triggered": false
    },
    {
@@ -99,15 +99,15 @@
    {
     "id": "SPR_SOFR_IORB",
     "name": "SOFR-IORB",
-    "z": -0.88,
-    "chg20": -5.0,
+    "z": -0.2,
+    "chg20": -1.0,
     "triggered": false
    },
    {
     "id": "SPR_SOFR99",
     "name": "SOFR尾部",
-    "z": 0.04,
-    "chg20": 0.0,
+    "z": 0.26,
+    "chg20": 1.0,
     "triggered": false
    },
    {
@@ -125,11 +125,11 @@
   {
    "id": "sofr_iorb",
    "name": "SOFR-IORB利差",
-   "val": -2.0,
+   "val": 0.0,
    "unit": "bp",
-   "date": "2026-09-29",
-   "chg": -2.0,
-   "pct": 81.6,
+   "date": "2026-09-30",
+   "chg": 2.0,
+   "pct": 87.0,
    "key": "SPR_SOFR_IORB"
   },
   {
@@ -137,19 +137,19 @@
    "name": "SOFR尾部(99分位-中位)",
    "val": 9.0,
    "unit": "bp",
-   "date": "2026-09-29",
-   "chg": 1.0,
+   "date": "2026-09-30",
+   "chg": 0.0,
    "pct": 27.6,
    "key": "SPR_SOFR99"
   },
   {
    "id": "sofr_onrrp",
    "name": "SOFR-ONRRP利差",
-   "val": 13.0,
+   "val": 15.0,
    "unit": "bp",
-   "date": "2026-09-29",
-   "chg": -2.0,
-   "pct": 77.0,
+   "date": "2026-09-30",
+   "chg": 2.0,
+   "pct": 83.3,
    "key": "SPR_SOFR_ONRRP"
   },
   {
@@ -205,21 +205,21 @@
   {
    "id": "srf",
    "name": "SRF常备回购用量",
-   "val": 1.2,
+   "val": 0.0,
    "unit": "十亿$",
-   "date": "2026-09-30",
-   "chg": 1.2,
-   "pct": 87.2,
+   "date": "2026-10-01",
+   "chg": -1.2,
+   "pct": 0.0,
    "key": "LIQ_SRF"
   },
   {
    "id": "hy",
    "name": "高收益债OAS",
-   "val": 3.08,
+   "val": 3.12,
    "unit": "%",
-   "date": "2026-09-29",
-   "chg": 0.06,
-   "pct": 53.0,
+   "date": "2026-09-30",
+   "chg": 0.04,
+   "pct": 57.1,
    "key": "BAMLH0A0HYM2"
   },
   {
@@ -235,11 +235,11 @@
   {
    "id": "vix",
    "name": "VIX(股市)",
-   "val": 16.04,
+   "val": 16.34,
    "unit": "点",
-   "date": "2026-09-29",
-   "chg": -0.03,
-   "pct": 31.6,
+   "date": "2026-09-30",
+   "chg": 0.3,
+   "pct": 34.9,
    "key": "VIXCLS"
   },
   {
