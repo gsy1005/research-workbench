@@ -1,13 +1,13 @@
 {
- "updated": "2026-10-01 16:36",
+ "updated": "2026-10-01 18:34",
  "asof": "2026-10-01",
  "regime": {
   "stage": 2,
-  "onrrp_bn": 11.539,
+  "onrrp_bn": 0.35,
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 60.7,
+  "value": 60.2,
   "n_comp": 9,
   "components": [
    {
@@ -38,12 +38,12 @@
    {
     "id": "MOVE_X",
     "name": "MOVE(债市波动)",
-    "pct": 69.2
+    "pct": 67.3
    },
    {
     "id": "NETLIQ",
     "name": "净流动性63日Δ(逆)",
-    "pct": 62.3
+    "pct": 60.0
    },
    {
     "id": "DTWEXBGS",
@@ -90,8 +90,8 @@
    {
     "id": "MOVE_X",
     "name": "MOVE",
-    "z": 2.54,
-    "chg63": 41.89,
+    "z": 2.61,
+    "chg63": 43.444,
     "triggered": true
    }
   ],
@@ -165,11 +165,11 @@
   {
    "id": "onrrp",
    "name": "ON RRP余额",
-   "val": 11.54,
+   "val": 0.35,
    "unit": "十亿$",
-   "date": "2026-09-30",
-   "chg": 0.09,
-   "pct": 37.6,
+   "date": "2026-10-01",
+   "chg": -11.19,
+   "pct": 13.1,
    "key": "RRPONTSYD"
   },
   {
@@ -195,11 +195,11 @@
   {
    "id": "netliq",
    "name": "净流动性(总资产-TGA-RRP)",
-   "val": 5.76,
+   "val": 5.77,
    "unit": "万亿$",
-   "date": "2026-09-30",
-   "chg": 0.0,
-   "pct": 30.5,
+   "date": "2026-10-01",
+   "chg": 0.01,
+   "pct": 31.3,
    "key": "NETLIQ"
   },
   {
@@ -225,11 +225,11 @@
   {
    "id": "move",
    "name": "MOVE美债波动率(债市)",
-   "val": 110.45,
+   "val": 108.84,
    "unit": "点",
-   "date": "2026-09-30",
-   "chg": 3.85,
-   "pct": 69.2,
+   "date": "2026-10-01",
+   "chg": -1.61,
+   "pct": 67.3,
    "key": "MOVE_X"
   },
   {
