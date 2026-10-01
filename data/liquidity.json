@@ -1,13 +1,13 @@
 {
- "updated": "2026-09-30 18:07",
- "asof": "2026-09-30",
+ "updated": "2026-10-01 02:23",
+ "asof": "2026-10-01",
  "regime": {
   "stage": 2,
   "onrrp_bn": 11.539,
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 58.8,
+  "value": 59.1,
   "n_comp": 9,
   "components": [
    {
@@ -38,7 +38,7 @@
    {
     "id": "MOVE_X",
     "name": "MOVE(债市波动)",
-    "pct": 64.8
+    "pct": 67.7
    },
    {
     "id": "NETLIQ",
@@ -53,7 +53,7 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率63日Δ",
-    "pct": 94.5
+    "pct": 94.1
    }
   ]
  },
@@ -69,9 +69,9 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率",
-    "z": 2.08,
-    "chg63": 0.74,
-    "triggered": true
+    "z": 1.99,
+    "chg63": 0.71,
+    "triggered": false
    },
    {
     "id": "BAMLH0A0HYM2",
@@ -90,8 +90,8 @@
    {
     "id": "MOVE_X",
     "name": "MOVE",
-    "z": 2.34,
-    "chg63": 38.295,
+    "z": 2.47,
+    "chg63": 40.626,
     "triggered": true
    }
   ],
@@ -225,11 +225,11 @@
   {
    "id": "move",
    "name": "MOVE美债波动率(债市)",
-   "val": 106.86,
+   "val": 109.19,
    "unit": "点",
    "date": "2026-09-30",
-   "chg": 0.26,
-   "pct": 64.8,
+   "chg": 2.59,
+   "pct": 67.7,
    "key": "MOVE_X"
   },
   {
@@ -245,10 +245,10 @@
   {
    "id": "real10y",
    "name": "10Y实际利率",
-   "val": 2.9,
+   "val": 2.91,
    "unit": "%",
-   "date": "2026-09-28",
-   "chg": 0.07,
+   "date": "2026-09-29",
+   "chg": 0.01,
    "pct": 99.9,
    "key": "DFII10"
   },
