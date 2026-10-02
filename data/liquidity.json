@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-02 02:34",
+ "updated": "2026-10-02 07:10",
  "asof": "2026-10-02",
  "regime": {
   "stage": 2,
@@ -7,7 +7,7 @@
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 59.9,
+  "value": 59.6,
   "n_comp": 9,
   "components": [
    {
@@ -38,7 +38,7 @@
    {
     "id": "MOVE_X",
     "name": "MOVE(债市波动)",
-    "pct": 68.5
+    "pct": 66.0
    },
    {
     "id": "NETLIQ",
@@ -90,8 +90,8 @@
    {
     "id": "MOVE_X",
     "name": "MOVE",
-    "z": 2.67,
-    "chg63": 44.584,
+    "z": 2.57,
+    "chg63": 42.73,
     "triggered": true
    }
   ],
@@ -225,11 +225,11 @@
   {
    "id": "move",
    "name": "MOVE美债波动率(债市)",
-   "val": 109.98,
+   "val": 108.13,
    "unit": "点",
    "date": "2026-10-01",
-   "chg": -0.47,
-   "pct": 68.5,
+   "chg": -2.32,
+   "pct": 66.0,
    "key": "MOVE_X"
   },
   {
