@@ -1,13 +1,13 @@
 {
- "updated": "2026-10-06 18:36",
- "asof": "2026-10-06",
+ "updated": "2026-10-07 02:41",
+ "asof": "2026-10-07",
  "regime": {
   "stage": 2,
   "onrrp_bn": 0.414,
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 60.3,
+  "value": 57.8,
   "n_comp": 9,
   "components": [
    {
@@ -23,7 +23,7 @@
    {
     "id": "SPR_CP_SOFR",
     "name": "商票-SOFR利差",
-    "pct": 76.9
+    "pct": 59.1
    },
    {
     "id": "BAMLH0A0HYM2",
@@ -38,7 +38,7 @@
    {
     "id": "MOVE_X",
     "name": "MOVE(债市波动)",
-    "pct": 67.8
+    "pct": 63.8
    },
    {
     "id": "NETLIQ",
@@ -53,7 +53,7 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率63日Δ",
-    "pct": 93.2
+    "pct": 92.5
    }
   ]
  },
@@ -69,8 +69,8 @@
    {
     "id": "DFII10",
     "name": "10Y实际利率",
-    "z": 1.89,
-    "chg63": 0.68,
+    "z": 1.8,
+    "chg63": 0.65,
     "triggered": false
    },
    {
@@ -90,8 +90,8 @@
    {
     "id": "MOVE_X",
     "name": "MOVE",
-    "z": 2.2,
-    "chg63": 36.828,
+    "z": 2.05,
+    "chg63": 34.011,
     "triggered": true
    }
   ],
@@ -113,8 +113,8 @@
    {
     "id": "SPR_CP_SOFR",
     "name": "商票-SOFR",
-    "z": 0.54,
-    "chg20": 9.0,
+    "z": -0.0,
+    "chg20": -0.0,
     "triggered": false
    }
   ]
@@ -155,11 +155,11 @@
   {
    "id": "cp_sofr",
    "name": "商票-SOFR利差",
-   "val": 9.0,
+   "val": 5.0,
    "unit": "bp",
-   "date": "2026-09-25",
-   "chg": 3.0,
-   "pct": 76.9,
+   "date": "2026-10-05",
+   "chg": -4.0,
+   "pct": 59.1,
    "key": "SPR_CP_SOFR"
   },
   {
@@ -225,11 +225,11 @@
   {
    "id": "move",
    "name": "MOVE美债波动率(债市)",
-   "val": 109.24,
+   "val": 106.42,
    "unit": "点",
    "date": "2026-10-06",
-   "chg": -4.36,
-   "pct": 67.8,
+   "chg": -7.18,
+   "pct": 63.8,
    "key": "MOVE_X"
   },
   {
@@ -245,10 +245,10 @@
   {
    "id": "real10y",
    "name": "10Y实际利率",
-   "val": 2.92,
+   "val": 2.95,
    "unit": "%",
-   "date": "2026-10-02",
-   "chg": 0.04,
+   "date": "2026-10-05",
+   "chg": 0.03,
    "pct": 99.9,
    "key": "DFII10"
   },
