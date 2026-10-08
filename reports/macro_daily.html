@@ -109,6 +109,11 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 .cust .ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px;}
 .cust select{font-family:inherit;font-size:12.5px;padding:4px 8px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--txt);}
 #custChart{height:340px;width:100%;margin-top:8px;}
+#custChart:empty{display:none;}
+.custbar{display:none;font-size:12.5px;color:var(--navy);font-weight:700;cursor:pointer;padding:4px 2px;letter-spacing:1px;user-select:none;}
+.custbar:hover{color:var(--red);}
+#custPanel.folded>#custList,#custPanel.folded>.ctl{display:none;}
+#custPanel.folded>.custbar{display:block;}
 </style>
 </head>
 <body>
@@ -290,8 +295,9 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 </div>
 
 <!-- ============ 自定义图表 ============ -->
-<div class="sec"><h2>自定义图表</h2><span>勾选指标自由叠加 · 量纲不同自动分配次坐标 · 可选区间与图型</span></div>
+<div class="sec" id="custSec"><h2>自定义图表</h2><span>勾选指标自由叠加 · 量纲不同自动分配次坐标 · 可选区间与图型</span></div>
 <div class="cust" id="custPanel">
+  <div class="custbar" id="custBar">▸ 自定义图表 · 点击展开添加图表</div>
   <div id="custList"></div>
   <div class="ctl">
     <span style="font-size:12.5px;color:var(--navy);font-weight:700;">区间</span>
@@ -310,6 +316,26 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   </div>
   <div id="custChart"></div>
 </div>
+<script>
+/* 自定义图表区：未画图时默认收成一条，点击展开；画图后自动展开 */
+(function(){
+  var p=document.getElementById('custPanel'),bar=document.getElementById('custBar'),
+      sec=document.getElementById('custSec'),ch=document.getElementById('custChart');
+  if(!p||!bar) return;
+  function hasChart(){return !!(ch&&(ch.querySelector('canvas')||ch.querySelector('div')));}
+  function apply(){
+    var folded=p.classList.contains('folded');
+    if(sec) sec.style.display=folded?'none':'';
+    bar.textContent=folded?'▸ 自定义图表 · 点击展开添加图表':'▾ 自定义图表 · 点击收起';
+  }
+  if(!hasChart()) p.classList.add('folded');
+  apply();
+  bar.onclick=function(){p.classList.toggle('folded');apply();};
+  if(ch) new MutationObserver(function(){
+    if(hasChart()&&p.classList.contains('folded')){p.classList.remove('folded');apply();}
+  }).observe(ch,{childList:true});
+})();
+</script>
 
 <!-- ============ 日内总结 ============ -->
 <div class="sec"><h2>日内总结</h2><span>规则引擎按最新数据自动生成</span></div>
