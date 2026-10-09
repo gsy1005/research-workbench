@@ -296,6 +296,7 @@ add('NFCI', '芝加哥联储金融条件指数', '点', 'rate', 'L1·FRED/Chicag
 add('STFSI4', '圣路易斯联储金融压力指数', '点', 'rate', 'L1·FRED/StLouisFed(原STFSI4已更名STLFSI4)', ('fred', 'STLFSI4'))
 add('IRLTLT01JPM156N', '日本10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01JPM156N'))
 add('IRLTLT01DEM156N', '德国10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01DEM156N'))
+add('IRLTLT01FRM156N', '法国10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01FRM156N'))
 add('IRLTLT01GBM156N', '英国10Y国债收益率', '%', 'rate', 'L1·FRED/OECD', ('fred', 'IRLTLT01GBM156N'))
 add('ECBDFR', '欧央行存款利率', '%', 'rate', 'L1·FRED/ECB', ('fred', 'ECBDFR'))
 add('Y_LQD', '投资级信用债ETF(LQD)', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'LQD'))
