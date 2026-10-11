@@ -1288,6 +1288,7 @@ function loadPmiCoef(){
       +'</div>'
       +'</div>'
       +'<div style="margin-top:10px;"><img src="../charts/pmi_coef.png?v='+Date.now()+'" style="width:100%;border-radius:8px;border:1px solid var(--line);" alt="PMI 2Y利率敏感度系数"></div>'
+      +'<p style="font-size:11.5px;margin:8px 0 0;"><a href="rate_lag_report.html" style="color:var(--gold);">📄 完整数据论证：利率多久影响经济 · 传导时滞全证据链 ↗</a>（传导时滞 12~24 个月，分环节有序兑现）</p>'
       +'</div>';
   }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">利率敏感度卡加载失败，请刷新重试。</p></div>';});
 }
@@ -1347,11 +1348,30 @@ function loadPmiNow(){
       +'</div></div>'
       +(n&&n.note?'<div style="margin-top:8px;font-size:12px;color:var(--dim);line-height:1.7;">'+n.note+'</div>':'')
       +trendHtml
+      +'<div id="tvBox"></div>'
       +'<div style="margin-top:10px;"><img src="../charts/pmi_nowcast.png?v='+Date.now()+'" style="width:100%;border-radius:8px;border:1px solid var(--line);" alt="ISM 实际 vs 合成预测"></div>'
       +'</div>';
   }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">PMI 预测卡加载失败，请刷新重试。</p></div>';});
 }
 loadPmiNow();
+
+/* --- 季度趋势滚动验证成绩单：读 trend_verify.json --- */
+function loadTrendVerify(){
+  var box=document.getElementById('tvBox'); if(!box)return;
+  fetch('../data/trend_verify.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(v){
+    if(!v||!v.stats||!v.stats.n_verified){box.innerHTML='';return;}
+    var s=v.stats;
+    box.innerHTML='<div style="margin-top:8px;padding:8px 12px;background:#101623;border-radius:8px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;">'
+      +'<span style="font-size:12px;color:var(--dim);">📋 滚动验证成绩单（逐月兑现）</span>'
+      +'<span style="font-size:13px;">已兑现 <b style="color:var(--gold);">'+s.n_verified+'</b> 期</span>'
+      +'<span style="font-size:13px;">±MAE命中 <b style="color:var(--gold);">'+(s.hit_rate==null?'—':(s.hit_rate*100).toFixed(0)+'%')+'</b></span>'
+      +'<span style="font-size:13px;">MAE <b style="color:var(--gold);">'+(s.mae==null?'—':s.mae)+'</b></span>'
+      +'<span style="font-size:13px;">偏差 <b style="color:var(--gold);">'+(s.bias==null?'—':(s.bias>0?'+':'')+s.bias)+'</b></span>'
+      +'</div>'
+      +'<div style="margin-top:8px;"><img src="../charts/trend_verify.png?v='+Date.now()+'" style="width:100%;border-radius:8px;border:1px solid var(--line);" alt="季度趋势预测滚动验证"></div>';
+  }).catch(function(){box.innerHTML='';});
+}
+loadTrendVerify();
 
 /* --- 今日边际变化：自动扫描器 --- */
 var CHG_RULES=[

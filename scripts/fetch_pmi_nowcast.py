@@ -411,6 +411,72 @@ def main():
             trend['err'] = round(ptr - fut, 2)
         log('  趋势展望: %s → %s ISM 预测 %.1f (MAE %.2f)' % (tr_now[0], tgt_month, ptr, stats_tr['mae']))
 
+        # ---------- 逐月滚动验证入库(对"准不准"的长期成绩单) ----------
+        tv_path = os.path.join(DATA, 'trend_verify.json')
+        tv = {'records': {}}
+        if os.path.exists(tv_path) and not FULL:
+            try:
+                tv = json.load(open(tv_path, encoding='utf-8'))
+            except Exception:
+                pass
+        rec = tv['records'].get(tgt_month, {})
+        rec.update({'made': tr_now[0], 'target': tgt_month, 'pred': round(ptr, 1),
+                    'band': trend['band'], 'mae': stats_tr['mae']})
+        if fut is not None:
+            rec['actual'] = fut
+            rec['err'] = round(ptr - fut, 2)
+            rec['hit'] = bool(abs(ptr - fut) <= stats_tr['mae'])
+        tv['records'][tgt_month] = rec
+        tv['updated'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+        recs = sorted(tv['records'].values(), key=lambda r: r['target'])
+        done = [r for r in recs if 'hit' in r]
+        tv['stats'] = {
+            'n_pred': len(recs), 'n_verified': len(done),
+            'hit_rate': round(sum(1 for r in done if r['hit']) / len(done), 3) if done else None,
+            'mae': round(float(np.mean([abs(r['err']) for r in done])), 2) if done else None,
+            'bias': round(float(np.mean([r['err'] for r in done])), 2) if done else None,
+        }
+        with open(tv_path, 'w', encoding='utf-8') as f:
+            json.dump(tv, f, ensure_ascii=False, separators=(',', ':'))
+        log('  滚动验证: %d 条预测, %d 条已兑现, 命中率 %s, MAE %s'
+            % (tv['stats']['n_pred'], tv['stats']['n_verified'],
+               tv['stats']['hit_rate'], tv['stats']['mae']))
+
+        # 滚动验证图: 误差条形 + 命中率累积曲线
+        try:
+            import matplotlib
+            matplotlib.use('Agg')
+            import matplotlib.pyplot as plt
+            try:
+                from daimon_runtime import setup_plot
+                setup_plot()
+            except Exception:
+                plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei']
+                plt.rcParams['axes.unicode_minus'] = False
+            ver = done
+            xs = [r['target'] for r in ver]
+            fig, (a1, a2) = plt.subplots(2, 1, figsize=(10, 5.2), dpi=130,
+                                         gridspec_kw={'height_ratios': [1.4, 1]})
+            a1.bar(xs, [r['err'] for r in ver],
+                   color=['#3fb950' if abs(r['err']) <= r['mae'] else '#e5534b' for r in ver])
+            a1.axhline(0, color='#555', lw=0.8)
+            a1.set_title('季度趋势预测 · 逐月兑现验证（预测误差，绿=±MAE内）', fontsize=11, fontweight='bold')
+            a1.set_ylabel('预测 - 实际（PMI点）')
+            a1.grid(alpha=0.25, axis='y')
+            cum = np.cumsum([1 if r['hit'] else 0 for r in ver]) / np.arange(1, len(ver) + 1) * 100
+            a2.plot(xs, cum, color='#d4a944', lw=1.8, marker='o', ms=3)
+            a2.axhline(50, color='#888', lw=0.7, ls=':')
+            a2.set_ylim(0, 105)
+            a2.set_ylabel('±MAE内命中率%（累积）')
+            a2.grid(alpha=0.25)
+            fig.autofmt_xdate(rotation=45)
+            fig.tight_layout()
+            os.makedirs(CHARTS, exist_ok=True)
+            fig.savefig(os.path.join(CHARTS, 'trend_verify.png'), bbox_inches='tight')
+            log('  写出 trend_verify.png')
+        except Exception as e:
+            log('  !! 滚动验证图跳过', repr(e)[:100])
+
     # ---------- 合并历史预测记录 ----------
     out_path = os.path.join(DATA, 'pmi_nowcast.json')
     hist = {}

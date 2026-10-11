@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>利率多久影响经济 · 传导时滞全证据链</title>
+<style>
+  :root{--bg:#0d1117;--card:#141b28;--line:#262d3d;--gold:#d4a944;--txt:#d7dde8;--dim:#8a94a6;--red:#e5534b;--green:#3fb950;--blue:#5b9bd5;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.85;padding:24px 16px 60px;}
+  .wrap{max-width:980px;margin:0 auto;}
+  h1{font-size:24px;color:var(--gold);margin-bottom:4px;}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:24px;}
+  h2{font-size:18px;color:var(--gold);margin:34px 0 10px;padding-left:10px;border-left:3px solid var(--gold);}
+  h3{font-size:15px;margin:18px 0 8px;color:var(--txt);}
+  p{margin:10px 0;font-size:14.5px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0;}
+  .card img{width:100%;border-radius:8px;margin-top:10px;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;}
+  th{background:#101623;color:var(--gold);}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .kpi{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0;}
+  .kpi>div{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center;}
+  .kpi b{display:block;font-size:22px;color:var(--gold);}
+  .kpi span{font-size:12px;color:var(--dim);}
+  .hl{color:var(--gold);font-weight:700;}
+  .up{color:var(--red);} .dn{color:var(--green);}
+  .note{font-size:12.5px;color:var(--dim);}
+  ul,ol{margin:8px 0 8px 22px;font-size:14.5px;}
+  li{margin:6px 0;}
+  .toc a{color:var(--blue);text-decoration:none;font-size:13.5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>利率多久影响经济？—— 传导时滞的全证据链</h1>
+<div class="sub">数据：FRED 免费接口（DGS2 / FEDFUNDS / PERMIT / INDPRO / PAYEMS / UNRATE / GPDI）+ 本工作台 ISM 库 · 样本 1985-2026 · 管线脚本 fetch_rate_lag.py · 全部走样本外/事件研究口径，可复算</div>
+
+<div class="card">
+<b style="color:var(--gold);">一句话结论：</b>利率（以 2Y 美债为代理）影响美国经济的主传导时滞是 <span class="hl">12~24 个月</span>，而且分环节有序兑现——<b>地产链最先（约 1 年出头）、工业/景气居中（1 年半上下）、企业投资与就业殿后（接近 2 年）</b>。弗里德曼 60 多年前说的"long and variable lags（长而可变的时滞）"，用 1985 年以来 500 个月的数据重新验证，依然成立。
+</div>
+
+<h2>0 · 结论速览表</h2>
+<p>下表是本报告全部证据的核心数字：对"2Y 利率 12 个月变化"这一冲击，各经济环节在 k 个月后出现响应极值（活动类取负相关谷，失业率取正相关峰）。</p>
+<table>
+<tr><th>经济环节</th><th>指标（变换）</th><th>传导谷/峰（12月差分口径）</th><th>换算实际时滞*</th><th>相关强度 |r|</th><th>排序</th></tr>
+<tr><td>景气调查</td><td>ISM 制造业 PMI（水平）</td><td class="num">20 个月</td><td class="num">≈14 个月</td><td class="num">0.37</td><td class="num">①最快</td></tr>
+<tr><td>地产链</td><td>建筑许可 PERMIT（同比）</td><td class="num">24 个月</td><td class="num">≈18 个月</td><td class="num">0.25</td><td class="num">②</td></tr>
+<tr><td>工业生产</td><td>工业产出 INDPRO（同比）</td><td class="num">24 个月</td><td class="num">≈18 个月</td><td class="num">0.29</td><td class="num">②</td></tr>
+<tr><td>企业投资</td><td>私人投资 GPDI（同比，季）</td><td class="num">29 个月</td><td class="num">≈23 个月</td><td class="num">0.34</td><td class="num">③</td></tr>
+<tr><td>就业</td><td>非农就业 PAYEMS（同比）</td><td class="num">30 个月</td><td class="num">≈24 个月</td><td class="num">0.25</td><td class="num">④最慢</td></tr>
+<tr><td>失业率</td><td>失业率 UNRATE（12个月Δ）</td><td class="num">26 个月（正峰）</td><td class="num">≈20 个月</td><td class="num">0.26</td><td class="num">③</td></tr>
+</table>
+<p class="note">* 换算说明：冲击与变量都用"12 个月差分/同比"平稳化，差分运算会把真实时滞在结果上右移约 6 个月（差分窗口的重心效应），故"12月差分口径"减约 6 个月为实际日历时滞。该修正在方向与排序上不影响结论。</p>
+<div class="kpi">
+<div><b>12~24月</b><span>主传导时滞区间</span></div>
+<div><b>≈1年</b><span>地产/景气最先响应</span></div>
+<div><b>≈2年</b><span>就业/失业率完全兑现</span></div>
+<div><b>3轮</b><span>加息周期事件研究互证</span></div>
+</div>
+
+<h2>1 · 为什么这个问题很难，本报告怎么回答</h2>
+<div class="card">
+<p><b>难点一：利率不是外生的。</b>央行加息往往因为经济过热——所以"利率上、经济强"的<b>同期正相关</b>是政策反应函数的产物，不是传导失效。直接把利率和经济做同期回归会得出荒谬结论。本报告所有证据都考察<b>利率冲击之后第 k 个月</b>（k=0~36）的响应，绕开同期污染。</p>
+<p><b>难点二：时滞不是一个数，是一个分布。</b>利率传导走的是多条通道（地产→耐用品→企业投资→就业），每条通道长度不同。所以本报告不按单一滞后下结论，而是画出<b>完整的响应剖面</b>，让各环节的传导谷自己"报时"。</p>
+<p><b>三组互相独立的证据：</b>①领先-滞后相关剖面（全样本统计）；②单滞后回归系数剖面（响应幅度）；③三轮加息周期事件研究（2004/2015/2022，不做任何回归，只看时间线）。三组证据指向同一答案才下结论。</p>
+</div>
+
+<h2>2 · 证据一：领先-滞后相关剖面</h2>
+<div class="card">
+<img src="../charts/rate_lag_xcorr.png" alt="领先-滞后相关剖面">
+<p><b>读图：</b>横轴是利率冲击后的月份 k。所有活动类曲线在 k=0 附近都是<b>正的</b>（政策反应函数：经济强→利率高），随后单调下行、在 10~15 个月<b>穿越零轴</b>（同期效应退场、传导效应接手），在 <span class="hl">18~30 个月</span> 形成负相关谷。失业率（紫线）方向镜像——在 k≈26 个月达到正峰，即利率冲击后约 2 年失业率响应最强。</p>
+<p><b>为什么相关谷在 18~30 个月而不是教科书说的 6~12 个月？</b>两个原因：其一，12 个月差分口径把时滞表观右移约 6 个月；其二，也是更重要的——<b>教科书的 6~12 个月指的是"开始产生影响"，而相关谷度量的是"影响达到峰值"</b>。从穿越零轴（10~15 月，开始影响）到负谷（20~30 月，影响峰值），中间这段 6~12 个月的爬升期，正是"传导进行时"。两个口径合起来，恰好完整复现"6~12 个月开始、12~24 个月见顶"的经典结论。</p>
+</div>
+
+<h2>3 · 证据二：分布式滞后系数剖面（响应有多大）</h2>
+<div class="card">
+<img src="../charts/rate_lag_profile.png" alt="分布式滞后系数剖面">
+<p><b>读图：</b>纵轴 β<sub>k</sub> 的含义：k 个月前 2Y 利率上行 1 个百分点，变量今天的水平变化多少。形状与证据一完全一致但多了一个维度——<b>响应幅度</b>。可以看到 ISM（橙）的负响应最深且最先到位，投资（绿）和非农（红）的响应同样深但拖后约 6~10 个月才到峰。这意味着：<b>如果只用就业数据判断利率政策效果，你会系统性滞后约两年</b>——决策上等于用后视镜开车。</p>
+</div>
+
+<h2>4 · 证据三：三轮加息周期事件研究（零回归，纯时间线）</h2>
+<div class="card">
+<img src="../charts/rate_cycles.png" alt="三轮加息周期事件研究">
+<p><b>2004-06 周期（FFR 1%→5.25%）：</b>建筑许可（蓝）在加息开始后 <b>约 10~12 个月见顶</b>（指数冲到 110+），随后崩塌至 70——地产链领先确认。工业产出（黄）扛到约 24 个月才回落。非农就业（绿）在 36 个月窗口内<b>全程没有负增长</b>。传导顺序：地产 → 工业 → （就业还没倒，衰退 2007 年底才来）。</p>
+<p><b>2015-12 周期（慢加息至 2.4%）：</b>节奏温和，许可在头一年先软后修复，工业与就业几乎无感——<b>证明时滞和强度取决于冲击的幅度</b>，这正是"variable lags"里的 variable。</p>
+<p><b>2022-03 周期（FFR 0→5.25%，40 年最猛）：</b>建筑许可<b>在 10 个月内从 100 崩到 75</b>——史上最快的地产响应（利率从 3% 到 7% 直接打穿承受能力）。但请注意非农就业（绿）：<b>直到加息开始后 30 个月、利率见顶回落，它还在 104 附近高位</b>。一轮史诗级加息没能在两年内让就业转头——这是"长而可变"最硬的一个案例，也解释了为什么 2023-24 年"加息不伤就业"的叙事当时看起来是对的（它在 2024-25 才开始兑现，见证据四与本工作台敏感度滚动系数）。</p>
+</div>
+
+<h2>5 · 证据四：本工作台两个模型的交叉验证</h2>
+<div class="card">
+<p><b>交叉验证 1 —— PMI 合成预测模型自动选出的利率滞后：</b>本工作台的 ISM 走样本外预测模型（地区联储+ISM滞后+利率项），在候选滞后里自动选出 <span class="hl">2Y 利率滞后 3 个季度（9 个月）</span>为最优——加入该滞后项后回测 MAE 从 1.33 降到 1.25，OOS R² 从 0.845 升到 0.86。<b>含义：</b>对<b>软数据/景气调查</b>这类快变量，利率信息的有效前瞻期就是 3 个季度左右；这与证据一中 ISM 传导谷（换算约 14 个月）不矛盾——回归选的是"边际预测力最强点"，相关谷是"完全兑现点"，两点之间正是传导爬升期。</p>
+<p><b>交叉验证 2 —— PMI 对利率的敏感度滚动系数：</b>下图是本日报「宏观压力」区的 2Y 利率敏感度系数（60 月滚动窗）。可以看到 2024-2025 年系数 deepening 到 -1.6（利率对 PMI 的压制达到样本期最强）——<b>2022-23 加息在 9~14 个月后开始压制景气、在 2024-25（约 2 年）达到峰值</b>，与证据一的 ISM 传导谷时点严丝合缝。最近系数回升至 -0.78，对应降息预期下的传导钝化。</p>
+<img src="../charts/pmi_coef.png" alt="PMI 2Y利率敏感度系数">
+</div>
+
+<h2>6 · 与文献的对照</h2>
+<div class="card">
+<ul>
+<li><b>弗里德曼（1961）：</b>"long and variable lags"，货币效应 6~18 个月显现、可长达 24 个月以上。本报告数据：开始影响 10~15 月、峰值 18~30 月（表观口径），完全兼容。</li>
+<li><b>美联储与主流宏观文献共识：</b>政策利率 → 地产/耐用品 2~6 个季度；→ GDP 4~8 个季度；→ 就业与失业率 6~12 个季度以上；→ 通胀（PCE平减）12~24 个月且最不确定。本报告各环节排序与量级与之吻合。</li>
+<li><b>Bernanke（大衰退研究）：</b>利率冲击的大头通过<b>住房抵押信贷渠道</b>传导，这正是本报告中响应最快、幅度最深的环节（2022 周期许可 10 个月崩 25%）。</li>
+<li><b>值得强调的现代变异：</b>2008 与 2020 后的三轮 QE/财政对冲、企业锁定低息长债（2020-21 投资级债发行潮），使 2022-24 周期的就业时滞比 2004 周期更长——"variable"在样本内就在变大，这正是本日报把敏感度做成<b>滚动跟踪</b>而非固定参数的原因。</li>
+</ul>
+</div>
+
+<h2>7 · 实操含义（对本日报读者的三个 actionable 结论）</h2>
+<div class="card">
+<ol>
+<li><b>看政策效果，别看就业。</b>就业/失业率是利率传导链条的末端，时滞接近 2 年。判断一轮加息是否"伤到了经济"，顺序是：建筑许可（约 1 年）→ ISM/工业产出（1 年+）→ 投资（近 2 年）→ 就业（2 年）。等就业数据确认，行情早已定价完毕。</li>
+<li><b>"加息不伤经济"永远是半成品判断。</b>它只在冲击后 1 年内近似成立（同期效应未退、传导未至）。2023 年的"经济韧性"叙事在 2024-25 年被敏感度系数 deepening 证伪了一部分。说这句话前，先看传导处于哪个阶段。</li>
+<li><b>把时滞表挂进你的宏观仪表盘：</b>本工作台已把敏感度系数（月度）、滞胀仪表盘、WEI 增长现报做成自动更新卡，本报告的 rate_lag 数据（data/rate_lag.json）同样随管线每日重算——政策拐点后的各月份，对着传导时滞表逐项核对兑现进度即可。</li>
+</ol>
+</div>
+
+<h2>8 · 方法论与数据源（可复算声明）</h2>
+<div class="card note">
+<p>冲击定义：DGS2（2Y 美债收益率）12 个月差分，单位 pp。变量变换：流量/指数类取同比%，失业率取 12 个月差分，ISM 取水平。相关剖面：corr(Δ2Y<sub>t</sub>, X<sub>t+k</sub>)，k=0..36，全样本 1985-01 至最新。系数剖面：单滞后 OLS X<sub>t+k</sub> ~ Δ2Y<sub>t</sub>。事件研究：三轮周期起点（FFR 首次上调月）起 36 个月，各变量以起点=100 归一化，零回归纯展示。传导谷定义：6~30 月窗内按经济理论方向的极值（活动类取 min，失业率取 max）。12 个月差分口径的时滞重心修正约 -6 个月。</p>
+<p>数据源：FRED 免费 CSV 接口（FEDFUNDS / DGS2 / T10Y2Y / PERMIT / INDPRO / PAYEMS / UNRATE / GPDI）；ISM 实际值来自本仓库 data/ht_series_us_econ.js。生成脚本：scripts/fetch_rate_lag.py（管线每日自动重跑，零 token）。本报告图表随管线自动更新。⚙️规则引擎与回归结果不构成投资建议。</p>
+</div>
+
+</div>
+</body>
+</html>

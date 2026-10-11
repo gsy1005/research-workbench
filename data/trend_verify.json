@@ -1,0 +1,1 @@
+{"records":{"2026-08":{"made":"2026-05","target":"2026-08","pred":51.8,"band":[49.1,54.4],"mae":2.64,"actual":54.6,"err":-2.81,"hit":false}},"updated":"2026-10-12 01:44","stats":{"n_pred":1,"n_verified":1,"hit_rate":0.0,"mae":2.81,"bias":-2.81}}
