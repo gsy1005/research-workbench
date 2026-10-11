@@ -276,6 +276,9 @@
 <!-- ============ 二·补二、宏观压力 · 滞胀仪表盘（管线每日自动更新·零token） ============ -->
 <h2 style="margin-top:20px;">二·补二、宏观压力 · 滞胀仪表盘<span class="en">STAGFLATION DASHBOARD · 五先行指标等权打分 0-100 · 越高越接近滞胀定价 · 管线自动更新</span></h2>
 <div id="stagBox">读取中…</div>
+<!-- ============ 二·补三、增长现报 · WEI 每周经济指数（管线自动·零token） ============ -->
+<h2 style="margin-top:20px;">二·补三、增长现报 · WEI 每周经济指数<span class="en">WEEKLY ECONOMIC INDEX · 周频GDP影子指标 · 季均≈GDP同比 · 纽约联储/达拉斯联储 · 每周四更新</span></h2>
+<div id="weiBox">读取中…</div>
 </section>
 <section class="dp" id="dp14">
 <!-- ============ 重要数据总览（美元/美债/外汇/霍尔木兹·自动读管线快照） ============ -->
@@ -1216,6 +1219,42 @@ function loadStagflation(){
   }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">滞胀仪表盘加载失败，请刷新重试。</p></div>';});
 }
 loadStagflation();
+
+/* --- 增长现报·WEI：读 wei.json（管线自动更新） --- */
+function loadWei(){
+  var box=document.getElementById('weiBox'); if(!box)return;
+  fetch('../data/wei.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
+    if(!d){box.innerHTML='<div class="card"><p style="color:var(--dim)">WEI 数据未生成（管线跑完即恢复）。</p></div>';return;}
+    var L=d.latest, v=L.value, ma=L.ma13;
+    var mom=v-L.prev, maMom=ma-L.ma13_prev;
+    var c= v<0?'#e5534b': v<1?'#d4a944':'#3fb950';
+    var arrow=function(x){return x>0?'<span style="color:#e5534b;">▲+'+x.toFixed(2)+'</span>':x<0?'<span style="color:#3fb950;">▼'+x.toFixed(2)+'</span>':'<span style="color:var(--dim);">→0.00</span>';};
+    var gdp=d.gdp&&d.gdp.yoy!=null?('GDP 同比 '+gdp_q(d.gdp.quarter)+' 实际值 <b>'+d.gdp.yoy+'%</b>'):'GDP 实际值待发布';
+    function gdp_q(q){return q?q.replace('-Q','年Q'):'—';}
+    var gap=(d.gdp&&d.gdp.yoy!=null)?(ma-d.gdp.yoy):null;
+    box.innerHTML='<div class="card">'
+      +'<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:center;">'
+      +'<div style="flex:0 0 auto;text-align:center;min-width:120px;">'
+      +'<div style="font-size:12px;color:var(--dim);margin-bottom:2px;">WEI 周度（'+L.week_ending+'止）</div>'
+      +'<div style="font-size:30px;font-weight:800;color:'+c+';line-height:1.1;">'+v+'<span style="font-size:14px;">%</span></div>'
+      +'<div style="font-size:11px;color:var(--dim);margin-top:2px;">周环比 '+arrow(mom)+'</div>'
+      +'</div>'
+      +'<div style="flex:0 0 auto;text-align:center;min-width:120px;">'
+      +'<div style="font-size:12px;color:var(--dim);margin-bottom:2px;">13周均值</div>'
+      +'<div style="font-size:30px;font-weight:800;color:#d4a944;line-height:1.1;">'+ma+'<span style="font-size:14px;">%</span></div>'
+      +'<div style="font-size:11px;color:var(--dim);margin-top:2px;">周环比 '+arrow(maMom)+'</div>'
+      +'</div>'
+      +'<div style="flex:1;min-width:230px;font-size:12.5px;line-height:2;color:var(--txt);">'
+      +'<div>'+gdp+'　·　13周均值 vs GDP同比：'+(gap==null?'—':(gap>0?'<b style="color:#e5534b;">偏热 +'+gap.toFixed(2)+'</b>':'<b style="color:#5b9bd5;">偏冷 '+gap.toFixed(2)+'</b>'))+'</div>'
+      +'<div style="color:var(--dim);font-size:11.5px;">'+d.note+'</div>'
+      +'</div>'
+      +'</div>'
+      +'<div style="margin-top:10px;"><img src="../charts/wei.png?v='+Date.now()+'" style="width:100%;border-radius:8px;border:1px solid var(--line);" alt="WEI 每周经济指数 vs GDP 同比"></div>'
+      +'<p style="font-size:11px;color:var(--dim);margin:8px 0 0;">'+d.source+' · 更新 '+d.updated+' · 单周噪声大看13周均值与趋势，⚙️规则引擎自动结论不构成观点</p>'
+      +'</div>';
+  }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">WEI 增长现报加载失败，请刷新重试。</p></div>';});
+}
+loadWei();
 
 /* --- 今日边际变化：自动扫描器 --- */
 var CHG_RULES=[
