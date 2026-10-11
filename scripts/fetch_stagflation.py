@@ -151,6 +151,33 @@ def main():
     rl_now, rl_lag = val('real10', latest), lag('real10', latest, 3)
     cur['bkrn_real_div'] = round((bk_now - bk_lag) - (rl_now - rl_lag), 2) if None not in (bk_now, bk_lag, rl_now, rl_lag) else None
 
+    # ---- 近24个月历史(供日报sparkline) ----
+    def calc_month(mk):
+        c = {}
+        c['fwd5y5y'] = val('fwd5y5y', mk)
+        a_now, a_lag = val('ahe_yoy', mk), lag('ahe_yoy', mk, 3)
+        c['wage_mom'] = round(((a_now / a_lag) ** 4 - 1) * 100, 2) if a_now and a_lag else None
+        w_now, w_lag = val('wti', mk), lag('wti', mk, 3)
+        o_chg = ((w_now / w_lag) - 1) * 100 if w_now and w_lag else None
+        cc_n, cc_l = val('corecpi', mk), lag('corecpi', mk, 3)
+        c_ann = ((cc_n / cc_l) ** 4 - 1) * 100 if cc_n and cc_l else None
+        o_sc = score('oil_core', min(max((o_chg or 0) * 2.5 + 30, 0), 100))
+        cc_sc = score('oil_core', min(max((c_ann or 0) * 22 + 30, 0), 100))
+        c['oil_core'] = round((o_sc + cc_sc) / 2)
+        c['hy_oas'] = val('hy_oas', mk)
+        b_n, b_l = val('breakeven10', mk), lag('breakeven10', mk, 3)
+        r_n, r_l = val('real10', mk), lag('real10', mk, 3)
+        c['bkrn_real_div'] = round((b_n - b_l) - (r_n - r_l), 2) if None not in (b_n, b_l, r_n, r_l) else None
+        return c
+
+    hist = {k: [] for k in NAMES}
+    for mk in months[-24:]:
+        cm = calc_month(mk)
+        for k in NAMES:
+            v = cm.get(k)
+            sc = v if (k == 'oil_core' and v is not None) else (score(k, v) if v is not None else None)
+            hist[k].append([mk, v, sc])
+
     subs = {}
     for k in NAMES:
         v = cur.get(k)
@@ -170,6 +197,8 @@ def main():
         'asof_month': latest,
         'total': total, 'level': lvl, 'gold_note': gold_note,
         'subscores': subs,
+        'history': hist,
+        'history_months': len(months[-24:]),
         'bands': {k: [[lo, hi, sc] for lo, hi, sc in v] for k, v in BANDS.items()},
         'rule': '五指标等权平均0-100; 详见脚本头注释',
     }

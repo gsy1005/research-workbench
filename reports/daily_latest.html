@@ -1201,15 +1201,40 @@ function loadStagflation(){
     }).join('');
     var subs='';
     if(d.subscores){
+      /* 迷你走势图: 近24个月得分历史 */
+      function spark(hist, color){
+        if(!hist||hist.length<2) return '';
+        var W=92,H=22,pad=2;
+        var scs=hist.map(function(h){return h[2]==null?null:h[2];}).filter(function(x){return x!=null;});
+        if(scs.length<2) return '';
+        var mn=Math.min.apply(null,scs), mx=Math.max.apply(null,scs);
+        if(mx-mn<1e-9){ mx=mn+1; }
+        var n=hist.length;
+        var pts=[];
+        for(var i=0;i<n;i++){
+          if(hist[i][2]==null) continue;
+          var x=pad+(W-2*pad)*i/(n-1);
+          var y=H-pad-(H-2*pad)*(hist[i][2]-mn)/(mx-mn);
+          pts.push(x.toFixed(1)+','+y.toFixed(1));
+        }
+        var last=pts[pts.length-1].split(',');
+        var y50=H-pad-(H-2*pad)*(50-mn)/(mx-mn);
+        var mid=(mn<50&&mx>50)?'<line x1="0" y1="'+y50.toFixed(1)+'" x2="'+W+'" y2="'+y50.toFixed(1)+'" stroke="#3a4356" stroke-width="0.6" stroke-dasharray="2,2"/>':'';
+        return '<svg width="'+W+'" height="'+H+'" style="flex:0 0 96px;background:#151b26;border-radius:4px;" title="近24个月得分走势(灰虚线=50分)">'
+          +mid
+          +'<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+color+'" stroke-width="1.6"/>'
+          +'<circle cx="'+last[0]+'" cy="'+last[1]+'" r="2.2" fill="'+color+'"/></svg>';
+      }
       var ks=Object.keys(d.subscores);
       subs=ks.map(function(k){
         var s=d.subscores[k], sc=s.score==null?0:s.score;
         var c= sc>=60?'#e5534b': sc>=40?'#d4a944':'#5b9bd5';
         var v=(s.value==null?'—':(Math.round(s.value*100)/100));
         return '<div style="display:flex;align-items:center;gap:8px;margin:3px 0;">'
-          +'<span style="flex:0 0 46%;font-size:12px;color:var(--txt);">'+s.name+'</span>'
+          +'<span style="flex:0 0 32%;font-size:12px;color:var(--txt);">'+s.name+'</span>'
           +'<span style="flex:1;height:9px;background:#1c2330;border-radius:5px;overflow:hidden;"><span style="display:block;height:100%;width:'+sc+'%;background:'+c+';"></span></span>'
-          +'<span style="flex:0 0 64px;text-align:right;font-size:11px;color:var(--dim);">'+v+' → '+sc+'分</span></div>';
+          +spark(d.history?d.history[k]:null, c)
+          +'<span style="flex:0 0 118px;text-align:right;font-size:11px;color:var(--dim);white-space:nowrap;">'+v+' → '+sc+'分</span></div>';
       }).join('');
     }
     box.innerHTML='<div class="card">'
