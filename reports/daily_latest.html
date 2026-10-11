@@ -276,6 +276,9 @@
 <!-- ============ 二·补二、宏观压力 · 滞胀仪表盘（管线每日自动更新·零token） ============ -->
 <h2 style="margin-top:20px;">二·补二、宏观压力 · 滞胀仪表盘<span class="en">STAGFLATION DASHBOARD · 五先行指标等权打分 0-100 · 越高越接近滞胀定价 · 管线自动更新</span></h2>
 <div id="stagBox">读取中…</div>
+<!-- ============ 二·补二·情、情景推演 · 12月加息已定价 × 中东三种剧本 ============ -->
+<h2 style="margin-top:20px;">二·补二·情、情景推演 · 中东三种剧本<span class="en">SCENARIO LAB · 固定前提: 12月加息25bp已定价(CME隐含~66%) · 情景变量: 中东冲突持续时间 · 点按钮切换</span></h2>
+<div id="scenBox">读取中…</div>
 <!-- ============ 二·补三、增长现报 · WEI 每周经济指数（管线自动·零token） ============ -->
 <h2 style="margin-top:20px;">二·补三、增长现报 · WEI 每周经济指数<span class="en">WEEKLY ECONOMIC INDEX · 周频GDP影子指标 · 季均≈GDP同比 · 纽约联储/达拉斯联储 · 每周四更新</span></h2>
 <div id="weiBox">读取中…</div>
@@ -1224,6 +1227,66 @@ function loadStagflation(){
   }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">滞胀仪表盘加载失败，请刷新重试。</p></div>';});
 }
 loadStagflation();
+
+/* --- 情景推演 · 中东三种剧本：固定前提12月加息已定价，变量为冲突持续时间 --- */
+function loadScen(){
+  var box=document.getElementById('scenBox'); if(!box)return;
+  fetch('../data/stagflation.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
+    if(!d||!d.bands){box.innerHTML='<div class="card"><p style="color:var(--dim)">情景推演依赖滞胀仪表盘区间数据，待管线生成后恢复。</p></div>';return;}
+    var bands=d.bands;
+    var cur=d.subscores||{};
+    function scoreOf(k,v){ if(k==='oil_core')return v; var b=bands[k]||[]; for(var i=0;i<b.length;i++){ if(v>=b[i][0]&&v<b[i][1])return b[i][2]; } return 0; }
+    var SCEN=[
+      {key:'A',name:'A · 快速缓和',tag:'1-2个月内降温 · 油价回$75-80',color:'#3fb950',
+       vals:{fwd5y5y:2.15,wage_mom:2.40,oil_core:12,hy_oas:2.90,bkrn_real_div:-0.70},
+       note:'风险溢价回吐，通胀预期重新锚定，黄金失去地缘支撑回归实际利率定价。'},
+      {key:'B',name:'B · 低烈度持续',tag:'低烈度延续6个月+ · 油价$95-105',color:'#d4a944',
+       vals:{fwd5y5y:2.55,wage_mom:3.10,oil_core:50,hy_oas:3.55,bkrn_real_div:0.10},
+       note:'油价高位钝化传导，滞胀压力温和累积但远未定价，黄金多空均衡、波动率抬升。'},
+      {key:'C',name:'C · 升级 · 封锁海峡',tag:'霍尔木兹受阻 · 油价$120+',color:'#e5534b',
+       vals:{fwd5y5y:2.85,wage_mom:3.50,oil_core:80,hy_oas:4.30,bkrn_real_div:0.60},
+       note:'供给冲击推盈亏平衡、压实际利率，滞胀交易全面启动，黄金为最确定的受益资产。'}
+    ];
+    var keys=['fwd5y5y','wage_mom','oil_core','hy_oas','bkrn_real_div'];
+    SCEN.forEach(function(s){ var t=0; keys.forEach(function(k){ t+=scoreOf(k,s.vals[k]); }); s.total=Math.round(t/keys.length*10)/10; });
+    function lvlOf(t){ return t<20?['舒适区','#3fb950']: t<40?['温和压力','#9ccc65']: t<60?['滞胀式压力升温','#d4a944']: t<80?['警戒区','#e67e22']:['滞胀定价区','#e5534b']; }
+    function goldOf(s){ var dv=s.vals.bkrn_real_div; return dv>0.3?['利多','#e6b422']: dv<0?['压制','#888']:['均衡','#d4a944']; }
+    var state={sel:'B'};
+    function render(){
+      var s=null; for(var i=0;i<SCEN.length;i++) if(SCEN[i].key===state.sel) s=SCEN[i];
+      var lv=lvlOf(s.total), g=goldOf(s);
+      var btns=SCEN.map(function(x){
+        var on=x.key===state.sel;
+        return '<button data-k="'+x.key+'" style="cursor:pointer;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:700;border:1px solid '+x.color+';'+(on?'background:'+x.color+';color:#0d1117;':'background:transparent;color:'+x.color+';')+'">'+x.name+'</button>';
+      }).join('');
+      var rows=keys.map(function(k){
+        var cs=(cur[k]&&cur[k].score!=null)?cur[k].score:0, ss=scoreOf(k,s.vals[k]);
+        var nm=(cur[k]&&cur[k].name)||k;
+        var cv=s.vals[k];
+        return '<div style="display:flex;align-items:center;gap:8px;margin:4px 0;">'
+          +'<span style="flex:0 0 34%;font-size:12px;color:var(--txt);">'+nm+'</span>'
+          +'<span style="flex:1;height:8px;background:#1c2330;border-radius:4px;overflow:hidden;" title="当前"><span style="display:block;height:100%;width:'+cs+'%;background:#5b6472;"></span></span>'
+          +'<span style="flex:1;height:8px;background:#1c2330;border-radius:4px;overflow:hidden;" title="剧本"><span style="display:block;height:100%;width:'+ss+'%;background:'+s.color+';"></span></span>'
+          +'<span style="flex:0 0 180px;text-align:right;font-size:11px;color:var(--dim);white-space:nowrap;">剧本值 '+cv+' → '+ss+'分（当前'+cs+'）</span></div>';
+      }).join('');
+      box.innerHTML='<div class="card">'
+        +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">'+btns+'</div>'
+        +'<div style="font-size:11.5px;color:var(--dim);margin-bottom:8px;">'+s.name+'　'+s.tag+'　｜　左灰条=当前打分，右彩条=剧本打分（100分制）</div>'
+        +rows
+        +'<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-top:12px;padding:10px 12px;background:#101623;border-radius:8px;border-left:3px solid '+s.color+';">'
+        +'<div style="text-align:center;min-width:110px;"><div style="font-size:30px;font-weight:800;color:'+lv[1]+';line-height:1.1;">'+s.total+'</div><div style="font-size:12px;font-weight:700;color:'+lv[1]+';">'+lv[0]+'</div></div>'
+        +'<div style="flex:1;min-width:220px;font-size:12.5px;line-height:1.8;color:var(--txt);">'+s.note+'<br>🥇 <b style="color:var(--gold);">黄金视角：</b><span style="color:'+g[1]+';font-weight:700;">'+g[0]+'</span>'
+        +'<span style="color:var(--dim);font-size:11px;">　（规则：盈亏平衡-实际利率背离 >+0.3 利多 / <0 压制）</span></div>'
+        +'</div>'
+        +'<div style="margin-top:8px;font-size:11px;color:var(--dim);">固定前提：12月加息25bp已定价（CME隐含~66%）。传导时滞：12月加息对PMI的实质响应落款 <b style="color:var(--txt);">2027Q3-Q4</b>（见利率传导时滞表）。</div>'
+        +'</div>';
+      var btns2=box.querySelectorAll('button[data-k]');
+      for(var j=0;j<btns2.length;j++){ (function(b){ b.onclick=function(){ state.sel=b.getAttribute('data-k'); render(); }; })(btns2[j]); }
+    }
+    render();
+  }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">情景推演加载失败，请刷新重试。</p></div>';});
+}
+loadScen();
 
 /* --- 增长现报·WEI：读 wei.json（管线自动更新） --- */
 function loadWei(){
