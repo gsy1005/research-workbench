@@ -122,7 +122,19 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="banner">
   <span class="brand">中哲金属 · 甘思雨</span>
   <h1>宏观数据日报</h1>
-  <div class="meta">图表版 · 数据日 <b id="autoDate">读取中…</b> · 每日 07:40 / 20:40（北京）自动更新</div>
+  <div class="meta">图表版 · 数据日 <b id="autoDate">读取中…</b> · 每日 07:40 / 20:40（北京）自动更新 · <span id="pageVer" style="font-weight:400;color:#9fb4d0">版本检测中…</span></div>
+  <script>
+  /* 页面版本戳：读自己文件的 Last-Modified（GitHub Pages 部署时间），便于分辨新旧缓存 */
+  (function(){
+    var el=document.getElementById('pageVer'); if(!el) return;
+    fetch(location.pathname,{method:'HEAD',cache:'no-cache'}).then(function(r){
+      var p=r.headers.get('Last-Modified'); if(!p) return;
+      var t=new Date(p).getTime()+8*3600000, d=new Date(t);
+      var z=function(n){return (n<10?'0':'')+n;};
+      el.textContent='页面构建 '+(d.getUTCMonth()+1)+'/'+d.getUTCDate()+' '+z(d.getUTCHours())+':'+z(d.getUTCMinutes())+'（北京）';
+    }).catch(function(){el.textContent='';});
+  })();
+  </script>
 </div>
 <a class="backlink" href="daily_latest.html">← 返回宏观研究日报（文字结论版）</a>
 
@@ -139,7 +151,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 </div>
 
 <!-- ============ 数据异动（自动扫描关键序列异动） ============ -->
-<div class="sec"><h2>数据异动</h2><span>自动扫描关键序列 · |z|≥1.8 触发（z=相对自身近半年波动的偏离）· 每条标注数据日期</span></div>
+<div class="sec"><h2>数据异动</h2><span>自动扫描关键序列 · 日度+周度双视角 · |z|≥1.8 触发（z=相对自身近半年波动的偏离）· 每条标注数据日期</span></div>
 <div class="secSum" id="sumX">⚙️ 异动扫描中…</div>
 <div id="anomBox"></div>
 
@@ -153,8 +165,9 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="cal-today" id="calToday">今日日历读取中…</div>
 
 <script>
-/* ============ 数据异动：自动扫描关键序列（z=相对自身近半年日变动分布的偏离） ============ */
+/* ============ 数据异动：自动扫描关键序列 · 日度+周度双视角（z=相对自身近半年波动的偏离） ============ */
 (function(){
+  function ser(k){return (window.CHART_SERIES||{})[k]||[];}
   function mvKey(){var c=['Y_MOVE','EDB_GLB_MOVE','MOVE'];for(var i=0;i<c.length;i++){if(ser(c[i]).length>40)return c[i];}return null;}
   var WATCH=[
     ['DGS10','美债10Y名义','%',2],['DGS2','美债2Y','%',2],
@@ -163,6 +176,14 @@ table.fw td.hl{font-weight:700;color:var(--red);}
     ['VIXCLS','VIX','点',1],['BAMLH0A0HYM2EY','高收益OAS','%',2],['BAMLC0A4CBBB','BBB OAS','%',2],
     ['DTWEXBGS','广义美元指数','点',2]
   ];
+  /* 法德利差 = 法国10Y − 德国10Y（月频，按日期对齐相减；管线已有德国10Y，法国10Y已加入数据源） */
+  function frde(){
+    var f=ser('IRLTLT01FRM156N'),d=ser('IRLTLT01DEM156N');
+    if(f.length<12||d.length<12) return null;
+    var dm={}; d.forEach(function(p){if(p[1]!=null)dm[p[0]]=p[1];});
+    var out=[]; f.forEach(function(p){if(p[1]!=null&&dm[p[0]]!=null)out.push([p[0],p[1]-dm[p[0]]]);});
+    return out.length>=12?out:null;
+  }
   function stdev(arr){if(arr.length<2)return 0;var m=0;arr.forEach(function(x){m+=x;});m/=arr.length;var s=0;arr.forEach(function(x){s+=(x-m)*(x-m);});return Math.sqrt(s/arr.length);}
   /* 近130个观测的h期变动标准差（不含最新一期本身，避免自比较） */
   function baseSd(a,h){
@@ -170,8 +191,9 @@ table.fw td.hl{font-weight:700;color:var(--red);}
     for(var i=n-130-h+1;i<n-h;i++){ if(i>=1&&a[i+h-1]&&a[i-1]&&a[i+h-1][1]!=null&&a[i-1][1]!=null) d.push(a[i+h-1][1]-a[i-1][1]); }
     return d.length>=25?stdev(d):null;
   }
-  function scan(key,label,unit,dec){
-    var a=ser(key); if(a.length<45) return null;
+  /* 日度视角：1日 / 5日变动 */
+  function scanD(a,label,unit,dec){
+    if(a.length<45) return null;
     var v1=a[a.length-1][1],v0=a[a.length-2][1];
     if(v1==null||v0==null) return null;
     var d1=v1-v0,d5=null;
@@ -184,34 +206,87 @@ table.fw td.hl{font-weight:700;color:var(--red);}
     if(az<1.8) return null;
     return {label:label,unit:unit,dec:dec,v:v1,d1:d1,d5:d5,z1:z1,z5:z5,az:az,date:a[a.length-1][0],up:(Math.abs(z1)>=Math.abs(z5||0)?d1>0:d5>0)};
   }
+  /* 周度重采样：每周取最后一个观测 */
+  function weekly(a){
+    var m={},i,d,y,dt,t0,wk;
+    for(i=0;i<a.length;i++){ if(a[i][1]==null) continue; d=a[i][0]; y=+d.slice(0,4);
+      dt=new Date(d+'T00:00:00Z'); t0=Date.UTC(y,0,1);
+      wk=Math.floor((dt.getTime()-t0)/604800000);
+      m[y+'W'+wk]=[d,a[i][1]]; }
+    return Object.keys(m).sort().map(function(k){return m[k];});
+  }
+  /* 周度视角：1周 / 4周变动（对周度重采样序列计算） */
+  function scanW(a,label,unit,dec){
+    var w=weekly(a); if(w.length<30) return null;
+    var v1=w[w.length-1][1],v0=w[w.length-2][1];
+    if(v1==null||v0==null) return null;
+    var d1=v1-v0,d4=null;
+    if(w.length>5&&w[w.length-5][1]!=null) d4=v1-w[w.length-5][1];
+    var sd1=baseSd(w,1);
+    var z1=(sd1&&sd1>0)?(d1/sd1):0;
+    var z4=null;
+    if(d4!=null){var sd4=baseSd(w,4); if(sd4&&sd4>0) z4=d4/sd4;}
+    var az=Math.max(Math.abs(z1),z4==null?0:Math.abs(z4));
+    if(az<1.8) return null;
+    return {label:label,unit:unit,dec:dec,v:v1,d1:d1,d4:d4,z1:z1,z4:z4,az:az,date:w[w.length-1][0],up:(Math.abs(z1)>=Math.abs(z4||0)?d1>0:d4>0)};
+  }
   function fmt(v,dec,unit){if(v==null||isNaN(v))return '—';var s=(v>0?'+':'')+v.toFixed(dec);return unit==='%'?s+'%':s+' '+unit;}
+  function toBp(o){o.v*=100;if(o.d1!=null)o.d1*=100;if(o.d5!=null)o.d5*=100;if(o.d4!=null)o.d4*=100;o.unit='bp';o.dec=0;return o;}
   function go(){
-    var out=[];
-    WATCH.forEach(function(w){var r=scan(w[0],w[1],w[2],w[3]);if(r)out.push(r);});
-    var mk=mvKey(); if(mk){var r=scan(mk,'MOVE债市波动率','点',1);if(r)out.push(r);}
-    out.sort(function(a,b){return b.az-a.az;});
-    out=out.slice(0,6);
+    var dl=[],wk=[],r,i;
+    for(i=0;i<WATCH.length;i++){r=scanD(ser(WATCH[i][0]),WATCH[i][1],WATCH[i][2],WATCH[i][3]);if(r)dl.push(r);}
+    var mk=mvKey(); if(mk){r=scanD(ser(mk),'MOVE债市波动率','点',1);if(r)dl.push(r);}
+    for(i=0;i<WATCH.length;i++){r=scanW(ser(WATCH[i][0]),WATCH[i][1],WATCH[i][2],WATCH[i][3]);if(r)wk.push(r);}
+    if(mk){r=scanW(ser(mk),'MOVE债市波动率','点',1);if(r)wk.push(r);}
+    var sp=frde();
+    if(sp){r=scanD(sp,'法德利差','%',2);if(r)dl.push(toBp(r));
+           r=scanW(sp,'法德利差','%',2);if(r)wk.push(toBp(r));}
+    dl.sort(function(a,b){return b.az-a.az;}); dl=dl.slice(0,6);
+    wk.sort(function(a,b){return b.az-a.az;}); wk=wk.slice(0,6);
     var sm=document.getElementById('sumX'),box=document.getElementById('anomBox');
-    if(!out.length){
-      if(sm) sm.innerHTML='<b>扫描结果</b>：近半年波动口径下，关键序列<b>暂无显著异动</b>（|z|≥1.8 才列出）。';
+    if(!dl.length&&!wk){
+      if(sm) sm.innerHTML='<b>扫描结果</b>：日度+周度双视角下，关键序列<b>暂无显著异动</b>（|z|≥1.8 才列出）。';
       if(box) box.innerHTML='';
       return;
     }
-    if(sm) sm.innerHTML='<b>扫描结果</b>：检出 <b>'+out.length+'</b> 项异动——'+out.map(function(o){
-      return '<b>'+o.label+'</b> '+(o.up?'<span style="color:#c0392b">飙升</span>':'<span style="color:#2471a3">骤降</span>')+'（z='+o.az.toFixed(1)+'）';
-    }).join('、')+'。';
-    var h='<table class="kv"><tr><th style="text-align:left">序列</th><th>最新</th><th>1日变动</th><th>5日变动</th><th>偏离 z</th><th>数据日</th><th>判定</th></tr>';
-    out.forEach(function(o){
-      var tag=o.up?'<b style="color:#c0392b">▲ 飙升</b>':'<b style="color:#2471a3">▼ 骤降</b>';
-      h+='<tr><td class="lb" style="font-weight:600">'+o.label+'</td>'+
-        '<td>'+o.v.toFixed(o.dec)+(o.unit==='%'?'%':'')+'</td>'+
-        '<td>'+fmt(o.d1,o.dec,o.unit)+'</td>'+
-        '<td>'+fmt(o.d5,o.dec,o.unit)+'</td>'+
-        '<td><b>'+(o.az).toFixed(1)+'</b></td>'+
-        '<td style="color:#8a97ab">'+o.date.slice(5)+'</td>'+
-        '<td>'+tag+'</td></tr>';
-    });
-    h+='</table>';
+    var parts=[];
+    if(dl.length) parts.push('日度 <b>'+dl.length+'</b> 项');
+    if(wk.length) parts.push('周度 <b>'+wk.length+'</b> 项');
+    if(sm) sm.innerHTML='<b>扫描结果</b>：'+parts.join('、')+'——'+
+      dl.concat(wk).slice(0,6).map(function(o){
+        return '<b>'+o.label+'</b> '+(o.up?'<span style="color:#c0392b">飙升</span>':'<span style="color:#2471a3">骤降</span>')+'（z='+o.az.toFixed(1)+'）';
+      }).join('、')+'。';
+    var h='';
+    if(dl.length){
+      h+='<div style="font-size:12.5px;font-weight:700;color:#1b3a5f;margin:8px 0 4px;letter-spacing:1px;">日度视角<span style="font-weight:400;color:#8a97ab"> · 1日/5日变动 z</span></div>';
+      h+='<table class="kv"><tr><th style="text-align:left">序列</th><th>最新</th><th>1日变动</th><th>5日变动</th><th>偏离 z</th><th>数据日</th><th>判定</th></tr>';
+      dl.forEach(function(o){
+        var tag=o.up?'<b style="color:#c0392b">▲ 飙升</b>':'<b style="color:#2471a3">▼ 骤降</b>';
+        h+='<tr><td class="lb" style="font-weight:600">'+o.label+'</td>'+
+          '<td>'+o.v.toFixed(o.dec)+(o.unit==='%'?'%':'')+'</td>'+
+          '<td>'+fmt(o.d1,o.dec,o.unit)+'</td>'+
+          '<td>'+fmt(o.d5,o.dec,o.unit)+'</td>'+
+          '<td><b>'+(o.az).toFixed(1)+'</b></td>'+
+          '<td style="color:#8a97ab">'+o.date.slice(5)+'</td>'+
+          '<td>'+tag+'</td></tr>';
+      });
+      h+='</table>';
+    }
+    if(wk.length){
+      h+='<div style="font-size:12.5px;font-weight:700;color:#1b3a5f;margin:12px 0 4px;letter-spacing:1px;">周度视角<span style="font-weight:400;color:#8a97ab"> · 1周/4周变动 z（每周最后一个观测重采样）</span></div>';
+      h+='<table class="kv"><tr><th style="text-align:left">序列</th><th>最新</th><th>1周变动</th><th>4周变动</th><th>偏离 z</th><th>数据日</th><th>判定</th></tr>';
+      wk.forEach(function(o){
+        var tag=o.up?'<b style="color:#c0392b">▲ 飙升</b>':'<b style="color:#2471a3">▼ 骤降</b>';
+        h+='<tr><td class="lb" style="font-weight:600">'+o.label+'</td>'+
+          '<td>'+o.v.toFixed(o.dec)+(o.unit==='%'?'%':'')+'</td>'+
+          '<td>'+fmt(o.d1,o.dec,o.unit)+'</td>'+
+          '<td>'+fmt(o.d4,o.dec,o.unit)+'</td>'+
+          '<td><b>'+(o.az).toFixed(1)+'</b></td>'+
+          '<td style="color:#8a97ab">'+o.date.slice(5)+'</td>'+
+          '<td>'+tag+'</td></tr>';
+      });
+      h+='</table>';
+    }
     if(box) box.innerHTML=h;
   }
   if(document.readyState==='complete'||document.readyState==='interactive') setTimeout(go,300);
