@@ -279,6 +279,9 @@
 <!-- ============ 二·补三、增长现报 · WEI 每周经济指数（管线自动·零token） ============ -->
 <h2 style="margin-top:20px;">二·补三、增长现报 · WEI 每周经济指数<span class="en">WEEKLY ECONOMIC INDEX · 周频GDP影子指标 · 季均≈GDP同比 · 纽约联储/达拉斯联储 · 每周四更新</span></h2>
 <div id="weiBox">读取中…</div>
+<!-- ============ 二·补四、PMI · 2Y 利率敏感度系数（月度滚动·零token） ============ -->
+<h2 style="margin-top:20px;">二·补四、PMI · 2Y 利率敏感度系数<span class="en">RATE SENSITIVITY TRACKER · 负=利率咬经济 · 向0收窄=传导失效 · 月度滚动回归</span></h2>
+<div id="pmiCoefBox">读取中…</div>
 </section>
 <section class="dp" id="dp14">
 <!-- ============ 重要数据总览（美元/美债/外汇/霍尔木兹·自动读管线快照） ============ -->
@@ -1255,6 +1258,40 @@ function loadWei(){
   }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">WEI 增长现报加载失败，请刷新重试。</p></div>';});
 }
 loadWei();
+
+/* --- PMI·2Y利率敏感度系数：读 pmi_coef.json --- */
+function loadPmiCoef(){
+  var box=document.getElementById('pmiCoefBox'); if(!box)return;
+  fetch('../data/pmi_coef.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
+    if(!d){box.innerHTML='<div class="card"><p style="color:var(--dim)">敏感度系数数据未生成（管线跑完即恢复）。</p></div>';return;}
+    var L=d.latest;
+    var c= L.coef>-0.3?'#3fb950': L.coef>-0.6?'#d4a944':'#e5534b';
+    var t=L.tstat==null?'—':L.tstat;
+    var sig=L.tstat!=null&&Math.abs(L.tstat)>=1.96;
+    var seg=d.segments||{};
+    box.innerHTML='<div class="card">'
+      +'<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:center;">'
+      +'<div style="flex:0 0 auto;text-align:center;min-width:130px;">'
+      +'<div style="font-size:12px;color:var(--dim);margin-bottom:2px;">扩张窗系数（'+L.month+'）</div>'
+      +'<div style="font-size:30px;font-weight:800;color:'+c+';line-height:1.1;">'+L.coef+'</div>'
+      +'<div style="font-size:11px;color:var(--dim);margin-top:2px;">t='+t+'（'+(sig?'<b style="color:#e5534b;">显著</b>':'不显著')+'）</div>'
+      +'</div>'
+      +'<div style="flex:0 0 auto;text-align:center;min-width:130px;">'
+      +'<div style="font-size:12px;color:var(--dim);margin-bottom:2px;">60月滚动窗</div>'
+      +'<div style="font-size:30px;font-weight:800;color:#d4a944;line-height:1.1;">'+L.coef_r60+'</div>'
+      +'<div style="font-size:11px;color:var(--dim);margin-top:2px;">t='+(L.tstat_r60==null?'—':L.tstat_r60)+'</div>'
+      +'</div>'
+      +'<div style="flex:1;min-width:230px;font-size:12.5px;line-height:1.9;color:var(--txt);">'
+      +'<div>2021年前均值 <b>'+(seg.pre2021_mean==null?'—':seg.pre2021_mean)+'</b> → 2021年后均值 <b>'+(seg.post2021_mean==null?'—':seg.post2021_mean)+'</b> · 近3月 <b>'+(seg.last3m_mean==null?'—':seg.last3m_mean)+'</b></div>'
+      +'<div style="color:var(--dim);font-size:11.5px;">'+d.note+'</div>'
+      +'</div>'
+      +'</div>'
+      +'<div style="margin-top:10px;"><img src="../charts/pmi_coef.png?v='+Date.now()+'" style="width:100%;border-radius:8px;border:1px solid var(--line);" alt="PMI 2Y利率敏感度系数"></div>'
+      +'<p style="font-size:11px;color:var(--dim);margin:8px 0 0;">'+d.desc+' · 单位: '+d.unit+' · 更新 '+d.updated+'</p>'
+      +'</div>';
+  }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">利率敏感度卡加载失败，请刷新重试。</p></div>';});
+}
+loadPmiCoef();
 
 /* --- 今日边际变化：自动扫描器 --- */
 var CHG_RULES=[

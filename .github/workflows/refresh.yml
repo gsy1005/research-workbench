@@ -46,11 +46,13 @@ jobs:
         run: python3 scripts/fetch_stagflation.py || true
       - name: WEI增长现报(FRED免费源)
         run: python3 scripts/fetch_wei.py || true
+      - name: PMI利率敏感度系数(FRED免费源)
+        run: python3 scripts/fetch_pmi_coef.py || true
       - name: 提交更新
         run: |
           git config user.name "workbench-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/stagflation.json charts/stagflation.png data/wei.json charts/wei.png
+          git add data/stagflation.json charts/stagflation.png data/wei.json charts/wei.png data/pmi_coef.json charts/pmi_coef.png
           git diff --cached --quiet || git commit -m "滞胀仪表盘更新"
           git pull --rebase origin main || git rebase --abort
           git push
