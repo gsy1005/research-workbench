@@ -273,6 +273,9 @@
 <!-- ============ 二·补、日报观点（人工更新·冻结制） ============ -->
 <h2>二·补、日报观点<span class="en">DAILY VIEWS · 人工更新 · 事后数据不回填、修正以注记追加</span></h2>
 <div id="viewsBox">读取中…</div>
+<!-- ============ 二·补二、宏观压力 · 滞胀仪表盘（管线每日自动更新·零token） ============ -->
+<h2 style="margin-top:20px;">二·补二、宏观压力 · 滞胀仪表盘<span class="en">STAGFLATION DASHBOARD · 五先行指标等权打分 0-100 · 越高越接近滞胀定价 · 管线自动更新</span></h2>
+<div id="stagBox">读取中…</div>
 </section>
 <section class="dp" id="dp14">
 <!-- ============ 重要数据总览（美元/美债/外汇/霍尔木兹·自动读管线快照） ============ -->
@@ -1171,6 +1174,48 @@ function loadViews(){
   }).catch(function(){var el=document.getElementById('viewsBox');if(el)el.innerHTML='<div class="card"><p style="color:var(--dim)">观点加载失败。</p></div>';});
 }
 loadViews();
+
+/* --- 宏观压力·滞胀仪表盘：读 stagflation.json（管线每日自动更新） --- */
+function loadStagflation(){
+  var box=document.getElementById('stagBox'); if(!box)return;
+  fetch('../data/stagflation.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(d){
+    if(!d){box.innerHTML='<div class="card"><p style="color:var(--dim)">滞胀仪表盘数据未生成（管线跑完即恢复）。</p></div>';return;}
+    var total=d.total, lvl=d.level;
+    var color= total<20?'#3fb950': total<40?'#9ccc65': total<60?'#d4a944': total<80?'#e67e22':'#e5534b';
+    var band=[['0-20 舒适','#3fb950'],['20-40 温和','#9ccc65'],['40-60 升温','#d4a944'],['60-80 警戒','#e67e22'],['80+ 滞胀定价','#e5534b']];
+    var bandHtml=band.map(function(b){
+      var on=(b[0].indexOf(lvl)>=0)||(lvl==='舒适区'&&b[0].indexOf('舒适')>=0)||(lvl==='温和压力'&&b[0].indexOf('温和')>=0)||(lvl==='滞胀式压力升温'&&b[0].indexOf('升温')>=0)||(lvl==='警戒区'&&b[0].indexOf('警戒')>=0)||(lvl==='滞胀定价区'&&b[0].indexOf('滞胀定价')>=0);
+      return '<span style="display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;margin-right:4px;border:1px solid '+b[1]+';'+(on?'background:'+b[1]+';color:#0d1117;font-weight:700;':'color:'+b[1]+';')+'">'+b[0]+'</span>';
+    }).join('');
+    var subs='';
+    if(d.subscores){
+      var ks=Object.keys(d.subscores);
+      subs=ks.map(function(k){
+        var s=d.subscores[k], sc=s.score==null?0:s.score;
+        var c= sc>=60?'#e5534b': sc>=40?'#d4a944':'#5b9bd5';
+        var v=(s.value==null?'—':(Math.round(s.value*100)/100));
+        return '<div style="display:flex;align-items:center;gap:8px;margin:3px 0;">'
+          +'<span style="flex:0 0 46%;font-size:12px;color:var(--txt);">'+s.name+'</span>'
+          +'<span style="flex:1;height:9px;background:#1c2330;border-radius:5px;overflow:hidden;"><span style="display:block;height:100%;width:'+sc+'%;background:'+c+';"></span></span>'
+          +'<span style="flex:0 0 64px;text-align:right;font-size:11px;color:var(--dim);">'+v+' → '+sc+'分</span></div>';
+      }).join('');
+    }
+    box.innerHTML='<div class="card">'
+      +'<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;">'
+      +'<div style="flex:0 0 auto;text-align:center;min-width:130px;">'
+      +'<div style="font-size:34px;font-weight:800;color:'+color+';line-height:1.1;">'+total+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin:2px 0 6px;">'+lvl+'</div>'
+      +'<div style="font-size:10.5px;color:var(--dim);line-height:1.5;">总分 /100<br>五指标等权</div>'
+      +'</div>'
+      +'<div style="flex:1;min-width:280px;">'+subs+'</div>'
+      +'</div>'
+      +'<div style="margin-top:10px;font-size:12.5px;line-height:1.8;padding:8px 10px;background:#101623;border-radius:8px;border-left:3px solid var(--gold);">🥇 <b style="color:var(--gold)">黄金视角：</b><span style="color:var(--txt);">'+d.gold_note+'</span></div>'
+      +'<div style="margin-top:8px;">'+bandHtml+'</div>'
+      +'<p style="font-size:11px;color:var(--dim);margin:8px 0 0;">数据月 '+d.asof_month+' · 更新 '+d.updated+' · 分项阈值与口径见管线 fetch_stagflation.py（FRED 免费源，零 token）</p>'
+      +'</div>';
+  }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">滞胀仪表盘加载失败，请刷新重试。</p></div>';});
+}
+loadStagflation();
 
 /* --- 今日边际变化：自动扫描器 --- */
 var CHG_RULES=[

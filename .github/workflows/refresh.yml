@@ -24,11 +24,31 @@ jobs:
         run: python3 scripts/fetch_extra_news.py || true
       - name: 收集近日发布数据(供日报页展示)
         run: python3 scripts/collect_releases.py || true
+      - name: 提取S&P PMI初值/终值(累积进data/spmi_flash.json)
+        run: python3 scripts/fetch_spmi_flash.py || true
       - name: 提交更新
         run: |
           git config user.name "workbench-bot"
           git config user.email "bot@users.noreply.github.com"
           git add data/news_latest.json data/news_fallback.js data/releases_recent.json
           git diff --cached --quiet || git commit -m "消息快照更新"
+          git pull --rebase origin main || git rebase --abort
+          git push
+  stagflation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests numpy matplotlib
+      - name: 滞胀压力仪表盘(FRED免费源)
+        run: python3 scripts/fetch_stagflation.py || true
+      - name: 提交更新
+        run: |
+          git config user.name "workbench-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/stagflation.json charts/stagflation.png
+          git diff --cached --quiet || git commit -m "滞胀仪表盘更新"
           git pull --rebase origin main || git rebase --abort
           git push
