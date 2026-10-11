@@ -1217,7 +1217,6 @@ function loadStagflation(){
       +'</div>'
       +'<div style="margin-top:10px;font-size:12.5px;line-height:1.8;padding:8px 10px;background:#101623;border-radius:8px;border-left:3px solid var(--gold);">🥇 <b style="color:var(--gold)">黄金视角：</b><span style="color:var(--txt);">'+d.gold_note+'</span></div>'
       +'<div style="margin-top:8px;">'+bandHtml+'</div>'
-      +'<p style="font-size:11px;color:var(--dim);margin:8px 0 0;">数据月 '+d.asof_month+' · 更新 '+d.updated+' · 分项阈值与口径见管线 fetch_stagflation.py（FRED 免费源，零 token）</p>'
       +'</div>';
   }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">滞胀仪表盘加载失败，请刷新重试。</p></div>';});
 }
@@ -1253,7 +1252,6 @@ function loadWei(){
       +'</div>'
       +'</div>'
       +'<div style="margin-top:10px;"><img src="../charts/wei.png?v='+Date.now()+'" style="width:100%;border-radius:8px;border:1px solid var(--line);" alt="WEI 每周经济指数 vs GDP 同比"></div>'
-      +'<p style="font-size:11px;color:var(--dim);margin:8px 0 0;">'+d.source+' · 更新 '+d.updated+' · 单周噪声大看13周均值与趋势，⚙️规则引擎自动结论不构成观点</p>'
       +'</div>';
   }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">WEI 增长现报加载失败，请刷新重试。</p></div>';});
 }
@@ -1287,7 +1285,6 @@ function loadPmiCoef(){
       +'</div>'
       +'</div>'
       +'<div style="margin-top:10px;"><img src="../charts/pmi_coef.png?v='+Date.now()+'" style="width:100%;border-radius:8px;border:1px solid var(--line);" alt="PMI 2Y利率敏感度系数"></div>'
-      +'<p style="font-size:11px;color:var(--dim);margin:8px 0 0;">'+d.desc+' · 单位: '+d.unit+' · 更新 '+d.updated+'</p>'
       +'</div>';
   }).catch(function(){box.innerHTML='<div class="card"><p style="color:var(--dim)">利率敏感度卡加载失败，请刷新重试。</p></div>';});
 }
