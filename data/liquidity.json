@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-18 09:05",
+ "updated": "2026-10-18 13:24",
  "asof": "2026-10-19",
  "regime": {
   "stage": 2,
@@ -7,7 +7,7 @@
   "desc": "ON RRP近枯竭→银行准备金边际定价, TGCR/SOFR对供给冲击更敏感(缩表阶段2)"
  },
  "stress": {
-  "value": 58.8,
+  "value": 59.2,
   "n_comp": 9,
   "components": [
    {
