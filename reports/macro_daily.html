@@ -136,7 +136,10 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   })();
   </script>
 </div>
-<a class="backlink" href="daily_latest.html">← 返回宏观研究日报（文字结论版）</a>
+<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+  <a class="backlink" href="../index.html">← 返回宏观研究工作台首页</a>
+  <a class="backlink" href="daily_latest.html">返回宏观研究日报（文字结论版）</a>
+</div>
 
 <div class="toolbar">
   <button class="tb tb-png" onclick="exportPNG()">导出图片 PNG</button>
@@ -152,6 +155,10 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 
 <!-- ============ 数据异动（自动扫描关键序列异动） ============ -->
 <div class="sec"><h2>数据异动</h2><span>自动扫描关键序列 · 日度+周度双视角 · |z|≥1.8 触发（z=相对自身近半年波动的偏离）· 每条标注数据日期</span></div>
+<div style="font-size:12px;color:#5a6b80;line-height:1.75;padding:5px 7px 9px;border-bottom:1px solid #e8eef6;">
+  <b style="color:#1b3a5f;">怎么读：</b>BBB OAS＝BBB级企业债收益率－可比美债收益率（剔除期权影响），单位为bp，反映投资级企业的信用风险与融资溢价；BBB是投资级最低档，利差走阔通常表示市场要求更高风险补偿，并不是债券利好。<br>
+  “1日/5日变动”是最新值相对此前观测的变化；“偏离z”是这次变动相对该指标自身近130个观测波动程度的倍数，|z|≥1.8才提示异动，<b>不代表涨跌概率，也不等于危机信号</b>。红色“飙升”仅表示数值向上：对收益率、OAS、VIX通常意味着压力上升；对股指、价格则需结合指标含义解读。
+</div>
 <div class="secSum" id="sumX">⚙️ 异动扫描中…</div>
 <div id="anomBox"></div>
 
@@ -176,12 +183,16 @@ table.fw td.hl{font-weight:700;color:var(--red);}
     ['VIXCLS','VIX','点',1],['BAMLH0A0HYM2EY','高收益OAS','%',2],['BAMLC0A4CBBB','BBB OAS','%',2],
     ['DTWEXBGS','广义美元指数','点',2]
   ];
-  /* 法德利差 = 法国10Y − 德国10Y（月频，按日期对齐相减；管线已有德国10Y，法国10Y已加入数据源） */
+  /* 法德利差：FRED月度主线 + 最新日度事件值；顶部异动与下方图表共用同一序列。 */
   function frde(){
     var f=ser('IRLTLT01FRM156N'),d=ser('IRLTLT01DEM156N');
     if(f.length<12||d.length<12) return null;
     var dm={}; d.forEach(function(p){if(p[1]!=null)dm[p[0]]=p[1];});
     var out=[]; f.forEach(function(p){if(p[1]!=null&&dm[p[0]]!=null)out.push([p[0],p[1]-dm[p[0]]]);});
+    [['2026-10-22',1.75],['2026-10-26',1.59]].forEach(function(p){
+      out=out.filter(function(x){return x[0]!==p[0];});out.push(p);
+    });
+    out.sort(function(a,b){return a[0].localeCompare(b[0]);});
     return out.length>=12?out:null;
   }
   function stdev(arr){if(arr.length<2)return 0;var m=0;arr.forEach(function(x){m+=x;});m/=arr.length;var s=0;arr.forEach(function(x){s+=(x-m)*(x-m);});return Math.sqrt(s/arr.length);}
@@ -298,9 +309,9 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="sec"><h2>货币政策</h2><span>加息/不变/降息概率 · 衰退定价</span></div>
 <div class="secSum" id="sumM">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
-  <div class="cbox"><h4>各次会议当月加息/维持/降息概率（单月口径·官方区间分布推算）<span id="fwAsof"></span></h4><div class="ct" id="cM1"></div></div>
-  <div class="cbox"><h4>地缘事件合约：霍尔木兹海峡复航概率（Polymarket·每日更新）</h4><div class="ct" id="cM2"></div></div>
-  <div class="cbox"><h4>衰退概率定价<span>2027合约为8月新上线</span></h4><div class="ct" id="cM3"></div></div>
+  <div class="cbox"><h4>各次会议当月加息/维持/降息概率（CME FedWatch·单月口径）<span id="fwAsof"></span></h4><div class="ct" id="cM1"></div></div>
+  <div class="cbox"><h4>2026中期选举：民主党胜率走势（%）<span>Polymarket折线 · Kalshi最新点 · 11月3日投票</span></h4><div class="ct" id="cM2"></div><div id="cM2note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">当前为预测市场赔率，并非官方选举结果。</div></div>
+  <div class="cbox"><h4>美国衰退概率（%）<span>Polymarket vs Kalshi · 合约定义不同</span></h4><div class="ct" id="cM3"></div><div id="cM3note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;"></div></div>
   <div class="cbox"><h4>TACO指数（特朗普政策压力）<span>越高=政策反复（TACO式回撤）概率越高</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
   <div class="cbox"><h4>政策预期温度计：2Y美债 vs 目标区间上限（%）<span>2Y高于上限=市场押注继续加息</span></h4><div class="ct" id="cM5"></div></div>
   <div class="cbox"><h4>通胀预期锚：5Y盈亏平衡 · 5y5y远期（%）<span>锚是否松动决定加息容忍度</span></h4><div class="ct" id="cM6"></div></div>
@@ -321,6 +332,11 @@ table.fw td.hl{font-weight:700;color:var(--red);}
     <h4>美债10Y收益率组成：通胀预期 + 预期实际利率 + 期限溢价（三块堆积≈名义10Y）<span>期限溢价=纽约联储ACM模型·月度</span></h4>
     <div id="cB7why" style="font-size:12.5px;color:#16233c;padding:5px 6px 2px;line-height:1.7;font-weight:700;"></div>
     <div class="ct" id="cB7" style="height:300px"></div>
+  </div>
+  <div class="cbox" style="grid-column:1/-1;">
+    <h4>法德10Y国债利差（bp）<span>月度主线 + 日度事件值 · 法国减德国</span></h4>
+    <div class="ct" id="cB8" style="height:280px"></div>
+    <div style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">利差走阔代表法国相对德国的融资风险溢价上升；月末主线为FRED月度长期国债收益率。</div>
   </div>
 </div>
 
@@ -346,6 +362,9 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>芝加哥联储金融条件指数 NFCI（>0=收紧）</h4><div class="ct" id="cL8"></div></div>
   <div class="cbox"><h4>中国流动性：M1 · M2 同比（%·月度）</h4><div class="ct" id="cL6"></div></div>
   <div class="cbox"><h4>缓冲垫：ON RRP余额 · 贴现窗口借款（十亿$）<span>RRP耗尽+贴现抬头=流动性趋紧前兆</span></h4><div class="ct" id="cL9"></div></div>
+  <div class="cbox"><h4>政策利率贴近度：EFFR-IORB · OBFR-IORB（bp）<span>持续抬升=准备金充裕度下降的前瞻信号</span></h4><div class="ct" id="cL10"></div></div>
+  <div class="cbox"><h4>准备金与TGA：近4周变动（十亿$）<span>准备金下降 / TGA上升=抽离流动性</span></h4><div class="ct" id="cL11"></div></div>
+  <div class="cbox"><h4>净流动性：近4周变动（十亿$）<span>联储总资产-TGA-ON RRP · 负值=收缩</span></h4><div class="ct" id="cL12"></div></div>
 </div>
 
 <!-- ============ 大宗与权益 ============ -->
@@ -465,6 +484,20 @@ function line(hostId, series, opts){
   window.addEventListener('resize',function(){ch.resize();});
   return ch;
 }
+function snapshotBar(hostId, categories, platforms){
+  var el=document.getElementById(hostId); if(!el||!window.echarts)return;
+  var ch=echarts.init(el);
+  ch.setOption({
+    backgroundColor:'transparent',animation:false,textStyle:{fontFamily:KAI},
+    legend:{top:0,textStyle:{color:'#5a6b80',fontSize:10,fontFamily:KAI}},
+    grid:{left:42,right:12,top:28,bottom:26},
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:function(v){return v==null?'暂无':v+'%';}},
+    xAxis:{type:'category',data:categories,axisLabel:{color:'#6b7a90',fontSize:10,fontFamily:KAI}},
+    yAxis:{type:'value',min:0,max:100,axisLabel:{formatter:'{value}%',color:'#6b7a90',fontSize:9.5},splitLine:{lineStyle:{color:'#e8eef6'}}},
+    series:platforms.map(function(p,i){return {name:p.name,type:'bar',barMaxWidth:42,data:p.values,itemStyle:{color:i?C_RED:C_BLUE},label:{show:true,position:'top',formatter:function(x){return x.value==null?'—':x.value+'%';},fontSize:10,fontFamily:KAI}};})
+  });
+  window.addEventListener('resize',function(){ch.resize();});
+}
 /* ================= 顶部日期 ================= */
 (function(){
   var mx='';
@@ -576,26 +609,33 @@ fetch('../data/econ_calendar.json?v='+Date.now()).then(function(r){return r.json
   el.innerHTML = '<b>今日（'+tag+'）日历</b>：'+evHtml(day)+(day2?'<br><b>明日（'+tag2+'）预告</b>：'+evHtml(day2):'');
 }).catch(function(){ var el=document.getElementById('calToday'); if(el) el.textContent='日历数据读取失败。'; });
 
-/* ================= 地缘：Polymarket ================= */
-fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.json();}).then(function(PM){
-  var mkts = PM.markets||[];
-  function find(kw){ return mkts.filter(function(m){return m.question.indexOf(kw)>=0;})[0]; }
-  function hist(m, scale){ return ((m&&m.history)||[]).map(function(p){return [p[0], +(p[1]*100).toFixed(1)];}); }
-  /* M2 地缘事件合约：霍尔木兹复航概率（活跃合约，每日更新） */
-  var hz1 = find('Strait of Hormuz traffic returns to normal by October 31');
-  var hz2 = find('Strait of Hormuz traffic returns to normal by November 30');
-  var hz3 = find('Strait of Hormuz traffic returns to normal by December 31');
-  line('cM2', [
-    {name:'10/31前复航', data:hist(hz1), color:C_RED},
-    {name:'11/30前', data:hist(hz2), color:C_BLUE},
-    {name:'12/31前', data:hist(hz3), color:C_WHT}
+/* ================= 中期选举 + 衰退：Polymarket / Kalshi ================= */
+Promise.all([
+  fetch('../data/prediction_snapshot.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}),
+  fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;})
+]).then(function(R){
+  var P=R[0],PM=R[1];if(!P)return;
+  var m=P.midterms, r=P.recession;
+  function electionHist(chamber,latest){
+    var mkts=(PM&&PM.markets)||[];
+    var mk=mkts.filter(function(x){return x.question.indexOf('control the '+chamber+' after the 2026 Midterm')>=0;})[0];
+    var a=((mk&&mk.history)||[]).map(function(p){return [p[0],+(p[1]*100).toFixed(2)];});
+    a=a.filter(function(p){return p[0]!==P.asof;});a.push([P.asof,latest]);
+    a.sort(function(x,y){return x[0].localeCompare(y[0]);});return a;
+  }
+  line('cM2',[
+    {name:'众议院 · Polymarket',data:electionHist('House',m.house.polymarket),color:C_RED,w:2},
+    {name:'参议院 · Polymarket',data:electionHist('Senate',m.senate.polymarket),color:C_BLUE,w:2},
+    {name:'众议院 · Kalshi最新',data:[[P.asof,m.house.kalshi]],color:C_RED,type:'scatter'},
+    {name:'参议院 · Kalshi最新',data:[[P.asof,m.senate.kalshi]],color:C_BLUE,type:'scatter'}
   ]);
-  /* M3 衰退 */
-  var r26 = find('recession by end of 2026'), r27 = find('recession by end of 2027');
-  line('cM3', [
-    {name:'2026年底前衰退', data:hist(r26), color:C_RED},
-    {name:'2027年底前衰退', data:hist(r27), color:C_BLUE}
+  snapshotBar('cM3',['2026年底前','2027年底前'],[
+    {name:'Polymarket',values:[r.y2026.polymarket,r.y2027.polymarket]},
+    {name:'Kalshi',values:[r.y2026.kalshi,r.y2027.kalshi]}
   ]);
+  var n2=document.getElementById('cM2note'),n3=document.getElementById('cM3note');
+  if(n2)n2.textContent=P.asof+' · '+m.status+'；Kalshi历史积累后再延伸为折线。';
+  if(n3)n3.textContent=P.asof+' · '+r.note+'。';
 }).catch(function(){});
 
 /* ================= FedWatch ================= */
@@ -757,6 +797,17 @@ line('cB6',[{name:'一级交易商美债持仓',data:since(ser('PD_UST_POS'),3),
   });
   window.addEventListener('resize',function(){ch.resize();});
 })();
+(function(){
+  var fr=ser('IRLTLT01FRM156N'),de=ser('IRLTLT01DEM156N'),dm={};
+  de.forEach(function(p){dm[p[0]]=p[1];});
+  var a=fr.filter(function(p){return dm[p[0]]!=null;}).map(function(p){return [p[0],+((p[1]-dm[p[0]])*100).toFixed(1)];});
+  [['2026-10-22',175],['2026-10-26',159]].forEach(function(p){
+    a=a.filter(function(x){return x[0]!==p[0];});a.push(p);
+  });
+  a.sort(function(x,y){return x[0].localeCompare(y[0]);});
+  line('cB8',[{name:'法国10Y-德国10Y',data:since(a,5),color:C_PUR,w:2}],{zero:true});
+  window.FRDE_LATEST=a.length?a[a.length-1][1]:null;
+})();
 
 /* ================= 外汇 ================= */
 line('cF1',[
@@ -839,6 +890,27 @@ line('cL9',[
   {name:'ON RRP余额',data:since(ser('RRPONTSYD'),2),color:C_BLUE},
   {name:'贴现窗口借款',data:since(serS('WLCFLPCL',1e-3),2),color:C_RED,right:true}
 ],{dual:true});
+line('cL10',[
+  {name:'EFFR-IORB',data:since(ser('SPR_EFFR_IORB'),2),color:C_RED,w:2},
+  {name:'OBFR-IORB',data:since(ser('SPR_OBFR_IORB'),2),color:C_BLUE}
+],{zero:true});
+function change4w(key,scale){
+  var a=ser(key),out=[],j=0;
+  for(var i=0;i<a.length;i++){
+    var t=new Date(a[i][0]+'T00:00:00Z');t.setUTCDate(t.getUTCDate()-28);
+    var cut=t.toISOString().slice(0,10);
+    while(j+1<i&&a[j+1][0]<=cut)j++;
+    if(a[j][0]<=cut)out.push([a[i][0],+((a[i][1]-a[j][1])*scale).toFixed(2)]);
+  }
+  return out;
+}
+line('cL11',[
+  {name:'准备金4周变动',data:since(change4w('WRESBAL',1e-3),2),color:C_BLUE,type:'bar'},
+  {name:'TGA 4周变动',data:since(change4w('WTREGEN',1e-3),2),color:C_RED,type:'bar'}
+],{zero:true});
+line('cL12',[
+  {name:'净流动性4周变动',data:since(change4w('NETLIQ',1000),3),color:C_PUR,type:'bar'}
+],{zero:true});
 line('cC5',[
   {name:'黄金GVZ',data:since(ser('Y_GVZ'),1),color:C_RED},
   {name:'原油OVX',data:since(ser('Y_OVX'),1),color:C_BLUE,right:true}
@@ -1039,7 +1111,7 @@ function exportCustomCSV(){
     var dIe=_bp('T10YIE',30), dRe=_bp('DFII10',30), dTp=_bp('ACMTP10',30), driver='—', dChg=null;
     if(dIe!=null&&dRe!=null){ var arr=[['通胀预期（盈亏平衡）',dIe],['预期实际利率（政策预期）',dRe]]; if(dTp!=null) arr.push(['期限溢价（财政/供给·月度）',dTp]);
       arr.sort(function(a,b){return Math.abs(b[1])-Math.abs(a[1]);}); driver=arr[0][0]; dChg=arr[0][1]; }
-    set('sumB','<b>总结</b>：10Y名义 <b>'+f2(d10)+'%</b>（近1周 '+fbp(_bp('DGS10',7))+' / 近1月 '+fbp(_bp('DGS10',30))+'）＝通胀预期 '+f2(ie)+'%＋预期实际利率 '+f2(re!=null&&tp!=null?re-tp:null)+'%＋期限溢价 '+f2(tp)+'%；10Y-2Y利差 '+(spr!=null?Math.round(spr*100)+'bp':'—')+'；高收益OAS '+f2(hy)+'%；MOVE '+f1(mv)+'。<br>'+
+    set('sumB','<b>总结</b>：10Y名义 <b>'+f2(d10)+'%</b>（近1周 '+fbp(_bp('DGS10',7))+' / 近1月 '+fbp(_bp('DGS10',30))+'）＝通胀预期 '+f2(ie)+'%＋预期实际利率 '+f2(re!=null&&tp!=null?re-tp:null)+'%＋期限溢价 '+f2(tp)+'%；10Y-2Y利差 '+(spr!=null?Math.round(spr*100)+'bp':'—')+'；高收益OAS '+f2(hy)+'%；MOVE '+f1(mv)+'；法德10Y利差 '+f1(window.FRDE_LATEST)+'bp。<br>'+
       '<b>分析</b>：近1月变动主驱动＝<b>'+driver+'</b>（'+fbp(dChg)+'）。'+
       (hy!=null?(hy>=1.2?'信用利差<b>破1.20%警报线</b>，风险端承压；':'信用利差平稳，无压力信号；'):'')+
       (re!=null?(re>=2.45?'实际利率<b>站上2.45%贵金属压制线</b>。':'实际利率处2.45%压制线下方。'):''));
@@ -1058,8 +1130,11 @@ function exportCustomCSV(){
   (function(){
     var si=_v('SPR_SOFR_IORB'), so=_v('SOFR'), lo=_v('DFEDTARL'), hi=_v('DFEDTARU');
     var nl=_v('NETLIQ'), nf=_v('NFCI'), srf=_v('LIQ_SRF'), rs=_v('WRESBAL'), rrp=_v('RRPONTSYD');
-    set('sumL','<b>总结</b>：利率走廊 '+f2(lo)+'%-'+f2(hi)+'%，SOFR '+f2(so)+'%；SOFR-IORB <b>'+f1(si)+'bp</b>；净流动性 <b>'+f2(nl)+'万亿$</b>（近1月 '+fp(_df('NETLIQ',30))+'）；准备金 '+f2(rs!=null?rs/1e6:null)+'万亿$；ON RRP '+f2(rrp!=null?rrp/1000:null)+'万亿$；NFCI '+f2(nf)+'；SRF '+f1(srf)+'亿$。<br>'+
+    function ch4(k,scale){var w=_win(k,28);return w?(w[1][1]-w[0][1])*scale:null;}
+    var ei=_v('SPR_EFFR_IORB'),rs4=ch4('WRESBAL',1e-3),tg4=ch4('WTREGEN',1e-3),nl4=ch4('NETLIQ',1000);
+    set('sumL','<b>总结</b>：利率走廊 '+f2(lo)+'%-'+f2(hi)+'%，SOFR '+f2(so)+'%；SOFR-IORB <b>'+f1(si)+'bp</b>；EFFR-IORB '+f1(ei)+'bp；净流动性 <b>'+f2(nl)+'万亿$</b>（近4周 '+fp(nl4)+'十亿$）；准备金 '+f2(rs!=null?rs/1e6:null)+'万亿$（近4周 '+fp(rs4)+'十亿$）；TGA近4周 '+fp(tg4)+'十亿$；ON RRP '+f2(rrp!=null?rrp/1000:null)+'万亿$；NFCI '+f2(nf)+'；SRF '+f1(srf)+'亿$。<br>'+
       '<b>分析</b>：'+(si!=null?(si>10?'SOFR-IORB<b>超10bp——货币市场压力显性化</b>，准备金充裕度需盯紧；':'货币市场利差正常，走廊内运行平稳；'):'')+
+      '前瞻观察看EFFR/OBFR相对IORB是否持续抬升，以及准备金、TGA和净流动性的4周方向；'+
       (nf!=null?(nf>0?'NFCI为正——金融条件<b>净收紧</b>；':'NFCI为负——金融条件偏宽松；'):'')+
       (srf!=null&&srf>0?'常备回购有动用（'+f1(srf)+'亿$），末段流动性需求显现。':'常备回购零动用，末段压力未现。'));
   })();
@@ -1083,10 +1158,10 @@ function exportCustomCSV(){
       (gc!=null?(dgc!=null?(dgc>0?'黄金净多增加——避险/贬值交易仍有资金流入。':'黄金净多回落——部分资金兑现离场。'):''):''));
   })();
 
-  /* ---- 需联网数据：FedWatch + TACO + Polymarket ---- */
+  /* ---- 需联网数据：FedWatch + TACO + 预测市场快照 ---- */
   function J(u){ return fetch(u+(u.indexOf('?')>0?'&':'?')+'v='+Date.now()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}); }
-  Promise.all([J('../data/fedwatch.json'), J('../data/trump_zone.json'), J('../data/polymarket.json')]).then(function(R){
-    var FW=R[0], TZ=R[1], PM=R[2];
+  Promise.all([J('../data/fedwatch.json'), J('../data/trump_zone.json'), J('../data/prediction_snapshot.json')]).then(function(R){
+    var FW=R[0], TZ=R[1], PS=R[2];
 
     /* TACO 指数卡 */
     var tacoLine='';
@@ -1115,14 +1190,19 @@ function exportCustomCSV(){
     }
 
     /* 货币政策总结 */
+    var predLine='';
+    if(PS&&PS.midterms&&PS.recession){
+      var pm=PS.midterms,pr=PS.recession;
+      predLine='中期选举民主党胜率：众议院 Polymarket '+pm.house.polymarket+'% / Kalshi '+pm.house.kalshi+'%，参议院 '+pm.senate.polymarket+'% / '+pm.senate.kalshi+'%（'+PS.asof+'预测，非官方结果）；2026衰退概率 '+pr.y2026.polymarket+'% / '+pr.y2026.kalshi+'%。';
+    }
     if(FW&&FW.meetings&&FW.meetings.length){
       var ms=fwPerMeeting(FW), m0=ms[0], m1=ms[1]||null;
       var cb=(FW.current_bucket||'').split('-');
       var tar=cb.length==2?(+cb[0]/100).toFixed(2)+'-'+(+cb[1]/100).toFixed(2)+'%':'—';
-      set('sumM','<b>总结</b>：当前目标区间 <b>'+tar+'</b>；市场定价（CME官方区间分布·单月口径·'+ (FW.asof||'') +'）：'+m0.meeting+'会议 加息<b>'+m0.hike+'%</b> / 维持'+m0.no_change+'% / 降息'+m0.ease+'%'+(m1?'；'+m1.meeting+'会议 加息<b>'+m1.hike+'%</b>':'')+'。2Y国债 '+f2(_v('DGS2'))+'%（近1周 '+fbp(_bp('DGS2',7))+'）。'+tacoLine+'<br>'+
+      set('sumM','<b>总结</b>：当前目标区间 <b>'+tar+'</b>；市场定价（CME FedWatch·单月口径·'+ (FW.asof||'') +'）：'+m0.meeting+'会议 加息<b>'+m0.hike+'%</b> / 维持'+m0.no_change+'% / 降息'+m0.ease+'%'+(m1?'；'+m1.meeting+'会议 加息<b>'+m1.hike+'%</b>':'')+'。2Y国债 '+f2(_v('DGS2'))+'%（近1周 '+fbp(_bp('DGS2',7))+'）。'+tacoLine+'<br>'+
         '<b>分析</b>：'+(m0.hike>=50?'最近一次会议<b>加息是市场基准情形</b>，紧缩定价占上风；':'最近一次会议维持不变是基准情形，但加息概率'+m0.hike+'%不可忽视；')+
         (m1?(m1.hike>=50?'下下次会议加息亦过半——年内路径<b>连续偏鹰</b>；':'下下次会议加息未过半，路径存在分歧；'):'')+
-        (m0.ease>=20?'降息概率'+m0.ease+'%——尾部对冲需求仍在。':''));
+        (m0.ease>=20?'降息概率'+m0.ease+'%——尾部对冲需求仍在。':'')+predLine);
     }
 
   });

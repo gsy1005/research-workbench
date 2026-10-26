@@ -40,7 +40,9 @@ def http_get(url, timeout=60, retries=3):
     for i in range(retries):
         try:
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (research workbench)'})
-            with urllib.request.urlopen(req, timeout=timeout) as r:
+            # 本机证书链无法校验 CFTC 官方站点；仅用于其公开数据下载。
+            import ssl
+            with urllib.request.urlopen(req, timeout=timeout, context=ssl._create_unverified_context()) as r:
                 return r.read()
         except Exception as e:
             log('  重试%d %s %s' % (i + 1, url.split('/')[-1], repr(e)[:80]))

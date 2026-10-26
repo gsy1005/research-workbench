@@ -8,12 +8,10 @@
 """
 import json, os, sys, time, datetime
 
-try:
-    from curl_cffi import requests as _creq
-    _SESS = _creq.Session(impersonate='chrome')
-except Exception:
-    import requests as _req
-    _SESS = _req.Session()
+# 当前网络下普通 requests 可连通，curl_cffi 的浏览器 TLS 会话会持续超时。
+import requests as _req
+_SESS = _req.Session()
+_SESS.headers.update({'User-Agent': 'Mozilla/5.0'})
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 OUT  = os.path.join(os.path.dirname(BASE), 'data', 'live_quotes.json')
