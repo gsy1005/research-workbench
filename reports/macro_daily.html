@@ -309,7 +309,6 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="sec"><h2>货币政策</h2><span>加息/不变/降息概率 · 衰退定价</span></div>
 <div class="secSum" id="sumM">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
-  <div class="cbox"><h4>各次会议当月加息/维持/降息概率（CME FedWatch·单月口径）<span id="fwAsof"></span></h4><div class="ct" id="cM1"></div></div>
   <div class="cbox"><h4>2026中期选举：民主党胜率走势（%）<span>Polymarket折线 · Kalshi最新点 · 11月3日投票</span></h4><div class="ct" id="cM2"></div><div id="cM2note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">当前为预测市场赔率，并非官方选举结果。</div></div>
   <div class="cbox"><h4>美国衰退概率（%）<span>Polymarket vs Kalshi · 合约定义不同</span></h4><div class="ct" id="cM3"></div><div id="cM3note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;"></div></div>
   <div class="cbox"><h4>TACO指数（特朗普政策压力）<span>越高=政策反复（TACO式回撤）概率越高</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
@@ -325,7 +324,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>美债收益率：2Y / 10Y / 30Y</h4><div class="ct" id="cB1"></div></div>
   <div class="cbox"><h4>期限利差：10Y-2Y · 10Y-3M</h4><div class="ct" id="cB2"></div></div>
   <div class="cbox"><h4>实际利率与通胀预期</h4><div class="ct" id="cB3"></div></div>
-  <div class="cbox"><h4>信用利差：高收益 OAS · BBB OAS</h4><div class="ct" id="cB4"></div></div>
+  <div class="cbox"><h4>信用利差：高收益 · BBB · BB · B级 OAS<span>评级越低，对违约与流动性风险越敏感</span></h4><div class="ct" id="cB4"></div></div>
   <div class="cbox"><h4>波动率：MOVE 债市 · VIX 股市</h4><div class="ct" id="cB5"></div></div>
   <div class="cbox"><h4>一级交易商美债持仓</h4><div class="ct" id="cB6"></div></div>
   <div class="cbox" style="grid-column:1/-1;">
@@ -376,6 +375,9 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>沪深300 · 恒生指数</h4><div class="ct" id="cC4"></div></div>
   <div class="cbox"><h4>商品波动率：黄金GVZ · 原油OVX（日度）<span>黄金的VIX · 飙升=避险/不确定性定价</span></h4><div class="ct" id="cC5"></div></div>
   <div class="cbox"><h4>工业金属与金银比：COMEX铜 · 金银比<span>铜=K型上行端需求温度计</span></h4><div class="ct" id="cC6"></div></div>
+  <div class="cbox"><h4>信用风险与美股波动：B级收益率－美债10Y · VIX<span>左轴bp · 利差与VIX同步上行=风险共振</span></h4><div class="ct" id="cC7"></div></div>
+  <div class="cbox"><h4>美股与股债相对强弱：SPY · HYG－TLT<span>HYG－TLT回落=高收益债跑输长债</span></h4><div class="ct" id="cC8"></div></div>
+  <div class="cbox"><h4>美股广度与大小盘：等权/市值加权 · 罗素2000/标普500<span>比值上行=涨势扩散或中小盘占优</span></h4><div class="ct" id="cC9"></div></div>
 </div>
 
 <!-- ============ 仓位 ============ -->
@@ -660,26 +662,7 @@ function fwPerMeeting(FW){
   });
 }
 fetch('../data/fedwatch.json?v='+Date.now()).then(function(r){return r.json();}).then(function(FW){
-  var el = document.getElementById('cM1'); if(!el||!window.echarts) return;
   var ms = (FW.meetings||[]).slice(0,6);
-  var pm = fwPerMeeting(FW).slice(0,6);
-  var as = document.getElementById('fwAsof');
-  if(as && FW.asof) as.textContent = FW.asof;
-  var ch = echarts.init(el);
-  ch.setOption({
-    backgroundColor:'transparent', animation:false, textStyle:{fontFamily:KAI},
-    legend:{top:0,textStyle:{color:'#5a6b80',fontSize:10,fontFamily:KAI}},
-    grid:{left:40,right:10,top:26,bottom:34},
-    tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#c9d4e4',textStyle:{color:'#22304a',fontSize:11,fontFamily:KAI}},
-    xAxis:{type:'category',data:pm.map(function(m){return m.meeting;}),axisLabel:{color:'#6b7a90',fontSize:9.5,rotate:20,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
-    yAxis:{type:'value',max:100,axisLabel:{color:'#6b7a90',fontSize:9.5,formatter:'{value}%'},splitLine:{lineStyle:{color:'#e8eef6'}}},
-    series:[
-      {name:'加息',type:'bar',stack:'p',itemStyle:{color:C_RED},data:pm.map(function(m){return m.hike;})},
-      {name:'不变',type:'bar',stack:'p',itemStyle:{color:C_GRAY},data:pm.map(function(m){return m.no_change;})},
-      {name:'降息',type:'bar',stack:'p',itemStyle:{color:C_BLUE},data:pm.map(function(m){return m.ease;})}
-    ]
-  });
-  window.addEventListener('resize',function(){ch.resize();});
   /* 完整概率矩阵表（与官网条件概率表同格式：行=会议，列=目标利率区间） */
   var ft = document.getElementById('fwTable');
   if(ft){
@@ -709,7 +692,7 @@ fetch('../data/fedwatch.json?v='+Date.now()).then(function(r){return r.json();})
     });
     fh += '<tr><td colspan="'+(bks.length+3)+'" style="text-align:left;font-size:11px;color:var(--dim);">'+
       '单位% · 蓝底深度=概率大小 · ▲=当前目标区间'+(cur?cur.replace(/(\d{3})-(\d{3})/,function(a,b,c){return '（'+(+b/100).toFixed(2)+'%-'+(+c/100).toFixed(2)+'%）';}):'')+
-      ' · 加息/不变/降息汇总见上方堆积柱 · 数据 '+(FW.asof||'')+'</td></tr>';
+      ' · 各会议目标利率区间概率 · 数据 '+(FW.asof||'')+'</td></tr>';
     ft.innerHTML = fh;
   }
 }).catch(function(){});
@@ -731,7 +714,9 @@ line('cB3',[
 ]);
 line('cB4',[
   {name:'高收益OAS',data:since(ser('BAMLH0A0HYM2'),1),color:C_RED},
-  {name:'BBB级OAS',data:since(ser('BAMLC0A4CBBB'),1),color:C_BLUE}
+  {name:'BBB级OAS',data:since(ser('BAMLC0A4CBBB'),1),color:C_BLUE},
+  {name:'BB级OAS',data:since(ser('BAMLH0A1HYBB'),1),color:C_PUR},
+  {name:'B级OAS',data:since(ser('BAMLH0A2HYB'),1),color:C_WHT}
 ]);
 line('cB5',[
   {name:'MOVE(债)',data:since(ser('Y_MOVE').length?ser('Y_MOVE'):ser('EDB_GLB_MOVE'),1),color:C_RED},
@@ -917,6 +902,18 @@ line('cC5',[
 line('cC6',[
   {name:'COMEX铜',data:since(ser('Y_COPPER'),1),color:C_RED},
   {name:'金银比',data:since(ser('GOLD_SILVER_RATIO'),1),color:C_BLUE,right:true}
+],{dual:true});
+line('cC7',[
+  {name:'B级收益率－美债10Y(bp)',data:since(ser('SPR_B_DGS10'),1),color:C_RED},
+  {name:'VIX',data:since(ser('VIXCLS'),1),color:C_BLUE,right:true}
+],{dual:true,left:58});
+line('cC8',[
+  {name:'HYG－TLT($)',data:since(ser('SPR_HYG_TLT'),1),color:C_BLUE},
+  {name:'SPY($)',data:since(ser('Y_SPY'),1),color:C_RED,right:true}
+],{dual:true});
+line('cC9',[
+  {name:'RSP/SPY×100',data:since(ser('RATIO_RSP_SPY'),1),color:C_RED},
+  {name:'罗素2000/标普500×100',data:since(ser('RATIO_RUT_GSPC'),1),color:C_BLUE,right:true}
 ],{dual:true});
 
 /* ================= CFTC 仓位 ================= */
@@ -1142,10 +1139,13 @@ function exportCustomCSV(){
   (function(){
     var au=_v('Y_GOLD'), ag=_v('Y_SLV'), gr=_v('GOLD_SILVER_RATIO'), wt=_v('DCOILWTICO'), bz=_v('DCOILBRENTEU');
     var sp=_v('Y_GSPC'), ix=_v('Y_IXIC'), hs=_v('Y_000300SS'), hi2=_v('Y_HSI');
-    set('sumC','<b>总结</b>：黄金 <b>'+f2(au)+'$</b>（近1周 '+fp(_pc('Y_GOLD',7))+'%）；白银 '+f2(ag)+'$（'+fp(_pc('Y_SLV',7))+'%）；金银比 '+f1(gr)+'；WTI '+f2(wt)+'$ / 布伦特 '+f2(bz)+'$；标普 '+f2(sp)+'（'+fp(_pc('Y_GSPC',7))+'%）；沪深300 '+f2(hs!=null?hs*1000:null)+'（'+fp(_pc('Y_000300SS',7))+'%）；恒生 '+f2(hi2)+'。<br>'+
+    var bs=_v('SPR_B_DGS10'), ht=_v('SPR_HYG_TLT'), br=_v('RATIO_RSP_SPY');
+    set('sumC','<b>总结</b>：黄金 <b>'+f2(au)+'$</b>（近1周 '+fp(_pc('Y_GOLD',7))+'%）；白银 '+f2(ag)+'$（'+fp(_pc('Y_SLV',7))+'%）；金银比 '+f1(gr)+'；WTI '+f2(wt)+'$ / 布伦特 '+f2(bz)+'$；标普 '+f2(sp)+'（'+fp(_pc('Y_GSPC',7))+'%）；B级－美债10Y利差 '+f1(bs)+'bp；HYG－TLT '+f2(ht)+'$；等权/市值加权比值 '+f2(br)+'。<br>'+
       '<b>分析</b>：金银比近1周'+((_pc('GOLD_SILVER_RATIO',7)||0)>0?'走扩——避险定价占优、白银弹性受压；':'收窄——白银相对弹性占优；')+
       (wt!=null?(wt>=96?'WTI<b>破96区间上沿——滞胀压力加剧</b>；':wt>=90?'油价90上方偏高，通胀二阶传导风险需盯；':'油价处90下方，能源腿压力可控；'):'')+
-      '权益端标普'+((_pc('Y_GSPC',7)||0)>=0?'近1周收涨':'近1周收跌')+'，A股'+((_pc('Y_000300SS',7)||0)>=0?'收涨':'收跌')+'。');
+      '权益端标普'+((_pc('Y_GSPC',7)||0)>=0?'近1周收涨':'近1周收跌')+'，A股'+((_pc('Y_000300SS',7)||0)>=0?'收涨':'收跌')+'；'+
+      'B级信用利差近1周'+((_pc('SPR_B_DGS10',7)||0)>0?'走扩——低评级风险补偿上升':'收窄——信用风险定价缓和')+'；'+
+      '美股等权相对市值加权'+((_pc('RATIO_RSP_SPY',7)||0)>0?'走强——涨势有所扩散':'走弱——权重龙头贡献更集中')+'。');
   })();
 
   /* ---- 仓位（CFTC周度） ---- */
