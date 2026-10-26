@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install requests pandas lxml html5lib xlrd curl_cffi websocket-client playwright
+      - run: pip install requests pandas lxml html5lib xlrd curl_cffi websocket-client playwright beautifulsoup4
       - run: python -m playwright install chromium --with-deps
 
       - name: 快讯快照(三站合并)
@@ -38,6 +38,7 @@ jobs:
           python3 scripts/fetch_cftc.py || true
           python3 scripts/fetch_macro.py || true
           python3 scripts/fetch_extra.py || true
+          python3 scripts/fetch_equity_credit.py || true
           python3 scripts/fetch_cn_macro.py || true
           python3 scripts/fetch_calendar.py || true
           python3 scripts/fetch_trump.py || true

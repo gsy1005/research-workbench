@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install requests pandas lxml html5lib xlrd curl_cffi websocket-client
+      - run: pip install requests pandas lxml html5lib xlrd curl_cffi websocket-client beautifulsoup4
       - name: fetch_macro + fetch_extra
         env:
           JIN10_TOKEN: ${{ secrets.JIN10_TOKEN }}
@@ -24,6 +24,7 @@ jobs:
           python3 scripts/fetch_cftc.py || true
           python3 scripts/fetch_macro.py || true
           python3 scripts/fetch_extra.py || true
+          python3 scripts/fetch_equity_credit.py || true
           python3 scripts/fetch_cn_macro.py || true
           python3 scripts/fetch_calendar.py || true
           python3 scripts/fetch_trump.py || true

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """美股风险偏好与信用利差：ICE BofA / FRED / Yahoo Finance。"""
 from pathlib import Path
-import json, datetime, time, subprocess
+import json, datetime, time, subprocess, shutil
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 
@@ -15,7 +15,7 @@ def curl_get(url):
     last_error = None
     for attempt in range(3):
         try:
-            r = subprocess.run(['curl.exe', '-fsSL', '--max-time', '60', url],
+            r = subprocess.run([shutil.which('curl') or 'curl', '-fsSL', '--max-time', '60', url],
                                capture_output=True, timeout=70)
             if r.returncode or not r.stdout:
                 raise RuntimeError(r.stderr.decode('utf-8', 'ignore')[:300])
