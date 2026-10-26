@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-10-26T18:10:49.659750Z",
+ "fetched_at": "2026-10-26T18:51:22.500343Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -14,7 +14,7 @@
      "price": 0.355
     }
    ],
-   "vol24": 117457,
+   "vol24": 116233,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1625,14 +1625,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.915
+     "price": 0.92
     },
     {
      "name": "No",
-     "price": 0.085
+     "price": 0.08
     }
    ],
-   "vol24": 839911,
+   "vol24": 823780,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -3234,7 +3234,7 @@
     ],
     [
      "2026-10-26",
-     0.915
+     0.92
     ]
    ]
   },
@@ -5710,7 +5710,7 @@
      "price": 0.9965
     }
    ],
-   "vol24": 97949,
+   "vol24": 92089,
    "end": "2026-11-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-october-31-20260810151043583",
    "history": [
@@ -6082,7 +6082,7 @@
      "price": 0.885
     }
    ],
-   "vol24": 39850,
+   "vol24": 39474,
    "end": "2027-01-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -6756,7 +6756,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 29093,
+   "vol24": 29124,
    "end": "2026-06-01",
    "slug": "bab-el-mandeb-strait-effectively-closed-by",
    "history": [
@@ -6942,7 +6942,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 1248090,
+   "vol24": 1250857,
    "end": "2026-09-20",
    "slug": "us-iran-ceasefire-continues-throughptptpt",
    "history": [
@@ -6976,7 +6976,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 334929,
+   "vol24": 336294,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -7007,14 +7007,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.185
+     "price": 0.195
     },
     {
      "name": "No",
-     "price": 0.815
+     "price": 0.805
     }
    ],
-   "vol24": 171117,
+   "vol24": 171056,
    "end": "2027-01-01",
    "slug": "will-the-us-invade-iran-before-2027",
    "history": [
@@ -8416,7 +8416,7 @@
     ],
     [
      "2026-10-26",
-     0.185
+     0.195
     ]
    ]
   },
@@ -8432,7 +8432,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 107058,
+   "vol24": 106968,
    "end": "2026-07-01",
    "slug": "iran-full-airspace-closure-byptptpt-20260625195253028",
    "history": [
@@ -8898,7 +8898,7 @@
      "price": 0.235
     }
    ],
-   "vol24": 6512,
+   "vol24": 6712,
    "end": "2026-12-10",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
@@ -15710,7 +15710,7 @@
      "price": 0.9995
     }
    ],
-   "vol24": 136896,
+   "vol24": 141896,
    "end": "2026-10-29",
    "slug": "fed-decision-in-october-20260617190323537",
    "history": [
