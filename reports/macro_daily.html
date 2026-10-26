@@ -336,6 +336,14 @@ table.fw td.hl{font-weight:700;color:var(--red);}
     <h4>法德10Y国债利差（bp）<span>月度主线 + 日度事件值</span></h4>
     <div class="ct" id="cB8"></div>
   </div>
+  <div class="cbox">
+    <h4>欧洲10Y国债收益率：法国 · 德国 · 意大利<span>月度 · 对照法德利差的两条腿</span></h4>
+    <div class="ct" id="cB9"></div>
+  </div>
+  <div class="cbox">
+    <h4>欧洲政策与流动性：ECB存款利率 · ECB总资产<span>日度政策利率 + 周度资产负债表</span></h4>
+    <div class="ct" id="cB10"></div>
+  </div>
 </div>
 
 <!-- ============ 外汇 ============ -->
@@ -518,6 +526,11 @@ var KV_ROWS = [
   ['COMEX黄金','Y_GOLD','美元',1,'pct'],['COMEX白银','Y_SLV','美元',2,'pct'],
   ['WTI原油','DCOILWTICO','美元',2,'pct'],['布油','DCOILBRENTEU','美元',2,'pct'],
   ['标普500','Y_GSPC','',0,'pct'],['纳指','Y_IXIC','',0,'pct'],['VIX','VIXCLS','',2,'pt'],
+  ['SPY标普ETF','Y_SPY','美元',2,'pct'],['罗素2000','Y_RUT','',2,'pct'],['RSP等权标普','Y_RSP','美元',2,'pct'],
+  ['HYG高收益债ETF','Y_HYG','美元',2,'pct'],['TLT长期美债ETF','Y_TLT','美元',2,'pct'],['HYG-TLT','SPR_HYG_TLT','美元',2,'pt'],
+  ['B级企业债收益率','BAMLH0A2HYBEY','%',2,'bp'],['B级-美债10Y','SPR_B_DGS10','bp',0,'pt'],
+  ['BB级OAS','BAMLH0A1HYBB','%',2,'bp'],['B级OAS','BAMLH0A2HYB','%',2,'bp'],
+  ['RSP/SPY×100','RATIO_RSP_SPY','',2,'pct'],['罗素2000/标普500×100','RATIO_RUT_GSPC','',2,'pct'],
   ['沪深300','Y_000300SS','',0,'pct',1000],['恒指','Y_HSI','',0,'pct']
 ];
 (function(){
@@ -792,6 +805,15 @@ line('cB6',[{name:'一级交易商美债持仓',data:since(ser('PD_UST_POS'),3),
   line('cB8',[{name:'法国10Y-德国10Y',data:since(a,5),color:C_PUR,w:2}],{zero:true});
   window.FRDE_LATEST=a.length?a[a.length-1][1]:null;
 })();
+line('cB9',[
+  {name:'法国10Y',data:since(ser('IRLTLT01FRM156N'),3),color:C_RED},
+  {name:'德国10Y',data:since(ser('IRLTLT01DEM156N'),3),color:C_BLUE},
+  {name:'意大利10Y',data:since(ser('IRLTLT01ITM156N'),3),color:C_WHT}
+]);
+line('cB10',[
+  {name:'ECB存款利率(%)',data:since(ser('ECBDFR'),2),color:C_RED},
+  {name:'ECB总资产(万亿欧元)',data:since(serS('ECBASSETSW',1e-6),3),color:C_BLUE,right:true}
+],{dual:true});
 
 /* ================= 外汇 ================= */
 line('cF1',[
