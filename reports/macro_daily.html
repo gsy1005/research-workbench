@@ -151,6 +151,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="sec"><h2>今日宏观总览</h2><span>按各指标最新可得数据自动更新 · 仅描述数值与变动，不作投资建议</span></div>
 <div class="sum" id="topSum">
   <div><b>利率</b>：<span id="topRates">FedWatch 数据读取中…</span></div>
+  <div><b>中期选举预测</b>：<span id="topElection">预测市场数据读取中…</span></div>
   <div id="topMarkets">市场数据读取中…</div>
   <div style="font-size:11px;color:#6b7a90;line-height:1.6;margin-top:4px;">注：不同指标发布日期与频次不同，变动按各序列最新观测及其1日/1周前可得观测计算。</div>
 </div>
@@ -1183,9 +1184,16 @@ function exportCustomCSV(){
 
     /* 货币政策总结 */
     var predLine='';
-    if(PS&&PS.midterms&&PS.recession){
-      var pm=PS.midterms,pr=PS.recession;
-      predLine='中期选举民主党胜率：众议院 Polymarket '+pm.house.polymarket+'% / Kalshi '+pm.house.kalshi+'%，参议院 '+pm.senate.polymarket+'% / '+pm.senate.kalshi+'%（'+PS.asof+'预测，非官方结果）；2026衰退概率 '+pr.y2026.polymarket+'% / '+pr.y2026.kalshi+'%。';
+    set('topElection','预测市场数据暂不可用。');
+    if(PS&&PS.midterms){
+      var pm=PS.midterms;
+      var electionLine='民主党胜率：众议院 Polymarket '+pm.house.polymarket+'% / Kalshi '+pm.house.kalshi+'%；参议院 Polymarket '+pm.senate.polymarket+'% / Kalshi '+pm.senate.kalshi+'%';
+      set('topElection',electionLine+'。（'+PS.asof+'预测，11月3日投票，非官方选举结果）');
+      predLine='中期选举'+electionLine+'（'+PS.asof+'预测，非官方结果）。';
+      if(PS.recession){
+        var pr=PS.recession;
+        predLine+='2026衰退概率 Polymarket '+pr.y2026.polymarket+'% / Kalshi '+pr.y2026.kalshi+'%。';
+      }
     }
     if(FW&&FW.meetings&&FW.meetings.length){
       var ms=fwPerMeeting(FW), m0=ms[0], m1=ms[1]||null;
