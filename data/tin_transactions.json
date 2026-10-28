@@ -5,6 +5,7 @@
   "strategy": {
     "macro_score": 1,
     "macro_reason": "中东外交缓和信号叠加美股上涨，宏观风险偏好小幅支持",
+    "daily_strategy": "近期中东局势有所缓和，但仍需防范反复，短线以观望为主；若表达看空观点，可用期权工具，并注意权利金与波动率成本。",
     "inventory_score": null,
     "spot_score": null,
     "weights": {
