@@ -228,7 +228,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
       dt=new Date(d+'T00:00:00Z'); t0=Date.UTC(y,0,1);
       wk=Math.floor((dt.getTime()-t0)/604800000);
       m[y+'W'+wk]=[d,a[i][1]]; }
-    return Object.keys(m).sort().map(function(k){return m[k];});
+    return Object.keys(m).map(function(k){return m[k];}).sort(function(a,b){return a[0].localeCompare(b[0]);});
   }
   /* 周度视角：1周 / 4周变动（对周度重采样序列计算） */
   function scanW(a,label,unit,dec){
@@ -1154,8 +1154,14 @@ function exportCustomCSV(){
 
   /* ---- 需联网数据：FedWatch + TACO + 预测市场快照 ---- */
   function J(u){ return fetch(u+(u.indexOf('?')>0?'&':'?')+'v='+Date.now()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}); }
-  Promise.all([J('../data/fedwatch.json'), J('../data/trump_zone.json'), J('../data/prediction_snapshot.json')]).then(function(R){
-    var FW=R[0], TZ=R[1], PS=R[2];
+  Promise.all([J('../data/fedwatch.json'), J('../data/trump_zone.json'), J('../data/prediction_snapshot.json'), J('../data/polymarket.json')]).then(function(R){
+    var FW=R[0], TZ=R[1], PS=R[2], PM=R[3];
+    function electionD1(chamber,latest){
+      var mkts=(PM&&PM.markets)||[];
+      var mk=mkts.filter(function(x){return x.question.indexOf('control the '+chamber+' after the 2026 Midterm')>=0;})[0];
+      var h=(mk&&mk.history)||[]; if(h.length<2)return null;
+      var prev=h[h.length-2][1]*100; return +(latest-prev).toFixed(2);
+    }
 
     /* TACO 指数卡 */
     var tacoLine='';
@@ -1188,9 +1194,10 @@ function exportCustomCSV(){
     set('topElection','预测市场数据暂不可用。');
     if(PS&&PS.midterms){
       var pm=PS.midterms;
-      var electionLine='民主党胜率：众议院 Polymarket '+pm.house.polymarket+'% / Kalshi '+pm.house.kalshi+'%；参议院 Polymarket '+pm.senate.polymarket+'% / Kalshi '+pm.senate.kalshi+'%';
+      function pp(v){return v==null?'（环比—）':'（环比'+fp(v,2)+'pp）';}
+      var electionLine='民主党胜率：众议院 Polymarket '+pm.house.polymarket+'%'+pp(electionD1('House',pm.house.polymarket))+' / Kalshi '+pm.house.kalshi+'%；参议院 Polymarket '+pm.senate.polymarket+'%'+pp(electionD1('Senate',pm.senate.polymarket))+' / Kalshi '+pm.senate.kalshi+'%';
       var predDates='Polymarket '+PS.asof+' / Kalshi '+(PS.kalshi_asof||PS.asof);
-      set('topElection',electionLine+'。（'+predDates+'，11月3日投票，非官方选举结果）');
+      set('topElection',electionLine+'。（环比为较前一观测；'+predDates+'，11月3日投票，非官方选举结果）');
       predLine='中期选举'+electionLine+'（'+predDates+'，非官方结果）。';
       if(PS.recession){
         var pr=PS.recession;
