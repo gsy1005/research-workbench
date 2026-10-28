@@ -22,11 +22,15 @@ SESSION.headers["User-Agent"] = "Mozilla/5.0 (compatible; research-workbench-ris
 
 YAHOO = {
     "SPY": "SPY", "NASDAQ": "^IXIC", "KOSPI": "^KS11", "CSI300": "ASHR",
-    "RSP": "RSP", "EEM": "EEM", "HYG": "HYG", "LQD": "LQD", "TLT": "TLT",
-    "EMB": "EMB", "VIX": "^VIX", "MOVE": "^MOVE", "COPPER": "HG=F",
+    "RSP": "RSP", "EEM": "EEM", "IWM": "IWM", "XLY": "XLY", "XLP": "XLP",
+    "HYG": "HYG", "LQD": "LQD", "TLT": "TLT", "EMB": "EMB",
+    "VIX": "^VIX", "VIX3M": "^VIX3M", "MOVE": "^MOVE", "COPPER": "HG=F",
     "GOLD": "GC=F", "AUDJPY": "AUDJPY=X", "DXY": "DX-Y.NYB", "BRENT": "BZ=F",
 }
-FRED = ["BAMLH0A0HYM2", "NFCI", "WALCL", "WTREGEN", "RRPONTSYD", "DFII10", "DGS3MO"]
+FRED = [
+    "BAMLH0A0HYM2", "BAMLC0A0CM", "NFCI", "WALCL", "WTREGEN", "RRPONTSYD",
+    "DFII10", "DGS3MO", "T10Y3M", "ICSA", "PERMIT", "WEI",
+]
 
 
 def yahoo(symbol):
@@ -160,9 +164,20 @@ def main():
     end = max(s.last_valid_index() for s in y.values() if not s.empty)
     idx = pd.bdate_range(start, end)
     market = pd.DataFrame({k: s.reindex(idx).ffill(limit=5) for k, s in y.items()})
-    macro = pd.DataFrame({k: s.reindex(idx).ffill() for k, s in f.items()})
-    macro["GPR7"] = gpr.reindex(idx).ffill()
+    # method='ffill' 保留周末/非交易日公布的周度数据，再对齐到最近一个交易日。
+    macro = pd.DataFrame({k: s.reindex(idx, method="ffill") for k, s in f.items()})
+    macro["GPR7"] = gpr.reindex(idx, method="ffill")
     macro["NETLIQ"] = (macro["WALCL"] - macro["WTREGEN"] - macro["RRPONTSYD"] * 1000) / 1e6
+
+    # 低频数据按近似公布时滞后再进入历史评分，降低“数据所属期可见”的前视偏差。
+    # 这不是实时 vintage 数据库，仍是保守的说明性回测。
+    hy_oas = macro["BAMLH0A0HYM2"].shift(1)
+    ig_oas = macro["BAMLC0A0CM"].shift(1)
+    nfci = macro["NFCI"].shift(5)
+    nfci_change = f["NFCI"].diff(13).reindex(idx, method="ffill").shift(5)
+    claims_trend = f["ICSA"].rolling(4).mean().pct_change(13, fill_method=None).reindex(idx, method="ffill").shift(5) * 100
+    permits_yoy = f["PERMIT"].pct_change(12, fill_method=None).reindex(idx, method="ffill").shift(20) * 100
+    wei_change = f["WEI"].diff(4).reindex(idx, method="ffill").shift(5)
 
     transformed = {}
     transformed["SPY 20日动量"] = ret(market["SPY"])
@@ -171,9 +186,10 @@ def main():
     transformed["A股ASHR 20日动量"] = ret(market["CSI300"])
     transformed["RSP/SPY 20日变化"] = ret(market["RSP"] / market["SPY"])
     transformed["EEM/SPY 20日变化"] = ret(market["EEM"] / market["SPY"])
+    transformed["IWM/SPY 20日变化"] = ret(market["IWM"] / market["SPY"])
     transformed["HYG/LQD 20日变化"] = ret(market["HYG"] / market["LQD"])
-    transformed["HYG/TLT 20日变化"] = ret(market["HYG"] / market["TLT"])
-    transformed["高收益OAS"] = macro["BAMLH0A0HYM2"]
+    transformed["高收益OAS"] = hy_oas
+    transformed["投资级OAS"] = ig_oas
     transformed["VIX"] = market["VIX"]
     transformed["MOVE"] = market["MOVE"]
     transformed["SPY 20日已实现波动"] = market["SPY"].pct_change(fill_method=None).rolling(20).std() * math.sqrt(252) * 100
@@ -181,26 +197,41 @@ def main():
     transformed["EMB/TLT 20日变化"] = ret(market["EMB"] / market["TLT"])
     transformed["AUD/JPY 20日动量"] = ret(market["AUDJPY"])
     transformed["DXY 20日动量"] = ret(market["DXY"])
-    transformed["NFCI"] = macro["NFCI"]
-    transformed["净流动性4周变化"] = macro["NETLIQ"].diff(20)
-    transformed["10Y实际利率20日变化"] = macro["DFII10"].diff(20)
+    transformed["NFCI"] = nfci
+    transformed["净流动性4周变化"] = macro["NETLIQ"].diff(20).shift(5)
+    transformed["10Y实际利率20日变化"] = macro["DFII10"].diff(20).shift(1)
     transformed["GPR地缘政治7日均值"] = macro["GPR7"]
     transformed["布伦特5日动量"] = ret(market["BRENT"], 5)
+    transformed["10Y-3M国债利差"] = macro["T10Y3M"].shift(1)
+    transformed["初请4周均值13周变化"] = claims_trend
+    transformed["建筑许可同比"] = permits_yoy
+    transformed["WEI周度经济指数4周变化"] = wei_change
+    transformed["VIX3M/VIX期限结构"] = market["VIX3M"] / market["VIX"]
+    transformed["高收益OAS 20日变化"] = hy_oas.diff(20)
+    transformed["XLY/XLP 20日变化"] = ret(market["XLY"] / market["XLP"])
+    transformed["NFCI 13周变化"] = nfci_change
 
     groups = [
-        {"key": "equity", "name": "全球权益与广度", "weight": 25, "items": [
-            ("SPY 20日动量", 5, False), ("纳指20日动量", 4, False), ("韩指20日动量", 4, False),
-            ("A股ASHR 20日动量", 4, False), ("RSP/SPY 20日变化", 4, False), ("EEM/SPY 20日变化", 4, False)]},
-        {"key": "credit", "name": "信用", "weight": 20, "items": [
-            ("HYG/LQD 20日变化", 10, False), ("HYG/TLT 20日变化", 10, False)]},
-        {"key": "volatility", "name": "波动率", "weight": 15, "items": [
-            ("VIX", 7, True), ("MOVE", 4, True), ("SPY 20日已实现波动", 4, True)]},
-        {"key": "cross_asset", "name": "跨资产确认", "weight": 15, "items": [
-            ("铜/金20日变化", 6, False), ("EMB/TLT 20日变化", 5, False), ("AUD/JPY 20日动量", 4, False)]},
-        {"key": "liquidity", "name": "美元与流动性", "weight": 15, "items": [
-            ("DXY 20日动量", 4, True), ("NFCI", 4, True), ("净流动性4周变化", 4, False), ("10Y实际利率20日变化", 3, True)]},
-        {"key": "geopolitical", "name": "地缘与中东", "weight": 10, "items": [
-            ("GPR地缘政治7日均值", 5, True), ("布伦特5日动量", 5, True)]},
+        {"key": "equity", "name": "全球权益与广度", "weight": 22, "items": [
+            ("SPY 20日动量", 4, False), ("纳指20日动量", 3, False), ("韩指20日动量", 3, False),
+            ("A股ASHR 20日动量", 3, False), ("RSP/SPY 20日变化", 4, False),
+            ("EEM/SPY 20日变化", 3, False), ("IWM/SPY 20日变化", 2, False)]},
+        {"key": "credit", "name": "信用", "weight": 18, "items": [
+            ("HYG/LQD 20日变化", 6, False), ("高收益OAS", 8, True), ("投资级OAS", 4, True)]},
+        {"key": "volatility", "name": "波动率", "weight": 13, "items": [
+            ("VIX", 5, True), ("MOVE", 4, True), ("SPY 20日已实现波动", 4, True)]},
+        {"key": "cross_asset", "name": "跨资产确认", "weight": 12, "items": [
+            ("铜/金20日变化", 5, False), ("EMB/TLT 20日变化", 4, False), ("AUD/JPY 20日动量", 3, False)]},
+        {"key": "liquidity", "name": "美元与流动性", "weight": 12, "items": [
+            ("DXY 20日动量", 3, True), ("NFCI", 3, True), ("净流动性4周变化", 3, False),
+            ("10Y实际利率20日变化", 3, True)]},
+        {"key": "geopolitical", "name": "地缘与中东", "weight": 8, "items": [
+            ("GPR地缘政治7日均值", 4, True), ("布伦特5日动量", 4, True)]},
+        {"key": "forward", "name": "前瞻与周期", "weight": 15, "items": [
+            ("10Y-3M国债利差", 2.5, False), ("初请4周均值13周变化", 2.5, True),
+            ("建筑许可同比", 2, False), ("WEI周度经济指数4周变化", 2, False),
+            ("VIX3M/VIX期限结构", 2, False), ("高收益OAS 20日变化", 2, True),
+            ("XLY/XLP 20日变化", 1, False), ("NFCI 13周变化", 1, True)]},
     ]
 
     scores = pd.DataFrame(index=idx)
@@ -219,10 +250,14 @@ def main():
         weights = np.array([x[1] for x in group["items"]], dtype=float)
         values = scores[cols]
         valid_weight = values.notna().mul(weights, axis=1).sum(axis=1)
-        group_scores[group["key"]] = values.mul(weights, axis=1).sum(axis=1) / valid_weight.replace(0, np.nan)
+        group_score = values.mul(weights, axis=1).sum(axis=1) / valid_weight.replace(0, np.nan)
+        # 早期OAS历史不足时由长期ETF信用比率承接；板块至少有30%权重才有效。
+        group_scores[group["key"]] = group_score.where(valid_weight >= weights.sum() * 0.3)
         total = total + group_scores[group["key"]].fillna(0) * group["weight"] / 100
-    # 未形成完整三年滚动窗口时不给出伪精确总分。
-    complete = scores.notna().sum(axis=1) >= 18
+    # 七个板块均有效且总权重覆盖至少85%才出分，缺失板块不再按0分处理。
+    weight_by_col = pd.Series({s["column"]: s["weight"] for s in specs})
+    coverage = scores.notna().mul(weight_by_col, axis=1).sum(axis=1)
+    complete = group_scores.notna().all(axis=1) & (coverage >= 85)
     total = total.where(complete)
 
     # 回测：当日收盘出分，下一交易日执行；SPY使用复权价，现金按3M美债利率计息。
@@ -245,6 +280,8 @@ def main():
 
     bands = []
     forward21 = spy_adj.pct_change(21, fill_method=None).shift(-21).reindex(bt_idx) * 100
+    rank_ic = bt_score.corr(forward21, method="spearman")
+    forward_rank_ic = group_scores["forward"].reindex(bt_idx).corr(forward21, method="spearman")
     for lo, hi, label in [(0, 20, "0–20 极度避险"), (20, 40, "20–40 偏避险"),
                           (40, 60, "40–60 中性"), (60, 80, "60–80 偏风偏"), (80, 101, "80–100 强风偏")]:
         mask = (bt_score >= lo) & (bt_score < hi) & forward21.notna()
@@ -273,6 +310,8 @@ def main():
     for spec in specs:
         raw = spec.pop("raw")
         raw_date = raw.loc[:latest_date].last_valid_index()
+        if raw_date is None:
+            raise ValueError("指标没有有效原始值：" + spec["name"])
         latest_indicators.append({**spec, "raw_date": raw_date.strftime("%Y-%m-%d"),
                                   "raw_value": float(raw.loc[raw_date]),
                                   "score": float(scores[spec["column"]].loc[latest_date])})
@@ -307,14 +346,17 @@ def main():
             "range": "0–100，越高越偏风险追逐",
             "bands": "0–20极度避险；20–40偏避险；40–60中性；60–80偏风偏；80–100强风偏",
             "normalization": "各指标仅在当日及过去756个交易日内计算滚动分位，至少504个观测；逆向指标取100减分位",
-            "weights": "六大板块固定权重，板块内固定权重；不依据回测收益拟合",
+            "weights": "七大板块固定权重：权益22%、信用18%、波动率13%、跨资产12%、流动性12%、地缘8%、前瞻15%；不依据回测收益拟合",
             "execution": "当日收盘出分，下一交易日执行；SPY复权收益，剩余仓位按3M美债计息，单边权重变化收取5bp",
-            "limitations": "固定权重含研究者判断，回测不是独立样本外证明；NFCI与GPR历史可能修订，非严格实时 vintage；跨市场日期以前值填充；21日收益为重叠窗口描述统计；未计税费、滑点和汇率对冲成本。",
+            "release_lag": "OAS与实际利率滞后1个交易日，NFCI/初请/WEI/净流动性滞后5个交易日，建筑许可滞后20个交易日；周度数据先保留周末观测再对齐交易日",
+            "coverage": "七个板块均须有效，且指标总权重覆盖至少85%；板块内按当时可用权重归一化，早期OAS不足时由长期ETF信用比率承接",
+            "limitations": "固定权重含研究者判断，回测不是独立样本外证明；公布时滞为近似规则，NFCI、WEI、GPR等历史可能修订，非严格实时vintage；早期信用指标构成与当前不同；跨市场日期以前值填充；21日收益为重叠窗口描述统计，秩相关不代表可交易收益；未计税费、滑点和汇率对冲成本。",
         },
         "backtest": {
             "start": bt_idx[0].strftime("%Y-%m-%d"), "end": bt_idx[-1].strftime("%Y-%m-%d"),
             "strategy": metrics(strategy_ret, cash_ret), "buyhold": metrics(spy_ret, cash_ret),
             "average_position": float(position.mean() * 100), "annual_turnover": float(position.diff().abs().sum() / len(position) * 252 * 100),
+            "rank_ic_21d": float(rank_ic), "forward_rank_ic_21d": float(forward_rank_ic),
             "bands": bands, "yearly": yearly,
             "curves": [[d.strftime("%Y-%m-%d"), round(float(strategy_curve.loc[d]), 5),
                         round(float(buyhold_curve.loc[d]), 5), round(float(position.loc[d] * 100), 2)] for d in bt_idx],
@@ -323,8 +365,8 @@ def main():
             {"name": "IMF：风险偏好常用波动率、信用、流动性、美元与黄金等跨资产指标", "url": "https://www.imf.org/external/pubs/ft/wp/2008/wp0885.pdf"},
             {"name": "Chicago Fed NFCI：正值偏紧、负值偏松，周度且历史可能修订", "url": "https://www.chicagofed.org/research/data/nfci/current-data"},
             {"name": "Caldara–Iacoviello GPR：基于报纸文本的地缘政治风险指数", "url": "https://www.matteoiacoviello.com/gpr.htm"},
-            {"name": "FRED：ICE BofA高收益OAS、利率与联储资产负债表", "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"},
-            {"name": "Yahoo Finance：全球指数、ETF与商品历史行情", "url": "https://finance.yahoo.com/"},
+            {"name": "FRED：ICE BofA信用OAS、利率曲线、初请、建筑许可与WEI", "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"},
+            {"name": "Yahoo Finance：全球指数、ETF、VIX期限结构与商品历史行情", "url": "https://finance.yahoo.com/"},
         ],
     }
     OUT.write_text(json.dumps(result, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
