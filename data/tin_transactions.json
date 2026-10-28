@@ -2,6 +2,18 @@
   "asof": "2026-10-28",
   "title": "锡锭成交日度跟踪",
   "unit_note": "原截图未显示单位，数值按原图口径记录，不自行补单位。",
+  "strategy": {
+    "macro_score": 1,
+    "macro_reason": "中东外交缓和信号叠加美股上涨，宏观风险偏好小幅支持",
+    "inventory_score": null,
+    "spot_score": null,
+    "weights": {
+      "macro": 25,
+      "deal": 35,
+      "inventory": 25,
+      "spot": 15
+    }
+  },
   "records": [
     {
       "date": "2026-10-28",
