@@ -419,15 +419,6 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>美股广度与大小盘：等权/市值加权 · 罗素2000/标普500<span>比值上行=涨势扩散或中小盘占优</span></h4><div class="ct" id="cC9"></div></div>
 </div>
 
-<!-- ============ 锡产业供需与策略（用户成交截图人工核验后更新） ============ -->
-<div class="sec"><h2>锡产业供需与策略</h2><span>TIN SUPPLY · DEMAND &amp; STRATEGY / 周度框架 × 日度边际 · 成交截图人工核验更新</span></div>
-<div class="secSum" id="sumTin">成交数据读取中…</div>
-<div class="grid3">
-  <div class="cbox"><h4>锡锭成交：同业贸易商 · 下游<span>按用户截图原值记录 · 原图未显示单位</span></h4><div class="ct" id="cTinDeal"></div></div>
-  <div class="cbox"><h4>最新日度边际<span id="tinDate"></span></h4><div id="tinLatest" style="font-size:13px;line-height:2;padding:12px 4px;">读取中…</div></div>
-  <div class="cbox"><h4>策略跟踪<span>条件式观察 · 不凭单日成交确认趋势</span></h4><div id="tinStrategy" style="font-size:12.5px;line-height:1.85;padding:10px 4px;color:#42566f;">读取中…</div></div>
-</div>
-
 <!-- ============ 仓位 ============ -->
 <div class="sec"><h2>仓位</h2><span>非商业净持仓（张）· 周度</span></div>
 <div class="secSum" id="sumP">⚙️ 总结与分析生成中…</div>
@@ -1377,41 +1368,6 @@ function exportCustomCSV(){
     if(!d)return;
     document.getElementById('riskBlend').innerHTML='双引擎：市场 '+(+d.latest_scores.market).toFixed(1)+' · 基本面 '+(+d.latest_scores.fundamental).toFixed(1)+'<br>75/25组合 '+(+d.latest_scores.blend25).toFixed(1)+' 分';
   }).catch(function(){});
-})();
-</script>
-<script>
-/* ============ 锡产业供需与策略：用户截图人工核验后追加 ============ */
-(function(){
-  function text(id,value){var el=document.getElementById(id);if(el)el.textContent=value;}
-  function html(id,value){var el=document.getElementById(id);if(el)el.innerHTML=value;}
-  fetch('../data/tin_transactions.json?v='+Date.now()).then(function(r){if(!r.ok)throw new Error('成交数据不可用');return r.json();}).then(function(d){
-    var rows=(d.records||[]).slice().sort(function(a,b){return a.date<b.date?-1:1;});
-    if(!rows.length)throw new Error('暂无成交记录');
-    var x=rows[rows.length-1],prev=rows.length>1?rows[rows.length-2]:null;
-    var total=(+x.trader)+(+x.downstream),share=total?(+x.downstream)/total*100:null;
-    var change=prev?total-((+prev.trader)+(+prev.downstream)):null;
-    var dealPct=prev&&+prev.downstream?((+x.downstream)-(+prev.downstream))/(+prev.downstream)*100:null;
-    var dealScore=dealPct==null?null:(dealPct>=20?2:(dealPct>=5?1:(dealPct<=-20?-2:(dealPct<=-5?-1:0))));
-    var st=d.strategy||{},weights=st.weights||{macro:25,deal:35,inventory:25,spot:15};
-    var dims=[['宏观',st.macro_score,weights.macro],['成交需求',dealScore,weights.deal],['库存',st.inventory_score,weights.inventory],['升贴水',st.spot_score,weights.spot]];
-    var score=dims.reduce(function(sum,a){return sum+(a[1]==null?0:(+a[1]))*(+a[2])/100;},0);
-    score=Math.max(-2,Math.min(2,score));
-    var coverage=dims.reduce(function(sum,a){return sum+(a[1]==null?0:(+a[2]));},0);
-    var confidence=coverage>=75?'高':(coverage>=50?'中':'低');
-    var label=score>=1.25?'强多':(score>=0.5?'偏多':(score>0.1?'中性略偏多':(score>=-0.1?'中性':(score>-0.5?'中性略偏空':(score>-1.25?'偏空':'强空')))));
-    var scoreText=(score>0?'+':'')+score.toFixed(2),scoreColor=score>0?'#c8342a':(score<0?'#2867b2':'#173554');
-    var marker=(score+2)/4*100;
-    var breakdown=dims.map(function(a){return a[0]+' '+(a[1]==null?'待数据':((+a[1]>0?'+':'')+a[1]))+' × '+a[2]+'%';}).join('；');
-    text('tinDate',' · '+x.date);
-    html('sumTin','<b>日度总结</b>：'+x.date+' 同业贸易商成交合计 <b>'+x.trader+'</b>、锡锭下游成交合计 <b>'+x.downstream+'</b>；下游占当日两类合计 <b>'+share.toFixed(1)+'%</b>。'+(prev?'两类合计较前一记录日 '+(change>=0?'+':'')+change+'。':'当前为首个记录日，暂不计算环比。')+' <b>多空评分 '+scoreText+'（'+label+'·'+confidence+'置信）</b>。');
-    html('tinLatest','同业贸易商：<b style="font-size:22px;color:#173554">'+x.trader+'</b><br>锡锭下游：<b style="font-size:22px;color:#c8342a">'+x.downstream+'</b><br>两类合计：<b>'+total+'</b>（较前记录 '+(prev?(change>=0?'+':'')+change:'—')+'）<br><span style="font-size:11px;color:#6b7a90">'+(d.unit_note||'')+'</span>');
-    html('tinStrategy','<div style="display:flex;align-items:end;justify-content:space-between;"><div><span style="font-size:11px;color:#6b7a90">多空评分 · -2强空 / +2强多</span><div style="font-size:32px;font-weight:700;line-height:1.2;color:'+scoreColor+'">'+scoreText+'</div></div><b style="color:'+scoreColor+'">'+label+' · '+confidence+'置信</b></div><div style="position:relative;height:8px;margin:12px 0 5px;border-radius:5px;background:linear-gradient(90deg,#2867b2,#b9c7d8 50%,#c8342a);"><i style="position:absolute;left:'+marker+'%;top:-4px;width:3px;height:16px;background:#16233c;transform:translateX(-50%);"></i></div><div style="display:flex;justify-content:space-between;font-size:10px;color:#6b7a90;"><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span></div><div style="margin:9px 0;font-size:11px;color:#6b7a90">'+breakdown+'<br>有效权重 '+coverage+'%；缺失分项按0计入，因此评分偏中性且置信度较低。</div><div style="padding:7px 9px;margin-bottom:8px;border-left:3px solid #c8342a;background:#fff5f2;color:#8f2d25;"><b>日度策略</b>：'+(st.daily_strategy||'短线以观望为主，等待更多供需数据确认。')+'</div><b>当前依据</b>：'+(st.macro_reason||'宏观分项按最新人工核验口径。')+'；成交首个记录日不计算方向分。<br><b>成交规则</b>：下游成交环比 ≥5% 记+1、≥20%记+2；≤-5%记-1、≤-20%记-2。<br><b>需求确认</b>：连续成交改善，并结合库存去化、升贴水走强，再上调需求评价。<br><b>更新方式</b>：每日收到成交截图后追加历史并刷新评分。');
-    if(window.echarts){
-      var ch=echarts.init(document.getElementById('cTinDeal'));
-      ch.setOption({animation:false,grid:{left:45,right:18,top:45,bottom:40},legend:{top:8,textStyle:{color:'#687b92',fontFamily:KAI}},tooltip:{trigger:'axis'},xAxis:{type:'category',data:rows.map(function(r){return r.date.slice(5);}),axisLabel:{color:'#6b7a90',fontFamily:KAI}},yAxis:{type:'value',name:'原图数值',nameTextStyle:{color:'#6b7a90',fontFamily:KAI},axisLabel:{color:'#6b7a90',fontFamily:KAI},splitLine:{lineStyle:{color:'#e8eef6'}}},series:[{name:'同业贸易商',type:'bar',data:rows.map(function(r){return r.trader;}),itemStyle:{color:'#2867b2'},barMaxWidth:34},{name:'锡锭下游',type:'bar',data:rows.map(function(r){return r.downstream;}),itemStyle:{color:'#c8342a'},barMaxWidth:34}]});
-      window.addEventListener('resize',function(){ch.resize();});
-    }
-  }).catch(function(e){text('sumTin',e.message);text('tinLatest','暂不可用');text('tinStrategy','等待成交截图更新。');});
 })();
 </script>
 </body>
