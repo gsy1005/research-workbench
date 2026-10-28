@@ -120,7 +120,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="wrap">
 
 <div class="banner">
-  <span class="brand">中哲金属</span>
+  <span class="brand">中哲金属 · 甘思雨</span>
   <h1>宏观数据日报</h1>
   <div class="meta">图表版 · 数据日 <b id="autoDate">读取中…</b> · 每日 07:40 / 20:40（北京）自动更新 · <span id="pageVer" style="font-weight:400;color:#9fb4d0">版本检测中…</span></div>
   <script>
@@ -639,16 +639,16 @@ Promise.all([
   line('cM2',[
     {name:'众议院 · Polymarket',data:electionHist('House',m.house.polymarket),color:C_RED,w:2},
     {name:'参议院 · Polymarket',data:electionHist('Senate',m.senate.polymarket),color:C_BLUE,w:2},
-    {name:'众议院 · Kalshi最新',data:[[P.asof,m.house.kalshi]],color:C_RED,type:'scatter'},
-    {name:'参议院 · Kalshi最新',data:[[P.asof,m.senate.kalshi]],color:C_BLUE,type:'scatter'}
+    {name:'众议院 · Kalshi最新',data:[[P.kalshi_asof||P.asof,m.house.kalshi]],color:C_RED,type:'scatter'},
+    {name:'参议院 · Kalshi最新',data:[[P.kalshi_asof||P.asof,m.senate.kalshi]],color:C_BLUE,type:'scatter'}
   ]);
   snapshotBar('cM3',['2026年底前','2027年底前'],[
     {name:'Polymarket',values:[r.y2026.polymarket,r.y2027.polymarket]},
     {name:'Kalshi',values:[r.y2026.kalshi,r.y2027.kalshi]}
   ]);
   var n2=document.getElementById('cM2note'),n3=document.getElementById('cM3note');
-  if(n2)n2.textContent=P.asof+' · '+m.status+'；Kalshi历史积累后再延伸为折线。';
-  if(n3)n3.textContent=P.asof+' · '+r.note+'。';
+  if(n2)n2.textContent='Polymarket '+P.asof+' / Kalshi '+(P.kalshi_asof||P.asof)+' · '+m.status+'；Kalshi历史积累后再延伸为折线。';
+  if(n3)n3.textContent='Polymarket '+P.asof+' / Kalshi '+(P.kalshi_asof||P.asof)+' · '+r.note+'。';
 }).catch(function(){});
 
 /* ================= FedWatch ================= */
@@ -1188,8 +1188,9 @@ function exportCustomCSV(){
     if(PS&&PS.midterms){
       var pm=PS.midterms;
       var electionLine='民主党胜率：众议院 Polymarket '+pm.house.polymarket+'% / Kalshi '+pm.house.kalshi+'%；参议院 Polymarket '+pm.senate.polymarket+'% / Kalshi '+pm.senate.kalshi+'%';
-      set('topElection',electionLine+'。（'+PS.asof+'预测，11月3日投票，非官方选举结果）');
-      predLine='中期选举'+electionLine+'（'+PS.asof+'预测，非官方结果）。';
+      var predDates='Polymarket '+PS.asof+' / Kalshi '+(PS.kalshi_asof||PS.asof);
+      set('topElection',electionLine+'。（'+predDates+'，11月3日投票，非官方选举结果）');
+      predLine='中期选举'+electionLine+'（'+predDates+'，非官方结果）。';
       if(PS.recession){
         var pr=PS.recession;
         predLine+='2026衰退概率 Polymarket '+pr.y2026.polymarket+'% / Kalshi '+pr.y2026.kalshi+'%。';
