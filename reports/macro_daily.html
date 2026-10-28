@@ -177,6 +177,10 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div><b>利率</b>：<span id="topRates">FedWatch 数据读取中…</span></div>
   <div><b>中期选举预测</b>：<span id="topElection">预测市场数据读取中…</span></div>
   <div id="topMarkets">市场数据读取中…</div>
+  <div id="middleEastBrief" style="margin-top:7px;padding-top:7px;border-top:1px dashed #d7e0eb;">
+    <b>中东与原油（10月28日）</b>：伊朗最高领袖提出按伊方条件推动结束战事，沙特、土耳其、巴基斯坦与伊朗同意继续地区安全会谈，外交层面出现缓和信号；但胡塞武装宣称袭击沙特炼厂，沙特方面当时尚未确认，供应风险仍未消除。<a href="https://www.jfdaily.com/news/detail?id=1202317" target="_blank" rel="noopener">上观新闻</a><br>
+    <b>油价与宏观</b>：10月27日结算，布伦特 <b>113.88</b> 美元/桶（<b>-1.7%</b>），WTI <b>99.90</b> 美元/桶（<b>-1.8%</b>）；10月28日 01:40 GMT 盘中，布伦特回升至 <b>115.36</b> 美元/桶（+1.3%），WTI 回升至 <b>101.12</b> 美元/桶（+1.2%）。<b>综合判断：外交缓和信号叠加美股最新交易日上涨，对宏观风险偏好构成小幅支持，不作宏观偏空判断</b>；油价日内反弹和供应风险仍是残余约束，暂不能据此认定局势已全面缓和。<a href="https://finance.sina.com.cn/world/2026-10-28/doc-iniwtiac4058836.shtml" target="_blank" rel="noopener">新浪财经</a> · <a href="https://www.angelone.in/news/commodities/crude-oil-prices-rise-after-attack-on-saudi-arabian-refinery-revives-supply-concerns-october-28-2026" target="_blank" rel="noopener">Angel One</a>
+  </div>
   <div style="font-size:11px;color:#6b7a90;line-height:1.6;margin-top:4px;">注：不同指标发布日期与频次不同，变动按各序列最新观测及其1日/1周前可得观测计算。</div>
 </div>
 
@@ -413,6 +417,15 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>信用风险与美股波动：B级收益率－美债10Y · VIX<span>左轴bp · 利差与VIX同步上行=风险共振</span></h4><div class="ct" id="cC7"></div></div>
   <div class="cbox"><h4>美股与股债相对强弱：SPY · HYG－TLT<span>HYG－TLT回落=高收益债跑输长债</span></h4><div class="ct" id="cC8"></div></div>
   <div class="cbox"><h4>美股广度与大小盘：等权/市值加权 · 罗素2000/标普500<span>比值上行=涨势扩散或中小盘占优</span></h4><div class="ct" id="cC9"></div></div>
+</div>
+
+<!-- ============ 锡产业供需与策略（用户成交截图人工核验后更新） ============ -->
+<div class="sec"><h2>锡产业供需与策略</h2><span>TIN SUPPLY · DEMAND &amp; STRATEGY / 周度框架 × 日度边际 · 成交截图人工核验更新</span></div>
+<div class="secSum" id="sumTin">成交数据读取中…</div>
+<div class="grid3">
+  <div class="cbox"><h4>锡锭成交：同业贸易商 · 下游<span>按用户截图原值记录 · 原图未显示单位</span></h4><div class="ct" id="cTinDeal"></div></div>
+  <div class="cbox"><h4>最新日度边际<span id="tinDate"></span></h4><div id="tinLatest" style="font-size:13px;line-height:2;padding:12px 4px;">读取中…</div></div>
+  <div class="cbox"><h4>策略跟踪<span>条件式观察 · 不凭单日成交确认趋势</span></h4><div id="tinStrategy" style="font-size:12.5px;line-height:1.85;padding:10px 4px;color:#42566f;">读取中…</div></div>
 </div>
 
 <!-- ============ 仓位 ============ -->
@@ -1364,6 +1377,29 @@ function exportCustomCSV(){
     if(!d)return;
     document.getElementById('riskBlend').innerHTML='双引擎：市场 '+(+d.latest_scores.market).toFixed(1)+' · 基本面 '+(+d.latest_scores.fundamental).toFixed(1)+'<br>75/25组合 '+(+d.latest_scores.blend25).toFixed(1)+' 分';
   }).catch(function(){});
+})();
+</script>
+<script>
+/* ============ 锡产业供需与策略：用户截图人工核验后追加 ============ */
+(function(){
+  function text(id,value){var el=document.getElementById(id);if(el)el.textContent=value;}
+  function html(id,value){var el=document.getElementById(id);if(el)el.innerHTML=value;}
+  fetch('../data/tin_transactions.json?v='+Date.now()).then(function(r){if(!r.ok)throw new Error('成交数据不可用');return r.json();}).then(function(d){
+    var rows=(d.records||[]).slice().sort(function(a,b){return a.date<b.date?-1:1;});
+    if(!rows.length)throw new Error('暂无成交记录');
+    var x=rows[rows.length-1],prev=rows.length>1?rows[rows.length-2]:null;
+    var total=(+x.trader)+(+x.downstream),share=total?(+x.downstream)/total*100:null;
+    var change=prev?total-((+prev.trader)+(+prev.downstream)):null;
+    text('tinDate',' · '+x.date);
+    html('sumTin','<b>日度总结</b>：'+x.date+' 同业贸易商成交合计 <b>'+x.trader+'</b>、锡锭下游成交合计 <b>'+x.downstream+'</b>；下游占当日两类合计 <b>'+share.toFixed(1)+'%</b>。'+(prev?'两类合计较前一记录日 '+(change>=0?'+':'')+change+'。':'当前为首个记录日，暂不计算环比。')+' 单日成交只用于跟踪边际，不单独作为需求趋势确认。');
+    html('tinLatest','同业贸易商：<b style="font-size:22px;color:#173554">'+x.trader+'</b><br>锡锭下游：<b style="font-size:22px;color:#c8342a">'+x.downstream+'</b><br>两类合计：<b>'+total+'</b>（较前记录 '+(prev?(change>=0?'+':'')+change:'—')+'）<br><span style="font-size:11px;color:#6b7a90">'+(d.unit_note||'')+'</span>');
+    html('tinStrategy','<b>当前处理</b>：记录日度边际，不因单日成交放量直接转多或转空。<br><b>需求确认</b>：后续若下游成交连续改善，并结合库存去化、升贴水走强，再上调需求评价。<br><b>失效情形</b>：若成交改善仅维持一日，或库存继续增加，则按短期脉冲而非持续补库处理。<br><b>更新方式</b>：每日收到成交截图后，人工核对日期与两项原值，再追加历史并刷新本页。');
+    if(window.echarts){
+      var ch=echarts.init(document.getElementById('cTinDeal'));
+      ch.setOption({animation:false,grid:{left:45,right:18,top:45,bottom:40},legend:{top:8,textStyle:{color:'#687b92',fontFamily:KAI}},tooltip:{trigger:'axis'},xAxis:{type:'category',data:rows.map(function(r){return r.date.slice(5);}),axisLabel:{color:'#6b7a90',fontFamily:KAI}},yAxis:{type:'value',name:'原图数值',nameTextStyle:{color:'#6b7a90',fontFamily:KAI},axisLabel:{color:'#6b7a90',fontFamily:KAI},splitLine:{lineStyle:{color:'#e8eef6'}}},series:[{name:'同业贸易商',type:'bar',data:rows.map(function(r){return r.trader;}),itemStyle:{color:'#2867b2'},barMaxWidth:34},{name:'锡锭下游',type:'bar',data:rows.map(function(r){return r.downstream;}),itemStyle:{color:'#c8342a'},barMaxWidth:34}]});
+      window.addEventListener('resize',function(){ch.resize();});
+    }
+  }).catch(function(e){text('sumTin',e.message);text('tinLatest','暂不可用');text('tinStrategy','等待成交截图更新。');});
 })();
 </script>
 </body>
