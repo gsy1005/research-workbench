@@ -44,6 +44,7 @@ jobs:
           python3 scripts/fetch_trump.py || true
           python3 scripts/fetch_downstream.py || true
           python3 scripts/gen_charts.py || true
+          python3 scripts/build_risk_appetite.py || true
 
       - name: FedWatch(CME官方加息概率)
         run: python3 scripts/fetch_fedwatch.py || true
@@ -73,6 +74,7 @@ jobs:
           git config user.name "data-bot"
           git config user.email "bot@users.noreply.github.com"
           git add data/ charts/ || true
+          git reset -q -- data/risk_appetite_source.json data/gpr_daily_recent.xls || true
           git diff --cached --quiet && echo "数据无变化" || git commit -m "一键全量更新 $(date -u +'%F %H:%M')Z"
           git pull --rebase origin main || (git rebase --abort && git pull --no-rebase -X ours origin main)
           git push

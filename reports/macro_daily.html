@@ -63,6 +63,21 @@ table.kv td{padding:5px 7px;border:1px solid var(--line);text-align:right;white-
 table.kv td.l{text-align:left;color:var(--wht);font-weight:700;}
 table.kv tr:nth-child(even) td{background:var(--panel2);}
 .up{color:var(--red)!important;} .dn{color:var(--blue)!important;}
+/* ===== 顶部风险偏好评分 ===== */
+.riskTop{display:grid;grid-template-columns:190px 1fr;gap:12px;margin-bottom:10px;}
+.riskScore{background:linear-gradient(135deg,#fff7f3,#fff);border:1px solid #ead8d0;border-radius:8px;text-align:center;padding:14px 10px;}
+.riskScore .n{font:700 46px Arial,sans-serif;color:var(--red);line-height:1.1;}
+.riskScore .r{display:inline-block;margin-top:7px;padding:2px 13px;border-radius:16px;background:#f6e2dd;color:#a62b23;font-size:16px;}
+.riskScore .m{margin-top:7px;color:var(--dim);font-size:11px;line-height:1.7;}
+.riskGroups{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.riskGroup{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:14px 10px;text-align:center;}
+.riskGroup .gn{font-size:12px;color:var(--dim);min-height:32px;display:flex;align-items:center;justify-content:center;}
+.riskGroup .gv{font:700 26px Arial,sans-serif;color:var(--navy);margin-top:5px;}
+.riskGroup .gb{height:5px;background:#dfe7f0;border-radius:4px;margin-top:9px;overflow:hidden;}
+.riskGroup .gb i{display:block;height:100%;background:linear-gradient(90deg,var(--blueL),var(--red));}
+#riskHistory{height:270px;width:100%;}
+@media(max-width:1100px){.riskGroups{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:720px){.riskTop{grid-template-columns:1fr;}.riskGroups{grid-template-columns:repeat(2,1fr);}}
 /* ===== 今日新出数据 ===== */
 .rel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;}
 .rel-card{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;padding:10px 12px;}
@@ -147,6 +162,14 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <button class="tb tb-csv" onclick="exportCSV()">导出表格 CSV</button>
   <span class="hint">导出为本页最新数据 · 自定义图表区可自选指标/区间/图型</span>
 </div>
+
+<!-- ============ 全球风险偏好评分（每日随数据管线更新） ============ -->
+<div class="sec"><h2>全球风险偏好评分</h2><span id="riskAsOf">评分数据读取中… · 0–100 越高越偏风险追逐</span></div>
+<div class="riskTop">
+  <div class="riskScore"><div class="n" id="riskScore">—</div><div class="r" id="riskRegime">读取中</div><div class="m" id="riskChange"></div></div>
+  <div class="riskGroups" id="riskGroups"></div>
+</div>
+<div class="cbox"><h4>总分历史<span>滚动三年历史分位 · 固定规则</span></h4><div id="riskHistory"></div></div>
 
 <!-- ============ 今日宏观总览（自动更新·客观数据描述） ============ -->
 <div class="sec"><h2>今日宏观总览</h2><span>按各指标最新可得数据自动更新 · 仅描述数值与变动，不作投资建议</span></div>
@@ -1296,6 +1319,37 @@ function exportCustomCSV(){
       }
       cePaintBtns(bodyId,false);
     });
+  });
+})();
+</script>
+
+<script>
+/* ============ 顶部全球风险偏好评分：总分、六板块与历史 ============ */
+(function(){
+  function signed(v){return v==null?'—':(v>0?'+':'')+(+v).toFixed(1);}
+  fetch('../data/risk_appetite.json?v='+Date.now()).then(function(r){if(!r.ok)throw new Error('评分数据不可用');return r.json();}).then(function(d){
+    document.getElementById('riskScore').textContent=(+d.score).toFixed(1);
+    document.getElementById('riskRegime').textContent=d.regime;
+    document.getElementById('riskChange').innerHTML='数据日 '+d.asof+'<br>日 '+signed(d.score_change_1d)+' 分 · 5日 '+signed(d.score_change_5d)+' 分';
+    document.getElementById('riskAsOf').innerHTML='每日随数据管线更新 · <a href="risk_appetite.html" style="color:var(--blueL);text-decoration:none">查看指标明细、方法与回测</a>';
+    document.getElementById('riskGroups').innerHTML=d.groups.map(function(g){
+      return '<div class="riskGroup"><div class="gn">'+g.name+'</div><div class="gv">'+g.score.toFixed(1)+'</div><div class="gb"><i style="width:'+Math.max(0,Math.min(100,g.score))+'%"></i></div></div>';
+    }).join('');
+    var el=document.getElementById('riskHistory');
+    if(el&&window.echarts){
+      var ch=echarts.init(el);
+      ch.setOption({animation:false,grid:{left:42,right:18,top:20,bottom:48},
+        tooltip:{trigger:'axis',valueFormatter:function(v){return (+v).toFixed(1)+' 分';}},
+        xAxis:{type:'time',axisLabel:{color:'#6b7a90',fontSize:10,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
+        yAxis:{type:'value',min:0,max:100,name:'分',axisLabel:{color:'#6b7a90',fontSize:10,fontFamily:KAI},splitLine:{lineStyle:{color:'#e8eef6'}}},
+        dataZoom:[{type:'inside'},{type:'slider',height:16,bottom:8}],
+        series:[{name:'风险偏好评分',type:'line',showSymbol:false,data:d.history,lineStyle:{width:1.7,color:'#c8342a'},itemStyle:{color:'#c8342a'},areaStyle:{color:'rgba(200,52,42,.07)'},
+          markLine:{symbol:'none',label:{show:false},lineStyle:{color:'#a9b7c8',type:'dashed'},data:[{yAxis:20},{yAxis:40},{yAxis:60},{yAxis:80}]}}]});
+      window.addEventListener('resize',function(){ch.resize();});
+    }
+  }).catch(function(e){
+    document.getElementById('riskRegime').textContent='暂不可用';
+    document.getElementById('riskAsOf').textContent=e.message;
   });
 })();
 </script>
