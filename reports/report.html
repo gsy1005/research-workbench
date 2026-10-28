@@ -6,7 +6,7 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>宏观研究 · 中哲金属</title>
+<title>宏观研究 · 中哲金属 甘思雨</title>
 <style>
   :root{--bg:#0d1117;--card:#141b28;--line:#262d3d;--gold:#d4a944;--txt:#d7dde8;--dim:#8a94a6;}
   *{box-sizing:border-box;margin:0;padding:0;}
@@ -35,12 +35,14 @@
 <div class="topbar">
   <div class="seg" id="seg">
     <button data-v="daily" class="on">日报</button>
+    <button data-v="macro">宏观数据日报</button>
     <button data-v="weekly">周报</button>
     <button data-v="trump">特朗普执政关注点</button>
   </div>
-  <div class="author">中哲金属</div>
+  <div class="author">中哲金属 · <b>甘思雨</b></div>
 </div>
 <iframe id="f-daily" src="daily_latest.html?v=latest" title="宏观研究日报"></iframe>
+<iframe id="f-macro" data-lazy="macro_daily.html" title="宏观数据日报·图表版" hidden></iframe>
 <iframe id="f-weekly" data-lazy="weekly_2026-W35.html" title="宏观研究周报" hidden></iframe>
 <iframe id="f-trump" data-lazy="../panels/trump_zone.html" title="特朗普执政关注焦点" hidden></iframe>
 <script>
@@ -48,14 +50,14 @@
   var seg=document.getElementById('seg');
   function show(v){
     seg.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.v===v);});
-    ['daily','weekly','trump'].forEach(function(k){
+    ['daily','macro','weekly','trump'].forEach(function(k){
       var f=document.getElementById('f-'+k); if(!f)return;
       f.hidden = (k!==v);
       if(k===v && f.dataset.lazy && !f.dataset.loaded){ f.src=f.dataset.lazy; f.dataset.loaded='1'; }
     });
   }
   seg.addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(b.dataset.v);});
-  var m=/[?&]v=(daily|weekly|trump)/.exec(location.search);
+  var m=/[?&]v=(daily|macro|weekly|trump)/.exec(location.search);
   if(m) show(m[1]);
   // 自动指向最新日报/周报（索引文件随新报告发布更新）
   fetch('../data/report_index.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(ix){
