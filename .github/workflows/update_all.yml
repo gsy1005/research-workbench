@@ -45,6 +45,7 @@ jobs:
           python3 scripts/fetch_downstream.py || true
           python3 scripts/gen_charts.py || true
           python3 scripts/build_risk_appetite.py || true
+          python3 scripts/experiment_fundamental_blend.py || true
 
       - name: FedWatch(CME官方加息概率)
         run: python3 scripts/fetch_fedwatch.py || true
