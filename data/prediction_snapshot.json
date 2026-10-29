@@ -1,18 +1,21 @@
 {
-  "asof": "2026-10-28",
-  "kalshi_asof": "2026-10-26",
+  "asof": "2026-10-29",
+  "kalshi_asof": "2026-10-29",
+  "kalshi_observed_at": "2026-10-29 02:25 ET",
   "source": "Polymarket Gamma/CLOB API；DeFi Rate 汇总 Kalshi；Sikt Intelligence；Reuters/Ipsos",
   "midterms": {
     "election_day": "2026-11-03",
     "status": "投票尚未开始，当前为预测市场赔率，并非官方选举结果",
-    "house": {"kalshi": 90.25, "polymarket": 91.5},
-    "senate": {"kalshi": 64.15, "polymarket": 66.5},
+    "house": {"kalshi": 91.45, "polymarket": 92.5},
+    "senate": {"kalshi": 66.3, "polymarket": 67.5},
     "dem_sweep_kalshi": 63.5,
+    "dem_sweep_kalshi_asof": "2026-10-26",
     "generic_ballot": {"dem": 47, "rep": 35, "source": "Reuters/Ipsos 2026-10-16至19"},
     "trump_approval": 31
   },
   "recession": {
-    "y2026": {"kalshi": 5.0, "polymarket": 7.5},
+    "kalshi_asof": "2026-10-26",
+    "y2026": {"kalshi": 5.0, "polymarket": 5.5},
     "y2027": {"kalshi": 20.0, "polymarket": 35.0},
     "note": "两平台合约结算定义可能不同，预测概率不代表实际发生概率"
   }

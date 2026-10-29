@@ -178,8 +178,8 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div><b>中期选举预测</b>：<span id="topElection">预测市场数据读取中…</span></div>
   <div id="topMarkets">市场数据读取中…</div>
   <div id="middleEastBrief" style="margin-top:7px;padding-top:7px;border-top:1px dashed #d7e0eb;">
-    <b>中东与原油（10月28日）</b>：伊朗最高领袖提出按伊方条件推动结束战事，沙特、土耳其、巴基斯坦与伊朗同意继续地区安全会谈，外交层面出现缓和信号；但胡塞武装宣称袭击沙特炼厂，沙特方面当时尚未确认，供应风险仍未消除。<a href="https://www.jfdaily.com/news/detail?id=1202317" target="_blank" rel="noopener">上观新闻</a><br>
-    <b>油价与宏观</b>：10月27日结算，布伦特 <b>113.88</b> 美元/桶（<b>-1.7%</b>），WTI <b>99.90</b> 美元/桶（<b>-1.8%</b>）；10月28日 01:40 GMT 盘中，布伦特回升至 <b>115.36</b> 美元/桶（+1.3%），WTI 回升至 <b>101.12</b> 美元/桶（+1.2%）。<b>综合判断：外交缓和信号叠加美股最新交易日上涨，对宏观风险偏好构成小幅支持，不作宏观偏空判断</b>；油价日内反弹和供应风险仍是残余约束，暂不能据此认定局势已全面缓和。<a href="https://finance.sina.com.cn/world/2026-10-28/doc-iniwtiac4058836.shtml" target="_blank" rel="noopener">新浪财经</a> · <a href="https://www.angelone.in/news/commodities/crude-oil-prices-rise-after-attack-on-saudi-arabian-refinery-revives-supply-concerns-october-28-2026" target="_blank" rel="noopener">Angel One</a>
+    <b>中东与原油（10月29日）</b>：美媒称美国已通知多个海湾国家及地区盟友，为中期选举后可能对伊朗发动短期军事行动做准备，特朗普尚未作出最终决定；与此同时，美国副总统万斯致信伊朗试图重启和平谈判，沙特请求给予谈判更多时间。<b>外交努力与选后军事风险并存，不能仅按单方面缓和或升级处理</b>。美国中央司令部称霍尔木兹海峡国际公认主要航道已清除水雷并保持畅通。<span style="color:#6b7a90">（10/29早间财经汇总）</span><br>
+    <b>油价与宏观</b>：10月28日结算，WTI <b>102.78</b> 美元/桶（<b>+2.88%</b>），布伦特 <b>115.32</b> 美元/桶（<b>+1.26%</b>）；10月29日亚盘油价回落，布伦特失守 <b>111</b> 美元/桶。EIA原油库存减少 <b>189.2</b> 万桶、降幅超预期，汽油库存增加 <b>387</b> 万桶，美国原油产量升至 <b>1,399.2</b> 万桶/日。美联储维持基准利率在 <b>3.75%–4.00%</b>，10比2投票中两票主张加息25bp，决议后加息预期升温；隔夜美股三大指数收涨，但谷歌财报不及预期拖累纳指期货，微软财报超预期，科技板块表现分化。<span style="color:#6b7a90">（10/29早间财经汇总）</span>
   </div>
   <div style="font-size:11px;color:#6b7a90;line-height:1.6;margin-top:4px;">注：不同指标发布日期与频次不同，变动按各序列最新观测及其1日/1周前可得观测计算。</div>
 </div>
@@ -676,7 +676,7 @@ Promise.all([
   ]);
   var n2=document.getElementById('cM2note'),n3=document.getElementById('cM3note');
   if(n2)n2.textContent='Polymarket '+P.asof+' / Kalshi '+(P.kalshi_asof||P.asof)+' · '+m.status+'；Kalshi历史积累后再延伸为折线。';
-  if(n3)n3.textContent='Polymarket '+P.asof+' / Kalshi '+(P.kalshi_asof||P.asof)+' · '+r.note+'。';
+  if(n3)n3.textContent='Polymarket '+P.asof+' / Kalshi '+(r.kalshi_asof||P.kalshi_asof||P.asof)+' · '+r.note+'。';
 }).catch(function(){});
 
 /* ================= FedWatch ================= */
