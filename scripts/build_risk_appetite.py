@@ -22,7 +22,7 @@ SESSION.headers["User-Agent"] = "Mozilla/5.0 (compatible; research-workbench-ris
 
 YAHOO = {
     "SPY": "SPY", "NASDAQ": "^IXIC", "KOSPI": "^KS11", "CSI300": "ASHR",
-    "CSI300_CN": "000300.SS",
+    "CSI300_CN": "510300.SS",
     "RSP": "RSP", "EEM": "EEM", "IWM": "IWM", "XLY": "XLY", "XLP": "XLP",
     "HYG": "HYG", "LQD": "LQD", "TLT": "TLT", "EMB": "EMB",
     "VIX": "^VIX", "VIX3M": "^VIX3M", "MOVE": "^MOVE", "COPPER": "HG=F",
@@ -185,7 +185,7 @@ def main():
     transformed["纳指20日动量"] = ret(market["NASDAQ"])
     transformed["韩指20日动量"] = ret(market["KOSPI"])
     transformed["A股ASHR 20日动量"] = ret(market["CSI300"])
-    transformed["沪深300 20日动量"] = ret(market["CSI300_CN"])
+    transformed["沪深300ETF 20日动量"] = ret(market["CSI300_CN"])
     transformed["RSP/SPY 20日变化"] = ret(market["RSP"] / market["SPY"])
     transformed["EEM/SPY 20日变化"] = ret(market["EEM"] / market["SPY"])
     transformed["IWM/SPY 20日变化"] = ret(market["IWM"] / market["SPY"])
@@ -216,7 +216,7 @@ def main():
     groups = [
         {"key": "equity", "name": "全球权益与广度", "weight": 22, "items": [
             ("SPY 20日动量", 4, False), ("纳指20日动量", 3, False), ("韩指20日动量", 3, False),
-            ("沪深300 20日动量", 2, False), ("A股ASHR 20日动量", 1, False),
+            ("沪深300ETF 20日动量", 2, False), ("A股ASHR 20日动量", 1, False),
             ("RSP/SPY 20日变化", 4, False),
             ("EEM/SPY 20日变化", 3, False), ("IWM/SPY 20日变化", 2, False)]},
         {"key": "credit", "name": "信用", "weight": 18, "items": [
