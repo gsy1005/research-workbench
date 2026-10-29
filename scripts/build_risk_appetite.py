@@ -288,6 +288,16 @@ def main():
     complete = group_scores.notna().all(axis=1) & (coverage >= 85)
     total = total.where(complete)
 
+    # 独立中国资产子评分：不参与全球总分，集中呈现A股、韩股与国内商品。
+    china_a = (
+        scores["equity__沪深300ETF 20日动量"] * 20 +
+        scores["equity__沪深300ETF 5日动量"] * 20 +
+        scores["equity__A股ASHR 20日动量"] * 10
+    ) / 50
+    china_korea = scores["equity__韩指20日动量"]
+    china_commodity = scores["cross_asset__沪铜主连20日动量"]
+    china_total = (china_a * 50 + china_korea * 20 + china_commodity * 30) / 100
+
     # 回测：当日收盘出分，下一交易日执行；SPY使用复权价，现金按3M美债利率计息。
     bt_idx = spy_adj.loc["2014-01-01":].index
     bt_score = total.reindex(bt_idx).ffill()
@@ -355,6 +365,7 @@ def main():
                                     "fetched_at": pm.get("fetched_at")})
 
     hist = total.loc["2014-01-01":].dropna()
+    china_hist = china_total.loc["2014-01-01":].dropna()
     # 图表保留全部日度评分；净值曲线与CSV逐日可复核。
     result = {
         "asof": latest_date.strftime("%Y-%m-%d"),
@@ -369,6 +380,18 @@ def main():
         "history": [[d.strftime("%Y-%m-%d"), round(float(v), 3)] for d, v in hist.items()],
         "group_history": {g["key"]: [[d.strftime("%Y-%m-%d"), round(float(group_scores[g["key"]].loc[d]), 3)]
                                      for d in hist.index if pd.notna(group_scores[g["key"]].loc[d])] for g in groups},
+        "china_asset": {
+            "asof": latest_date.strftime("%Y-%m-%d"),
+            "score": float(china_total.loc[latest_date]),
+            "regime": regime(float(china_total.loc[latest_date])),
+            "components": [
+                {"key": "a_share", "name": "A股", "weight": 50, "score": float(china_a.loc[latest_date])},
+                {"key": "korea", "name": "韩股", "weight": 20, "score": float(china_korea.loc[latest_date])},
+                {"key": "commodity", "name": "沪铜", "weight": 30, "score": float(china_commodity.loc[latest_date])},
+            ],
+            "history": [[d.strftime("%Y-%m-%d"), round(float(v), 3)] for d, v in china_hist.items()],
+            "method": "A股50%（沪深300ETF 20日20%、5日20%、ASHR 20日10%）＋韩股20%＋沪铜30%；沿用滚动三年分位，不参与全球总分",
+        },
         "middle_east": middle_east,
         "method": {
             "range": "0–100，越高越偏风险追逐",

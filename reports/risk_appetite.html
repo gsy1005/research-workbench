@@ -18,6 +18,12 @@
   <div class="scoreCard"><div class="bigScore" id="score">—</div><div class="regime" id="regime">读取中</div><div class="scoreMeta" id="scoreMeta"></div></div>
   <div class="panel summary"><b>当前客观解读</b><div id="currentSummary">正在汇总各板块……</div><div class="warning">这是市场状态计分，不是买卖建议，也不是下跌概率。低分可能出现在下跌中，也可能出现在反弹前；应结合估值、基本面和持仓约束使用。</div></div>
 </div>
+<div class="sec"><h2>中国资产子评分</h2><span>A股 50% · 韩股 20% · 沪铜 30% · 独立展示，不参与全球总分</span></div>
+<div class="hero">
+  <div class="scoreCard"><div class="bigScore" id="chinaScore">—</div><div class="regime" id="chinaRegime">读取中</div><div class="scoreMeta" id="chinaMeta"></div></div>
+  <div class="panel summary"><b>国内风险状态</b><div id="chinaSummary">正在汇总 A 股、韩股与沪铜……</div><div class="warning" id="chinaMethod"></div></div>
+</div>
+<div class="chart" id="chinaHistoryChart"></div>
 <div class="sec"><h2>双引擎组合实验</h2><span>纯市场与基本面分开计算 · 25%为预设平衡组合，不按最优回测选权重</span></div>
 <div class="blendGrid" id="blendScores"></div>
 <div class="note" id="blendConclusion">正在比较纯市场、基本面与固定组合……</div>
@@ -57,6 +63,15 @@ fetch('../data/risk_appetite.json?v='+Date.now()).then(r=>{if(!r.ok)throw Error(
   document.getElementById('scoreMeta').innerHTML='数据日 '+d.asof+'<br>较前日 <span class="'+(d.score_change_1d>=0?'up':'dn')+'">'+fmt(d.score_change_1d)+'</span> 分 · 较5日前 <span class="'+(d.score_change_5d>=0?'up':'dn')+'">'+fmt(d.score_change_5d)+'</span> 分';
   const sorted=[...d.groups].sort((a,b)=>a.score-b.score);
   document.getElementById('currentSummary').innerHTML='当前主要拖累为 <b>'+sorted[0].name+' '+fmt(sorted[0].score)+' 分</b> 与 <b>'+sorted[1].name+' '+fmt(sorted[1].score)+' 分</b>；相对支撑来自 <b>'+sorted[sorted.length-1].name+' '+fmt(sorted[sorted.length-1].score)+' 分</b>。分数较5日前 '+fmt(d.score_change_5d)+' 分，表明跨资产信号仍处于'+d.regime+'区间。';
+  if(d.china_asset){
+    const c=d.china_asset;
+    document.getElementById('chinaScore').textContent=fmt(c.score);
+    document.getElementById('chinaRegime').textContent=c.regime;
+    document.getElementById('chinaMeta').innerHTML='数据日 '+c.asof+'<br>独立子评分 · 不影响全球总分';
+    document.getElementById('chinaSummary').innerHTML=c.components.map(g=>'<b>'+g.name+' '+fmt(g.score)+' 分</b>').join('；')+'。该子评分用于集中观察 A 股、韩股与国内商品的风险状态。';
+    document.getElementById('chinaMethod').textContent=c.method;
+    lineChart('chinaHistoryChart',c.history.map(x=>x[0]),[{name:'中国资产子评分',data:c.history.map(x=>x[1]),color:C.gold,area:true,markLine:{symbol:'none',label:{show:true,formatter:'{c}'},data:[{yAxis:20},{yAxis:40},{yAxis:60},{yAxis:80}]}}],'分');
+  }
   document.getElementById('groups').innerHTML=d.groups.map(g=>'<div class="group"><div class="name">'+g.name+'</div><div class="num">'+fmt(g.score)+'</div><div class="weight">权重 '+g.weight+'%</div><div class="bar"><i style="width:'+g.score+'%"></i></div></div>').join('');
   const forwardMeta={
     '10Y-3M国债利差':['6–18个月','曲线深度倒挂常领先增长与信用周期放缓'],
