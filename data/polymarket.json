@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-10-29T07:39:45.858227Z",
+ "fetched_at": "2026-10-29T08:05:41.516925Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -14,7 +14,7 @@
      "price": 0.325
     }
    ],
-   "vol24": 180136,
+   "vol24": 180940,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1632,7 +1632,7 @@
      "price": 0.075
     }
    ],
-   "vol24": 1067654,
+   "vol24": 1071962,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -5710,7 +5710,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 539861,
+   "vol24": 540080,
    "end": "2026-07-25",
    "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080",
    "history": [
@@ -5776,7 +5776,7 @@
      "price": 0.9985
     }
    ],
-   "vol24": 413442,
+   "vol24": 410916,
    "end": "2026-11-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-october-31-20260810151043583",
    "history": [
@@ -6086,7 +6086,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 136828,
+   "vol24": 136832,
    "end": "2026-08-16",
    "slug": "us-iran-hormuz-agreement-byptptpt-20260803235957575",
    "history": [
@@ -6834,7 +6834,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 848952,
+   "vol24": 849018,
    "end": "2026-09-20",
    "slug": "us-iran-ceasefire-continues-throughptptpt",
    "history": [
@@ -6868,7 +6868,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 481727,
+   "vol24": 483487,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -6906,7 +6906,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 143739,
+   "vol24": 143769,
    "end": "2026-10-01",
    "slug": "iran-leadership-change-by",
    "history": [
@@ -7583,10 +7583,6 @@
     [
      "2026-10-28",
      0.06
-    ],
-    [
-     "2026-10-29",
-     0.055
     ]
    ]
   },
@@ -7602,7 +7598,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 5803,
+   "vol24": 5850,
    "end": "2026-07-31",
    "slug": "which-month-will-strait-of-hormuz-traffic-return-to-normal-20260702155718114",
    "history": [
@@ -15097,11 +15093,11 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.954
+     "price": 0.9535
     },
     {
      "name": "No",
-     "price": 0.046
+     "price": 0.0465
     }
    ],
    "vol24": 354,
@@ -15126,7 +15122,7 @@
     ],
     [
      "2026-10-29",
-     0.954
+     0.9535
     ]
    ]
   },
@@ -16056,7 +16052,7 @@
      "price": 0.9975
     }
    ],
-   "vol24": 443355,
+   "vol24": 443582,
    "end": "2026-12-09",
    "slug": "fed-decision-in-december-20260729232808632",
    "history": [
