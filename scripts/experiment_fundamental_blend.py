@@ -78,6 +78,7 @@ def main():
     end = max(s.last_valid_index() for s in y.values() if not s.empty)
     idx = pd.bdate_range(start, end)
     market = pd.DataFrame({k: s.reindex(idx).ffill(limit=5) for k, s in y.items()})
+    cn_copper = series(src.get("sina", {}).get("SHFE_CU"), "SHFE_CU").reindex(idx, method="ffill")
     macro = pd.DataFrame({k: s.reindex(idx, method="ffill") for k, s in f.items()})
     macro["GPR7"] = gpr.reindex(idx, method="ffill")
     macro["NETLIQ"] = (macro["WALCL"] - macro["WTREGEN"] - macro["RRPONTSYD"] * 1000) / 1e6
@@ -99,6 +100,7 @@ def main():
         "韩指20日动量": ret(market["KOSPI"]),
         "A股ASHR 20日动量": ret(market["CSI300"]),
         "沪深300ETF 20日动量": ret(market["CSI300_CN"]),
+        "沪深300ETF 5日动量": ret(market["CSI300_CN"], 5),
         "RSP/SPY 20日变化": ret(market["RSP"] / market["SPY"]),
         "EEM/SPY 20日变化": ret(market["EEM"] / market["SPY"]),
         "IWM/SPY 20日变化": ret(market["IWM"] / market["SPY"]),
@@ -108,6 +110,7 @@ def main():
         "VIX": market["VIX"], "MOVE": market["MOVE"],
         "SPY 20日已实现波动": market["SPY"].pct_change(fill_method=None).rolling(20).std() * math.sqrt(252) * 100,
         "铜/金20日变化": ret(market["COPPER"] / market["GOLD"]),
+        "沪铜主连20日动量": ret(cn_copper),
         "EMB/TLT 20日变化": ret(market["EMB"] / market["TLT"]),
         "AUD/JPY 20日动量": ret(market["AUDJPY"]),
         "DXY 20日动量": ret(market["DXY"]), "NFCI": nfci,
@@ -123,13 +126,14 @@ def main():
     }
 
     groups = [
-        ("equity", 22, [("SPY 20日动量", 4, False), ("纳指20日动量", 3, False), ("韩指20日动量", 3, False),
+        ("equity", 22, [("SPY 20日动量", 3, False), ("纳指20日动量", 3, False), ("韩指20日动量", 3, False),
                        ("沪深300ETF 20日动量", 2, False), ("A股ASHR 20日动量", 1, False),
-                       ("RSP/SPY 20日变化", 4, False),
+                       ("沪深300ETF 5日动量", 2, False), ("RSP/SPY 20日变化", 3, False),
                        ("EEM/SPY 20日变化", 3, False), ("IWM/SPY 20日变化", 2, False)]),
         ("credit", 18, [("HYG/LQD 20日变化", 6, False), ("高收益OAS", 8, True), ("投资级OAS", 4, True)]),
         ("volatility", 13, [("VIX", 5, True), ("MOVE", 4, True), ("SPY 20日已实现波动", 4, True)]),
-        ("cross_asset", 12, [("铜/金20日变化", 5, False), ("EMB/TLT 20日变化", 4, False), ("AUD/JPY 20日动量", 3, False)]),
+        ("cross_asset", 12, [("铜/金20日变化", 3, False), ("沪铜主连20日动量", 2, False),
+                            ("EMB/TLT 20日变化", 4, False), ("AUD/JPY 20日动量", 3, False)]),
         ("liquidity", 12, [("DXY 20日动量", 3, True), ("NFCI", 3, True), ("净流动性4周变化", 3, False),
                          ("10Y实际利率20日变化", 3, True)]),
         ("geopolitical", 8, [("GPR地缘政治7日均值", 4, True), ("布伦特5日动量", 4, True)]),

@@ -50,6 +50,20 @@ def yahoo(symbol):
     }
 
 
+def sina_future(symbol):
+    """新浪国内期货主连日线，返回日期与收盘价。"""
+    url = ("https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_" + symbol +
+           "=/InnerFuturesNewService.getDailyKLine?symbol=" + symbol)
+    r = SESSION.get(url, headers={"Referer": "https://finance.sina.com.cn/"}, timeout=60)
+    r.raise_for_status()
+    text = r.text
+    rows = json.loads(text[text.index("([") + 1:text.rindex(")")])
+    points = [[x["d"], float(x["c"])] for x in rows if x.get("c") is not None]
+    if len(points) < 30:
+        raise ValueError("国内期货历史行情不足")
+    return points
+
+
 def fred(sid):
     # 当前网络下curl对FRED长CSV更稳定；仍直接读取官方FRED地址。
     import subprocess
@@ -66,9 +80,10 @@ def fred(sid):
 
 
 def load_sources():
-    cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {"yahoo": {}, "fred": {}}
+    cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {"yahoo": {}, "fred": {}, "sina": {}}
     cache.setdefault("yahoo", {})
     cache.setdefault("fred", {})
+    cache.setdefault("sina", {})
 
     def save():
         cache["fetched_at"] = datetime.now(timezone.utc).isoformat()
@@ -82,6 +97,12 @@ def load_sources():
             time.sleep(0.15)
         except Exception as exc:
             print("YAHOO_FAIL", name, str(exc)[:160], flush=True)
+    try:
+        cache["sina"]["SHFE_CU"] = sina_future("CU0")
+        save()
+        print("SINA SHFE_CU", cache["sina"]["SHFE_CU"][-1], flush=True)
+    except Exception as exc:
+        print("SINA_FAIL_SHFE_CU", str(exc)[:160], flush=True)
     for sid in FRED:
         try:
             cache["fred"][sid] = fred(sid)
@@ -165,6 +186,7 @@ def main():
     end = max(s.last_valid_index() for s in y.values() if not s.empty)
     idx = pd.bdate_range(start, end)
     market = pd.DataFrame({k: s.reindex(idx).ffill(limit=5) for k, s in y.items()})
+    cn_copper = series(src.get("sina", {}).get("SHFE_CU"), "SHFE_CU").reindex(idx, method="ffill")
     # method='ffill' 保留周末/非交易日公布的周度数据，再对齐到最近一个交易日。
     macro = pd.DataFrame({k: s.reindex(idx, method="ffill") for k, s in f.items()})
     macro["GPR7"] = gpr.reindex(idx, method="ffill")
@@ -186,6 +208,7 @@ def main():
     transformed["韩指20日动量"] = ret(market["KOSPI"])
     transformed["A股ASHR 20日动量"] = ret(market["CSI300"])
     transformed["沪深300ETF 20日动量"] = ret(market["CSI300_CN"])
+    transformed["沪深300ETF 5日动量"] = ret(market["CSI300_CN"], 5)
     transformed["RSP/SPY 20日变化"] = ret(market["RSP"] / market["SPY"])
     transformed["EEM/SPY 20日变化"] = ret(market["EEM"] / market["SPY"])
     transformed["IWM/SPY 20日变化"] = ret(market["IWM"] / market["SPY"])
@@ -196,6 +219,7 @@ def main():
     transformed["MOVE"] = market["MOVE"]
     transformed["SPY 20日已实现波动"] = market["SPY"].pct_change(fill_method=None).rolling(20).std() * math.sqrt(252) * 100
     transformed["铜/金20日变化"] = ret(market["COPPER"] / market["GOLD"])
+    transformed["沪铜主连20日动量"] = ret(cn_copper)
     transformed["EMB/TLT 20日变化"] = ret(market["EMB"] / market["TLT"])
     transformed["AUD/JPY 20日动量"] = ret(market["AUDJPY"])
     transformed["DXY 20日动量"] = ret(market["DXY"])
@@ -215,16 +239,17 @@ def main():
 
     groups = [
         {"key": "equity", "name": "全球权益与广度", "weight": 22, "items": [
-            ("SPY 20日动量", 4, False), ("纳指20日动量", 3, False), ("韩指20日动量", 3, False),
+            ("SPY 20日动量", 3, False), ("纳指20日动量", 3, False), ("韩指20日动量", 3, False),
             ("沪深300ETF 20日动量", 2, False), ("A股ASHR 20日动量", 1, False),
-            ("RSP/SPY 20日变化", 4, False),
+            ("沪深300ETF 5日动量", 2, False), ("RSP/SPY 20日变化", 3, False),
             ("EEM/SPY 20日变化", 3, False), ("IWM/SPY 20日变化", 2, False)]},
         {"key": "credit", "name": "信用", "weight": 18, "items": [
             ("HYG/LQD 20日变化", 6, False), ("高收益OAS", 8, True), ("投资级OAS", 4, True)]},
         {"key": "volatility", "name": "波动率", "weight": 13, "items": [
             ("VIX", 5, True), ("MOVE", 4, True), ("SPY 20日已实现波动", 4, True)]},
         {"key": "cross_asset", "name": "跨资产确认", "weight": 12, "items": [
-            ("铜/金20日变化", 5, False), ("EMB/TLT 20日变化", 4, False), ("AUD/JPY 20日动量", 3, False)]},
+            ("铜/金20日变化", 3, False), ("沪铜主连20日动量", 2, False),
+            ("EMB/TLT 20日变化", 4, False), ("AUD/JPY 20日动量", 3, False)]},
         {"key": "liquidity", "name": "美元与流动性", "weight": 12, "items": [
             ("DXY 20日动量", 3, True), ("NFCI", 3, True), ("净流动性4周变化", 3, False),
             ("10Y实际利率20日变化", 3, True)]},
@@ -370,6 +395,7 @@ def main():
             {"name": "Caldara–Iacoviello GPR：基于报纸文本的地缘政治风险指数", "url": "https://www.matteoiacoviello.com/gpr.htm"},
             {"name": "FRED：ICE BofA信用OAS、利率曲线、初请、建筑许可与WEI", "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"},
             {"name": "Yahoo Finance：全球指数、ETF、VIX期限结构与商品历史行情", "url": "https://finance.yahoo.com/"},
+            {"name": "新浪财经：国内期货主连历史行情（沪铜）", "url": "https://finance.sina.com.cn/futures/"},
         ],
     }
     OUT.write_text(json.dumps(result, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
