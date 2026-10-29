@@ -98,6 +98,7 @@ def main():
         "纳指20日动量": ret(market["NASDAQ"]),
         "韩指20日动量": ret(market["KOSPI"]),
         "A股ASHR 20日动量": ret(market["CSI300"]),
+        "沪深300 20日动量": ret(market["CSI300_CN"]),
         "RSP/SPY 20日变化": ret(market["RSP"] / market["SPY"]),
         "EEM/SPY 20日变化": ret(market["EEM"] / market["SPY"]),
         "IWM/SPY 20日变化": ret(market["IWM"] / market["SPY"]),
@@ -123,7 +124,8 @@ def main():
 
     groups = [
         ("equity", 22, [("SPY 20日动量", 4, False), ("纳指20日动量", 3, False), ("韩指20日动量", 3, False),
-                       ("A股ASHR 20日动量", 3, False), ("RSP/SPY 20日变化", 4, False),
+                       ("沪深300 20日动量", 2, False), ("A股ASHR 20日动量", 1, False),
+                       ("RSP/SPY 20日变化", 4, False),
                        ("EEM/SPY 20日变化", 3, False), ("IWM/SPY 20日变化", 2, False)]),
         ("credit", 18, [("HYG/LQD 20日变化", 6, False), ("高收益OAS", 8, True), ("投资级OAS", 4, True)]),
         ("volatility", 13, [("VIX", 5, True), ("MOVE", 4, True), ("SPY 20日已实现波动", 4, True)]),
