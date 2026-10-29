@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install requests pandas lxml html5lib xlrd curl_cffi websocket-client beautifulsoup4
+      - run: pip install requests pandas lxml html5lib xlrd curl_cffi websocket-client beautifulsoup4 scipy matplotlib
       - name: fetch_macro + fetch_extra
         env:
           JIN10_TOKEN: ${{ secrets.JIN10_TOKEN }}
