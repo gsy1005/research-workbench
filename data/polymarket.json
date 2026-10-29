@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-10-29T08:05:41.516925Z",
+ "fetched_at": "2026-10-29T08:43:41.587420Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -14,7 +14,7 @@
      "price": 0.325
     }
    ],
-   "vol24": 180940,
+   "vol24": 189484,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1632,7 +1632,7 @@
      "price": 0.075
     }
    ],
-   "vol24": 1071962,
+   "vol24": 1066659,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -5710,7 +5710,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 540080,
+   "vol24": 524955,
    "end": "2026-07-25",
    "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080",
    "history": [
@@ -5776,7 +5776,7 @@
      "price": 0.9985
     }
    ],
-   "vol24": 410916,
+   "vol24": 410614,
    "end": "2026-11-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-october-31-20260810151043583",
    "history": [
@@ -6086,7 +6086,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 136832,
+   "vol24": 131104,
    "end": "2026-08-16",
    "slug": "us-iran-hormuz-agreement-byptptpt-20260803235957575",
    "history": [
@@ -6152,7 +6152,7 @@
      "price": 0.885
     }
    ],
-   "vol24": 74641,
+   "vol24": 75016,
    "end": "2027-01-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -6834,7 +6834,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 849018,
+   "vol24": 870359,
    "end": "2026-09-20",
    "slug": "us-iran-ceasefire-continues-throughptptpt",
    "history": [
@@ -6868,7 +6868,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 483487,
+   "vol24": 402808,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -6906,7 +6906,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 143769,
+   "vol24": 143806,
    "end": "2026-10-01",
    "slug": "iran-leadership-change-by",
    "history": [
@@ -7583,6 +7583,10 @@
     [
      "2026-10-28",
      0.06
+    ],
+    [
+     "2026-10-29",
+     0.055
     ]
    ]
   },
@@ -7724,7 +7728,7 @@
      "price": 0.225
     }
    ],
-   "vol24": 115348,
+   "vol24": 115398,
    "end": "2026-12-10",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
@@ -12762,7 +12766,7 @@
      "price": 0.65
     }
    ],
-   "vol24": 139,
+   "vol24": 143,
    "end": "2027-12-31",
    "slug": "us-recession-by-end-of-2027-20260807185409760",
    "history": [
@@ -14552,7 +14556,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 494320,
+   "vol24": 493320,
    "end": "2026-10-29",
    "slug": "fed-decision-in-october-20260617190323537",
    "history": [
@@ -15100,7 +15104,7 @@
      "price": 0.0465
     }
    ],
-   "vol24": 354,
+   "vol24": 349,
    "end": "2026-10-31",
    "slug": "trump-approval-rating-at-least-on-october-30",
    "history": [
@@ -16052,7 +16056,7 @@
      "price": 0.9975
     }
    ],
-   "vol24": 443582,
+   "vol24": 584067,
    "end": "2026-12-09",
    "slug": "fed-decision-in-december-20260729232808632",
    "history": [
