@@ -1,20 +1,20 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-10-31T06:55:14.806042Z",
+ "fetched_at": "2026-10-31T15:26:00.567959Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.705
+     "price": 0.715
     },
     {
      "name": "No",
-     "price": 0.295
+     "price": 0.285
     }
    ],
-   "vol24": 375803,
+   "vol24": 330390,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1616,7 +1616,7 @@
     ],
     [
      "2026-10-31",
-     0.705
+     0.715
     ]
    ]
   },
@@ -1632,7 +1632,7 @@
      "price": 0.055
     }
    ],
-   "vol24": 718322,
+   "vol24": 1017992,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -5710,7 +5710,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 347150,
+   "vol24": 467399,
    "end": "2026-07-25",
    "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080",
    "history": [
@@ -5776,7 +5776,7 @@
      "price": 0.885
     }
    ],
-   "vol24": 97713,
+   "vol24": 147525,
    "end": "2027-01-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -6462,7 +6462,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 76553,
+   "vol24": 90627,
    "end": "2026-08-16",
    "slug": "us-iran-hormuz-agreement-byptptpt-20260803235957575",
    "history": [
@@ -6528,7 +6528,7 @@
      "price": 0.9995
     }
    ],
-   "vol24": 59793,
+   "vol24": 33507,
    "end": "2026-11-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-october-31-20260810151043583",
    "history": [
@@ -6842,7 +6842,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 760354,
+   "vol24": 725299,
    "end": "2026-09-20",
    "slug": "us-iran-ceasefire-continues-throughptptpt",
    "history": [
@@ -6876,7 +6876,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 329177,
+   "vol24": 297094,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -6914,7 +6914,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 141964,
+   "vol24": 97018,
    "end": "2026-07-01",
    "slug": "us-iran-final-nuclear-deal-by-20260621201254412",
    "history": [
@@ -6965,14 +6965,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.055
+     "price": 0.06
     },
     {
      "name": "No",
-     "price": 0.945
+     "price": 0.94
     }
    ],
-   "vol24": 16897,
+   "vol24": 27661,
    "end": "2026-12-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-november-30-20260810151158765",
    "history": [
@@ -7278,7 +7278,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 9655,
+   "vol24": 4180,
    "end": "2026-07-31",
    "slug": "which-month-will-strait-of-hormuz-traffic-return-to-normal-20260702155718114",
    "history": [
@@ -7397,14 +7397,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.71
+     "price": 0.695
     },
     {
      "name": "No",
-     "price": 0.29
+     "price": 0.305
     }
    ],
-   "vol24": 9177,
+   "vol24": 19819,
    "end": "2026-12-10",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
@@ -7566,7 +7566,7 @@
     ],
     [
      "2026-10-31",
-     0.71
+     0.695
     ]
    ]
   },
@@ -10972,7 +10972,7 @@
      "price": 0.935
     }
    ],
-   "vol24": 9212,
+   "vol24": 9350,
    "end": "2027-01-31",
    "slug": "us-recession-by-end-of-2026",
    "history": [
@@ -14256,7 +14256,7 @@
      "price": 0.996
     }
    ],
-   "vol24": 109825,
+   "vol24": 73718,
    "end": "2026-12-09",
    "slug": "fed-decision-in-december-20260729232808632",
    "history": [
@@ -14622,7 +14622,7 @@
      "price": 0.685
     }
    ],
-   "vol24": 1682,
+   "vol24": 991,
    "end": "2026-12-13",
    "slug": "government-shutdown-by",
    "history": [
@@ -14648,7 +14648,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 567,
+   "vol24": 413,
    "end": "2026-10-31",
    "slug": "trump-approval-rating-at-least-on-october-30",
    "history": [
@@ -15601,14 +15601,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0165
+     "price": 0.0185
     },
     {
      "name": "No",
-     "price": 0.9835
+     "price": 0.9815
     }
    ],
-   "vol24": 84315,
+   "vol24": 132125,
    "end": "2026-11-03",
    "slug": "which-tossup-senate-states-will-republicans-win-ak-ia-ks-me-mi-oh-tx",
    "history": [
@@ -15626,7 +15626,7 @@
     ],
     [
      "2026-10-31",
-     0.0165
+     0.0185
     ]
    ]
   }
