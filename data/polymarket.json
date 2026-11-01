@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-11-01T18:05:50.239145Z",
+ "fetched_at": "2026-11-01T19:34:23.011032Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -14,7 +14,7 @@
      "price": 0.285
     }
    ],
-   "vol24": 275228,
+   "vol24": 384508,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-senate-in-2026",
    "history": [
@@ -1632,7 +1632,7 @@
      "price": 0.055
     }
    ],
-   "vol24": 1070482,
+   "vol24": 1051484,
    "end": "2026-11-04",
    "slug": "which-party-will-win-the-house-in-2026",
    "history": [
@@ -5710,7 +5710,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 625436,
+   "vol24": 623840,
    "end": "2026-07-25",
    "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080",
    "history": [
@@ -5776,7 +5776,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 82035,
+   "vol24": 93701,
    "end": "2026-08-16",
    "slug": "us-iran-hormuz-agreement-byptptpt-20260803235957575",
    "history": [
@@ -6238,7 +6238,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 863836,
+   "vol24": 995969,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -6276,7 +6276,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 688933,
+   "vol24": 712190,
    "end": "2026-09-20",
    "slug": "us-iran-ceasefire-continues-throughptptpt",
    "history": [
@@ -6310,7 +6310,7 @@
      "price": 0.825
     }
    ],
-   "vol24": 62100,
+   "vol24": 59195,
    "end": "2027-01-01",
    "slug": "will-the-us-invade-iran-before-2027",
    "history": [
@@ -7741,14 +7741,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.055
+     "price": 0.06
     },
     {
      "name": "No",
-     "price": 0.945
+     "price": 0.94
     }
    ],
-   "vol24": 43070,
+   "vol24": 43740,
    "end": "2026-12-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-november-30-20260810151158765",
    "history": [
@@ -8038,7 +8038,7 @@
     ],
     [
      "2026-11-01",
-     0.055
+     0.06
     ]
    ]
   },
@@ -8047,14 +8047,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.125
+     "price": 0.115
     },
     {
      "name": "No",
-     "price": 0.875
+     "price": 0.885
     }
    ],
-   "vol24": 38740,
+   "vol24": 41416,
    "end": "2027-01-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -8728,7 +8728,7 @@
     ],
     [
      "2026-11-01",
-     0.125
+     0.115
     ]
    ]
   },
@@ -8863,14 +8863,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.705
+     "price": 0.725
     },
     {
      "name": "No",
-     "price": 0.295
+     "price": 0.275
     }
    ],
-   "vol24": 1149,
+   "vol24": 11695,
    "end": "2026-12-10",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
@@ -9032,7 +9032,7 @@
     ],
     [
      "2026-11-01",
-     0.705
+     0.725
     ]
    ]
   },
@@ -12438,7 +12438,7 @@
      "price": 0.945
     }
    ],
-   "vol24": 3456,
+   "vol24": 836,
    "end": "2027-01-31",
    "slug": "us-recession-by-end-of-2026",
    "history": [
@@ -16073,14 +16073,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.28
+     "price": 0.315
     },
     {
      "name": "No",
-     "price": 0.72
+     "price": 0.685
     }
    ],
-   "vol24": 330,
+   "vol24": 394,
    "end": "2026-12-13",
    "slug": "government-shutdown-by",
    "history": [
@@ -16094,7 +16094,7 @@
     ],
     [
      "2026-11-01",
-     0.28
+     0.315
     ]
    ]
   },
@@ -17055,14 +17055,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0405
+     "price": 0.0375
     },
     {
      "name": "No",
-     "price": 0.9595
+     "price": 0.9625
     }
    ],
-   "vol24": 26955,
+   "vol24": 23548,
    "end": "2026-11-03",
    "slug": "which-tossup-senate-states-will-republicans-win-ak-ia-ks-me-mi-oh-tx",
    "history": [
@@ -17084,7 +17084,7 @@
     ],
     [
      "2026-11-01",
-     0.0405
+     0.0375
     ]
    ]
   }
