@@ -83,6 +83,30 @@ table.kv tr:nth-child(even) td{background:var(--panel2);}
 /* ===== 今日新出数据 ===== */
 .rel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;}
 .rel-card{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;padding:10px 12px;}
+/* ===== 美元流动性监测（外部面板快照） ===== */
+.lpChain{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,#fff7f3,#fff);border:1px solid #ead8d0;border-radius:8px;padding:12px 16px;margin-bottom:12px;}
+.lpChain .lvl{font:700 30px KaiTi,STKaiti,"楷体",serif;color:var(--red);}
+.lpChain .lvl small{font-size:12px;color:var(--dim);font-weight:400;display:block;letter-spacing:2px;}
+.lpChain .why{flex:1;min-width:260px;font-size:12.5px;line-height:1.9;color:var(--txt);}
+.lpChain .why b{color:var(--wht);}
+.lpChain .next{flex-basis:100%;font-size:11.5px;color:var(--dim);line-height:1.8;border-top:1px dashed #ead8d0;padding-top:6px;}
+.lpStages{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.lpStage{flex:1;min-width:150px;background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--gray,#9aa8ba);border-radius:6px;padding:8px 10px;font-size:11.5px;}
+.lpStage b{display:block;font-size:13px;color:var(--wht);margin-bottom:2px;}
+.lpStage .st{display:inline-block;padding:0 8px;border-radius:10px;font-size:11px;margin:2px 0 4px;}
+.lpStage ul{list-style:none;color:var(--dim);line-height:1.7;}
+.lpStage li.on{color:var(--txt);}
+.lpStage li.on b{display:inline;color:var(--red);}
+.lpCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px;}
+.lpCard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;}
+.lpCard h5{font-size:12.5px;color:var(--dim);font-weight:400;letter-spacing:1px;}
+.lpCard .v{font:700 24px Arial,sans-serif;color:var(--navy);margin:3px 0;}
+.lpCard .v small{font-size:12px;color:var(--dim);font-weight:400;}
+.lpCard .s{font-size:11.5px;color:var(--dim);line-height:1.7;}
+.lpTake{background:#fdf7ea;border:1px solid #e3c88f;border-left:4px solid #b98a2f;border-radius:6px;padding:10px 16px;font-size:12.5px;line-height:2;color:#3a2f16;}
+.lpTake .tvh{color:#8a6a2f;font-weight:bold;margin-right:8px;}
+.lpTake .stance{margin-top:6px;padding:6px 12px;border-left:3px solid #b98a2f;background:#fffef5;font-weight:700;}
+.lpTake ol{margin-left:18px;}
 .rel-card h3{font-size:14px;color:var(--wht);letter-spacing:1px;}
 .rel-card h3 .hot{color:var(--red);font-size:11px;margin-left:6px;}
 .rel-card .num{font-size:20px;color:var(--red);font-weight:700;margin:4px 0 2px;}
@@ -418,6 +442,24 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>政策利率贴近度：EFFR-IORB · OBFR-IORB（bp）<span>持续抬升=准备金充裕度下降的前瞻信号</span></h4><div class="ct" id="cL10"></div></div>
   <div class="cbox"><h4>准备金与TGA：近4周变动（十亿$）<span>准备金下降 / TGA上升=抽离流动性</span></h4><div class="ct" id="cL11"></div></div>
   <div class="cbox"><h4>净流动性：近4周变动（十亿$）<span>联储总资产-TGA-ON RRP · 负值=收缩</span></h4><div class="ct" id="cL12"></div></div>
+</div>
+
+<!-- ============ 美元流动性监测（外部面板快照） ============ -->
+<div class="sec"><h2>美元流动性监测</h2><span id="lpAsOf">来源: gsy1005.github.io/l- · 面板每小时自动更新 · 数据快照随日报管线每日刷新</span></div>
+<div class="secSum" id="lpSum">⚙️ 面板快照读取中…</div>
+<div id="lpPanel" style="display:none;">
+  <div class="lpChain">
+    <div class="lvl"><span id="lpLevel">—</span><small>脆弱传导链等级</small></div>
+    <div class="why" id="lpWhy"></div>
+    <div class="next" id="lpNext"></div>
+  </div>
+  <div class="lpStages" id="lpStages"></div>
+  <div class="lpCards" id="lpCards"></div>
+  <div class="grid3">
+    <div class="cbox"><h4>资金压力指数 FSI 与流动性压力指数 LPI（0–100）<span>60以下正常 · 60–80关注 · 80–95偏高 · 95以上压力</span></h4><div class="ct" id="cLP1"></div></div>
+    <div class="cbox"><h4>关键结论 · 规则生成<span>仅用于仓位与对冲参考 · 非预测</span></h4><div class="lpTake" id="lpTake" style="border:none;margin:0;height:100%;"></div></div>
+    <div class="cbox"><h4>本周变化 · 与7天前比较</h4><div class="lpTake" id="lpWeekly" style="border:none;margin:0;height:100%;background:#f4f8fd;border-left-color:var(--navy);color:var(--txt);"></div></div>
+  </div>
 </div>
 
 <!-- ============ 大宗与权益 ============ -->
@@ -1405,6 +1447,91 @@ function exportCustomCSV(){
     if(!d)return;
     document.getElementById('riskBlend').innerHTML='双引擎：市场 '+(+d.latest_scores.market).toFixed(1)+' · 基本面 '+(+d.latest_scores.fundamental).toFixed(1)+'<br>75/25组合 '+(+d.latest_scores.blend25).toFixed(1)+' 分';
   }).catch(function(){});
+})();
+</script>
+
+<script>
+/* ============ 美元流动性监测：外部面板快照渲染 ============ */
+(function(){
+  var LP=null;
+  function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function stColor(s){
+    s=(s||'').toLowerCase();
+    if(/stress|elevated|confirmed|red/.test(s)) return '#d63a2b';
+    if(/watch|partial|approach|amber/.test(s)) return '#c07a1a';
+    if(/quiet|normal|calm|green/.test(s)) return '#3d8a4f';
+    return '#6b7a90';
+  }
+  function badge(s){
+    return '<span class="st" style="background:'+stColor(s)+'18;color:'+stColor(s)+';border:1px solid '+stColor(s)+'55;">'+esc(s)+'</span>';
+  }
+  function render(d){
+    LP=d;
+    var chain=d.chain||{};
+    document.getElementById('lpLevel').textContent=chain.level||'—';
+    document.getElementById('lpWhy').innerHTML='<b>'+esc(chain.stance||'')+'</b>';
+    document.getElementById('lpNext').textContent=chain.next||'';
+    // 传导链五阶段
+    document.getElementById('lpStages').innerHTML=(d.stages||[]).map(function(g,i){
+      var inds=(g.inds||[]).filter(function(x){return x.on;}).slice(0,4).map(function(x){
+        return '<li class="on">'+esc(x.name)+' <b>'+esc(x.value)+'</b></li>';}).join('');
+      return '<div class="lpStage" style="border-left-color:'+stColor(g.status)+';">'
+        +'<b>'+i+' · '+esc(g.name)+'</b>'+badge(g.badge||g.statusZh)
+        +'<ul>'+inds+'</ul></div>';
+    }).join('');
+    // 指标卡
+    var secs=d.sections||{};
+    function card(title,val,status,sub){
+      return '<div class="lpCard"><h5>'+esc(title)+'</h5><div class="v">'+esc(val)
+        +' <small style="color:'+stColor(status)+';font-weight:700;">'+esc(status||'')+'</small></div>'
+        +(sub?'<div class="s">'+esc(sub)+'</div>':'')+'</div>';
+    }
+    var cards=[];
+    if(d.fsi) cards.push(card('资金压力指数 FSI · 日度',d.fsi.value,d.fsi.status,d.fsi.sub));
+    if(d.lpi) cards.push(card('流动性压力指数 LPI · 周度背景',d.lpi.value,null,(d.lpi.regime?'regime '+d.lpi.regime+' · ':'')+'缓冲变薄的前置信号'));
+    if(d.funding) cards.push(card('资金压力三支柱共振',d.funding.triggered,d.funding.status,d.where?d.where.verdict:null));
+    if(d.sofr) cards.push(card('SOFR − IORB · 5日中位数',d.sofr.med5d+' bp','观测 '+d.sofr.obs,'EFFR − IORB '+d.sofr.effr+' bp · '+(d.where?d.where.verdict:'')));
+    if(d.repair&&d.repair.vixTerm) cards.push(card('修复信号 · VIX期限结构',d.repair.vixTerm.value,d.repair.count,d.repair.vixTerm.curve));
+    document.getElementById('lpCards').innerHTML=cards.join('');
+    // 关键结论
+    var tk=d.takeaway||{};
+    document.getElementById('lpTake').innerHTML='<span class="tvh">关键结论</span>'
+      +'<ol>'+(tk.points||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ol>'
+      +(tk.stance?'<div class="stance">'+esc(tk.stance)+'</div>':'');
+    // 本周变化
+    document.getElementById('lpWeekly').innerHTML='<span class="tvh" style="color:var(--navy);">本周变化</span><ul style="margin-left:16px;line-height:1.9;">'
+      +(d.weeklyChanges||[]).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>';
+    // 汇总行
+    document.getElementById('lpSum').innerHTML='脆弱传导链 <b style="color:var(--red);">'+esc(chain.level||'—')+'</b>'
+      +(d.fsi?' · FSI <b>'+esc(d.fsi.value)+'</b>（'+esc(d.fsi.status||'')+'）':'')
+      +(d.lpi?' · LPI <b>'+esc(d.lpi.value)+'</b>':'')
+      +(d.funding&&d.funding.triggered?' · 资金共振 <b>'+esc(d.funding.triggered)+'</b>':'')
+      +' · 快照 '+esc(d.updated||d.fetchedAt||'');
+    document.getElementById('lpAsOf').innerHTML='来源: <a href="'+esc(d.source)+'" target="_blank" rel="noopener noreferrer" style="color:var(--blueL);text-decoration:none;">gsy1005.github.io/l- 美元流动性监测面板</a> · 面板更新 '+esc(d.updated||'—')+' · 快照抓取 '+esc(d.fetchedAt||'—');
+    document.getElementById('lpPanel').style.display='';
+    // FSI/LPI 趋势
+    var el=document.getElementById('cLP1');
+    if(el&&window.echarts&&d.history&&d.history.length){
+      var fsi=d.history.filter(function(h){return h.fsi&&h.fsi.t!=null&&!isNaN(+h.fsi.t);}).map(function(h){return [h.date,+h.fsi.t];});
+      var lpi=d.history.filter(function(h){return h.lpi&&h.lpi.t!=null&&!isNaN(parseFloat(h.lpi.t));}).map(function(h){return [h.date,parseFloat(h.lpi.t)];});
+      var ch=echarts.init(el);
+      ch.setOption({animation:false,textStyle:{fontFamily:KAI},
+        grid:{left:40,right:16,top:30,bottom:22},
+        legend:{top:0,textStyle:{color:'#5a6b80',fontSize:10,fontFamily:KAI},itemWidth:14,itemHeight:8},
+        tooltip:{trigger:'axis',backgroundColor:'#ffffff',borderColor:'#c9d4e4',textStyle:{color:'#22304a',fontSize:11,fontFamily:KAI}},
+        xAxis:{type:'time',axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
+        yAxis:{type:'value',min:0,max:100,axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},splitLine:{lineStyle:{color:'#e8eef6'}}},
+        series:[
+          {name:'FSI 资金压力指数',type:'line',showSymbol:false,data:fsi,lineStyle:{width:1.8,color:'#c8342a'},itemStyle:{color:'#c8342a'},
+           markLine:{symbol:'none',label:{show:false},lineStyle:{color:'#a9b7c8',type:'dashed'},data:[{yAxis:60},{yAxis:80},{yAxis:95}]}},
+          {name:'LPI 流动性压力指数（周度）',type:'line',showSymbol:false,data:lpi,lineStyle:{width:1.6,color:'#9a7fc4'},itemStyle:{color:'#9a7fc4'}}
+        ]});
+      window.addEventListener('resize',function(){ch.resize();});
+    }
+  }
+  fetch('../data/liquidity_panel.json?v='+Date.now()).then(function(r){if(!r.ok)throw new Error('快照数据不可用');return r.json();}).then(render).catch(function(e){
+    document.getElementById('lpSum').textContent='美元流动性监测快照暂不可用（'+e.message+'）· 数据随每日一键更新生成';
+  });
 })();
 </script>
 </body>
