@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-11-08T16:08:48.322761Z",
+ "fetched_at": "2026-11-08T18:04:07.010596Z",
  "markets": [
   {
    "question": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
@@ -3250,7 +3250,7 @@
      "price": 0.9615
     }
    ],
-   "vol24": 48656,
+   "vol24": 48658,
    "end": "2027-01-01",
    "slug": "iran-agrees-to-end-enrichment-of-uranium-by-december-31",
    "history": [
@@ -4128,7 +4128,7 @@
      "price": 0.91
     }
    ],
-   "vol24": 259,
+   "vol24": 368,
    "end": "2027-01-01",
    "slug": "what-will-be-in-a-us-iran-deal-in-2026-20260624150226501",
    "history": [
@@ -4866,7 +4866,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 468297,
+   "vol24": 503494,
    "end": "2026-07-25",
    "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080",
    "history": [
@@ -4921,84 +4921,18 @@
    ]
   },
   {
-   "question": "US-Iran Hormuz Agreement by August 15?",
-   "outcomes": [
-    {
-     "name": "Yes",
-     "price": 0.0
-    },
-    {
-     "name": "No",
-     "price": 1.0
-    }
-   ],
-   "vol24": 27756,
-   "end": "2026-08-16",
-   "slug": "us-iran-hormuz-agreement-byptptpt-20260803235957575",
-   "history": [
-    [
-     "2026-08-05",
-     0.545
-    ],
-    [
-     "2026-08-06",
-     0.595
-    ],
-    [
-     "2026-08-07",
-     0.395
-    ],
-    [
-     "2026-08-08",
-     0.505
-    ],
-    [
-     "2026-08-09",
-     0.195
-    ],
-    [
-     "2026-08-10",
-     0.085
-    ],
-    [
-     "2026-08-11",
-     0.08
-    ],
-    [
-     "2026-08-12",
-     0.095
-    ],
-    [
-     "2026-08-13",
-     0.0415
-    ],
-    [
-     "2026-08-14",
-     0.0355
-    ],
-    [
-     "2026-08-15",
-     0.0055
-    ],
-    [
-     "2026-08-16",
-     0.004
-    ]
-   ]
-  },
-  {
    "question": "Strait of Hormuz traffic returns to normal by December 31?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.085
+     "price": 0.08
     },
     {
      "name": "No",
-     "price": 0.915
+     "price": 0.92
     }
    ],
-   "vol24": 23520,
+   "vol24": 45662,
    "end": "2027-01-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-december-31",
    "history": [
@@ -5700,7 +5634,73 @@
     ],
     [
      "2026-11-08",
+     0.08
+    ]
+   ]
+  },
+  {
+   "question": "US-Iran Hormuz Agreement by August 15?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0
+    },
+    {
+     "name": "No",
+     "price": 1.0
+    }
+   ],
+   "vol24": 27817,
+   "end": "2026-08-16",
+   "slug": "us-iran-hormuz-agreement-byptptpt-20260803235957575",
+   "history": [
+    [
+     "2026-08-05",
+     0.545
+    ],
+    [
+     "2026-08-06",
+     0.595
+    ],
+    [
+     "2026-08-07",
+     0.395
+    ],
+    [
+     "2026-08-08",
+     0.505
+    ],
+    [
+     "2026-08-09",
+     0.195
+    ],
+    [
+     "2026-08-10",
      0.085
+    ],
+    [
+     "2026-08-11",
+     0.08
+    ],
+    [
+     "2026-08-12",
+     0.095
+    ],
+    [
+     "2026-08-13",
+     0.0415
+    ],
+    [
+     "2026-08-14",
+     0.0355
+    ],
+    [
+     "2026-08-15",
+     0.0055
+    ],
+    [
+     "2026-08-16",
+     0.004
     ]
    ]
   },
@@ -5716,7 +5716,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 21754,
+   "vol24": 27406,
    "end": "2026-06-01",
    "slug": "bab-el-mandeb-strait-effectively-closed-by",
    "history": [
@@ -5902,7 +5902,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 797121,
+   "vol24": 799477,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -5929,6 +5929,28 @@
    ]
   },
   {
+   "question": "US x Iran Effective Ceasefire by November 8?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.245
+    },
+    {
+     "name": "No",
+     "price": 0.755
+    }
+   ],
+   "vol24": 37299,
+   "end": "2026-11-08",
+   "slug": "us-x-iran-effective-ceasefire-begins-by-2-week-pause-20261108",
+   "history": [
+    [
+     "2026-11-08",
+     0.245
+    ]
+   ]
+  },
+  {
    "question": "Iran leadership change by September 30?",
    "outcomes": [
     {
@@ -5940,7 +5962,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 123471,
+   "vol24": 123881,
    "end": "2026-10-01",
    "slug": "iran-leadership-change-by",
    "history": [
@@ -6334,7 +6356,7 @@
      "price": 0.9795
     }
    ],
-   "vol24": 2496,
+   "vol24": 2550,
    "end": "2026-12-31",
    "slug": "iran-leader-end-of-2026",
    "history": [
@@ -7209,40 +7231,6 @@
    ]
   },
   {
-   "question": "US x Iran effective ceasefire continues through November 5, 2026?",
-   "outcomes": [
-    {
-     "name": "Yes",
-     "price": 0.9975
-    },
-    {
-     "name": "No",
-     "price": 0.0025
-    }
-   ],
-   "vol24": 20299,
-   "end": "2026-11-06",
-   "slug": "us-iran-effective-ceasefire-continues-throughptptpt-20261103",
-   "history": [
-    [
-     "2026-11-05",
-     0.954
-    ],
-    [
-     "2026-11-06",
-     0.9875
-    ],
-    [
-     "2026-11-07",
-     0.996
-    ],
-    [
-     "2026-11-08",
-     0.9975
-    ]
-   ]
-  },
-  {
    "question": "Strait of Hormuz traffic returns to normal by November 30?",
    "outcomes": [
     {
@@ -7254,7 +7242,7 @@
      "price": 0.976
     }
    ],
-   "vol24": 20292,
+   "vol24": 18618,
    "end": "2026-12-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-november-30-20260810151158765",
    "history": [
@@ -7569,6 +7557,132 @@
     [
      "2026-11-08",
      0.024
+    ]
+   ]
+  },
+  {
+   "question": "Will Strait of Hormuz traffic return to normal in July?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0
+    },
+    {
+     "name": "No",
+     "price": 1.0
+    }
+   ],
+   "vol24": 2856,
+   "end": "2026-07-31",
+   "slug": "which-month-will-strait-of-hormuz-traffic-return-to-normal-20260702155718114",
+   "history": [
+    [
+     "2026-07-09",
+     0.08
+    ],
+    [
+     "2026-07-10",
+     0.045
+    ],
+    [
+     "2026-07-11",
+     0.058
+    ],
+    [
+     "2026-07-12",
+     0.066
+    ],
+    [
+     "2026-07-13",
+     0.045
+    ],
+    [
+     "2026-07-14",
+     0.0245
+    ],
+    [
+     "2026-07-15",
+     0.026
+    ],
+    [
+     "2026-07-16",
+     0.023
+    ],
+    [
+     "2026-07-17",
+     0.012
+    ],
+    [
+     "2026-07-18",
+     0.0135
+    ],
+    [
+     "2026-07-19",
+     0.0125
+    ],
+    [
+     "2026-07-20",
+     0.014
+    ],
+    [
+     "2026-07-21",
+     0.011
+    ],
+    [
+     "2026-07-22",
+     0.01
+    ],
+    [
+     "2026-07-23",
+     0.0055
+    ],
+    [
+     "2026-07-24",
+     0.008
+    ],
+    [
+     "2026-07-25",
+     0.0045
+    ],
+    [
+     "2026-07-26",
+     0.005
+    ],
+    [
+     "2026-07-27",
+     0.005
+    ],
+    [
+     "2026-07-28",
+     0.004
+    ],
+    [
+     "2026-07-30",
+     0.0025
+    ],
+    [
+     "2026-07-31",
+     0.0005
+    ],
+    [
+     "2026-08-01",
+     0.0005
+    ],
+    [
+     "2026-08-02",
+     0.0005
+    ],
+    [
+     "2026-08-03",
+     0.0005
+    ],
+    [
+     "2026-08-04",
+     0.0005
+    ],
+    [
+     "2026-08-05",
+     0.0005
     ]
    ]
   },
@@ -7911,132 +8025,6 @@
    ]
   },
   {
-   "question": "Will Strait of Hormuz traffic return to normal in July?",
-   "outcomes": [
-    {
-     "name": "Yes",
-     "price": 0.0
-    },
-    {
-     "name": "No",
-     "price": 1.0
-    }
-   ],
-   "vol24": 1751,
-   "end": "2026-07-31",
-   "slug": "which-month-will-strait-of-hormuz-traffic-return-to-normal-20260702155718114",
-   "history": [
-    [
-     "2026-07-09",
-     0.08
-    ],
-    [
-     "2026-07-10",
-     0.045
-    ],
-    [
-     "2026-07-11",
-     0.058
-    ],
-    [
-     "2026-07-12",
-     0.066
-    ],
-    [
-     "2026-07-13",
-     0.045
-    ],
-    [
-     "2026-07-14",
-     0.0245
-    ],
-    [
-     "2026-07-15",
-     0.026
-    ],
-    [
-     "2026-07-16",
-     0.023
-    ],
-    [
-     "2026-07-17",
-     0.012
-    ],
-    [
-     "2026-07-18",
-     0.0135
-    ],
-    [
-     "2026-07-19",
-     0.0125
-    ],
-    [
-     "2026-07-20",
-     0.014
-    ],
-    [
-     "2026-07-21",
-     0.011
-    ],
-    [
-     "2026-07-22",
-     0.01
-    ],
-    [
-     "2026-07-23",
-     0.0055
-    ],
-    [
-     "2026-07-24",
-     0.008
-    ],
-    [
-     "2026-07-25",
-     0.0045
-    ],
-    [
-     "2026-07-26",
-     0.005
-    ],
-    [
-     "2026-07-27",
-     0.005
-    ],
-    [
-     "2026-07-28",
-     0.004
-    ],
-    [
-     "2026-07-30",
-     0.0025
-    ],
-    [
-     "2026-07-31",
-     0.0005
-    ],
-    [
-     "2026-08-01",
-     0.0005
-    ],
-    [
-     "2026-08-02",
-     0.0005
-    ],
-    [
-     "2026-08-03",
-     0.0005
-    ],
-    [
-     "2026-08-04",
-     0.0005
-    ],
-    [
-     "2026-08-05",
-     0.0005
-    ]
-   ]
-  },
-  {
    "question": "Another Fed rate hike in 2026?",
    "outcomes": [
     {
@@ -8048,7 +8036,7 @@
      "price": 0.245
     }
    ],
-   "vol24": 732,
+   "vol24": 1042,
    "end": "2026-12-10",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
@@ -11637,11 +11625,11 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.037
+     "price": 0.0375
     },
     {
      "name": "No",
-     "price": 0.963
+     "price": 0.9625
     }
    ],
    "vol24": 2277,
@@ -13130,7 +13118,7 @@
     ],
     [
      "2026-11-08",
-     0.037
+     0.0375
     ]
    ]
   },
@@ -14946,7 +14934,7 @@
      "price": 0.9945
     }
    ],
-   "vol24": 21467,
+   "vol24": 21468,
    "end": "2026-12-09",
    "slug": "fed-decision-in-december-20260729232808632",
    "history": [
@@ -15333,14 +15321,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.335
+     "price": 0.345
     },
     {
      "name": "No",
-     "price": 0.665
+     "price": 0.655
     }
    ],
-   "vol24": 11296,
+   "vol24": 11916,
    "end": "2026-12-13",
    "slug": "government-shutdown-by",
    "history": [
@@ -15382,7 +15370,7 @@
     ],
     [
      "2026-11-08",
-     0.335
+     0.345
     ]
    ]
   },
@@ -15398,7 +15386,7 @@
      "price": 0.028
     }
    ],
-   "vol24": 3,
+   "vol24": 2,
    "end": "2026-11-14",
    "slug": "trump-approval-rating-at-least-on-november-13",
    "history": [
