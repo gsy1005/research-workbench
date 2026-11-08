@@ -35,6 +35,7 @@ jobs:
         run: |
           python3 scripts/fetch_polymarket.py || true
           python3 scripts/fetch_liquidity.py || true
+          python3 scripts/fetch_liquidity_panel.py || true
           python3 scripts/fetch_cftc.py || true
           python3 scripts/fetch_macro.py || true
           python3 scripts/fetch_extra.py || true

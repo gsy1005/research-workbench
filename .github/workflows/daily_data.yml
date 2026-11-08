@@ -21,6 +21,7 @@ jobs:
         run: |
           python3 scripts/fetch_polymarket.py || true
           python3 scripts/fetch_liquidity.py || true
+          python3 scripts/fetch_liquidity_panel.py || true
           python3 scripts/fetch_cftc.py || true
           python3 scripts/fetch_macro.py || true
           python3 scripts/fetch_extra.py || true
@@ -41,7 +42,7 @@ jobs:
         run: |
           git config user.name "data-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add charts/ data/polymarket.json data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json data/calendar_consensus.json data/econ_calendar.json data/j10_store.json data/trump_zone.json data/truth_posts.json data/news_latest.json data/news_fallback.js data/risk_appetite.json data/risk_appetite_backtest.csv data/risk_fundamental_experiment.json
+          git add charts/ data/polymarket.json data/chart_series.js data/macro_series.json data/macro_catalog.js data/auctions.json data/tic.json data/cftc.json data/liquidity.json data/liquidity_panel.json data/calendar_consensus.json data/econ_calendar.json data/j10_store.json data/trump_zone.json data/truth_posts.json data/news_latest.json data/news_fallback.js data/risk_appetite.json data/risk_appetite_backtest.csv data/risk_fundamental_experiment.json
           git diff --cached --quiet || git commit -m "每日数据 $(date +%F)"
           git pull --rebase origin main || { git rebase --abort; git pull --no-rebase -X ours origin main; }
           git push
