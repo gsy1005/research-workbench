@@ -1,5 +1,5 @@
 {
- "asof": "2026-11-15 00:04 BJT",
+ "asof": "2026-11-16 00:40 BJT",
  "src": "L2·Yahoo Finance 服务端快照(每2小时)",
  "quotes": {
   "VIXCLS": {
@@ -29,40 +29,40 @@
   "Y_GOLD": {
    "sym": "GC=F",
    "price": 3886.3,
-   "chg": -228.2,
-   "chg_pct": -5.546,
+   "chg": -143.9,
+   "chg_pct": -3.571,
    "time": "2026-11-13 21:59 UTC",
    "currency": "USD"
   },
   "Y_SLV": {
    "sym": "SI=F",
    "price": 49.121,
-   "chg": -3.443,
-   "chg_pct": -6.55,
+   "chg": -1.98,
+   "chg_pct": -3.875,
    "time": "2026-11-13 21:59 UTC",
    "currency": "USD"
   },
   "DCOILWTICO": {
    "sym": "CL=F",
    "price": 88.56,
-   "chg": 1.71,
-   "chg_pct": 1.969,
+   "chg": 2.52,
+   "chg_pct": 2.929,
    "time": "2026-11-13 22:00 UTC",
    "currency": "USD"
   },
   "DCOILBRENTEU": {
    "sym": "BZ=F",
    "price": 95.84,
-   "chg": 3.27,
-   "chg_pct": 3.532,
+   "chg": 4.35,
+   "chg_pct": 4.755,
    "time": "2026-11-13 21:59 UTC",
    "currency": "USD"
   },
   "Y_COPPER": {
    "sym": "HG=F",
    "price": 6.09,
-   "chg": -0.238,
-   "chg_pct": -3.761,
+   "chg": -0.13,
+   "chg_pct": -2.09,
    "time": "2026-11-13 21:59 UTC",
    "currency": "USD"
   },
@@ -85,8 +85,8 @@
   "Y_DXY": {
    "sym": "DX-Y.NYB",
    "price": 103.411,
-   "chg": 1.761,
-   "chg_pct": 1.732,
+   "chg": 1.181,
+   "chg_pct": 1.155,
    "time": "2026-11-13 21:59 UTC",
    "currency": "USD"
   },
@@ -108,10 +108,10 @@
   },
   "Y_BTC": {
    "sym": "BTC-USD",
-   "price": 65569.73,
-   "chg": -8150.39,
-   "chg_pct": -11.056,
-   "time": "2026-11-14 16:04 UTC",
+   "price": 64447.67,
+   "chg": -9516.8,
+   "chg_pct": -12.867,
+   "time": "2026-11-15 16:40 UTC",
    "currency": "USD"
   }
  }
