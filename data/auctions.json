@@ -1,89 +1,89 @@
 {
- "updated": "2026-11-15 16:36",
+ "updated": "2026-11-15 19:13",
  "recent": [
   {
-   "term": "10-Year",
-   "date": "2026-08-12",
-   "btc": 2.53,
-   "indirect_pct": 61.0,
-   "high_yield": 4.683
-  },
-  {
-   "term": "10-Year",
-   "date": "2026-07-23",
-   "btc": 2.3,
-   "indirect_pct": 58.3,
-   "high_yield": 2.438
-  },
-  {
-   "term": "10-Year",
-   "date": "2026-05-12",
-   "btc": 2.4,
-   "indirect_pct": 51.5,
-   "high_yield": 4.468
-  },
-  {
-   "term": "10-Year",
-   "date": "2026-02-11",
+   "term": "30-Year",
+   "date": "2026-08-13",
    "btc": 2.39,
-   "indirect_pct": 50.1,
-   "high_yield": 4.177
+   "indirect_pct": 53.1,
+   "high_yield": 5.216
   },
   {
-   "term": "10-Year",
-   "date": "2026-01-22",
-   "btc": 2.38,
-   "indirect_pct": 67.0,
-   "high_yield": 1.94
+   "term": "30-Year",
+   "date": "2026-05-13",
+   "btc": 2.3,
+   "indirect_pct": 53.7,
+   "high_yield": 5.046
   },
   {
-   "term": "10-Year",
-   "date": "2025-11-12",
-   "btc": 2.43,
-   "indirect_pct": 57.8,
-   "high_yield": 4.074
+   "term": "30-Year",
+   "date": "2026-02-19",
+   "btc": 2.75,
+   "indirect_pct": 78.0,
+   "high_yield": 2.473
   },
   {
-   "term": "10-Year",
-   "date": "2025-08-06",
-   "btc": 2.35,
-   "indirect_pct": 47.8,
-   "high_yield": 4.255
+   "term": "30-Year",
+   "date": "2026-02-12",
+   "btc": 2.66,
+   "indirect_pct": 54.4,
+   "high_yield": 4.75
   },
   {
-   "term": "10-Year",
-   "date": "2025-07-24",
+   "term": "30-Year",
+   "date": "2025-11-13",
+   "btc": 2.29,
+   "indirect_pct": 61.3,
+   "high_yield": 4.694
+  },
+  {
+   "term": "30-Year",
+   "date": "2025-08-07",
+   "btc": 2.27,
+   "indirect_pct": 44.4,
+   "high_yield": 4.813
+  },
+  {
+   "term": "30-Year",
+   "date": "2025-05-08",
+   "btc": 2.31,
+   "indirect_pct": 43.4,
+   "high_yield": 4.819
+  },
+  {
+   "term": "30-Year",
+   "date": "2025-02-20",
+   "btc": 2.48,
+   "indirect_pct": 69.9,
+   "high_yield": 2.403
+  },
+  {
+   "term": "30-Year",
+   "date": "2025-02-13",
+   "btc": 2.33,
+   "indirect_pct": 51.0,
+   "high_yield": 4.748
+  },
+  {
+   "term": "30-Year",
+   "date": "2024-11-06",
+   "btc": 2.64,
+   "indirect_pct": 50.4,
+   "high_yield": 4.608
+  },
+  {
+   "term": "30-Year",
+   "date": "2024-08-08",
+   "btc": 2.31,
+   "indirect_pct": 54.8,
+   "high_yield": 4.314
+  },
+  {
+   "term": "30-Year",
+   "date": "2024-05-09",
    "btc": 2.41,
-   "indirect_pct": 58.5,
-   "high_yield": 1.985
-  },
-  {
-   "term": "10-Year",
-   "date": "2025-05-06",
-   "btc": 2.6,
-   "indirect_pct": 52.4,
-   "high_yield": 4.342
-  },
-  {
-   "term": "10-Year",
-   "date": "2025-02-12",
-   "btc": 2.48,
-   "indirect_pct": 55.8,
-   "high_yield": 4.632
-  },
-  {
-   "term": "10-Year",
-   "date": "2025-01-23",
-   "btc": 2.48,
-   "indirect_pct": 62.5,
-   "high_yield": 2.243
-  },
-  {
-   "term": "10-Year",
-   "date": "2024-11-05",
-   "btc": 2.58,
-   "indirect_pct": 49.4,
-   "high_yield": 4.347
+   "indirect_pct": 57.6,
+   "high_yield": 4.635
   }
  ]
 }
