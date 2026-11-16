@@ -209,10 +209,6 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div><b>利率</b>：<span id="topRates">FedWatch 数据读取中…</span></div>
   <div><b>AI/英伟达预测</b>：<span id="topElection">预测市场数据读取中…</span></div>
   <div id="topMarkets">市场数据读取中…</div>
-  <div id="middleEastBrief" style="margin-top:7px;padding-top:7px;border-top:1px dashed #d7e0eb;">
-    <b>中东与原油（10月29日）</b>：美媒称美国已通知多个海湾国家及地区盟友，为中期选举后可能对伊朗发动短期军事行动做准备，特朗普尚未作出最终决定；与此同时，美国副总统万斯致信伊朗试图重启和平谈判，沙特请求给予谈判更多时间。<b>外交努力与选后军事风险并存，不能仅按单方面缓和或升级处理</b>。美国中央司令部称霍尔木兹海峡国际公认主要航道已清除水雷并保持畅通。<span style="color:#6b7a90">（10/29早间财经汇总）</span><br>
-    <b>油价与宏观</b>：10月28日结算，WTI <b>102.78</b> 美元/桶（<b>+2.88%</b>），布伦特 <b>115.32</b> 美元/桶（<b>+1.26%</b>）；10月29日亚盘油价回落，布伦特失守 <b>111</b> 美元/桶。EIA原油库存减少 <b>189.2</b> 万桶、降幅超预期，汽油库存增加 <b>387</b> 万桶，美国原油产量升至 <b>1,399.2</b> 万桶/日。美联储维持基准利率在 <b>3.75%–4.00%</b>，10比2投票中两票主张加息25bp，决议后加息预期升温；隔夜美股三大指数收涨，但谷歌财报不及预期拖累纳指期货，微软财报超预期，科技板块表现分化。<span style="color:#6b7a90">（10/29早间财经汇总）</span>
-  </div>
   <div style="font-size:11px;color:#6b7a90;line-height:1.6;margin-top:4px;">注：不同指标发布日期与频次不同，变动按各序列最新观测及其1日/1周前可得观测计算。</div>
 </div>
 
@@ -1295,9 +1291,18 @@ function exportCustomCSV(){
       var pmAs=(PM.fetched_at||'').slice(0,10);
       var jr2026=yesOdds(/rejoin NVIDIA by December 31, 2026/i);
       var aiBubble=yesOdds(/AI bubble burst in 2026/i);
-      var aiLine='英伟达下任CEO领先：'+(topC?topC+' '+candNames[topC].toFixed(0)+'%':'—')
-        +(jr2026!=null?'；黄仁勋2026年底前重返英伟达 '+jr2026+'%':'')
-        +(aiBubble!=null?'；AI泡沫2026年内破裂 '+aiBubble+'%':'');
+      function oddsD1(qre){ var m=pmk.filter(function(x){return qre.test(x.question||'');})[0];
+        if(!m||!m.history||m.history.length<2)return null;
+        var h=m.history, d=(h[h.length-1][1]-h[h.length-2][1])*100;
+        return +d.toFixed(1); }
+      function pp(v){ return v==null?'（环比—）':'（环比'+(v>0?'+':'')+v+'pp）'; }
+      var jrD1=oddsD1(/rejoin NVIDIA by December 31, 2026/i);
+      var aiD1=oddsD1(/AI bubble burst in 2026/i);
+      var esc=topC?topC.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'):null;
+      var topD1=esc?oddsD1(new RegExp('^Will '+esc+' be the next CEO of NVIDIA','i')):null;
+      var aiLine='英伟达下任CEO领先：'+(topC?topC+' '+candNames[topC].toFixed(0)+'%'+pp(topD1):'—')
+        +(jr2026!=null?'；黄仁勋2026年底前重返英伟达 '+jr2026+'%'+pp(jrD1):'')
+        +(aiBubble!=null?'；AI泡沫2026年内破裂 '+aiBubble+'%'+pp(aiD1):'');
       set('topElection',aiLine+'。（Polymarket '+pmAs+'，合约最新价，非官方结果）');
       predLine='AI/英伟达预测：'+aiLine+'（Polymarket '+pmAs+'）。';
     }
