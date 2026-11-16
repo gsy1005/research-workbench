@@ -44,7 +44,6 @@ h1 em{font-style:normal;background:linear-gradient(transparent 62%,rgba(212,169,
 .rng button{background:transparent;color:var(--dim);border:1px solid var(--line);border-radius:6px;padding:3px 10px;font-size:12px;font-family:inherit;cursor:pointer}
 .rng button.on{color:var(--gold);border-color:var(--gold)}
 .note{color:var(--dim);font-size:11.5px;margin-top:8px}
-/* TACO事件 */
 .ev{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px;background:var(--card)}
 .ev-hd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;cursor:pointer}
 .ev-date{color:var(--dim);font-size:12px}
@@ -116,12 +115,12 @@ a.lnk{color:var(--gold);text-decoration:none}
 <body>
 <div class="wrap">
   <h1>特朗普执政<em>关注焦点</em></h1>
-  <div class="sub">政策压力 · 民调 · TACO回撤 · Truth Social · 政策预期 —— 数据每日管线自动更新</div>
+  <div class="sub">AI与科技股 · 民调 · Truth Social · 政策预期 —— 数据每日管线自动更新</div>
 
   <div class="stats" id="stats"></div>
 
   <div class="tabbar" id="tabs">
-    <button data-p="p1" class="on">压力指数</button>
+    <button data-p="p1" class="on">AI与科技股</button>
     <button data-p="p2">民调</button>
     <button data-p="p5">市场政策预期</button>
     <button data-p="sec-cn" class="macro">美中竞赛</button>
@@ -136,19 +135,18 @@ a.lnk{color:var(--gold);text-decoration:none}
     <button data-p="p-lev" style="border-color:var(--gold)">贵金属杠杆</button>
     <button data-p="sec-mfg" class="macro">制造业</button>
     <button data-p="sec-move" class="macro">国际移动</button>
-    <button data-p="p3">TACO事件复盘</button>
     <button data-p="p4">Truths跟踪</button>
     <button data-p="p-ht" style="border-color:var(--gold)">宏观库</button>
   </div>
 
   <div class="panel on" id="p1">
     <div class="card">
-      <h3>川普压力指数（TACO指数）· 总指数与分项贡献</h3>
+      <h3>AI与科技股 · 纳指100 / 英伟达 / 标普500（归一化走势）</h3>
       <div class="rng" id="rng1">
         <button data-r="90">近3月</button><button data-r="180">近6月</button><button data-r="365" class="on">近1年</button><button data-r="0">全部</button>
       </div>
       <div class="chart" id="chPressure"></div>
-      <div class="note">柱=分项贡献（净支持/10Y/MOVE/S&P/VIX/CPI Nowcast，堆叠）；金线=总指数。短标=强/最强TACO回撤事件。口径：60%纯20日变化+40%第二任期绝对压力分位。</div>
+      <div class="note">三条线均归一化（区间首日=100）便于对照：蓝=纳指100，绿=英伟达NVDA，金=标普500。Yahoo日线，每日管线自动更新。</div>
     </div>
   </div>
 
@@ -188,14 +186,6 @@ a.lnk{color:var(--gold);text-decoration:none}
   <div class="panel" id="sec-asset"><div class="secnote">股 · 债 · 汇 · 金 · 币 · 房 —— 资产价格全景</div></div>
   <div class="panel" id="sec-mfg"><div class="secnote">工业产出 · 产能利用率 · 耐用品 · 资本品订单</div></div>
   <div class="panel" id="sec-move"><div class="secnote">跨境与出行活跃度（TSA安检旅客量）</div></div>
-
-  <div class="panel" id="p3">
-    <div class="filterRow">
-      <input id="evQ" placeholder="筛选事件，如：关税 / 伊朗 / 鲍威尔…">
-      <span class="note" id="evCnt"></span>
-    </div>
-    <div id="evList"></div>
-  </div>
 
   <div class="panel" id="p4">
     <div class="filterRow">
@@ -287,43 +277,40 @@ window.addEventListener('load',()=>setTimeout(()=>hashOpen(0),200));
 
 /* ---------- 统计卡 ---------- */
 function renderStats(){
-  const p=TZ.pressure, a=TZ.approval;
-  const pc=p.value>0?'up':(p.value<0?'down':'flat');
+  const a=TZ.approval;
   const ac=a.net>0?'up':'down';
+  const ndxA=(window.CHART_SERIES&&window.CHART_SERIES.Y_NDX)||[];
+  const nvA=(window.CHART_SERIES&&window.CHART_SERIES.Y_NVDA)||[];
+  const ndxL=ndxA.length?ndxA[ndxA.length-1]:null;
+  const nvL=nvA.length?nvA[nvA.length-1]:null;
   const lastPost=TR&&TR.posts.length?new Date(TR.posts[0].t):null;
   $('stats').innerHTML=
-    `<div class="stat"><div class="k">川普压力指数</div><div class="v ${pc}">${p.value>0?'+':''}${p.value}%</div><div class="d">截至 ${p.asof} · L3·ocmacro</div></div>
+    `<div class="stat"><div class="k">纳指100</div><div class="v flat">${ndxL?ndxL[1].toLocaleString():'—'}</div><div class="d">${ndxL?ndxL[0]:''} · Yahoo日线</div></div>
      <div class="stat"><div class="k">净支持率</div><div class="v ${ac}">${a.net>0?'+':''}${a.net}%</div><div class="d">支持 ${a.approve}% / 反对 ${a.disapprove}% · ${a.asof}</div></div>
-     <div class="stat"><div class="k">TACO事件复盘</div><div class="v flat">${TZ.taco_events.length}条</div><div class="d">更新至 ${TZ.taco_updated||'—'}</div></div>
+     <div class="stat"><div class="k">英伟达 NVDA</div><div class="v flat">${nvL?'$'+nvL[1].toFixed(2):'—'}</div><div class="d">${nvL?nvL[0]:''} · Yahoo日线</div></div>
      <div class="stat"><div class="k">Truth Social存档</div><div class="v flat">${(TR.total_in_archive/10000).toFixed(1)}万条</div><div class="d">最新 ${lastPost?lastPost.toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+' 北京':''}</div></div>`;
   $('srcNote').innerHTML='数据来源：'+esc(TZ.source)+'；'+esc(TR.source)+'。抓取时间 '+(TZ.fetched_at||'').slice(0,16).replace('T',' ')+' UTC · 特朗普专区为本工作台数据镜像，标注L3·第三方。';
 }
 
-/* ---------- 压力指数图 ---------- */
-const COMP=[['approval','净支持','#e5534b'],['dgs10','10Y','#e5864b'],['move','MOVE','#d4a944'],['sp500','S&P','#5b9bd5'],['vix','VIX','#8b6fd5'],['cpinow','CPI Nowcast','#4caf7d']];
+/* ---------- AI与科技股走势（纳指100/英伟达/标普500 归一化） ---------- */
 function cutDays(arr,days){if(!days)return arr;const end=arr[arr.length-1][0];const t0=new Date(end);t0.setDate(t0.getDate()-days);const k=t0.toISOString().slice(0,10);return arr.filter(p=>p[0]>=k);}
+const AIT=[['Y_NDX','纳指100','#5b9bd5'],['Y_NVDA','英伟达','#7ac142'],['Y_GSPC','标普500','#d4a944']];
 function renderPressure(days){
-  const H=cutDays(TZ.pressure.history,days);
-  const dates=H.map(p=>p[0]);
-  const mk=null;
-  const series=COMP.map((c,i)=>({
-    name:c[1],type:'bar',stack:'c',itemStyle:{color:c[2]},barMaxWidth:5,
-    data:H.map(p=>p[2+i])
-  }));
-  series.push({name:'总指数',type:'line',z:5,symbol:'none',lineStyle:{color:'#f2e3b6',width:2.2},itemStyle:{color:'#f2e3b6'},
-    data:H.map(p=>p[1]),
-    markLine:{symbol:'none',silent:true,label:{show:false},lineStyle:{type:'solid',width:1},
-      data:TZ.pressure.taco_marks.filter(m=>/强/.test(m.strength)).map(m=>({xAxis:(m.date.split('→').pop()||m.date).trim(),
-        lineStyle:{color:m.strength==='最强'?'#e5534b':'#e5864b',opacity:.55},
-        tooltip:{formatter:`<b>${esc(m.date)} · ${esc(m.strength)}</b><br>${esc(m.text)}`}}))}});
+  const S=window.CHART_SERIES||{};
+  const norm=k=>{let a=cutDays(S[k]||[],days);if(a.length<2)return null;const b=a[0][1];return a.map(p=>[p[0],+(p[1]/b*100).toFixed(2)]);};
+  const ref=norm('Y_NDX')||norm('Y_NVDA')||norm('Y_GSPC')||[];
+  const dates=ref.map(p=>p[0]);
+  const series=AIT.map(t=>{const n=norm(t[0]);if(!n)return null;const m={};n.forEach(p=>m[p[0]]=p[1]);
+    return {name:t[1],type:'line',symbol:'none',lineStyle:{color:t[2],width:2},itemStyle:{color:t[2]},
+      data:dates.map(d=>m[d]!=null?m[d]:null)};}).filter(Boolean);
   if(!CH.p)CH.p=echarts.init($('chPressure'));
   CH.p.setOption({
     backgroundColor:'transparent',
-    tooltip:{trigger:'axis',axisPointer:{type:'cross'},backgroundColor:'#171a20',borderColor:'#2a2e37',textStyle:{color:'#e8e6e1',fontSize:12}},
+    tooltip:{trigger:'axis',backgroundColor:'#171a20',borderColor:'#2a2e37',textStyle:{color:'#e8e6e1',fontSize:12},valueFormatter:v=>v==null?'—':(+v).toFixed(1)},
     legend:{textStyle:{color:'#9a958c',fontSize:11},top:0},
     grid:{left:46,right:16,top:36,bottom:60},
     xAxis:{type:'category',data:dates,axisLine:{lineStyle:{color:'#2a2e37'}},axisLabel:{color:'#9a958c',fontSize:10}},
-    yAxis:{type:'value',name:'%',axisLabel:{color:'#9a958c'},splitLine:{lineStyle:{color:'#22262e'}}},
+    yAxis:{type:'value',name:'归一化',axisLabel:{color:'#9a958c'},splitLine:{lineStyle:{color:'#22262e'}}},
     dataZoom:[{type:'slider',height:18,bottom:22,borderColor:'#2a2e37',backgroundColor:'#171a20',textStyle:{color:'#9a958c'}}],
     series:series
   },true);
@@ -351,24 +338,6 @@ function renderApproval(days){
   },true);
 }
 $('rng2').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('rng2').children].forEach(x=>x.classList.toggle('on',x===b));renderApproval(+b.dataset.r);};
-
-/* ---------- TACO事件 ---------- */
-function renderEvents(q){
-  q=(q||'').trim();
-  const list=TZ.taco_events.filter(e=>!q||(e.title+e.threat+e.retreat+e.reason+e.implication).includes(q));
-  $('evCnt').textContent=list.length+' / '+TZ.taco_events.length+' 条 · 点击展开详情';
-  $('evList').innerHTML=list.map(e=>`
-    <div class="ev" onclick="this.classList.toggle('open')">
-      <div class="ev-hd"><span class="ev-date">${esc(e.range)}</span><span class="badge b-${esc(e.strength)}">${esc(e.strength)}</span><span class="ev-title">${esc(e.title)}</span></div>
-      <div class="ev-body">
-        ${e.threat?`<p><span class="tag">威胁</span>${esc(e.threat)}</p>`:''}
-        ${e.retreat?`<p><span class="tag t2">回撤</span>${esc(e.retreat)}</p>`:''}
-        ${e.reason?`<p><span class="tag t3">研判</span>${esc(e.reason)}</p>`:''}
-        ${e.implication?`<p><span class="tag t4">含义</span>${esc(e.implication)}</p>`:''}
-      </div>
-    </div>`).join('')||'<div class="empty">没有匹配的事件</div>';
-}
-$('evQ').oninput=e=>renderEvents(e.target.value);
 
 /* ---------- Truths ---------- */
 const KWS=['关税','tariff','美联储','fed','鲍威尔','powell','降息','rate','中国','china','俄罗斯','russia','伊朗','iran','油','oil','通胀','inflation','制裁','sanction','北约','nato','乌克兰','ukraine','协议','deal'];
@@ -783,7 +752,7 @@ Promise.all([
   fetch('../data/macro_series.json?v='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null)
 ]).then(([tz,tr,mac])=>{
   TZ=tz;TR=tr;MACRO=mac;
-  renderStats();renderPressure(365);renderApproval(365);renderEvents('');renderPosts();renderMarkets();renderAI();
+  renderStats();renderPressure(365);renderApproval(365);renderPosts();renderMarkets();renderAI();
   renderMacro('poll',$('pollExtra'));
 }).catch(e=>{
   document.body.insertAdjacentHTML('beforeend','<div class="empty">数据文件缺失：请先运行 scripts/fetch_trump.py</div>');

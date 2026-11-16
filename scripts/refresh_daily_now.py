@@ -25,6 +25,7 @@ YAHOO = {
  'Y_GOLD':'GC=F','Y_SLV':'SI=F','Y_COPPER':'HG=F',
  'Y_DXY':'DX-Y.NYB','Y_EURUSD':'EURUSD=X','Y_USDJPY':'JPY=X',
  'Y_HSI':'^HSI','Y_000300SS':'510300.SS','Y_MOVE':'^MOVE',
+ 'Y_NVDA':'NVDA',
  'Y_GVZ':'^GVZ','Y_OVX':'^OVX','VIXCLS':'^VIX',
  'Y_TLT':'TLT','Y_HYG':'HYG','Y_LQD':'LQD','Y_EMB':'EMB'
 }

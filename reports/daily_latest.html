@@ -340,7 +340,7 @@
 <h2>五、政策定价与地缘跟踪<span class="en">POLICY PRICING & GEO</span></h2>
 <div class="grid2">
   <div class="mini"><h4>CME FedWatch 加息预期（联邦基金期货定价）<a href="https://www.cmegroup.cn/fed-watch/" target="_blank" rel="noopener" style="float:right;background:var(--gold);color:#111;font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;text-decoration:none;">↗ CME官方实时页</a></h4><div id="fwBox"></div><div style="font-size:11px;color:var(--dim);margin-top:6px;">此表=每2小时管线快照（工作日07-23点）；秒级实时请点右上直达官方页——CME主站X-Frame-Options:DENY+工具会话校验，官方明确禁止第三方嵌入，已实测无解。</div></div>
-  <div class="mini"><h4>特朗普 TACO 压力指数</h4><div id="tacoBox"></div></div>
+  <div class="mini"><h4>AI与科技股 · 纳指100 / 英伟达</h4><div id="aiBox"></div></div>
 </div>
 <div class="mini"><h4>美伊局势 · 预测市场跟踪</h4><div id="iranBox"></div></div>
 <div class="mini" style="margin-top:12px;"><h4>地缘专区 · 美伊与中东格局重要事件时间线</h4>
@@ -353,9 +353,9 @@
 
 </section>
 <section class="dp" id="dp8">
-<!-- ============ 特朗普执政关注焦点（完整面板嵌入：压力指数·民调含参众两院·政策预期·TACO·Truths） ============ -->
-<h2>特朗普执政关注焦点<span class="en">TRUMP ZONE · 政策压力 · 民调（含2026参众两院控制权） · TACO · Truth Social · 数据每日管线更新</span></h2>
-<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">完整面板内嵌：压力指数 / 民调（净支持率 + <b style="color:#e5534b">共和党拿下参议院</b> / <b style="color:#e5534b">共和党赢得众议院</b>概率）/ 市场政策预期 / 美中竞赛 / 财政 / 贸易 / 物价 / 利率 / 流动性 / 就业 / 能源 / 资产 / TACO事件复盘 / Truths跟踪。数据源 L3·ocmacro + L2·Polymarket交易所，每日管线自动更新。<a href="../panels/trump_zone.html" style="color:var(--gold);">新窗口打开 ↗</a></p></div>
+<!-- ============ 特朗普执政关注焦点（完整面板嵌入：AI与科技股·民调·政策预期·Truths） ============ -->
+<h2>特朗普执政关注焦点<span class="en">TRUMP ZONE · AI与科技股 · 民调 · Truth Social · 政策预期 · 数据每日管线更新</span></h2>
+<div class="card"><p style="font-size:12px;color:var(--dim);margin:0;">完整面板内嵌：AI与科技股（纳指100/英伟达走势 + 英伟达预测市场）/ 民调（净支持率）/ 市场政策预期 / 美中竞赛 / 财政 / 贸易 / 物价 / 利率 / 流动性 / 就业 / 能源 / 资产 / Truths跟踪。数据源 L2·Yahoo + L2·Polymarket交易所 + L3·ocmacro，每日管线自动更新。<a href="../panels/trump_zone.html" style="color:var(--gold);">新窗口打开 ↗</a></p></div>
 <iframe src="../panels/trump_zone.html" style="width:100%;height:2450px;border:0;border-radius:8px;background:#0d1117;" loading="lazy" title="特朗普执政关注焦点"></iframe>
 </section>
 <section class="dp" id="dp4">
@@ -1036,22 +1036,24 @@ function renderLive(S){
     `<table><tr><th>FOMC会议</th><th>维持不变</th><th>加息25bp</th><th>加息50bp</th></tr>${rows}</table>
      <div style="font-size:11px;color:var(--dim);margin-top:6px;">${esc(fw.src)} · 截至 ${fw.asof} · ${esc(fw.note)}；前一快照(${fw.prev.asof})：9月维持${fw.prev.hold}% / 加息${fw.prev.hike25}%</div>`;
   }
-  // TACO（若 fresh_panels.js 已用 trump_zone.json 渲染，则跳过快照）
-  if(!window.__tacoFresh){
-  let t = S.taco;
-  let comps = t.comps.map(c=>`<tr><td>${c[0]}</td><td class="${c[1]>=0?'up':'dn'}" style="text-align:right;">${c[1]>0?'+':''}${c[1]}%</td></tr>`).join('');
-  let evs = t.events.map(e=>`<div style="font-size:12px;padding:5px 0;border-top:1px dashed var(--line);"><span style="color:var(--dim);font-size:11px;">${e[0]}</span> ${e[1]}</div>`).join('');
-  document.getElementById('tacoBox').innerHTML =
-    `<div style="display:flex;align-items:baseline;gap:14px;"><span class="big" style="color:${t.value>0?'var(--up)':'var(--dn)'};">${t.value>0?'+':''}${t.value}%</span>
-     <span class="ch-tag" style="border-color:var(--gold);color:var(--gold);">${t.zone}区</span>
-     <span style="font-size:12px;color:var(--dim);">较20个交易日前 ${t.chg20d}%</span></div>
-     <div class="zonebar"><div style="background:#2d4a3f;"></div><div style="background:#3a4a2d;"></div><div style="background:#4a3a2d;"></div><div style="background:#4a2d2d;"></div></div>
-     <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim);"><span>膨胀(易GAMBLE)</span><span>低压</span><span>中压</span><span>高压(易TACO)</span></div>
-     <div style="font-size:11px;color:var(--dim);margin:8px 0;">分项贡献（20日变动标准化）：</div>
-     <table>${comps}</table>
-     <div style="font-size:11px;color:var(--dim);margin-top:10px;">近期TACO事件：</div>${evs}
-     <div style="font-size:11px;color:var(--dim);margin-top:8px;">${esc(t.src)} · 数据日 ${t.asof} · ${esc(t.method)}</div>`;
-  }
+  // AI与科技股 mini（读 chart_series.js 的 Yahoo 日线）
+  (function(){
+    var box=document.getElementById('aiBox'); if(!box) return;
+    var CS=window.CHART_SERIES||{};
+    function row(k,name,fmt){
+      var a=CS[k]||[]; if(a.length<2) return '';
+      var L=a[a.length-1];
+      var d20=a.length>21?((L[1]-a[a.length-21][1])/a[a.length-21][1]*100):null;
+      return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-top:1px dashed var(--line);">'
+        +'<span style="font-size:12px;color:var(--dim);">'+name+'</span>'
+        +'<span style="font-size:14px;font-weight:700;">'+fmt(L[1])+(d20!=null?' <span style="font-size:11px;color:'+(d20>=0?'var(--up)':'var(--dn)')+';font-weight:400;">20日 '+(d20>=0?'+':'')+d20.toFixed(1)+'%</span>':'')+'</span>'
+        +'<span style="font-size:11px;color:var(--dim);">'+L[0]+'</span></div>';
+    }
+    box.innerHTML=row('Y_NDX','纳指100',function(v){return v.toLocaleString();})
+      +row('Y_NVDA','英伟达 NVDA',function(v){return '$'+v.toFixed(2);})
+      +row('Y_GSPC','标普500',function(v){return v.toLocaleString();})
+      +'<div style="font-size:11px;color:var(--dim);margin-top:6px;">Yahoo日线 · 每日管线自动更新 · 英伟达预测市场（下任CEO/市值/AI泡沫）见下方特朗普专区面板</div>';
+  })();
   // 美伊（若 fresh_panels.js 已用 polymarket.json+geopolitics.json 渲染，则跳过快照）
   if(!window.__iranFresh){
   let ir = S.iran;

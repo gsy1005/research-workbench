@@ -91,7 +91,7 @@ table.kv tr:nth-child(even) td{background:var(--panel2);}
 .lpBar .eval b{color:var(--wht);}
 .lpBar .meta{font-size:11px;color:var(--dim);flex-basis:100%;border-top:1px dashed #ead8d0;padding-top:4px;}
 .lpBar .meta a{color:var(--blueL);text-decoration:none;}
-.lpFrameWrap{margin:0 0 4px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#0d0f14;}
+.lpFrameWrap{margin:0 0 4px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#f5f2ec;}
 .lpFrameWrap iframe{display:block;width:100%;height:960px;border:0;}
 .lpTake{background:#fdf7ea;border:1px solid #e3c88f;border-left:4px solid #b98a2f;border-radius:6px;padding:10px 16px;font-size:12.5px;line-height:2;color:#3a2f16;}
 .lpTake .tvh{color:#8a6a2f;font-weight:bold;margin-right:8px;}
@@ -355,7 +355,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="grid3">
   <div class="cbox"><h4>英伟达下任CEO · Polymarket赔率（%）<span>黄仁勋11月12日已辞职 · 候选人Yes合约最新价</span></h4><div class="ct" id="cM2"></div><div id="cM2note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">读取预测市场数据中…</div></div>
   <div class="cbox"><h4>美国衰退概率（%）<span>Polymarket vs Kalshi · 合约定义不同</span></h4><div class="ct" id="cM3"></div><div id="cM3note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;"></div></div>
-  <div class="cbox"><h4>TACO指数（特朗普政策压力）<span>越高=政策反复（TACO式回撤）概率越高</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
+  <div class="cbox"><h4>AI与科技股：纳指100 vs 英伟达（归一化）<span>区间首日=100 · Yahoo日线 · 每日管线更新</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
   <div class="cbox"><h4>AI预测赔率走势（%）<span>Polymarket每日Yes合约价 · 黄仁勋2026年底前重返英伟达 · AI泡沫2026年内破裂</span></h4><div class="ct" id="cM2t"></div><div id="cM2tnote" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">读取预测市场历史中…</div></div>
   <div class="cbox"><h4>政策预期温度计：2Y美债 vs 目标区间上限（%）<span>2Y高于上限=市场押注继续加息</span></h4><div class="ct" id="cM5"></div></div>
   <div class="cbox"><h4>通胀预期锚：5Y盈亏平衡 · 5y5y远期（%）<span>锚是否松动决定加息容忍度</span></h4><div class="ct" id="cM6"></div></div>
@@ -1205,36 +1205,37 @@ function exportCustomCSV(){
       '<b>商品仓位</b>：黄金净持仓 '+(gc!=null?gc.toLocaleString():'—')+' 张（周 '+fp(dgc,0)+'张）；WTI原油净持仓 '+(cl!=null?cl.toLocaleString():'—')+' 张（周 '+fp(dcl,0)+'张）。正值为净多、负值为净空。');
   })();
 
-  /* ---- 需联网数据：FedWatch + TACO + 预测市场快照 ---- */
+  /* ---- 需联网数据：FedWatch + 预测市场快照 ---- */
   function J(u){ return fetch(u+(u.indexOf('?')>0?'&':'?')+'v='+Date.now()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}); }
   Promise.all([J('../data/fedwatch.json'), J('../data/trump_zone.json'), J('../data/prediction_snapshot.json'), J('../data/polymarket.json')]).then(function(R){
     var FW=R[0], TZ=R[1], PS=R[2], PM=R[3];
 
-    /* TACO 指数卡 */
-    var tacoLine='';
-    if(TZ&&TZ.pressure){
-      var P=TZ.pressure, hist=P.history||[];
-      var v=P.value, d20=hist.length>21?+(v-hist[hist.length-21][1]).toFixed(1):null;
-      var band=v>=8?'高压区·需防TACO式政策反复':(v>=2?'中压区':'低压区');
-      var cmap={approval:'净支持',dgs10:'10Y',move:'MOVE',sp500:'标普',vix:'VIX',bkevenpy02:'盈亏平衡'};
-      var chips=''; if(P.latest_contrib){ Object.keys(cmap).forEach(function(k){ var x=P.latest_contrib[k]; if(x==null)return;
-        chips+='<span style="display:inline-block;border:1px solid #c9d4e4;border-radius:9px;padding:1px 7px;margin:1px 3px 1px 0;font-size:10.5px;color:#44536b;">'+cmap[k]+' <b style="color:'+(x>0?'#c8342a':'#2f6fbd')+'">'+fp(x,1)+'</b></span>'; }); }
-      set('cM4t','当前 <b style="color:#c8342a;font-size:17px;">'+f1(v)+'</b>（截至 '+P.asof+' · 20日 '+fp(d20,1)+'）· <b>'+band+'</b><br><span style="font-size:10.5px;color:#66788f;">分项贡献：</span>'+chips);
-      tacoLine='TACO指数 '+f1(v)+'（20日'+fp(d20,1)+'）——'+band+'。';
+    /* AI与科技股卡：纳指100 vs 英伟达（归一化） */
+    var aiStockLine='';
+    (function(){
+      var ndx=ser('Y_NDX'), nv=ser('Y_NVDA');
+      if(ndx.length<2&&nv.length<2) return;
+      var nL=ndx.length?ndx[ndx.length-1]:null, vL=nv.length?nv[nv.length-1]:null;
+      var n20=ndx.length>21?Math.round(ndx[ndx.length-1][1]-ndx[ndx.length-21][1]):null;
+      var v20=nv.length>21?+((nv[nv.length-1][1]-nv[nv.length-21][1])/nv[nv.length-21][1]*100).toFixed(1):null;
+      set('cM4t','纳指100 <b style="color:#2f6fbd;font-size:16px;">'+(nL?nL[1].toLocaleString():'—')+'</b>（20日 '+(n20!=null?(n20>0?'+':'')+n20:'—')+'点） · 英伟达 <b style="color:#3e7c2b;font-size:16px;">'+(vL?'$'+vL[1].toFixed(2):'—')+'</b>（20日 '+(v20!=null?(v20>0?'+':'')+v20+'%':'—')+'）');
+      aiStockLine='纳指100 '+(nL?nL[1].toLocaleString():'—')+'（20日'+(n20!=null?(n20>0?'+':'')+n20+'点':'—')+'）；英伟达 '+(vL?'$'+vL[1].toFixed(2):'—')+'（20日'+(v20!=null?(v20>0?'+':'')+v20+'%':'—')+'）。';
       var el4=document.getElementById('cM4');
-      if(el4&&window.echarts&&hist.length){
+      if(el4&&window.echarts){
+        var norm=function(a){var b=a[0][1];return a.slice(-250).map(function(p){return [p[0],+(p[1]/b*100).toFixed(2)];});};
+        var nn=ndx.length>1?norm(ndx):[], vv=nv.length>1?norm(nv):[];
         var ch4=echarts.init(el4);
         ch4.setOption({backgroundColor:'transparent',animation:false,
-          grid:{left:34,right:10,top:14,bottom:20},
+          legend:{show:true,top:0,textStyle:{fontSize:10,color:'#66788f'},data:['纳指100','英伟达']},
+          grid:{left:40,right:12,top:26,bottom:20},
           xAxis:{type:'time',axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},axisLine:{lineStyle:{color:'#c9d4e4'}}},
           yAxis:{type:'value',axisLabel:{color:'#6b7a90',fontSize:9.5,fontFamily:KAI},splitLine:{lineStyle:{color:'#e8eef6'}}},
-          series:[{name:'TACO指数',type:'line',showSymbol:false,data:hist.slice(-250).map(function(p){return [p[0],p[1]];}),
-            lineStyle:{width:1.8,color:'#d4a944'},itemStyle:{color:'#d4a944'},
-            areaStyle:{color:'rgba(212,169,68,.14)'},
-            markLine:{symbol:'none',label:{show:false},lineStyle:{color:'#9fb0c3',type:'dashed'},data:[{yAxis:0},{yAxis:8,lineStyle:{color:'#c8342a',type:'dashed'},label:{show:true,formatter:'高压线',fontSize:9,color:'#c8342a',position:'insideStartTop'}}]}}]});
+          series:[
+            {name:'纳指100',type:'line',showSymbol:false,data:nn,lineStyle:{width:1.8,color:'#2f6fbd'},itemStyle:{color:'#2f6fbd'}},
+            {name:'英伟达',type:'line',showSymbol:false,data:vv,lineStyle:{width:1.8,color:'#3e7c2b'},itemStyle:{color:'#3e7c2b'}}]});
         window.addEventListener('resize',function(){ch4.resize();});
       }
-    }
+    })();
 
     /* 货币政策总结 */
     var predLine='';
@@ -1280,7 +1281,7 @@ function exportCustomCSV(){
       var rate1=m1?m1.meeting+'：加息 '+m1.hike+'% / 维持 '+m1.no_change+'% / 降息 '+m1.ease+'%':'';
       set('topRates',rate0+(m1?'；'+rate1:'')+'。（CME FedWatch，'+(FW.asof||'')+'）');
       set('sumM','<b>总结</b>：当前目标区间 <b>'+tar+'</b>；'+rate0+(m1?'；'+rate1:'')+'。最近会议概率最高项为<b>'+opts[0][0]+' '+opts[0][1]+'%</b>。<br>'+
-        '<b>其他指标</b>：2Y美债 '+f2(_v('DGS2'))+'%（近1周 '+fbp(_bp('DGS2',7))+'）。'+tacoLine+predLine+'（CME FedWatch，'+(FW.asof||'')+'）');
+        '<b>其他指标</b>：2Y美债 '+f2(_v('DGS2'))+'%（近1周 '+fbp(_bp('DGS2',7))+'）。'+aiStockLine+predLine+'（CME FedWatch，'+(FW.asof||'')+'）');
     }
 
   });
@@ -1475,6 +1476,24 @@ function exportCustomCSV(){
     });
   };
   loadEval();
+  /* 流动性面板 iframe 健康检查：从未加载完成或内容为空时给出直达链接，避免纯黑一块 */
+  (function(){
+    var fr=document.getElementById('lpFrame'); if(!fr) return;
+    var loaded=false;
+    var timer=setTimeout(check,9000);
+    fr.addEventListener('load',function(){ loaded=true; clearTimeout(timer); setTimeout(check,2500); });
+    function check(){
+      if(!loaded) return; /* 同域可读则校验内容；跨域无法读取时视为已加载 */
+      try{
+        var d=fr.contentDocument;
+        if(d&&d.body&&d.body.innerText.replace(/\s/g,'').length>50) return;
+      }catch(e){ return; }
+      var w=fr.parentNode;
+      if(w&&!w.querySelector('.lpFallback')){
+        w.insertAdjacentHTML('beforeend','<div class="lpFallback" style="padding:14px 16px;font-size:12.5px;color:#5a6a82;background:#f5f2ec;line-height:1.8;">流动性面板未能在此窗口加载（深色主题面板可能被浏览器或广告拦截插件拦截）。请直接访问 <a href="https://gsy1005.github.io/l-/" target="_blank" rel="noopener noreferrer" style="color:#2f6fbd;font-weight:700;">gsy1005.github.io/l- ↗</a> 查看完整面板，或点击页面顶部「市场脆弱性/流动性监测」按钮重试。</div>');
+      }
+    }
+  })();
 })();
 </script>
 </body>

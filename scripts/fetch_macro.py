@@ -248,6 +248,7 @@ add('B235RC1Q027SBEA', '联邦关税收入(年化)', '十亿美元', 'cn', 'L1·
 # 资产 asset
 add('Y_GSPC', '标普500', '点', 'asset', 'L2·Yahoo', ('yahoo', '^GSPC'))
 add('Y_IXIC', '纳斯达克综指', '点', 'asset', 'L2·Yahoo', ('yahoo', '^IXIC'))
+add('Y_NVDA', '英伟达NVDA', '美元', 'asset', 'L2·Yahoo', ('yahoo', 'NVDA'))
 add('VIXCLS', 'VIX波动率', '点', 'asset', 'L1·FRED/CBOE', ('fred', 'VIXCLS'))
 add('Y_MOVE', 'MOVE美债波动率', '点', 'liq', 'L2·Yahoo(ICE BofA)', ('yahoo', '^MOVE'))
 add('Y_DXY', '美元指数DXY', '点', 'asset', 'L2·Yahoo', ('yahoo', 'DX-Y.NYB'))
