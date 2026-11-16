@@ -10,23 +10,32 @@ CLOB = "https://clob.polymarket.com"
 TOPICS = ["Iran nuclear deal", "Strait of Hormuz", "Iran", "Hormuz traffic",
           "Fed rate hike", "Fed decision September", "US recession", "Fed rate decision",
           "government shutdown", "Trump approval rating", "tariff", "China trade",
-          "Fed chair Powell", "midterm elections", "Senate 2026", "House 2026", "oil price"]
+          "Fed chair Powell", "NVIDIA", "Jensen Huang", "AI bubble", "NVDA", "oil price"]
 KEYWORDS = ["recession", "fed", "fomc", "rate cut", "rate decision", "senate", "congress",
             "approval", "tariff", "shutdown", "debt ceiling", "powell", "midterm", "house",
-            "hormuz", "rate hike", "hike", "strait", "iran", "nuclear"]
+            "hormuz", "rate hike", "hike", "strait", "iran", "nuclear",
+            "nvidia", "jensen", "nvda", "ai bubble", "anthropic", "openai"]
 CAP = 28
-# 必抓市场（按slug定点, 放在名单最前）：参众两院控制权（2026中期选举）
-TARGET_SLUGS = ["which-party-will-win-the-senate-in-2026", "which-party-will-win-the-house-in-2026"]
+# 必抓市场（按slug定点, 放在名单最前）：黄仁勋与AI科技股（英伟达CEO继任/重返/市值/AI泡沫）
+TARGET_SLUGS = ["next-ceo-of-nvidia", "jensen-huang-rejoins-nvidia-byptptpt",
+                "nvidias-market-cap-end-of-2026", "ai-bubble-burst-by"]
+TARGET_MAX_PER_EVENT = 15  # 定点事件包含全部子市场（候选人/日期合约）
+
 
 def get(url, **kw):
     r = requests.get(url, headers=UA, timeout=30, **kw)
     r.raise_for_status()
     return r.json()
 
-def pick_from_events(events, picks, seen, cap):
+def pick_from_events(events, picks, seen, cap, allm=False, per_event_cap=1):
     for ev in events:
         title = (ev.get("title") or "")
-        for m in (ev.get("markets") or [])[:1]:
+        markets = ev.get("markets") or []
+        if allm:
+            markets = markets[:per_event_cap]
+        else:
+            markets = markets[:1]
+        for m in markets:
             ctoken = None
             try:
                 ct = json.loads(m.get("clobTokenIds") or "[]")
@@ -87,7 +96,7 @@ def main():
                 mks = get(f"{GAMMA}/markets", params={"slug": slug})
                 evs = [{"slug": slug, "title": mks[0].get("question") or slug,
                         "markets": mks}] if mks else []
-            pick_from_events(evs or [], picks, seen, CAP)
+            pick_from_events(evs or [], picks, seen, CAP, allm=True, per_event_cap=TARGET_MAX_PER_EVENT)
         except Exception as e:
             print("slug fail:", slug, str(e)[:80])
     # 1) 定向主题搜索

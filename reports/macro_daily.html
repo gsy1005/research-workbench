@@ -174,9 +174,10 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 </div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 4px;padding:8px 10px;background:#f4f8fd;border:1px solid #d9e1ee;border-radius:6px;">
   <span style="font-size:12px;color:#1b3a5f;font-weight:700;margin-right:4px;">预测市场收藏</span>
-  <a class="backlink" style="margin:0;padding:3px 9px;background:#fff;border:1px solid #c9d8ee;border-radius:4px;" href="https://kalshi.com/category/elections/midterms" target="_blank" rel="noopener noreferrer">Kalshi · 中期选举地图</a>
-  <a class="backlink" style="margin:0;padding:3px 9px;background:#fff;border:1px solid #c9d8ee;border-radius:4px;" href="https://kalshi.com/markets/controls/senate-winner/controls-2026" target="_blank" rel="noopener noreferrer">Kalshi · 参议院历史曲线</a>
-  <a class="backlink" style="margin:0;padding:3px 9px;background:#fff;border:1px solid #c9d8ee;border-radius:4px;" href="https://polymarket.com/event/which-party-will-win-the-senate-in-2026" target="_blank" rel="noopener noreferrer">Polymarket · 参议院概率曲线</a>
+  <a class="backlink" style="margin:0;padding:3px 9px;background:#fff;border:1px solid #c9d8ee;border-radius:4px;" href="https://polymarket.com/event/next-ceo-of-nvidia" target="_blank" rel="noopener noreferrer">Polymarket · 英伟达下任CEO</a>
+  <a class="backlink" style="margin:0;padding:3px 9px;background:#fff;border:1px solid #c9d8ee;border-radius:4px;" href="https://polymarket.com/event/jensen-huang-rejoins-nvidia-byptptpt" target="_blank" rel="noopener noreferrer">Polymarket · 黄仁勋重返英伟达</a>
+  <a class="backlink" style="margin:0;padding:3px 9px;background:#fff;border:1px solid #c9d8ee;border-radius:4px;" href="https://polymarket.com/event/nvidias-market-cap-end-of-2026" target="_blank" rel="noopener noreferrer">Polymarket · 英伟达年底市值</a>
+  <a class="backlink" style="margin:0;padding:3px 9px;background:#fff;border:1px solid #c9d8ee;border-radius:4px;" href="https://polymarket.com/event/ai-bubble-burst-by" target="_blank" rel="noopener noreferrer">Polymarket · AI泡沫破裂时间</a>
 </div>
 
 <div class="toolbar">
@@ -206,7 +207,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="sec"><h2>今日宏观总览</h2><span>按各指标最新可得数据自动更新 · 仅描述数值与变动，不作投资建议</span></div>
 <div class="sum" id="topSum">
   <div><b>利率</b>：<span id="topRates">FedWatch 数据读取中…</span></div>
-  <div><b>中期选举预测</b>：<span id="topElection">预测市场数据读取中…</span></div>
+  <div><b>AI/英伟达预测</b>：<span id="topElection">预测市场数据读取中…</span></div>
   <div id="topMarkets">市场数据读取中…</div>
   <div id="middleEastBrief" style="margin-top:7px;padding-top:7px;border-top:1px dashed #d7e0eb;">
     <b>中东与原油（10月29日）</b>：美媒称美国已通知多个海湾国家及地区盟友，为中期选举后可能对伊朗发动短期军事行动做准备，特朗普尚未作出最终决定；与此同时，美国副总统万斯致信伊朗试图重启和平谈判，沙特请求给予谈判更多时间。<b>外交努力与选后军事风险并存，不能仅按单方面缓和或升级处理</b>。美国中央司令部称霍尔木兹海峡国际公认主要航道已清除水雷并保持畅通。<span style="color:#6b7a90">（10/29早间财经汇总）</span><br>
@@ -371,7 +372,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
 <div class="sec"><h2>货币政策</h2><span>加息/不变/降息概率 · 衰退定价</span></div>
 <div class="secSum" id="sumM">⚙️ 总结与分析生成中…</div>
 <div class="grid3">
-  <div class="cbox"><h4>2026中期选举：民主党胜率走势（%）<span>Polymarket折线 · Kalshi最新点 · 11月3日投票</span></h4><div class="ct" id="cM2"></div><div id="cM2note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">当前为预测市场赔率，并非官方选举结果。</div></div>
+  <div class="cbox"><h4>英伟达下任CEO · Polymarket赔率（%）<span>黄仁勋11月12日已辞职 · 候选人Yes合约最新价</span></h4><div class="ct" id="cM2"></div><div id="cM2note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">读取预测市场数据中…</div></div>
   <div class="cbox"><h4>美国衰退概率（%）<span>Polymarket vs Kalshi · 合约定义不同</span></h4><div class="ct" id="cM3"></div><div id="cM3note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;"></div></div>
   <div class="cbox"><h4>TACO指数（特朗普政策压力）<span>越高=政策反复（TACO式回撤）概率越高</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
   <div class="cbox"><h4>政策预期温度计：2Y美债 vs 目标区间上限（%）<span>2Y高于上限=市场押注继续加息</span></h4><div class="ct" id="cM5"></div></div>
@@ -689,33 +690,43 @@ fetch('../data/econ_calendar.json?v='+Date.now()).then(function(r){return r.json
   el.innerHTML = '<b>今日（'+tag+'）日历</b>：'+evHtml(day)+(day2?'<br><b>明日（'+tag2+'）预告</b>：'+evHtml(day2):'');
 }).catch(function(){ var el=document.getElementById('calToday'); if(el) el.textContent='日历数据读取失败。'; });
 
-/* ================= 中期选举 + 衰退：Polymarket / Kalshi ================= */
+/* ================= 英伟达/AI预测市场 + 衰退：Polymarket ================= */
 Promise.all([
   fetch('../data/prediction_snapshot.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;}),
   fetch('../data/polymarket.json?v='+Date.now()).then(function(r){return r.ok?r.json():null;})
 ]).then(function(R){
-  var P=R[0],PM=R[1];if(!P)return;
-  var m=P.midterms, r=P.recession;
-  function electionHist(chamber,latest){
-    var mkts=(PM&&PM.markets)||[];
-    var mk=mkts.filter(function(x){return x.question.indexOf('control the '+chamber+' after the 2026 Midterm')>=0;})[0];
-    var a=((mk&&mk.history)||[]).map(function(p){return [p[0],+(p[1]*100).toFixed(2)];});
-    a=a.filter(function(p){return p[0]!==P.asof;});a.push([P.asof,latest]);
-    a.sort(function(x,y){return x[0].localeCompare(y[0]);});return a;
+  var P=R[0],PM=R[1];
+  var mkts=(PM&&PM.markets)||[];
+  /* 英伟达下任CEO：候选人Yes合约最新价 → 横向赔率条 */
+  var cands=[];
+  mkts.forEach(function(x){
+    var mm=/^Will (.+?) be the next CEO of NVIDIA/i.exec(x.question||'');
+    if(!mm||!(x.outcomes&&x.outcomes.length))return;
+    var yes=null; x.outcomes.forEach(function(o){if(/^Yes$/i.test(o.name))yes=o.price;});
+    if(yes==null)yes=x.outcomes[0].price;
+    cands.push({name:mm[1],odds:yes*100,vol:x.vol24||0});
+  });
+  cands.sort(function(a,b){return b.odds-a.odds;});
+  cands=cands.slice(0,6);
+  var n2=document.getElementById('cM2note');
+  if(cands.length){
+    snapshotBar('cM2',cands.map(function(c){return c.name;}),[
+      {name:'Polymarket',values:cands.map(function(c){return +c.odds.toFixed(1);})}
+    ]);
+    if(n2)n2.textContent='Polymarket '+(PM.fetched_at||'').slice(0,10)+' · 黄仁勋11月12日辞去CEO、CFO Colette Kress任临时CEO；赔率为Yes合约最新价，非官方任命结果。';
+  }else if(n2){
+    n2.textContent='Polymarket候选人数据暂不可用（随每日管线更新）。';
   }
-  line('cM2',[
-    {name:'众议院 · Polymarket',data:electionHist('House',m.house.polymarket),color:C_RED,w:2},
-    {name:'参议院 · Polymarket',data:electionHist('Senate',m.senate.polymarket),color:C_BLUE,w:2},
-    {name:'众议院 · Kalshi最新',data:[[P.kalshi_asof||P.asof,m.house.kalshi]],color:C_RED,type:'scatter'},
-    {name:'参议院 · Kalshi最新',data:[[P.kalshi_asof||P.asof,m.senate.kalshi]],color:C_BLUE,type:'scatter'}
-  ]);
-  snapshotBar('cM3',['2026年底前','2027年底前'],[
-    {name:'Polymarket',values:[r.y2026.polymarket,r.y2027.polymarket]},
-    {name:'Kalshi',values:[r.y2026.kalshi,r.y2027.kalshi]}
-  ]);
-  var n2=document.getElementById('cM2note'),n3=document.getElementById('cM3note');
-  if(n2)n2.textContent='Polymarket '+P.asof+' / Kalshi '+(P.kalshi_asof||P.asof)+' · '+m.status+'；Kalshi历史积累后再延伸为折线。';
-  if(n3)n3.textContent='Polymarket '+P.asof+' / Kalshi '+(r.kalshi_asof||P.kalshi_asof||P.asof)+' · '+r.note+'。';
+  /* 美国衰退概率 */
+  var r=P&&P.recession;
+  if(r){
+    snapshotBar('cM3',['2026年底前','2027年底前'],[
+      {name:'Polymarket',values:[r.y2026.polymarket,r.y2027.polymarket]},
+      {name:'Kalshi',values:[r.y2026.kalshi,r.y2027.kalshi]}
+    ]);
+    var n3=document.getElementById('cM3note');
+    if(n3)n3.textContent='Polymarket '+P.asof+' / Kalshi '+(r.kalshi_asof||P.kalshi_asof||P.asof)+' · '+r.note+'。';
+  }
 }).catch(function(){});
 
 /* ================= FedWatch ================= */
@@ -1222,12 +1233,6 @@ function exportCustomCSV(){
   function J(u){ return fetch(u+(u.indexOf('?')>0?'&':'?')+'v='+Date.now()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}); }
   Promise.all([J('../data/fedwatch.json'), J('../data/trump_zone.json'), J('../data/prediction_snapshot.json'), J('../data/polymarket.json')]).then(function(R){
     var FW=R[0], TZ=R[1], PS=R[2], PM=R[3];
-    function electionD1(chamber,latest){
-      var mkts=(PM&&PM.markets)||[];
-      var mk=mkts.filter(function(x){return x.question.indexOf('control the '+chamber+' after the 2026 Midterm')>=0;})[0];
-      var h=(mk&&mk.history)||[]; if(h.length<2)return null;
-      var prev=h[h.length-2][1]*100; return +(latest-prev).toFixed(2);
-    }
 
     /* TACO 指数卡 */
     var tacoLine='';
@@ -1258,17 +1263,28 @@ function exportCustomCSV(){
     /* 货币政策总结 */
     var predLine='';
     set('topElection','预测市场数据暂不可用。');
-    if(PS&&PS.midterms){
-      var pm=PS.midterms;
-      function pp(v){return v==null?'（环比—）':'（环比'+fp(v,2)+'pp）';}
-      var electionLine='民主党胜率：众议院 Polymarket '+pm.house.polymarket+'%'+pp(electionD1('House',pm.house.polymarket))+' / Kalshi '+pm.house.kalshi+'%；参议院 Polymarket '+pm.senate.polymarket+'%'+pp(electionD1('Senate',pm.senate.polymarket))+' / Kalshi '+pm.senate.kalshi+'%';
-      var predDates='Polymarket '+PS.asof+' / Kalshi '+(PS.kalshi_asof||PS.asof);
-      set('topElection',electionLine+'。（环比为较前一观测；'+predDates+'，11月3日投票，非官方选举结果）');
-      predLine='中期选举'+electionLine+'（'+predDates+'，非官方结果）。';
-      if(PS.recession){
-        var pr=PS.recession;
-        predLine+='2026衰退概率 Polymarket '+pr.y2026.polymarket+'% / Kalshi '+pr.y2026.kalshi+'%。';
-      }
+    if(PM&&PM.markets){
+      var pmk=PM.markets;
+      function yesOdds(qre){ var m=pmk.filter(function(x){return qre.test(x.question||'');})[0];
+        if(!m||!m.outcomes||!m.outcomes.length)return null;
+        var yes=null; m.outcomes.forEach(function(o){if(/^Yes$/i.test(o.name))yes=o.price;});
+        return yes==null?null:+(yes*100).toFixed(0); }
+      var candNames={}; pmk.forEach(function(x){ var mm=/^Will (.+?) be the next CEO of NVIDIA/i.exec(x.question||'');
+        if(mm&&x.outcomes&&x.outcomes.length){ var yes=null; x.outcomes.forEach(function(o){if(/^Yes$/i.test(o.name))yes=o.price;});
+          if(yes!=null&&yes>0.005)candNames[mm[1]]=yes*100; } });
+      var topC=Object.keys(candNames).sort(function(a,b){return candNames[b]-candNames[a];})[0];
+      var pmAs=(PM.fetched_at||'').slice(0,10);
+      var jr2026=yesOdds(/rejoin NVIDIA by December 31, 2026/i);
+      var aiBubble=yesOdds(/AI bubble burst in 2026/i);
+      var aiLine='英伟达下任CEO领先：'+(topC?topC+' '+candNames[topC].toFixed(0)+'%':'—')
+        +(jr2026!=null?'；黄仁勋2026年底前重返英伟达 '+jr2026+'%':'')
+        +(aiBubble!=null?'；AI泡沫2026年内破裂 '+aiBubble+'%':'');
+      set('topElection',aiLine+'。（Polymarket '+pmAs+'，合约最新价，非官方结果）');
+      predLine='AI/英伟达预测：'+aiLine+'（Polymarket '+pmAs+'）。';
+    }
+    if(PS&&PS.recession){
+      var pr=PS.recession;
+      predLine+='2026衰退概率 Polymarket '+pr.y2026.polymarket+'% / Kalshi '+pr.y2026.kalshi+'%。';
     }
     if(FW&&FW.meetings&&FW.meetings.length){
       var ms=fwPerMeeting(FW), m0=ms[0], m1=ms[1]||null;
