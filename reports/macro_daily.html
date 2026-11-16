@@ -375,6 +375,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>英伟达下任CEO · Polymarket赔率（%）<span>黄仁勋11月12日已辞职 · 候选人Yes合约最新价</span></h4><div class="ct" id="cM2"></div><div id="cM2note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">读取预测市场数据中…</div></div>
   <div class="cbox"><h4>美国衰退概率（%）<span>Polymarket vs Kalshi · 合约定义不同</span></h4><div class="ct" id="cM3"></div><div id="cM3note" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;"></div></div>
   <div class="cbox"><h4>TACO指数（特朗普政策压力）<span>越高=政策反复（TACO式回撤）概率越高</span></h4><div id="cM4t" style="font-size:12px;color:#16233c;padding:2px 4px 0;line-height:1.7;"></div><div class="ct" id="cM4"></div></div>
+  <div class="cbox"><h4>AI预测赔率走势（%）<span>Polymarket每日Yes合约价 · 黄仁勋2026年底前重返英伟达 · AI泡沫2026年内破裂</span></h4><div class="ct" id="cM2t"></div><div id="cM2tnote" style="font-size:11px;color:#6b7a90;line-height:1.6;padding:0 4px 4px;">读取预测市场历史中…</div></div>
   <div class="cbox"><h4>政策预期温度计：2Y美债 vs 目标区间上限（%）<span>2Y高于上限=市场押注继续加息</span></h4><div class="ct" id="cM5"></div></div>
   <div class="cbox"><h4>通胀预期锚：5Y盈亏平衡 · 5y5y远期（%）<span>锚是否松动决定加息容忍度</span></h4><div class="ct" id="cM6"></div></div>
 </div>
@@ -716,6 +717,24 @@ Promise.all([
     if(n2)n2.textContent='Polymarket '+(PM.fetched_at||'').slice(0,10)+' · 黄仁勋11月12日辞去CEO、CFO Colette Kress任临时CEO；赔率为Yes合约最新价，非官方任命结果。';
   }else if(n2){
     n2.textContent='Polymarket候选人数据暂不可用（随每日管线更新）。';
+  }
+  /* AI预测赔率走势：黄仁勋2026年底前重返英伟达 / AI泡沫2026年内破裂 */
+  function oddsHist(qre){
+    var m=mkts.filter(function(x){return qre.test(x.question||'');})[0];
+    if(!m||!(m.history&&m.history.length))return null;
+    return (m.history||[]).map(function(p){return [p[0],+(p[1]*100).toFixed(2)];});
+  }
+  var jrH=oddsHist(/rejoin NVIDIA by December 31, 2026/i);
+  var aiH=oddsHist(/^AI bubble burst in 2026\?/i);
+  var tser=[];
+  if(jrH&&jrH.length>1)tser.push({name:'黄仁勋2026年底前重返英伟达',data:jrH,color:C_RED,w:2});
+  if(aiH&&aiH.length>1)tser.push({name:'AI泡沫2026年内破裂',data:aiH,color:C_BLUE,w:2});
+  var nt2=document.getElementById('cM2tnote');
+  if(tser.length){
+    line('cM2t',tser);
+    if(nt2)nt2.textContent='Polymarket '+(PM.fetched_at||'').slice(0,10)+' · Yes合约每日价；两线同步上行=市场对AI交易脆弱性的定价升温。';
+  }else if(nt2){
+    nt2.textContent='历史数据积累中（随每日管线更新）。';
   }
   /* 美国衰退概率 */
   var r=P&&P.recession;
