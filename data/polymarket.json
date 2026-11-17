@@ -1,20 +1,20 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-11-17T09:04:30.552918Z",
+ "fetched_at": "2026-11-17T18:42:06.270946Z",
  "markets": [
   {
    "question": "Will Colette Kress be the next CEO of NVIDIA?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.084
+     "price": 0.0855
     },
     {
      "name": "No",
-     "price": 0.916
+     "price": 0.9145
     }
    ],
-   "vol24": 24326,
+   "vol24": 26118,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -40,7 +40,7 @@
     ],
     [
      "2026-11-17",
-     0.084
+     0.0855
     ]
    ]
   },
@@ -49,14 +49,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0135
+     "price": 0.007
     },
     {
      "name": "No",
-     "price": 0.9865
+     "price": 0.993
     }
    ],
-   "vol24": 486,
+   "vol24": 4531,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -82,7 +82,7 @@
     ],
     [
      "2026-11-17",
-     0.0135
+     0.007
     ]
    ]
   },
@@ -91,14 +91,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0045
+     "price": 0.005
     },
     {
      "name": "No",
-     "price": 0.9955
+     "price": 0.995
     }
    ],
-   "vol24": 553,
+   "vol24": 3848,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -140,7 +140,7 @@
      "price": 0.9975
     }
    ],
-   "vol24": 3189,
+   "vol24": 2475,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -175,14 +175,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0025
+     "price": 0.0035
     },
     {
      "name": "No",
-     "price": 0.9975
+     "price": 0.9965
     }
    ],
-   "vol24": 924518,
+   "vol24": 2010,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -208,7 +208,7 @@
     ],
     [
      "2026-11-17",
-     0.0025
+     0.0035
     ]
    ]
   },
@@ -217,14 +217,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0175
+     "price": 0.0105
     },
     {
      "name": "No",
-     "price": 0.9825
+     "price": 0.9895
     }
    ],
-   "vol24": 1486,
+   "vol24": 9787,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -250,7 +250,7 @@
     ],
     [
      "2026-11-17",
-     0.0175
+     0.0105
     ]
    ]
   },
@@ -259,14 +259,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.1215
+     "price": 0.1505
     },
     {
      "name": "No",
-     "price": 0.8785
+     "price": 0.8495
     }
    ],
-   "vol24": 737244,
+   "vol24": 776073,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -288,7 +288,7 @@
     ],
     [
      "2026-11-17",
-     0.1215
+     0.1505
     ]
    ]
   },
@@ -297,14 +297,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.145
+     "price": 0.155
     },
     {
      "name": "No",
-     "price": 0.855
+     "price": 0.845
     }
    ],
-   "vol24": 19043,
+   "vol24": 32199,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -326,7 +326,7 @@
     ],
     [
      "2026-11-17",
-     0.145
+     0.155
     ]
    ]
   },
@@ -335,14 +335,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.1675
+     "price": 0.2145
     },
     {
      "name": "No",
-     "price": 0.8325
+     "price": 0.7855
     }
    ],
-   "vol24": 61288,
+   "vol24": 70575,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -364,7 +364,7 @@
     ],
     [
      "2026-11-17",
-     0.1675
+     0.2145
     ]
    ]
   },
@@ -373,14 +373,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.002
+     "price": 0.0025
     },
     {
      "name": "No",
-     "price": 0.998
+     "price": 0.9975
     }
    ],
-   "vol24": 924518,
+   "vol24": 2041,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -406,7 +406,7 @@
     ],
     [
      "2026-11-17",
-     0.002
+     0.0025
     ]
    ]
   },
@@ -415,14 +415,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.007
+     "price": 0.0085
     },
     {
      "name": "No",
-     "price": 0.993
+     "price": 0.9915
     }
    ],
-   "vol24": 924518,
+   "vol24": 80709,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -444,7 +444,7 @@
     ],
     [
      "2026-11-17",
-     0.007
+     0.0085
     ]
    ]
   },
@@ -453,14 +453,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.005
+     "price": 0.0045
     },
     {
      "name": "No",
-     "price": 0.995
+     "price": 0.9955
     }
    ],
-   "vol24": 1025,
+   "vol24": 5672,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -482,7 +482,7 @@
     ],
     [
      "2026-11-17",
-     0.005
+     0.0045
     ]
    ]
   },
@@ -491,14 +491,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.018
+     "price": 0.0155
     },
     {
      "name": "No",
-     "price": 0.982
+     "price": 0.9845
     }
    ],
-   "vol24": 360,
+   "vol24": 3864,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -520,7 +520,7 @@
     ],
     [
      "2026-11-17",
-     0.018
+     0.014
     ]
    ]
   },
@@ -536,7 +536,7 @@
      "price": 0.997
     }
    ],
-   "vol24": 924518,
+   "vol24": 701,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -574,7 +574,7 @@
      "price": 0.998
     }
    ],
-   "vol24": 924518,
+   "vol24": 2708,
    "end": "2029-01-01",
    "slug": "next-ceo-of-nvidia",
    "history": [
@@ -605,14 +605,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0365
+     "price": 0.0475
     },
     {
      "name": "No",
-     "price": 0.9635
+     "price": 0.9525
     }
    ],
-   "vol24": 661062,
+   "vol24": 955206,
    "end": "2026-12-01",
    "slug": "jensen-huang-rejoins-nvidia-byptptpt",
    "history": [
@@ -630,7 +630,7 @@
     ],
     [
      "2026-11-17",
-     0.0365
+     0.0475
     ]
    ]
   },
@@ -639,14 +639,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.1015
+     "price": 0.123
     },
     {
      "name": "No",
-     "price": 0.8985
+     "price": 0.877
     }
    ],
-   "vol24": 678032,
+   "vol24": 873762,
    "end": "2027-01-01",
    "slug": "jensen-huang-rejoins-nvidia-byptptpt",
    "history": [
@@ -664,7 +664,7 @@
     ],
     [
      "2026-11-17",
-     0.1005
+     0.123
     ]
    ]
   },
@@ -673,14 +673,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.285
+     "price": 0.365
     },
     {
      "name": "No",
-     "price": 0.715
+     "price": 0.635
     }
    ],
-   "vol24": 117840,
+   "vol24": 107476,
    "end": "2028-01-01",
    "slug": "jensen-huang-rejoins-nvidia-byptptpt",
    "history": [
@@ -698,7 +698,7 @@
     ],
     [
      "2026-11-17",
-     0.285
+     0.365
     ]
    ]
   },
@@ -707,14 +707,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.5425
+     "price": 0.5395
     },
     {
      "name": "No",
-     "price": 0.4575
+     "price": 0.4605
     }
    ],
-   "vol24": 13311,
+   "vol24": 5355,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -1112,7 +1112,7 @@
     ],
     [
      "2026-11-17",
-     0.5445
+     0.5395
     ]
    ]
   },
@@ -1121,14 +1121,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.281
+     "price": 0.212
     },
     {
      "name": "No",
-     "price": 0.719
+     "price": 0.788
     }
    ],
-   "vol24": 533,
+   "vol24": 954,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -1518,7 +1518,7 @@
     ],
     [
      "2026-11-17",
-     0.28
+     0.212
     ]
    ]
   },
@@ -1527,14 +1527,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.12
+     "price": 0.17
     },
     {
      "name": "No",
-     "price": 0.88
+     "price": 0.83
     }
    ],
-   "vol24": 477,
+   "vol24": 796,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -1908,7 +1908,7 @@
     ],
     [
      "2026-11-17",
-     0.12
+     0.17
     ]
    ]
   },
@@ -1924,7 +1924,7 @@
      "price": 0.92
     }
    ],
-   "vol24": 431,
+   "vol24": 868,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -2331,14 +2331,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0025
+     "price": 0.034
     },
     {
      "name": "No",
-     "price": 0.9975
+     "price": 0.966
     }
    ],
-   "vol24": 343,
+   "vol24": 1070,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -2712,7 +2712,7 @@
     ],
     [
      "2026-11-17",
-     0.0025
+     0.034
     ]
    ]
   },
@@ -2721,14 +2721,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0015
+     "price": 0.0025
     },
     {
      "name": "No",
-     "price": 0.9985
+     "price": 0.9975
     }
    ],
-   "vol24": 315,
+   "vol24": 804,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -3122,7 +3122,7 @@
     ],
     [
      "2026-11-17",
-     0.0015
+     0.0025
     ]
    ]
   },
@@ -3131,14 +3131,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0045
+     "price": 0.0005
     },
     {
      "name": "No",
-     "price": 0.9955
+     "price": 0.9995
     }
    ],
-   "vol24": 110,
+   "vol24": 436,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -3516,7 +3516,7 @@
     ],
     [
      "2026-11-17",
-     0.004
+     0.0005
     ]
    ]
   },
@@ -3532,7 +3532,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 8561,
+   "vol24": 14632,
    "end": "2026-04-01",
    "slug": "ai-bubble-burst-by",
    "history": [
@@ -4067,14 +4067,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.078
+     "price": 0.081
     },
     {
      "name": "No",
-     "price": 0.922
+     "price": 0.919
     }
    ],
-   "vol24": 4365,
+   "vol24": 6558,
    "end": "2027-01-01",
    "slug": "ai-bubble-burst-by",
    "history": [
@@ -5500,7 +5500,7 @@
     ],
     [
      "2026-11-17",
-     0.078
+     0.081
     ]
    ]
   },
@@ -5516,7 +5516,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 8561,
+   "vol24": 14632,
    "end": "2026-01-01",
    "slug": "ai-bubble-burst-by",
    "history": [
@@ -5702,7 +5702,7 @@
      "price": 0.82
     }
    ],
-   "vol24": 4196,
+   "vol24": 8074,
    "end": "2027-07-01",
    "slug": "ai-bubble-burst-by",
    "history": [
@@ -5912,7 +5912,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 38545,
+   "vol24": 55724,
    "end": "2026-07-01",
    "slug": "us-iran-final-nuclear-deal-by-20260621201254412",
    "history": [
@@ -5970,7 +5970,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 197751,
+   "vol24": 184430,
    "end": "2026-07-25",
    "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080",
    "history": [
@@ -6036,7 +6036,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 510284,
+   "vol24": 760610,
    "end": "2026-07-18",
    "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
    "history": [
@@ -6074,7 +6074,7 @@
      "price": 0.9885
     }
    ],
-   "vol24": 25532,
+   "vol24": 25484,
    "end": "2026-12-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-november-30-20260810151158765",
    "history": [
@@ -6429,14 +6429,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.9635
+     "price": 0.965
     },
     {
      "name": "No",
-     "price": 0.0365
+     "price": 0.035
     }
    ],
-   "vol24": 24824,
+   "vol24": 7951,
    "end": "2026-12-10",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
@@ -6658,7 +6658,7 @@
     ],
     [
      "2026-11-17",
-     0.9635
+     0.965
     ]
    ]
   },
@@ -6821,14 +6821,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.023
+     "price": 0.0225
     },
     {
      "name": "No",
-     "price": 0.977
+     "price": 0.9775
     }
    ],
-   "vol24": 5012,
+   "vol24": 9778,
    "end": "2027-01-31",
    "slug": "us-recession-by-end-of-2026",
    "history": [
@@ -8346,7 +8346,7 @@
     ],
     [
      "2026-11-17",
-     0.023
+     0.0225
     ]
    ]
   },
@@ -8355,14 +8355,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0035
+     "price": 0.0025
     },
     {
      "name": "No",
-     "price": 0.9965
+     "price": 0.9975
     }
    ],
-   "vol24": 240877,
+   "vol24": 194499,
    "end": "2026-12-09",
    "slug": "fed-decision-in-december-20260729232808632",
    "history": [
@@ -8772,7 +8772,7 @@
     ],
     [
      "2026-11-17",
-     0.0035
+     0.0025
     ]
    ]
   },
@@ -8788,7 +8788,7 @@
      "price": 0.605
     }
    ],
-   "vol24": 1478,
+   "vol24": 1565,
    "end": "2026-12-13",
    "slug": "government-shutdown-by",
    "history": [
@@ -8875,14 +8875,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.145
+     "price": 0.275
     },
     {
      "name": "No",
-     "price": 0.855
+     "price": 0.725
     }
    ],
-   "vol24": 288,
+   "vol24": 6,
    "end": "2026-11-21",
    "slug": "trump-approval-rating-on-november-20",
    "history": [
@@ -8900,7 +8900,7 @@
     ],
     [
      "2026-11-17",
-     0.145
+     0.275
     ]
    ]
   },
