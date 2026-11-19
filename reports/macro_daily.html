@@ -91,8 +91,6 @@ table.kv tr:nth-child(even) td{background:var(--panel2);}
 .lpBar .eval b{color:var(--wht);}
 .lpBar .meta{font-size:11px;color:var(--dim);flex-basis:100%;border-top:1px dashed #ead8d0;padding-top:4px;}
 .lpBar .meta a{color:var(--blueL);text-decoration:none;}
-.lpFrameWrap{margin:0 0 4px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#f5f2ec;}
-.lpFrameWrap iframe{display:block;width:100%;height:960px;border:0;}
 .lpTake{background:#fdf7ea;border:1px solid #e3c88f;border-left:4px solid #b98a2f;border-radius:6px;padding:10px 16px;font-size:12.5px;line-height:2;color:#3a2f16;}
 .lpTake .tvh{color:#8a6a2f;font-weight:bold;margin-right:8px;}
 .lpTake .stance{margin-top:6px;padding:6px 12px;border-left:3px solid #b98a2f;background:#fffef5;font-weight:700;}
@@ -415,8 +413,7 @@ table.fw td.hl{font-weight:700;color:var(--red);}
   <div class="cbox"><h4>准备金与TGA：近4周变动（十亿$）<span>准备金下降 / TGA上升=抽离流动性</span></h4><div class="ct" id="cL11"></div></div>
   <div class="cbox"><h4>净流动性：近4周变动（十亿$）<span>联储总资产-TGA-ON RRP · 负值=收缩</span></h4><div class="ct" id="cL12"></div></div>
 </div>
-<div class="secSum" style="margin-top:6px;"><b>美元流动性监测面板</b> · 完整网站嵌入 · 点击页面顶部「市场脆弱性/流动性监测」按钮重新生成</div>
-<div class="lpFrameWrap"><iframe id="lpFrame" src="https://gsy1005.github.io/l-/" loading="lazy" title="美元流动性监测面板"></iframe></div>
+<div class="secSum" style="margin-top:6px;"><b>美元流动性监测面板</b> · 仅展示结论板块（完整面板：<a href="https://gsy1005.github.io/l-/" target="_blank" rel="noopener noreferrer" style="color:#2f6fbd;font-weight:700;">gsy1005.github.io/l- ↗</a>）· 点击页面顶部「市场脆弱性/流动性监测」按钮重新生成</div>
 
 <!-- ============ 大宗与权益 ============ -->
 <div class="sec"><h2>大宗与权益</h2><span>贵金属 · 原油 · 美股 · 中国股市</span></div>
@@ -1466,34 +1463,13 @@ function exportCustomCSV(){
   var btn=document.getElementById('lpTopBtn');
   if(btn) btn.onclick=function(){
     btn.disabled=true; var old=btn.textContent; btn.textContent='↻ 重新生成中…';
-    var fr=document.getElementById('lpFrame');
-    var p1=loadEval();
-    var p2=new Promise(function(res){ if(!fr) return res(); fr.src='https://gsy1005.github.io/l-/?t='+Date.now(); fr.onload=function(){res();}; setTimeout(res,12000); });
-    Promise.all([p1,p2]).finally(function(){
+    loadEval().finally(function(){
       btn.disabled=false; btn.textContent=old;
-      var t=document.getElementById('lpFrame');
+      var t=document.getElementById('lpBar');
       if(t&&t.scrollIntoView) t.scrollIntoView({behavior:'smooth',block:'start'});
     });
   };
   loadEval();
-  /* 流动性面板 iframe 健康检查：从未加载完成或内容为空时给出直达链接，避免纯黑一块 */
-  (function(){
-    var fr=document.getElementById('lpFrame'); if(!fr) return;
-    var loaded=false;
-    var timer=setTimeout(check,9000);
-    fr.addEventListener('load',function(){ loaded=true; clearTimeout(timer); setTimeout(check,2500); });
-    function check(){
-      if(!loaded) return; /* 同域可读则校验内容；跨域无法读取时视为已加载 */
-      try{
-        var d=fr.contentDocument;
-        if(d&&d.body&&d.body.innerText.replace(/\s/g,'').length>50) return;
-      }catch(e){ return; }
-      var w=fr.parentNode;
-      if(w&&!w.querySelector('.lpFallback')){
-        w.insertAdjacentHTML('beforeend','<div class="lpFallback" style="padding:14px 16px;font-size:12.5px;color:#5a6a82;background:#f5f2ec;line-height:1.8;">流动性面板未能在此窗口加载（深色主题面板可能被浏览器或广告拦截插件拦截）。请直接访问 <a href="https://gsy1005.github.io/l-/" target="_blank" rel="noopener noreferrer" style="color:#2f6fbd;font-weight:700;">gsy1005.github.io/l- ↗</a> 查看完整面板，或点击页面顶部「市场脆弱性/流动性监测」按钮重试。</div>');
-      }
-    }
-  })();
 })();
 </script>
 </body>
