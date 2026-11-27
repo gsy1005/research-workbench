@@ -1,6 +1,6 @@
 {
  "source": "Polymarket Gamma/CLOB API（GitHub Actions每日更新）",
- "fetched_at": "2026-11-27T05:19:56.276388Z",
+ "fetched_at": "2026-11-27T09:37:07.534434Z",
  "markets": [
   {
    "question": "Will Colette Kress be the next CEO of NVIDIA?",
@@ -1173,14 +1173,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.6785
+     "price": 0.611
     },
     {
      "name": "No",
-     "price": 0.3215
+     "price": 0.389
     }
    ],
-   "vol24": 2954,
+   "vol24": 16126,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -1618,7 +1618,7 @@
     ],
     [
      "2026-11-27",
-     0.6775
+     0.611
     ]
    ]
   },
@@ -1627,14 +1627,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.183
+     "price": 0.219
     },
     {
      "name": "No",
-     "price": 0.817
+     "price": 0.781
     }
    ],
-   "vol24": 576,
+   "vol24": 1601,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -2064,7 +2064,7 @@
     ],
     [
      "2026-11-27",
-     0.181
+     0.219
     ]
    ]
   },
@@ -2073,14 +2073,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.1095
+     "price": 0.1065
     },
     {
      "name": "No",
-     "price": 0.8905
+     "price": 0.8935
     }
    ],
-   "vol24": 1636,
+   "vol24": 1645,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -2494,7 +2494,7 @@
     ],
     [
      "2026-11-27",
-     0.1095
+     0.1065
     ]
    ]
   },
@@ -2957,11 +2957,11 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0065
+     "price": 0.006
     },
     {
      "name": "No",
-     "price": 0.9935
+     "price": 0.994
     }
    ],
    "vol24": 498,
@@ -3378,7 +3378,7 @@
     ],
     [
      "2026-11-27",
-     0.0065
+     0.006
     ]
    ]
   },
@@ -3394,7 +3394,7 @@
      "price": 0.9985
     }
    ],
-   "vol24": 457,
+   "vol24": 560,
    "end": "2026-12-31",
    "slug": "nvidias-market-cap-end-of-2026",
    "history": [
@@ -4278,7 +4278,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 27184,
+   "vol24": 20514,
    "end": "2026-04-01",
    "slug": "ai-bubble-burst-by",
    "history": [
@@ -4813,14 +4813,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.174
+     "price": 0.162
     },
     {
      "name": "No",
-     "price": 0.826
+     "price": 0.838
     }
    ],
-   "vol24": 20008,
+   "vol24": 15524,
    "end": "2027-01-01",
    "slug": "ai-bubble-burst-by",
    "history": [
@@ -6286,7 +6286,7 @@
     ],
     [
      "2026-11-27",
-     0.174
+     0.162
     ]
    ]
   },
@@ -6302,7 +6302,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 27184,
+   "vol24": 20514,
    "end": "2026-01-01",
    "slug": "ai-bubble-burst-by",
    "history": [
@@ -6481,14 +6481,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.375
+     "price": 0.365
     },
     {
      "name": "No",
-     "price": 0.625
+     "price": 0.635
     }
    ],
-   "vol24": 7176,
+   "vol24": 4989,
    "end": "2027-07-01",
    "slug": "ai-bubble-burst-by",
    "history": [
@@ -6722,7 +6722,7 @@
     ],
     [
      "2026-11-27",
-     0.375
+     0.365
     ]
    ]
   },
@@ -6738,7 +6738,7 @@
      "price": 1.0
     }
    ],
-   "vol24": 8058,
+   "vol24": 42710,
    "end": "2026-07-01",
    "slug": "us-iran-final-nuclear-deal-by-20260621201254412",
    "history": [
@@ -6785,18 +6785,122 @@
    ]
   },
   {
+   "question": "US announces end of Iranian blockade by July 24, 2026?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 0.0
+    },
+    {
+     "name": "No",
+     "price": 1.0
+    }
+   ],
+   "vol24": 90414,
+   "end": "2026-07-25",
+   "slug": "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080",
+   "history": [
+    [
+     "2026-07-14",
+     0.08
+    ],
+    [
+     "2026-07-15",
+     0.115
+    ],
+    [
+     "2026-07-16",
+     0.13
+    ],
+    [
+     "2026-07-17",
+     0.075
+    ],
+    [
+     "2026-07-18",
+     0.075
+    ],
+    [
+     "2026-07-19",
+     0.0355
+    ],
+    [
+     "2026-07-20",
+     0.046
+    ],
+    [
+     "2026-07-21",
+     0.05
+    ],
+    [
+     "2026-07-22",
+     0.044
+    ],
+    [
+     "2026-07-23",
+     0.0255
+    ],
+    [
+     "2026-07-24",
+     0.0225
+    ],
+    [
+     "2026-07-25",
+     0.0055
+    ]
+   ]
+  },
+  {
+   "question": "Israel x Iran ceasefire continues through July 18?",
+   "outcomes": [
+    {
+     "name": "Yes",
+     "price": 1.0
+    },
+    {
+     "name": "No",
+     "price": 0.0
+    }
+   ],
+   "vol24": 234526,
+   "end": "2026-07-18",
+   "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
+   "history": [
+    [
+     "2026-07-17",
+     0.5
+    ],
+    [
+     "2026-07-18",
+     0.9335
+    ],
+    [
+     "2026-07-19",
+     0.9925
+    ],
+    [
+     "2026-07-20",
+     0.992
+    ],
+    [
+     "2026-07-21",
+     0.997
+    ]
+   ]
+  },
+  {
    "question": "Strait of Hormuz traffic returns to normal by November 30?",
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0025
+     "price": 0.0015
     },
     {
      "name": "No",
-     "price": 0.9975
+     "price": 0.9985
     }
    ],
-   "vol24": 83573,
+   "vol24": 83054,
    "end": "2026-12-01",
    "slug": "strait-of-hormuz-traffic-returns-to-normal-by-november-30-20260810151158765",
    "history": [
@@ -7182,45 +7286,7 @@
     ],
     [
      "2026-11-27",
-     0.0025
-    ]
-   ]
-  },
-  {
-   "question": "Israel x Iran ceasefire continues through July 18?",
-   "outcomes": [
-    {
-     "name": "Yes",
-     "price": 1.0
-    },
-    {
-     "name": "No",
-     "price": 0.0
-    }
-   ],
-   "vol24": 293418,
-   "end": "2026-07-18",
-   "slug": "israel-x-iran-ceasefire-continues-throughptptpt-20260716224448963",
-   "history": [
-    [
-     "2026-07-17",
-     0.5
-    ],
-    [
-     "2026-07-18",
-     0.9335
-    ],
-    [
-     "2026-07-19",
-     0.9925
-    ],
-    [
-     "2026-07-20",
-     0.992
-    ],
-    [
-     "2026-07-21",
-     0.997
+     0.0015
     ]
    ]
   },
@@ -7229,14 +7295,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.955
+     "price": 0.9605
     },
     {
      "name": "No",
-     "price": 0.045
+     "price": 0.0395
     }
    ],
-   "vol24": 4365,
+   "vol24": 5483,
    "end": "2026-12-10",
    "slug": "another-fed-rate-hike-in-2026",
    "history": [
@@ -7498,7 +7564,7 @@
     ],
     [
      "2026-11-27",
-     0.955
+     0.9605
     ]
    ]
   },
@@ -7661,14 +7727,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.033
+     "price": 0.0335
     },
     {
      "name": "No",
-     "price": 0.967
+     "price": 0.9665
     }
    ],
-   "vol24": 15374,
+   "vol24": 15128,
    "end": "2027-01-31",
    "slug": "us-recession-by-end-of-2026",
    "history": [
@@ -9226,7 +9292,7 @@
     ],
     [
      "2026-11-27",
-     0.033
+     0.0335
     ]
    ]
   },
@@ -9242,7 +9308,7 @@
      "price": 0.9985
     }
    ],
-   "vol24": 131928,
+   "vol24": 132422,
    "end": "2026-12-09",
    "slug": "fed-decision-in-december-20260729232808632",
    "history": [
@@ -9708,7 +9774,7 @@
      "price": 0.735
     }
    ],
-   "vol24": 7748,
+   "vol24": 5234,
    "end": "2026-12-13",
    "slug": "government-shutdown-by",
    "history": [
@@ -9835,14 +9901,14 @@
    "outcomes": [
     {
      "name": "Yes",
-     "price": 0.0075
+     "price": 0.0135
     },
     {
      "name": "No",
-     "price": 0.9925
+     "price": 0.9865
     }
    ],
-   "vol24": 339,
+   "vol24": 425,
    "end": "2026-11-28",
    "slug": "trump-approval-rating-on-november-27",
    "history": [
@@ -9872,7 +9938,7 @@
     ],
     [
      "2026-11-27",
-     0.0075
+     0.0135
     ]
    ]
   },
@@ -10130,7 +10196,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 1139140,
+   "vol24": 947174,
    "end": "2027-01-01",
    "slug": "new-nvidia-ceo-named-by-december-31-2026",
    "history": [
@@ -10204,7 +10270,7 @@
      "price": 0.0
     }
    ],
-   "vol24": 239972,
+   "vol24": 180957,
    "end": "2027-01-01",
    "slug": "jensen-huang-admits-to-another-affair-by-december-31",
    "history": [
